@@ -108,17 +108,11 @@ body {
 }
 
 .sidebar-logo {
-  width: 32px;
-  height: 32px;
-  background: var(--color-accent);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   flex-shrink: 0;
+  object-fit: contain;
 }
 
 .sidebar-title {
