@@ -71,11 +71,9 @@ export default function LoginView() {
             src="/kalarti-logo.png"
             alt="Kalarti"
             style={{
-              width: 64,
-              height: 64,
-              borderRadius: 16,
+              width: 72,
+              height: 72,
               marginBottom: 16,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
             }}
           />
           <h1 style={{ fontSize: 20, fontWeight: 700, color: '#171717', letterSpacing: '-0.02em' }}>
