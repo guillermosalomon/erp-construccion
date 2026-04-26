@@ -67,22 +67,17 @@ export default function LoginView() {
           borderBottom: '1px solid #e5e5e5',
           background: '#fafafa',
         }}>
-          <div style={{
-            width: 56,
-            height: 56,
-            background: '#2563eb',
-            borderRadius: 14,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontWeight: 800,
-            fontSize: 22,
-            marginBottom: 16,
-            boxShadow: '0 4px 12px rgba(37,99,235,0.3)',
-          }}>
-            EC
-          </div>
+          <img
+            src="/kalarti-logo.png"
+            alt="Kalarti"
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 16,
+              marginBottom: 16,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            }}
+          />
           <h1 style={{ fontSize: 20, fontWeight: 700, color: '#171717', letterSpacing: '-0.02em' }}>
             ERP Construcción
           </h1>

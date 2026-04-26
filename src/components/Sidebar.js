@@ -192,7 +192,7 @@ export default function Sidebar({ activeSection, onNavigate }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <div className="sidebar-logo">EC</div>
+        <img src="/kalarti-logo.png" alt="Kalarti" className="sidebar-logo" style={{ width: 36, height: 36, borderRadius: 10 }} />
         <div>
           <div className="sidebar-title">ERP Construcción</div>
           <div className="sidebar-subtitle">Gestión de Obra</div>

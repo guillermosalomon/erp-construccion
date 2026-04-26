@@ -80,11 +80,9 @@ export default function Home() {
         background: '#fafafa',
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{
-            width: 56, height: 56, background: '#2563eb', borderRadius: 14,
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            color: 'white', fontWeight: 800, fontSize: 22, marginBottom: 16,
-          }}>EC</div>
+            <img src="/kalarti-logo.png" alt="Kalarti" style={{
+              width: 56, height: 56, borderRadius: 14, marginBottom: 16,
+            }} />
           <div style={{ fontSize: 14, color: '#737373' }}>Cargando...</div>
         </div>
       </div>
