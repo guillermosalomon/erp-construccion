@@ -732,10 +732,10 @@ async function syncToSupabase(action, state) {
             
             await presupuestoService.create(sanitized);
           } catch (err) {
-            if (err.message?.includes('column')) {
+            try {
               const { asignado_a_cuadrilla, num_cuadrillas, fecha_inicio, fecha_fin, descripcion, predecesor_item_num, ...clean } = action.payload;
               await presupuestoService.create(clean);
-            } else throw err;
+            } catch (e2) { console.warn('[SyncQueue] Fallback ADD also failed:', e2); }
           }
           break;
         }
@@ -748,10 +748,10 @@ async function syncToSupabase(action, state) {
             
             await presupuestoService.update(action.payload.id, sanitized);
           } catch (err) {
-            if (err.message?.includes('column')) {
+            try {
               const { asignado_a_cuadrilla, num_cuadrillas, fecha_inicio, fecha_fin, descripcion, predecesor_item_num, ...clean } = action.payload;
               await presupuestoService.update(action.payload.id, clean);
-            } else throw err;
+            } catch (e2) { console.warn('[SyncQueue] Fallback UPDATE also failed:', e2); }
           }
           break;
         }
