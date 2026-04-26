@@ -1,9 +1,70 @@
 'use client';
 
+import { useState, useRef } from 'react';
 import { useStore } from '@/store/StoreContext';
+import { templateService } from '@/lib/template-service';
+import { useAuth } from '@/lib/auth';
 
 export default function Dashboard() {
-  const { state, calcularCostoAPU, calcularPresupuesto, calculateExecutionValue, calculateTotalPayments } = useStore();
+    const { state, clearDatabase, calcularCostoAPU, calcularPresupuesto, calculateExecutionValue, calculateTotalPayments } = useStore();
+    const { user } = useAuth();
+    const [showTemplates, setShowTemplates] = useState(false);
+    const fileInputRef = useRef(null);
+    const [importMode, setImportMode] = useState('REPLACE'); // 'REPLACE' o 'MERGE'
+
+    const handleExport = async () => {
+      const name = prompt("Nombre de la plantilla:", "Mi Plantilla ERP");
+      if (!name) return;
+      const template = await templateService.generateTemplate(state, name);
+      templateService.downloadTemplate(template);
+      setShowTemplates(false);
+    };
+
+    const handleImportClick = (mode) => {
+      setImportMode(mode);
+      fileInputRef.current.click();
+      setShowTemplates(false);
+    };
+
+    const handleFileChange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (importMode === 'REPLACE') {
+        if (!confirm("⚠️ ¿REEMPLAZAR TODO? Se borrarán los datos actuales antes de cargar la plantilla.")) return;
+        await clearDatabase();
+      } else {
+        if (!confirm("¿Fusionar datos? Se agregarán los datos de la plantilla a los actuales.")) return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const templateData = JSON.parse(event.target.result);
+          await templateService.importTemplate(templateData, importMode);
+          alert("¡Plantilla cargada con éxito!");
+          window.location.reload();
+        } catch (err) {
+          alert("Error al cargar: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    };
+
+    const handleCloudUpload = async () => {
+      if (!user) return alert("Debes iniciar sesión para compartir.");
+      const name = prompt("Nombre para compartir:", "Plantilla Compartida");
+      if (!name) return;
+      
+      try {
+        const template = await templateService.generateTemplate(state, name);
+        await templateService.uploadToCloud(template, user.id);
+        alert("¡Plantilla subida a la nube con éxito!");
+      } catch (err) {
+        alert("Error al subir: " + err.message);
+      }
+      setShowTemplates(false);
+    };
 
   const totalInsumos = state.insumos.length;
   const totalAPUBasicos = state.apus.filter((a) => a.tipo === 'BASICO').length;
@@ -52,6 +113,38 @@ export default function Dashboard() {
           <div className="page-header-subtitle">Control 360°: Logística, Finanzas y Ejecución</div>
         </div>
         <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center' }}>
+          
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            style={{ display: 'none' }} 
+            accept=".json"
+            onChange={handleFileChange}
+          />
+
+          <div style={{ position: 'relative' }}>
+            <button 
+              className="btn btn-secondary btn-sm"
+              onClick={() => setShowTemplates(!showTemplates)}
+            >
+              💾 Plantillas ▼
+            </button>
+            {showTemplates && (
+              <div style={{
+                position: 'absolute', top: '100%', right: 0, marginTop: 5,
+                background: '#fff', border: '1px solid #e5e5e5', borderRadius: 8,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 100, width: 200,
+                overflow: 'hidden'
+              }}>
+                <button className="dropdown-item" onClick={handleExport}>📥 Guardar Local</button>
+                <button className="dropdown-item" onClick={() => handleImportClick('REPLACE')}>📤 Cargar (Reemplazar)</button>
+                <button className="dropdown-item" onClick={() => handleImportClick('MERGE')}>➕ Cargar (Fusionar)</button>
+                <div style={{ height: 1, background: '#f1f5f9' }} />
+                <button className="dropdown-item" onClick={handleCloudUpload}>☁️ Compartir en Nube</button>
+              </div>
+            )}
+          </div>
+
           <button 
             className="btn btn-primary btn-sm"
             onClick={async () => {

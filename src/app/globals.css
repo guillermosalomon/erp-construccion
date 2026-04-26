@@ -705,3 +705,20 @@ body {
 .inline-edit-input[type=number] {
   -moz-appearance: textfield;
 }
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.dropdown-item:hover {
+  background: var(--color-surface-hover);
+}

@@ -1602,6 +1602,67 @@ export function StoreProvider({ children }) {
     hydrate();
   }, []);
 
+  const clearDatabase = async () => {
+    if (!db()) return;
+    try {
+      // 1. Nivel 3 (Dependencias finales)
+      const { data: inv } = await db().from('inventario_transacciones').select('id');
+      const { data: ava } = await db().from('obra_avances').select('id');
+      const { data: nts } = await db().from('item_notes').select('id');
+      const { data: bim } = await db().from('bim_links').select('id');
+      const { data: ppg } = await db().from('personal_proyecto').select('id');
+      const { data: chk } = await db().from('item_checklist_items').select('id');
+      const { data: doc } = await db().from('item_documents').select('id');
+      const { data: asi } = await db().from('control_asistencia').select('id');
+      const { data: pag } = await db().from('pagos_cliente').select('id');
+      
+      await Promise.all([
+        ...(inv || []).map(x => inventarioService.remove(x.id)),
+        ...(ava || []).map(x => obraAvancesService.remove(x.id)),
+        ...(nts || []).map(x => notesService.remove(x.id)),
+        ...(bim || []).map(x => bimLinksService.remove(x.id)),
+        ...(ppg || []).map(x => personalProyectoService.remove(x.id)),
+        ...(chk || []).map(x => checklistService.remove(x.id)),
+        ...(doc || []).map(x => itemDocumentsService.remove(x.id)),
+        ...(asi || []).map(x => asistenciaService.remove(x.id)),
+        ...(pag || []).map(x => pagosService.remove(x.id))
+      ]);
+
+      // 2. Nivel 2 (Presupuesto y Detalles)
+      const { data: pre } = await db().from('presupuesto_items').select('id');
+      const { data: det } = await db().from('apu_detalle').select('id');
+      const { data: bod } = await db().from('bodegas').select('id');
+      const { data: cdt } = await db().from('cargo_detalle').select('id');
+      
+      await Promise.all([
+        ...(pre || []).map(x => presupuestoService.remove(x.id)),
+        ...(det || []).map(x => apuDetalleService.remove(x.id)),
+        ...(bod || []).map(x => bodegaService.remove(x.id)),
+        ...(cdt || []).map(x => cargoDetalleService.remove(x.id))
+      ]);
+
+      // 3. Nivel 1 (Entidades base)
+      const { data: pers } = await db().from('personal').select('id');
+      const { data: apus } = await db().from('apu').select('id');
+      const { data: insu } = await db().from('insumos').select('id');
+      const { data: carg } = await db().from('cargos').select('id');
+      const { data: proy } = await db().from('proyectos').select('id');
+      
+      await Promise.all([
+        ...(pers || []).map(x => personalService.remove(x.id)),
+        ...(apus || []).map(x => apuService.remove(x.id)),
+        ...(insu || []).map(x => insumosService.remove(x.id)),
+        ...(carg || []).map(x => cargosService.remove(x.id)),
+        ...(proy || []).map(x => proyectosService.remove(x.id))
+      ]);
+
+      return true;
+    } catch (e) {
+      console.error("Error clearing database:", e);
+      throw e;
+    }
+  };
+
 
   return (
     <StoreContext.Provider value={{
@@ -1616,6 +1677,7 @@ export function StoreProvider({ children }) {
       calcularDatosCargo,
       getProjectLaborNeeds,
       getCargoProjectItems,
+      clearDatabase,
       dataLoading,
       isOnline,
     }}>
