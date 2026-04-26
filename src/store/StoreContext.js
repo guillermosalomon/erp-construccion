@@ -733,7 +733,7 @@ async function syncToSupabase(action, state) {
             await presupuestoService.create(sanitized);
           } catch (err) {
             if (err.message?.includes('column')) {
-              const { asignado_a_cuadrilla, num_cuadrillas, fecha_inicio, fecha_fin, descripcion, ...clean } = action.payload;
+              const { asignado_a_cuadrilla, num_cuadrillas, fecha_inicio, fecha_fin, descripcion, predecesor_item_num, ...clean } = action.payload;
               await presupuestoService.create(clean);
             } else throw err;
           }
@@ -749,7 +749,7 @@ async function syncToSupabase(action, state) {
             await presupuestoService.update(action.payload.id, sanitized);
           } catch (err) {
             if (err.message?.includes('column')) {
-              const { asignado_a_cuadrilla, num_cuadrillas, fecha_inicio, fecha_fin, descripcion, ...clean } = action.payload;
+              const { asignado_a_cuadrilla, num_cuadrillas, fecha_inicio, fecha_fin, descripcion, predecesor_item_num, ...clean } = action.payload;
               await presupuestoService.update(action.payload.id, clean);
             } else throw err;
           }
