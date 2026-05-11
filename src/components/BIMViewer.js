@@ -212,7 +212,7 @@ export default function BIMViewer({ onSelect, selectedId, coloredMap, isStandalo
       meshGroup.visible = !!visibleDisciplinas[model.disciplina];
       fitCameraToAll();
     } catch (err) {
-      console.error('Error loading model from DB:', err);
+      console.error(`Error loading model from DB: ${err.message || String(err)}`);
     } finally {
       setIsLoading(false);
       setLoadingMsg('');

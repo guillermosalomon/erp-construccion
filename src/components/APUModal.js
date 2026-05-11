@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useStore } from '@/store/StoreContext';
+import { calcularPrecioMercado } from '@/lib/price-engine';
 
 const UNIDADES = ['un', 'kg', 'm', 'm2', 'm3', 'lt', 'gl', 'hr', 'día', 'viaje', 'saco'];
 
@@ -34,7 +35,8 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
     nombre: apu.nombre, 
     descripcion: apu.descripcion || '', 
     unidad: apu.unidad, 
-    rendimiento: String(apu.rendimiento || 1) 
+    rendimiento: String(apu.rendimiento || 1),
+    categoria_apu: apu.categoria_apu || 'Otros'
   });
   
   const [detalleForm, setDetalleForm] = useState({ 
@@ -45,7 +47,8 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
     cantidad: '', 
     rendimiento: '', // Nuevo
     unidad_detalle: '', // Nuevo
-    desperdicio_pct: '0' 
+    desperdicio_pct: '0',
+    herramienta_menor_pct: '0'
   });
 
   const formatCurrency = (val) =>
@@ -70,11 +73,12 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
       rendimiento: parseFloat(detalleForm.rendimiento) || null,
       unidad_detalle: detalleForm.unidad_detalle || null,
       desperdicio_pct: parseFloat(detalleForm.desperdicio_pct) || 0,
+      herramienta_menor_pct: detalleForm.tipo_linea === 'cargo' ? (parseFloat(detalleForm.herramienta_menor_pct) || 0) : 0,
     };
 
     if ((!payload.insumo_id && !payload.apu_hijo_id && !payload.cargo_id) || payload.cantidad <= 0) return;
     dispatch({ type: 'ADD_APU_DETALLE', payload });
-    setDetalleForm({ ...detalleForm, insumo_id: '', cargo_id: '', apu_hijo_id: '', cantidad: '', rendimiento: '', unidad_detalle: '' });
+    setDetalleForm({ ...detalleForm, insumo_id: '', cargo_id: '', apu_hijo_id: '', cantidad: '', rendimiento: '', unidad_detalle: '', herramienta_menor_pct: '0' });
   };
 
   const handleUpdateDetalle = (id, field, value) => {
@@ -130,9 +134,10 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
             <tr>
               <th>Recurso</th>
               <th>Unidad</th>
-              <th style={{ textAlign: 'right', width: 90 }}>Rendimiento</th>
+              {!isLabor && <th style={{ textAlign: 'right', width: 90 }}>Rendimiento</th>}
               <th style={{ textAlign: 'right', width: 90 }}>Cantidad</th>
-              <th style={{ textAlign: 'right', width: 70 }}>Desp. %</th>
+              {isLabor && <th style={{ textAlign: 'right', width: 70 }}>% H.M.</th>}
+              <th style={{ textAlign: 'right', width: 90 }}>{isLabor ? 'Factor Mult.' : 'Desp. %'}</th>
               <th style={{ textAlign: 'right' }}>P. Unit.</th>
               <th style={{ textAlign: 'right' }}>Subtotal</th>
               <th style={{ width: 40 }}></th>
@@ -148,7 +153,7 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
               
               // Lógica de unidad y precio con conversión para cargos
               let unidad = ins ? ins.unidad : (cargo ? cargo.unidad : (subApu ? subApu.unidad : ''));
-              let precio = ins ? ins.precio_unitario : (cargo ? cargo.precio_unitario : (subApu ? calcularCostoAPU(subApu.id) : 0));
+              let precio = ins ? (Number(ins.precio_unitario) || calcularPrecioMercado(ins.id, state.mkOfertas, '')?.precio_mercado || 0) : (cargo ? cargo.precio_unitario : (subApu ? calcularCostoAPU(subApu.id) : 0));
               
               if (cargo && det.unidad_detalle) {
                 unidad = det.unidad_detalle;
@@ -167,7 +172,9 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
                 else if (uDet === 'día' || uDet === 'dia') precio = p_hr * h_dia;
               }
 
-              const subtotal = (precio * (Number(det.cantidad) || 0) * (cargo ? 1 : (1 + (Number(det.desperdicio_pct) || 0) / 100)));
+              const fMult = cargo ? (parseFloat(cargo.factor_multiplicador) || 1) : (1 + (Number(det.desperdicio_pct) || 0) / 100);
+              const hmPct = cargo ? (Number(det.herramienta_menor_pct) || 0) : 0;
+              const subtotal = (precio * (Number(det.cantidad) || 0) * fMult) * (1 + hmPct / 100);
 
               const rendValue = det.rendimiento != null ? det.rendimiento : (det.cantidad > 0 ? Number((1 / det.cantidad).toFixed(4)) : '');
 
@@ -178,17 +185,19 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
                     <div style={{ fontSize: 10, color: '#64748b' }}>{ins ? ins.codigo : (cargo ? cargo.codigo : (subApu ? subApu.codigo : ''))}</div>
                   </td>
                   <td><span className="tag" style={{ background: '#f1f5f9', color: '#475569', fontSize: 10 }}>{unidad}</span></td>
-                  <td style={{ textAlign: 'right' }}>
-                    <input 
-                      key={`rend-${det.id}-${det.cantidad}`}
-                      type="number"
-                      step="0.0001"
-                      className="inline-edit-input"
-                      style={{ textAlign: 'right', width: '100%', color: 'var(--color-primary)' }}
-                      defaultValue={rendValue || ''}
-                      onBlur={(e) => handleUpdateDetalle(det.id, 'rendimiento', e.target.value)}
-                    />
-                  </td>
+                  {!isLabor && (
+                    <td style={{ textAlign: 'right' }}>
+                      <input 
+                        key={`rend-${det.id}-${det.cantidad}`}
+                        type="number"
+                        step="0.0001"
+                        className="inline-edit-input"
+                        style={{ textAlign: 'right', width: '100%', color: 'var(--color-primary)' }}
+                        defaultValue={rendValue || ''}
+                        onBlur={(e) => handleUpdateDetalle(det.id, 'rendimiento', e.target.value)}
+                      />
+                    </td>
+                  )}
                   <td style={{ textAlign: 'right' }}>
                     <input 
                       key={`cant-${det.id}-${det.rendimiento}`}
@@ -200,6 +209,24 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
                       onBlur={(e) => handleUpdateDetalle(det.id, 'cantidad', e.target.value)}
                     />
                   </td>
+                  {isLabor && (
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
+                        <input 
+                          type="number"
+                          step="1"
+                          className="inline-edit-input"
+                          style={{ width: 45, textAlign: 'right', color: '#059669', fontWeight: 600 }}
+                          defaultValue={det.herramienta_menor_pct || 0}
+                          onBlur={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            dispatch({ type: 'UPDATE_APU_DETALLE', payload: { ...det, herramienta_menor_pct: val, id: det.id } });
+                          }}
+                        />
+                        <span style={{ fontSize: 10, color: '#059669' }}>%</span>
+                      </div>
+                    </td>
+                  )}
                   <td style={{ textAlign: 'right' }}>
                     {!cargo ? (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
@@ -213,7 +240,25 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
                         <span style={{ fontSize: 10, color: 'var(--color-warning)' }}>%</span>
                       </div>
                     ) : (
-                      <span style={{ color: '#cbd5e1' }}>—</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
+                        <span style={{ fontSize: 10, color: 'var(--color-primary)' }}>x</span>
+                        <input 
+                          type="number"
+                          step="0.01"
+                          className="inline-edit-input"
+                          style={{ width: 50, textAlign: 'right', color: 'var(--color-primary)', fontWeight: 600 }}
+                          defaultValue={cargo.factor_multiplicador || 1.0}
+                          onBlur={(e) => {
+                            const val = parseFloat(e.target.value) || 1.0;
+                            if (val !== parseFloat(cargo.factor_multiplicador)) {
+                              dispatch({ 
+                                type: 'UPDATE_CARGO', 
+                                payload: { id: cargo.id, factor_multiplicador: val } 
+                              });
+                            }
+                          }}
+                        />
+                      </div>
                     )}
                   </td>
                   <td style={{ textAlign: 'right' }}>{formatCurrency(precio)}</td>
@@ -259,20 +304,29 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
               </button>
             </div>
             
-            <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 16 }}>
+            <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">Nombre del Ítem</label>
                 <input className="form-input" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />
               </div>
               <div className="form-group">
-                <label className="form-label">Unidad de Medida</label>
+                <label className="form-label">Unidad</label>
                 <select className="form-select" value={form.unidad} onChange={(e) => setForm({ ...form, unidad: e.target.value })}>
                   {UNIDADES.map(u => <option key={u} value={u}>{u}</option>)}
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">Rendimiento Base</label>
+                <label className="form-label">Rendimiento</label>
                 <input type="number" step="0.01" className="form-input" value={form.rendimiento} onChange={(e) => setForm({ ...form, rendimiento: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Categoría</label>
+                <select className="form-select" value={form.categoria_apu} onChange={(e) => setForm({ ...form, categoria_apu: e.target.value })}>
+                  <option value="Otros">Otros</option>
+                  {Array.from(new Set(state.apus.map(a => a.categoria_apu || 'Otros'))).filter(c => c !== 'Otros').sort().map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
               </div>
             </div>
           </section>
@@ -294,7 +348,7 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
                   <select className="form-select" style={{ width: 140, fontSize: 11 }} value={detalleForm.tipo_linea} onChange={(e) => setDetalleForm({ ...detalleForm, tipo_linea: e.target.value, insumo_id: '', cargo_id: '', apu_hijo_id: '', unidad_detalle: '' })}>
                     <option value="insumo">Insumo</option>
                     <option value="cargo">Cargo (M.O.)</option>
-                    {apu.tipo === 'COMPUESTO' && <option value="apu">Sub-APU</option>}
+                    <option value="apu">Sub-APU</option>
                   </select>
                   
                   {detalleForm.tipo_linea === 'insumo' && (
@@ -311,7 +365,7 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
                   )}
                   {detalleForm.tipo_linea === 'apu' && (
                     <select className="form-select" style={{ fontSize: 11 }} value={detalleForm.apu_hijo_id} onChange={(e) => setDetalleForm({ ...detalleForm, apu_hijo_id: e.target.value })}>
-                      <option value="">Seleccionar sub-APU...</option>
+                      <option value="">Seleccionar Sub-APU...</option>
                       {availableSubAPUs.map(a => <option key={a.id} value={a.id}>{a.nombre} ({a.unidad})</option>)}
                     </select>
                   )}
@@ -324,14 +378,22 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
                   <select className="form-select" style={{ fontSize: 11 }} value={detalleForm.unidad_detalle || 'Hora'} onChange={(e) => setDetalleForm({ ...detalleForm, unidad_detalle: e.target.value })}>
                     <option value="Hora">Hora</option>
                     <option value="Día">Día</option>
+                    <option value="Mes">Mes</option>
                   </select>
                 </div>
               )}
 
-              <div className="form-group" style={{ width: 110 }}>
-                <label className="form-label" style={{ fontSize: 10 }}>Rendimiento</label>
-                <input type="number" step="0.01" className="form-input" style={{ fontSize: 11 }} value={detalleForm.rendimiento} onChange={(e) => handleRendimientoChange(e.target.value)} placeholder="Ej: 10" />
-              </div>
+              {detalleForm.tipo_linea !== 'cargo' ? (
+                <div className="form-group" style={{ width: 110 }}>
+                  <label className="form-label" style={{ fontSize: 10 }}>Rendimiento</label>
+                  <input type="number" step="0.01" className="form-input" style={{ fontSize: 11 }} value={detalleForm.rendimiento} onChange={(e) => handleRendimientoChange(e.target.value)} placeholder="Ej: 10" />
+                </div>
+              ) : (
+                <div className="form-group" style={{ width: 80 }}>
+                  <label className="form-label" style={{ fontSize: 10 }}>% H.M.</label>
+                  <input type="number" step="1" className="form-input" style={{ fontSize: 11, color: '#059669', fontWeight: 600 }} value={detalleForm.herramienta_menor_pct} onChange={(e) => setDetalleForm({ ...detalleForm, herramienta_menor_pct: e.target.value })} placeholder="Ej: 5" />
+                </div>
+              )}
 
               <div className="form-group" style={{ width: 110 }}>
                 <label className="form-label" style={{ fontSize: 10 }}>Cantidad</label>

@@ -58,7 +58,7 @@ Responde ESTRICTAMENTE con un objeto JSON válido usando el siguiente esquema (N
     const data = JSON.parse(parsedText);
     return Response.json(data);
   } catch (error) {
-    console.error("Error validando la factura con Gemini:", error);
+    console.error(`Error validando la factura con Gemini: ${error.message || String(error)}`);
     return Response.json({ error: "Error de IA: " + error.message }, { status: 500 });
   }
 }

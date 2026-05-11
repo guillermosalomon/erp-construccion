@@ -258,24 +258,24 @@ export default function LogisticsView({ contextProyectoId }) {
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Cantidad</label>
-                  <input type="number" className="form-input" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="0.00" />
+                  <input type="number" className="form-input" value={qty || ''} onChange={(e) => setQty(e.target.value)} placeholder="0.00" />
                 </div>
                 {inoutType === 'ENTRADA' && (
                   <div className="form-group">
                     <label className="form-label">Costo Unidad (Real)</label>
-                    <input type="number" className="form-input" value={costoReal} onChange={(e) => setCostoReal(e.target.value)} placeholder="$" />
+                    <input type="number" className="form-input" value={costoReal || ''} onChange={(e) => setCostoReal(e.target.value)} placeholder="$" />
                   </div>
                 )}
               </div>
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Concepto / Motivo</label>
-                  <input type="text" className="form-input" value={motivo} onChange={(e) => setMotivo(e.target.value)} placeholder="Ej: Factura 123 o Retiro para vigas" />
+                  <input type="text" className="form-input" value={motivo || ''} onChange={(e) => setMotivo(e.target.value)} placeholder="Ej: Factura 123 o Retiro para vigas" />
                 </div>
                 {inoutType === 'ENTRADA' && (
                   <div className="form-group">
                     <label className="form-label">Distribuidor</label>
-                    <input type="text" className="form-input" value={distribuidor} onChange={(e) => setDistribuidor(e.target.value)} placeholder="Proveedor (Opcional)" />
+                    <input type="text" className="form-input" value={distribuidor || ''} onChange={(e) => setDistribuidor(e.target.value)} placeholder="Proveedor (Opcional)" />
                   </div>
                 )}
               </div>

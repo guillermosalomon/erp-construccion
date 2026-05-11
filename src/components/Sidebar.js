@@ -60,14 +60,19 @@ export default function Sidebar({ activeSection, onNavigate }) {
         { id: 'insumos', name: 'Insumos', icon: '📦' },
         { id: 'personal', name: 'Personal', icon: '👷' },
         { id: 'cargos', name: 'Cargos', icon: '👔' },
-        { id: 'apu-basicos', name: 'APU Básicos', icon: '🧱' },
-        { id: 'apu-compuestos', name: 'APU Compuestos', icon: '🏗️' },
+        { id: 'apu', name: 'APU', icon: '🧱' },
       ],
     },
     {
       label: 'Logística',
       items: [
         { id: 'logistica', name: 'Bodega Móvil', icon: '🏬' },
+      ],
+    },
+    {
+      label: 'CRM',
+      items: [
+        { id: 'crm', name: 'Clientes', icon: '👥' },
       ],
     },
     {
@@ -89,6 +94,21 @@ export default function Sidebar({ activeSection, onNavigate }) {
       items: [
         { id: 'visor-3d', name: 'Visor 3D', icon: '🧊' },
         { id: 'bim-5d', name: 'Vinculación 5D', icon: '🔗' },
+      ],
+    },
+    {
+      label: 'Comercio',
+      items: [
+        { id: 'punto-venta', name: 'Punto de Venta', icon: '🏪' },
+        { id: 'historial-pos', name: 'Historial POS', icon: '📋' },
+        { id: 'marketplace', name: 'Marketplace', icon: '🛒' },
+      ],
+    },
+    {
+      label: 'Comunicación',
+      items: [
+        { id: 'chat-history', name: 'Historial de Chat', icon: '💬' },
+        { id: 'telegram-chat', name: 'Copiloto Telegram', icon: '✈️', onClick: () => window.open('https://t.me/Kalarti_bot', '_blank') },
       ],
     },
   ];
@@ -114,7 +134,13 @@ export default function Sidebar({ activeSection, onNavigate }) {
               <button
                 key={item.id}
                 className={`sidebar-link ${activeSection === item.id ? 'active' : ''}`}
-                onClick={() => !item.disabled && onNavigate(item.id)}
+                onClick={() => {
+                  if (item.onClick) {
+                    item.onClick();
+                  } else {
+                    onNavigate(item.id);
+                  }
+                }}
                 disabled={item.disabled}
                 style={item.disabled ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
                 title={item.disabled ? 'Disponible en próximas fases' : item.name}

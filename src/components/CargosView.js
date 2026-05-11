@@ -10,16 +10,17 @@ const emptyForm = {
   unidad: 'Mes',
   precio_unitario: '0',
   factor_smlv: '1.0',
+  factor_multiplicador: '1.0',
   categoria: 'Mano de Obra Directa',
 };
 
-const CATEGORIAS_CARGO = ['Oficina (Escritorio)', 'Campo (Móvil)', 'Mano de Obra Directa'];
+const CATEGORIAS_CARGO = ['Oficina (Escritorio)', 'Campo (Móvil)', 'Mano de Obra Directa', 'Comercio (Ventas)'];
 
 export default function CargosView() {  const { state, dispatch, calcularDatosCargo } = useStore();
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [form, setForm] = useState({ ...emptyForm, factor_smlv: '1.0', recargo_cop: 0, recargo_pct: 0 });
+  const [form, setForm] = useState({ ...emptyForm, factor_smlv: '1.0', factor_multiplicador: '1.0', recargo_cop: 0, recargo_pct: 0 });
   const [search, setSearch] = useState('');
   const [newMemberId, setNewMemberId] = useState('');
   const [newMemberQty, setNewMemberQty] = useState(1);
@@ -45,7 +46,7 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
   }, [state.cargos, search]);
 
   const openCreate = () => {
-    setForm({ ...emptyForm, factor_smlv: '1.0', recargo_cop: 0, recargo_pct: 0 });
+    setForm({ ...emptyForm, factor_smlv: '1.0', factor_multiplicador: '1.0', recargo_cop: 0, recargo_pct: 0 });
     setEditingId(crypto.randomUUID());
     setIsCreating(true);
     setShowModal(true);
@@ -57,6 +58,7 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
       unidad: cargo.unidad,
       precio_unitario: String(cargo.precio_unitario),
       factor_smlv: String(cargo.factor_smlv || 1.0),
+      factor_multiplicador: String(cargo.factor_multiplicador || 1.0),
       recargo_cop: cargo.recargo_cop || 0,
       recargo_pct: cargo.recargo_pct || 0,
       categoria: cargo.categoria || 'Mano de Obra Directa',
@@ -78,6 +80,8 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
       { nombre: 'Arq. Residente', categoria: 'Campo (Móvil)', factor_smlv: 4.5, unidad: 'Mes', codigo: 'RES-002' },
       { nombre: 'Practicante', categoria: 'Campo (Móvil)', factor_smlv: 1.0, unidad: 'Mes', codigo: 'PRA-001' },
       { nombre: 'Almacén (Bodega)', categoria: 'Campo (Móvil)', factor_smlv: 1.5, unidad: 'Mes', codigo: 'ALM-001' },
+      { nombre: 'Admin Tienda', categoria: 'Comercio (Ventas)', factor_smlv: 2.0, unidad: 'Mes', codigo: 'VEN-001' },
+      { nombre: 'Vendedor', categoria: 'Comercio (Ventas)', factor_smlv: 1.2, unidad: 'Mes', codigo: 'VEN-002' },
     ];
 
     seed.forEach(item => {
@@ -94,6 +98,7 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
     const payload = {
       ...form,
       factor_smlv: parseFloat(form.factor_smlv) || 1,
+      factor_multiplicador: parseFloat(form.factor_multiplicador) || 1,
       recargo_cop: parseFloat(form.recargo_cop) || 0,
       recargo_pct: parseFloat(form.recargo_pct) || 0,
     };
@@ -113,6 +118,7 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
     if (!newMemberId || !editingId) return;
     const childCargo = state.cargos.find(c => c.id === newMemberId);
     const inheritedFactor = parseFloat(childCargo?.factor_smlv) || 1.0;
+    const factorVal = newMemberFactor ? parseFloat(newMemberFactor) : inheritedFactor;
     dispatch({
       type: 'ADD_CARGO_DETALLE',
       payload: { 
@@ -120,12 +126,32 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
         cargo_padre_id: editingId, 
         cargo_hijo_id: newMemberId, 
         cantidad: parseFloat(newMemberQty) || 1,
-        factor_smlv: newMemberFactor ? parseFloat(newMemberFactor) : inheritedFactor
+        factor_smlv: isNaN(factorVal) ? 1.0 : factorVal
       }
     });
     setNewMemberId('');
     setNewMemberQty(1);
     setNewMemberFactor('');
+  };
+
+  const handleDuplicate = (cargo) => {
+    const newId = crypto.randomUUID();
+    const members = state.cargoDetalles.filter(d => d.cargo_padre_id === cargo.id);
+    dispatch({ type: 'ADD_CARGO', payload: { 
+      ...cargo, 
+      id: newId, 
+      nombre: cargo.nombre + ' (Copia)',
+      codigo: 'MO-' + Date.now().toString(36).toUpperCase(),
+    }});
+    members.forEach(det => {
+      dispatch({ type: 'ADD_CARGO_DETALLE', payload: {
+        id: crypto.randomUUID(),
+        cargo_padre_id: newId,
+        cargo_hijo_id: det.cargo_hijo_id,
+        cantidad: det.cantidad,
+        factor_smlv: det.factor_smlv,
+      }});
+    });
   };
 
   const formatCurrency = (val) =>
@@ -234,6 +260,7 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                   <th>Nombre del Cargo / Equipo</th>
                   <th>Unidad</th>
                   <th style={{ textAlign: 'right' }}>Factor SMLV</th>
+                  <th style={{ textAlign: 'right' }}>F. Mult.</th>
                   <th style={{ textAlign: 'right' }}>Tarifa Real</th>
                   <th style={{ width: 100 }}>Acciones</th>
                 </tr>
@@ -251,8 +278,8 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                           fontSize: 10, 
                           padding: '2px 6px', 
                           borderRadius: 4, 
-                          background: cargo.categoria?.includes('Oficina') ? '#dbeafe' : cargo.categoria?.includes('Campo') ? '#dcfce7' : '#f1f5f9',
-                          color: cargo.categoria?.includes('Oficina') ? '#1e40af' : cargo.categoria?.includes('Campo') ? '#166534' : '#475569',
+                          background: cargo.categoria?.includes('Oficina') ? '#dbeafe' : cargo.categoria?.includes('Campo') ? '#dcfce7' : cargo.categoria?.includes('Comercio') ? '#fef3c7' : '#f1f5f9',
+                          color: cargo.categoria?.includes('Oficina') ? '#1e40af' : cargo.categoria?.includes('Campo') ? '#166534' : cargo.categoria?.includes('Comercio') ? '#92400e' : '#475569',
                           fontWeight: 600
                         }}>
                           {cargo.categoria || 'Mano de Obra'}
@@ -301,6 +328,22 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                           <span style={{ fontSize: 12, color: 'var(--color-primary)', fontWeight: 600 }}>x</span>
                         </div>
                       </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <input 
+                          type="number"
+                          step="0.01"
+                          className="inline-edit-input"
+                          style={{ width: 50, textAlign: 'right', fontWeight: 600, color: '#64748b' }}
+                          defaultValue={cargo.factor_multiplicador || 1.0}
+                          onBlur={(e) => {
+                            const val = parseFloat(e.target.value) || 1.0;
+                            if (val !== cargo.factor_multiplicador) {
+                              dispatch({ type: 'UPDATE_CARGO', payload: { id: cargo.id, factor_multiplicador: val } });
+                            }
+                          }}
+                          onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
+                        />
+                      </td>
                       <td style={{ textAlign: 'right', fontWeight: 700 }}>
                         <div style={{ fontSize: 11, color: '#64748b', fontWeight: 400 }}>
                           {formatCurrency(smlv * data.factor)} /mes
@@ -309,8 +352,9 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: 4 }}>
-                          <button className="btn btn-ghost btn-sm" onClick={() => openEdit(cargo)}>✏️</button>
-                          <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-danger)' }} onClick={() => dispatch({ type: 'DELETE_CARGO', payload: cargo.id })}>🗑️</button>
+                          <button className="btn btn-ghost btn-sm" onClick={() => openEdit(cargo)} title="Editar">✏️</button>
+                          <button className="btn btn-ghost btn-sm" onClick={() => handleDuplicate(cargo)} title="Duplicar">📋</button>
+                          <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-danger)' }} onClick={() => dispatch({ type: 'DELETE_CARGO', payload: cargo.id })} title="Eliminar">🗑️</button>
                         </div>
                       </td>
                     </tr>
@@ -377,6 +421,18 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                         disabled={currentMembers.length > 0}
                         style={currentMembers.length > 0 ? { fontWeight: 700, color: 'var(--color-primary)', background: '#f8fafc' } : {}}
                         title={currentMembers.length > 0 ? "Calculado automáticamente como la suma de integrantes" : ""}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Factor Multiplicador</label>
+                      <input
+                        className="form-input"
+                        type="number"
+                        step="0.01"
+                        value={form.factor_multiplicador}
+                        onChange={(e) => setForm({ ...form, factor_multiplicador: e.target.value })}
+                        style={{ fontWeight: 700, color: 'var(--color-secondary)' }}
+                        placeholder="Ej: 1.70"
                       />
                     </div>
                   </div>
@@ -452,7 +508,8 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                         {currentMembers.map((det, idx) => {
                           const cargo = state.cargos.find(c => c.id === det.cargo_hijo_id);
                           const factorFromDB = parseFloat(cargo?.factor_smlv) || 1.0;
-                          const displayFactor = det.factor_smlv != null ? parseFloat(det.factor_smlv) : factorFromDB;
+                          const rawFactor = det.factor_smlv != null ? parseFloat(det.factor_smlv) : factorFromDB;
+                          const displayFactor = isNaN(rawFactor) ? 1.0 : rawFactor;
                           return (
                             <tr key={det.id || `member-${idx}`}>
                               <td>{cargo?.nombre}</td>

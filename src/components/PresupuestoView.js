@@ -8,11 +8,13 @@ export default function PresupuestoView({ proyectoId, onBack }) {
   const { state, dispatch, calcularCostoAPU, calcularPresupuesto } = useStore();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
-  const [addForm, setAddForm] = useState({ apu_id: '', cantidad: '', descripcion: '', capitulo: '', asignado_a_cuadrilla: '', fecha_inicio: '', num_cuadrillas: 1 });
+  const [addForm, setAddForm] = useState({ apu_id: '', apu_search: '', cantidad: '', descripcion: '', capitulo: '', etapa: '', sub_capitulo: '', asignado_a_cuadrilla: '', fecha_inicio: '', num_cuadrillas: 1 });
   const [importPreview, setImportPreview] = useState(null);
   const [importMapping, setImportMapping] = useState({ cantidad_col: '', descripcion_col: '' });
   const [activeApuId, setActiveApuId] = useState(null);
   const [showApuModal, setShowApuModal] = useState(false);
+  const [editingChapter, setEditingChapter] = useState(null);
+  const [chapterEditValue, setChapterEditValue] = useState('');
   const fileInputRef = useRef(null);
 
   const proyecto = state.proyectos.find((p) => p.id === proyectoId);
@@ -44,6 +46,30 @@ export default function PresupuestoView({ proyectoId, onBack }) {
     return map;
   }, [items]);
 
+  // ── Unique values for suggestions ──
+  const uniqueEtapas = useMemo(() => {
+    const defaults = ['ESTUDIOS Y DISEÑOS', 'CONSULTORÍA', 'ETAPA 1', 'ETAPA 2', 'FASE A', 'FASE B', 'CIMENTACIÓN', 'ESTRUCTURA', 'ACABADOS'];
+    const current = items.map(i => i.etapa).filter(Boolean);
+    return [...new Set([...defaults, ...current])].sort();
+  }, [items]);
+
+  const uniqueCapitulos = useMemo(() => {
+    const defaults = [
+      'PRELIMINARES', 'CIMENTACIÓN', 'ESTRUCTURA', 'MAMPOSTERÍA', 
+      'INSTALACIONES HIDROSANITARIAS', 'INSTALACIONES ELÉCTRICAS',
+      'PAÑETES Y REVOQUES', 'PISOS Y ENCHAPES', 'CARPINTERÍA MADERA',
+      'CARPINTERÍA METÁLICA', 'PINTURA', 'ASEO Y ENTREGAS'
+    ];
+    const current = items.map(i => i.capitulo).filter(Boolean);
+    return [...new Set([...defaults, ...current])].sort();
+  }, [items]);
+
+  const uniqueSubCapitulos = useMemo(() => {
+    const defaults = ['EXCAVACIONES', 'CONCRETOS', 'ACERO', 'RELLENOS', 'TUBERÍAS', 'CABLEADO'];
+    const current = items.map(i => i.sub_capitulo).filter(Boolean);
+    return [...new Set([...defaults, ...current])].sort();
+  }, [items]);
+
   // ── Add item ──
   const handleAddItem = (e) => {
     e.preventDefault();
@@ -56,13 +82,25 @@ export default function PresupuestoView({ proyectoId, onBack }) {
         cantidad: parseFloat(addForm.cantidad) || 0,
         descripcion: addForm.descripcion,
         capitulo: addForm.capitulo,
+        etapa: addForm.etapa,
+        sub_capitulo: addForm.sub_capitulo,
         asignado_a_cuadrilla: addForm.asignado_a_cuadrilla,
         orden: items.length,
         fecha_inicio: addForm.fecha_inicio,
         num_cuadrillas: parseInt(addForm.num_cuadrillas) || 1,
       },
     });
-    setAddForm({ apu_id: '', cantidad: '', descripcion: '', capitulo: '', asignado_a_cuadrilla: '', fecha_inicio: '', num_cuadrillas: 1 });
+    
+    // Heredar valores para el siguiente ítem
+    setAddForm(prev => ({ 
+      ...prev, 
+      apu_id: '', 
+      apu_search: '',
+      cantidad: '', 
+      descripcion: '', 
+      asignado_a_cuadrilla: '',
+      // Mantenemos: capitulo, etapa, sub_capitulo, fecha_inicio, num_cuadrillas
+    }));
     setShowAddModal(false);
   };
 
@@ -221,6 +259,25 @@ export default function PresupuestoView({ proyectoId, onBack }) {
 </html>`;
   };
 
+  const handleUpdateChapterName = (oldName, newName) => {
+    if (!newName || oldName === newName) {
+      setEditingChapter(null);
+      return;
+    }
+    
+    // Identificar todos los ítems que pertenecen a este capítulo (incluyendo los 'Sin capítulo')
+    const itemsToUpdate = items.filter(i => (i.capitulo || 'Sin capítulo') === oldName);
+    
+    itemsToUpdate.forEach(item => {
+      dispatch({
+        type: 'UPDATE_PRESUPUESTO_ITEM',
+        payload: { id: item.id, capitulo: newName }
+      });
+    });
+    
+    setEditingChapter(null);
+  };
+
   return (
     <>
       <div className="page-header">
@@ -260,26 +317,34 @@ export default function PresupuestoView({ proyectoId, onBack }) {
 
       <div className="page-body">
         {/* AIU Summary Bar */}
-        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
+        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}>
           <div className="stat-card">
             <div className="stat-label">Costo Directo</div>
-            <div className="currency" style={{ fontSize: 20, fontWeight: 700 }}>{formatCurrency(presupuesto.costoDirecto)}</div>
+            <div className="currency" style={{ fontSize: 18, fontWeight: 700 }}>{formatCurrency(presupuesto.costoDirecto)}</div>
           </div>
           <div className="stat-card">
-            <div className="stat-label">Administración ({presupuesto.pctAdmin}%)</div>
-            <div className="currency" style={{ fontSize: 16, fontWeight: 600 }}>{formatCurrency(presupuesto.admin)}</div>
+            <div className="stat-label">Admin ({presupuesto.pctAdmin}%)</div>
+            <div className="currency" style={{ fontSize: 14, fontWeight: 600 }}>{formatCurrency(presupuesto.admin)}</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Imprevistos ({presupuesto.pctImprev}%)</div>
-            <div className="currency" style={{ fontSize: 16, fontWeight: 600 }}>{formatCurrency(presupuesto.imprevistos)}</div>
+            <div className="currency" style={{ fontSize: 14, fontWeight: 600 }}>{formatCurrency(presupuesto.imprevistos)}</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Utilidad ({presupuesto.pctUtil}%)</div>
-            <div className="currency" style={{ fontSize: 16, fontWeight: 600 }}>{formatCurrency(presupuesto.utilidad)}</div>
+            <div className="currency" style={{ fontSize: 14, fontWeight: 600 }}>{formatCurrency(presupuesto.utilidad)}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">IVA ({presupuesto.pctIva}%)</div>
+            <div className="currency" style={{ fontSize: 14, fontWeight: 600 }}>{formatCurrency(presupuesto.iva)}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label" style={{ color: '#dc2626' }}>Retefuente ({presupuesto.pctRete}%)</div>
+            <div className="currency" style={{ fontSize: 14, fontWeight: 600, color: '#dc2626' }}>- {formatCurrency(presupuesto.retefuente)}</div>
           </div>
           <div className="stat-card" style={{ background: 'var(--color-accent)', border: 'none' }}>
             <div className="stat-label" style={{ color: 'rgba(255,255,255,0.8)' }}>Total Presupuesto</div>
-            <div className="currency" style={{ fontSize: 22, fontWeight: 700, color: '#fff' }}>
+            <div className="currency" style={{ fontSize: 20, fontWeight: 700, color: '#fff' }}>
               {formatCurrency(presupuesto.gran_total)}
             </div>
           </div>
@@ -295,13 +360,48 @@ export default function PresupuestoView({ proyectoId, onBack }) {
 
               return (
                 <div className="card" key={capName}>
-                  <div className="card-header">
-                    <h3 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-                      📁 {capName}
-                      <span style={{ fontSize: 12, fontWeight: 400, color: 'var(--color-text-tertiary)' }}>
-                        ({capItems.length} ítem{capItems.length !== 1 ? 's' : ''})
-                      </span>
-                    </h3>
+                  <div className="card-header" style={{ cursor: 'pointer' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', flex: 1 }}>
+                      {editingChapter === capName ? (
+                        <input
+                          autoFocus
+                          type="text"
+                          className="form-input"
+                          list="capitulo-options"
+                          value={chapterEditValue}
+                          onChange={(e) => setChapterEditValue(e.target.value)}
+                          onBlur={() => handleUpdateChapterName(capName, chapterEditValue)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleUpdateChapterName(capName, chapterEditValue);
+                            if (e.key === 'Escape') setEditingChapter(null);
+                          }}
+                          style={{ 
+                            fontSize: 14, 
+                            fontWeight: 700, 
+                            height: 32, 
+                            padding: '4px 8px',
+                            width: 'auto',
+                            minWidth: 200,
+                            border: '2px solid var(--color-accent)'
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : (
+                        <h3 
+                          onClick={() => {
+                            setEditingChapter(capName);
+                            setChapterEditValue(capName);
+                          }}
+                          style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', margin: 0 }}
+                          title="Click para renombrar capítulo"
+                        >
+                          📁 {capName}
+                          <span style={{ fontSize: 12, fontWeight: 400, color: 'var(--color-text-tertiary)' }}>
+                            ({capItems.length} ítem{capItems.length !== 1 ? 's' : ''})
+                          </span>
+                        </h3>
+                      )}
+                    </div>
                     <span className="currency" style={{ fontWeight: 600, color: 'var(--color-accent)' }}>
                       {formatCurrency(capSubtotal)}
                     </span>
@@ -311,15 +411,16 @@ export default function PresupuestoView({ proyectoId, onBack }) {
                       <thead>
                         <tr>
                           <th style={{ width: 40 }}>#</th>
+                          <th style={{ width: 80 }}>Etapa</th>
+                          <th style={{ width: 120 }}>Sub-capítulo</th>
                           <th>APU</th>
                           <th>Descripción</th>
-                          <th style={{ width: 150 }}>Personal Asignado</th>
-                          <th style={{ width: 60 }}>Und</th>
-                          <th style={{ width: 80, textAlign: 'right' }}>Cantidad</th>
+                          <th style={{ width: 150 }}>Personal</th>
+                          <th style={{ width: 50 }}>Und</th>
+                          <th style={{ width: 70, textAlign: 'right' }}>Cant</th>
                           <th style={{ width: 100 }}>Inicio</th>
                           <th style={{ width: 100 }}>Fin</th>
-                          <th style={{ width: 110, textAlign: 'right' }}>V. Unitario</th>
-                          <th style={{ width: 120, textAlign: 'right' }}>V. Total</th>
+                          <th style={{ width: 100, textAlign: 'right' }}>V. Total</th>
                           <th style={{ width: 40 }}></th>
                         </tr>
                       </thead>
@@ -341,30 +442,69 @@ export default function PresupuestoView({ proyectoId, onBack }) {
                           return (
                             <tr key={item.id}>
                               <td style={{ color: 'var(--color-text-tertiary)' }}>{idx + 1}</td>
-                              <td style={{ verticalAlign: 'top', padding: '8px 12px' }}>
-                                {apu ? (
-                                  <div style={{ position: 'relative', width: '100%' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                      <div style={{ flex: 1 }}>
-                                        <code style={{ fontSize: 10, color: 'var(--color-text-tertiary)', background: '#f8fafc', padding: '1px 4px', borderRadius: 4 }}>{apu.codigo}</code>
-                                        <div style={{ fontWeight: 600, fontSize: 12, marginTop: 2 }}>{apu.nombre}</div>
-                                      </div>
-                                      <button 
-                                        className="btn btn-ghost btn-sm" 
-                                        style={{ padding: '2px', fontSize: 14 }}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setActiveApuId(apu.id);
-                                          setShowApuModal(true);
-                                        }}
-                                        title="Editar APU"
-                                      >
-                                        ✏️
-                                      </button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <span style={{ color: 'var(--color-warning)', fontSize: 11 }}>⚠ APU no asignado</span>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-input"
+                                  value={item.etapa || ''}
+                                  list="etapa-options"
+                                  onChange={(e) => dispatch({ 
+                                    type: 'UPDATE_PRESUPUESTO_ITEM', 
+                                    payload: { id: item.id, etapa: e.target.value } 
+                                  })}
+                                  placeholder="Etapa..."
+                                  style={{ height: 26, fontSize: 10, padding: '2px 4px', width: '100%', border: '1px transparent solid', background: 'transparent' }}
+                                  onFocus={(e) => e.target.style.border = '1px solid var(--color-border)'}
+                                  onBlur={(e) => e.target.style.border = '1px transparent solid'}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-input"
+                                  value={item.sub_capitulo || ''}
+                                  list="sub-capitulo-options"
+                                  onChange={(e) => dispatch({ 
+                                    type: 'UPDATE_PRESUPUESTO_ITEM', 
+                                    payload: { id: item.id, sub_capitulo: e.target.value } 
+                                  })}
+                                  placeholder="Sub-capítulo..."
+                                  style={{ height: 26, fontSize: 10, padding: '2px 4px', width: '100%', border: '1px transparent solid', background: 'transparent' }}
+                                  onFocus={(e) => e.target.style.border = '1px solid var(--color-border)'}
+                                  onBlur={(e) => e.target.style.border = '1px transparent solid'}
+                                />
+                              </td>
+                              <td style={{ minWidth: 200 }}>
+                                <input
+                                  type="text"
+                                  className="form-input"
+                                  placeholder="Buscar APU..."
+                                  style={{ fontSize: 11, height: 32, width: '100%' }}
+                                  list="apu-compuesto-options"
+                                  value={apu ? `${apu.codigo} — ${apu.nombre}` : ''}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    const selected = state.apus.find(a => a.tipo === 'COMPUESTO' && `${a.codigo} — ${a.nombre}` === val);
+                                    if (selected) {
+                                      dispatch({ 
+                                        type: 'UPDATE_PRESUPUESTO_ITEM', 
+                                        payload: { id: item.id, apu_id: selected.id } 
+                                      });
+                                    }
+                                  }}
+                                />
+                                {apu && (
+                                  <button 
+                                    className="btn btn-ghost btn-sm" 
+                                    style={{ padding: '2px', fontSize: 10, marginTop: 4 }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setActiveApuId(apu.id);
+                                      setShowApuModal(true);
+                                    }}
+                                  >
+                                    🔍 Ver Detalle APU
+                                  </button>
                                 )}
                               </td>
                               <td>
@@ -415,24 +555,24 @@ export default function PresupuestoView({ proyectoId, onBack }) {
                                   type="date"
                                   className="form-input"
                                   value={item.fecha_inicio || ''}
-                                  onChange={(e) => dispatch({ type: 'UPDATE_PRESUPUESTO_ITEM', payload: { id: item.id, fecha_inicio: e.target.value } })}
-                                  style={{ width: 105, padding: '2px 4px', fontSize: 11, height: 26 }}
+                                  onChange={(e) => dispatch({ 
+                                    type: 'UPDATE_PRESUPUESTO_ITEM', 
+                                    payload: { id: item.id, fecha_inicio: e.target.value } 
+                                  })}
+                                  style={{ height: 26, fontSize: 10, padding: '2px 4px', width: '100%' }}
                                 />
                               </td>
-                              <td style={{ fontSize: 11, fontWeight: 500, textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-                                {(() => {
-                                  if (item.fecha_fin) return formatDate(item.fecha_fin);
-                                  if (item.fecha_inicio) {
-                                    const rend = parseFloat(apu?.rendimiento) || 1;
-                                    const cuand = parseInt(item.num_cuadrillas) || 1;
-                                    const days = Math.ceil(item.cantidad / (rend * cuand)) || 1;
-                                    return formatDate(calculateEndDate(item.fecha_inicio, days));
-                                  }
-                                  return '—';
-                                })()}
-                              </td>
-                              <td style={{ textAlign: 'right' }}>
-                                <span className="currency" style={{ fontSize: 11 }}>{formatCurrency(costoUnit)}</span>
+                              <td>
+                                <input
+                                  type="date"
+                                  className="form-input"
+                                  value={item.fecha_fin || ''}
+                                  onChange={(e) => dispatch({ 
+                                    type: 'UPDATE_PRESUPUESTO_ITEM', 
+                                    payload: { id: item.id, fecha_fin: e.target.value } 
+                                  })}
+                                  style={{ height: 26, fontSize: 10, padding: '2px 4px', width: '100%' }}
+                                />
                               </td>
                               <td style={{ textAlign: 'right' }}>
                                 <span className="currency" style={{ fontWeight: 700, fontSize: 11 }}>{formatCurrency(subtotal)}</span>
@@ -483,30 +623,39 @@ export default function PresupuestoView({ proyectoId, onBack }) {
               <div className="modal-body">
                 <div className="form-group">
                   <label className="form-label">APU *</label>
-                  <select
-                    className="form-select"
-                    value={addForm.apu_id}
-                    onChange={(e) => setAddForm({ ...addForm, apu_id: e.target.value })}
+                  <input
+                    className="form-input"
+                    placeholder="Escribe código o nombre para buscar..."
+                    list="apu-compuesto-options"
+                    value={addForm.apu_search}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const selected = state.apus.find(a => a.tipo === 'COMPUESTO' && `${a.codigo} — ${a.nombre}` === val);
+                      setAddForm({ 
+                        ...addForm, 
+                        apu_search: val, 
+                        apu_id: selected ? selected.id : '' 
+                      });
+                    }}
                     required
-                  >
-                    <option value="">Seleccionar APU...</option>
-                    <optgroup label="APU Básicos">
-                      {state.apus.filter((a) => a.tipo === 'BASICO').map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.codigo} — {a.nombre} ({a.unidad}) — {formatCurrency(calcularCostoAPU(a.id))}
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="APU Compuestos">
-                      {state.apus.filter((a) => a.tipo === 'COMPUESTO').map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.codigo} — {a.nombre} ({a.unidad}) — {formatCurrency(calcularCostoAPU(a.id))}
-                        </option>
-                      ))}
-                    </optgroup>
-                  </select>
+                  />
+                  {addForm.apu_id && (
+                    <div style={{ marginTop: 4, fontSize: 11, color: 'var(--color-primary)', fontWeight: 500 }}>
+                      ✓ APU Seleccionado: {state.apus.find(a => a.id === addForm.apu_id)?.unidad}
+                    </div>
+                  )}
                 </div>
                 <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Etapa</label>
+                    <input
+                      className="form-input"
+                      value={addForm.etapa}
+                      list="etapa-options"
+                      onChange={(e) => setAddForm({ ...addForm, etapa: e.target.value })}
+                      placeholder="Ej: Etapa 1, Fase A..."
+                    />
+                  </div>
                   <div className="form-group">
                     <label className="form-label">Cantidad *</label>
                     <input
@@ -520,13 +669,26 @@ export default function PresupuestoView({ proyectoId, onBack }) {
                       required
                     />
                   </div>
+                </div>
+                <div className="form-row">
                   <div className="form-group">
                     <label className="form-label">Capítulo</label>
                     <input
                       className="form-input"
                       value={addForm.capitulo}
+                      list="capitulo-options"
                       onChange={(e) => setAddForm({ ...addForm, capitulo: e.target.value })}
-                      placeholder="Ej: Cimentación, Estructura..."
+                      placeholder="Ej: Cimentación..."
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Sub-capítulo / Categoría</label>
+                    <input
+                      className="form-input"
+                      value={addForm.sub_capitulo}
+                      list="sub-capitulo-options"
+                      onChange={(e) => setAddForm({ ...addForm, sub_capitulo: e.target.value })}
+                      placeholder="Ej: Excavaciones..."
                     />
                   </div>
                 </div>
@@ -682,6 +844,25 @@ export default function PresupuestoView({ proyectoId, onBack }) {
           onClose={() => setShowApuModal(false)} 
         />
       )}
+
+      {/* Datalists for suggestions */}
+      <datalist id="etapa-options">
+        {uniqueEtapas.map(opt => <option key={opt} value={opt} />)}
+      </datalist>
+      <datalist id="capitulo-options">
+        {uniqueCapitulos.map(opt => <option key={opt} value={opt} />)}
+      </datalist>
+      <datalist id="sub-capitulo-options">
+        {uniqueSubCapitulos.map(opt => <option key={opt} value={opt} />)}
+      </datalist>
+      <datalist id="apu-compuesto-options">
+        {state.apus
+          .filter(a => a.tipo === 'COMPUESTO')
+          .map(a => (
+            <option key={a.id} value={`${a.codigo} — ${a.nombre}`} />
+          ))
+        }
+      </datalist>
     </>
   );
 }

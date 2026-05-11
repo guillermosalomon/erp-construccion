@@ -41,7 +41,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, message: '¡Datos E2E creados correctamente!', proyecto_id: proy.id });
   } catch (error) {
-    console.error('Seed Error:', error);
+    console.error(`Seed Error: ${error.message || String(error)}`);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

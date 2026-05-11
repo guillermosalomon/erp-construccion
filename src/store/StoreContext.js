@@ -23,7 +23,15 @@ import {
   itemDocumentsService,
   usuariosService,
   asistenciaService,
+  getUserId,
+  mkTiendasService,
+  mkPuntosVentaService,
+  mkOfertasService,
+  mkPedidosService,
+  categoriasService,
+  cargoDetalleService,
 } from '@/lib/services';
+import { calcularPrecioMercado } from '@/lib/price-engine';
 
 const StoreContext = createContext(null);
 
@@ -93,13 +101,23 @@ const initialState = {
   itemChecklistItems: [],
   itemDocuments: [],
   bimModels: [],
+  // Marketplace (Fase 14)
+  mkOfertas: [],
+  mkPedidos: [],
+  mkPedidoItems: [],
+  mkTiendas: [],
+  mkPuntosVenta: [],
+  mkTraspasos: [],
+  mkTraspasoItems: [],
+  chatCotizaciones: [],
 };
 
 /* ─── Reducer ─── */
 function storeReducer(state, action) {
-  switch (action.type) {
-    // ── Hydration (load from Supabase) ──
-    case 'LOAD_ALL': {
+  try {
+    switch (action.type) {
+      // ── Hydration (load from Supabase) ──
+      case 'LOAD_ALL': {
       // Deduplicar datos entrantes para evitar "Duplicate Key" en React
       const payload = action.payload || {};
       const deduplicated = {};
@@ -190,7 +208,8 @@ function storeReducer(state, action) {
 
         const updatedCargos = state.cargos.map(cargo => {
           const factor = parseFloat(cargo.factor_smlv) || 1.0;
-          let precio = smlv * factor;
+          const fMult = parseFloat(cargo.factor_multiplicador) || 1.0;
+          let precio = smlv * factor * fMult;
           const u = cargo.unidad?.toLowerCase() || '';
           if (u === 'hora' || u === 'hr') precio = precio / h_mes;
           else if (u === 'día' || u === 'dia') precio = (precio / h_mes) * h_dia;
@@ -231,25 +250,30 @@ function storeReducer(state, action) {
         insumos: state.insumos.filter((i) => i.id !== action.payload),
         apuDetalles: state.apuDetalles.filter((d) => d.insumo_id !== action.payload),
       };
-    case 'ADD_INSUMOS_BATCH':
+    case 'ADD_INSUMOS_BATCH': {
+      const batchItems = Array.isArray(action.payload) ? action.payload : [];
+      if (batchItems.length === 0) return state;
       return {
         ...state,
         insumos: [
           ...state.insumos,
-          ...action.payload.map((i) => ({
+          ...batchItems.map((i) => ({
             ...i,
             created_at: now(),
             updated_at: now()
           }))
         ]
       };
+    }
 
     // ── APU ──
-    case 'ADD_APU':
+    case 'ADD_APU': {
+      const id = action.payload.id || generateId();
       return {
         ...state,
-        apus: [...state.apus, { ...action.payload, created_at: now(), updated_at: now() }],
+        apus: [...state.apus, { ...action.payload, id, created_at: now(), updated_at: now() }],
       };
+    }
     case 'UPDATE_APU':
       return {
         ...state,
@@ -267,11 +291,13 @@ function storeReducer(state, action) {
       };
 
     // ── APU Detalle ──
-    case 'ADD_APU_DETALLE':
+    case 'ADD_APU_DETALLE': {
+      const id = action.payload.id || generateId();
       return {
         ...state,
-        apuDetalles: [...state.apuDetalles, { ...action.payload, created_at: now() }],
+        apuDetalles: [...state.apuDetalles, { ...action.payload, id, created_at: now() }],
       };
+    }
     case 'UPDATE_APU_DETALLE':
       return {
         ...state,
@@ -293,16 +319,18 @@ function storeReducer(state, action) {
       };
 
     // ── Proyectos ──
-    case 'ADD_PROYECTO':
+    case 'ADD_PROYECTO': {
+      const id = action.payload.id || generateId();
       return {
         ...state,
         proyectos: [...state.proyectos, {
           ...action.payload,
+          id,
           created_at: now(),
           updated_at: now(),
         }],
       };
- Joe
+    }
     case 'UPDATE_PROYECTO':
       return {
         ...state,
@@ -319,6 +347,7 @@ function storeReducer(state, action) {
 
     // ── Presupuesto Items ──
     case 'ADD_PRESUPUESTO_ITEM': {
+      const id = action.payload.id || generateId();
       const apu = state.apus.find(a => a.id === action.payload.apu_id);
       const rendimiento = Number(apu?.rendimiento) || 1;
       const numCuadrillas = Number(action.payload.num_cuadrillas) || 1;
@@ -330,7 +359,7 @@ function storeReducer(state, action) {
 
       return {
         ...state,
-        presupuestoItems: [...state.presupuestoItems, { ...action.payload, fecha_fin: fechaFin, created_at: now() }],
+        presupuestoItems: [...state.presupuestoItems, { ...action.payload, id, fecha_fin: fechaFin, created_at: now() }],
       };
     }
     case 'ADD_PRESUPUESTO_ITEMS_BATCH':
@@ -465,6 +494,64 @@ function storeReducer(state, action) {
         inventario: state.inventario.map((i) => (i.id === action.payload.id ? { ...i, ...action.payload.changes } : i)),
       };
 
+    // ── Marketplace: Tiendas ──
+    case 'ADD_MK_TIENDA':
+      return { ...state, mkTiendas: [...state.mkTiendas, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
+    case 'UPDATE_MK_TIENDA':
+      return { ...state, mkTiendas: state.mkTiendas.map(t => t.id === action.payload.id ? { ...t, ...action.payload } : t) };
+    case 'DELETE_MK_TIENDA':
+      return { ...state, mkTiendas: state.mkTiendas.filter(t => t.id !== action.payload) };
+    case 'DELETE_MK_TIENDA_COMPLETA':
+      return {
+        ...state,
+        mkTiendas: state.mkTiendas.filter(t => t.id !== action.payload),
+        mkPuntosVenta: state.mkPuntosVenta.filter(pv => pv.tienda_id !== action.payload),
+        mkOfertas: state.mkOfertas.filter(o => o.tienda_id !== action.payload),
+        mkPedidos: state.mkPedidos.filter(p => p.tienda_id !== action.payload),
+        personalProyecto: state.personalProyecto.filter(pp => pp.tienda_id !== action.payload)
+      };
+
+    // ── Marketplace: Puntos de Venta ──
+    case 'ADD_MK_PUNTO_VENTA':
+      return { ...state, mkPuntosVenta: [...state.mkPuntosVenta, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
+    case 'UPDATE_MK_PUNTO_VENTA':
+      return { ...state, mkPuntosVenta: state.mkPuntosVenta.map(p => p.id === action.payload.id ? { ...p, ...action.payload } : p) };
+    case 'DELETE_MK_PUNTO_VENTA':
+      return { ...state, mkPuntosVenta: state.mkPuntosVenta.filter(p => p.id !== action.payload) };
+    case 'DELETE_MK_PUNTO_VENTA_COMPLETA':
+      return {
+        ...state,
+        mkPuntosVenta: state.mkPuntosVenta.filter(p => p.id !== action.payload),
+        mkOfertas: state.mkOfertas.filter(o => o.punto_venta_id !== action.payload),
+        mkPedidos: state.mkPedidos.filter(p => p.punto_venta_id !== action.payload),
+        personalProyecto: state.personalProyecto.filter(pp => pp.punto_venta_id !== action.payload)
+      };
+
+    // ── Marketplace: Ofertas (Insumo + Punto de Venta + Precio) ──
+    case 'ADD_MK_OFERTA':
+      return { ...state, mkOfertas: [...state.mkOfertas, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
+    case 'UPDATE_MK_OFERTA':
+      return { ...state, mkOfertas: state.mkOfertas.map(p => p.id === action.payload.id ? { ...p, ...action.payload } : p) };
+    case 'DELETE_MK_OFERTA':
+      return { ...state, mkOfertas: state.mkOfertas.filter(p => p.id !== action.payload) };
+    // ── Marketplace: Pedidos ──
+    case 'ADD_MK_PEDIDO':
+      return { ...state, mkPedidos: [...state.mkPedidos, { ...action.payload, id: action.payload.id || crypto.randomUUID(), created_at: new Date().toISOString() }] };
+    case 'UPDATE_MK_PEDIDO':
+      return { ...state, mkPedidos: state.mkPedidos.map(p => p.id === action.payload.id ? { ...p, ...action.payload } : p) };
+    case 'DELETE_MK_PEDIDO':
+      return { ...state, mkPedidos: state.mkPedidos.filter(p => p.id !== action.payload) };
+    case 'ADD_MK_PEDIDO_ITEM':
+      return { ...state, mkPedidoItems: [...state.mkPedidoItems, { ...action.payload, id: action.payload.id || generateId() }] };
+
+    // ── Marketplace: Traspasos ──
+    case 'ADD_MK_TRASPASO':
+      return { ...state, mkTraspasos: [...state.mkTraspasos, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
+    case 'UPDATE_MK_TRASPASO':
+      return { ...state, mkTraspasos: state.mkTraspasos.map(t => t.id === action.payload.id ? { ...t, ...action.payload } : t) };
+    case 'ADD_MK_TRASPASO_ITEM':
+      return { ...state, mkTraspasoItems: [...state.mkTraspasoItems, { ...action.payload, id: action.payload.id || generateId() }] };
+
     // ── Pagos Cliente ──
     case 'ADD_PAGO':
       return {
@@ -507,7 +594,8 @@ function storeReducer(state, action) {
       const h_mes = parseFloat(state.config.find(c => c.clave === 'HORAS_MES')?.valor) || 192;
       const h_dia = parseFloat(state.config.find(c => c.clave === 'HORAS_DIA')?.valor) || 8;
       const factor = parseFloat(action.payload.factor_smlv) || 1.0;
-      let precio = smlv * factor;
+      const fMult = parseFloat(action.payload.factor_multiplicador) || 1.0;
+      let precio = smlv * factor * fMult;
       if (action.payload.unidad === 'Hora') precio = precio / h_mes;
       if (action.payload.unidad === 'Día') precio = (precio / h_mes) * h_dia;
 
@@ -534,10 +622,12 @@ function storeReducer(state, action) {
       const h_dia = parseFloat(state.config.find(c => c.clave === 'HORAS_DIA')?.valor) || 8;
       const updatedCargo = { ...action.payload };
       
-      if (updatedCargo.factor_smlv !== undefined || updatedCargo.unidad !== undefined) {
+      if (updatedCargo.factor_smlv !== undefined || updatedCargo.unidad !== undefined || updatedCargo.factor_multiplicador !== undefined) {
         const factor = parseFloat(updatedCargo.factor_smlv ?? state.cargos.find(c => c.id === action.payload.id)?.factor_smlv) || 1.0;
+        const fMult = parseFloat(updatedCargo.factor_multiplicador ?? state.cargos.find(c => c.id === action.payload.id)?.factor_multiplicador) || 1.0;
         const unidad = updatedCargo.unidad ?? state.cargos.find(c => c.id === action.payload.id)?.unidad;
-        let precio = smlv * factor;
+        
+        let precio = smlv * factor * fMult;
         const u = unidad?.toLowerCase() || '';
         if (u === 'hora' || u === 'hr') precio = precio / h_mes;
         if (u === 'día' || u === 'dia') precio = (precio / h_mes) * h_dia;
@@ -581,8 +671,10 @@ function storeReducer(state, action) {
       };
 
     // --- Personal x Proyecto ---
-    case 'ADD_PERSON_PROYECTO':
-      return { ...state, personalProyecto: [action.payload, ...state.personalProyecto] };
+    case 'ADD_PERSON_PROYECTO': {
+      const id = action.payload.id || generateId();
+      return { ...state, personalProyecto: [{ ...action.payload, id }, ...state.personalProyecto] };
+    }
     case 'UPDATE_PERSON_PROYECTO':
       return { 
         ...state, 
@@ -629,8 +721,13 @@ function storeReducer(state, action) {
       return { ...state, bimModels: newModels };
     }
 
-    default:
-      return state;
+      default:
+        return state;
+    }
+  } catch (e) {
+    const errorMsg = `🔴 [StoreReducer] Error crítico en "${action.type}": ${e.message}`;
+    console.error(errorMsg);
+    return state;
   }
 }
 
@@ -659,19 +756,37 @@ async function syncToSupabase(action, state) {
           await insumosService.remove(action.payload);
           break;
         case 'ADD_INSUMOS_BATCH':
-          await insumosService.createBatch(action.payload);
+          if (Array.isArray(action.payload)) {
+            await insumosService.createBatch(action.payload);
+          }
           break;
 
         // APU
         case 'ADD_APU': {
-          // Limpiar campos calculados/UI que no existen en la tabla
           const { v_presupuesto, costo_total, ...apuClean } = action.payload;
-          await apuService.create(apuClean);
+          try {
+            await apuService.create(apuClean);
+          } catch (e) {
+            if (e?.code === 'PGRST204' || e?.message?.includes('schema cache')) {
+              // Campo desconocido — reintenta sin campos problemáticos
+              const { categoria_apu, ...saferPayload } = apuClean;
+              console.warn('[Sync] Reintentando ADD_APU sin campos desconocidos');
+              try { await apuService.create(saferPayload); } catch(e2) { console.warn('[Sync] ADD_APU fallback:', e2.message); }
+            } else throw e;
+          }
           break;
         }
         case 'UPDATE_APU': {
           const { v_presupuesto: _vp, costo_total: _ct, ...apuUpdateClean } = action.payload;
-          await apuService.update(apuUpdateClean.id, apuUpdateClean);
+          try {
+            await apuService.update(apuUpdateClean.id, apuUpdateClean);
+          } catch (e) {
+            if (e?.code === 'PGRST204' || e?.message?.includes('schema cache')) {
+              const { categoria_apu, ...saferPayload } = apuUpdateClean;
+              console.warn('[Sync] Reintentando UPDATE_APU sin campos desconocidos');
+              try { await apuService.update(saferPayload.id, saferPayload); } catch(e2) { console.warn('[Sync] UPDATE_APU fallback:', e2.message); }
+            } else throw e;
+          }
           break;
         }
         case 'DELETE_APU':
@@ -689,13 +804,20 @@ async function syncToSupabase(action, state) {
             cantidad: action.payload.cantidad, 
             desperdicio_pct: action.payload.desperdicio_pct,
             unidad_detalle: action.payload.unidad_detalle,
-            rendimiento: action.payload.rendimiento
+            rendimiento: action.payload.rendimiento,
+            herramienta_menor_pct: action.payload.herramienta_menor_pct || 0
           });
           break;
         }
-        case 'UPDATE_APU_DETALLE':
-          await apuDetalleService.update(action.payload.id, action.payload);
+        case 'UPDATE_APU_DETALLE': {
+          // Solo enviar campos que existen en la tabla de Supabase
+          const { id, apu_id, insumo_id, cargo_id, apu_hijo_id, cantidad, desperdicio_pct, unidad_detalle, rendimiento, herramienta_menor_pct } = action.payload;
+          const cleanDetalle = { apu_id, insumo_id, cargo_id, apu_hijo_id, cantidad, desperdicio_pct, unidad_detalle, rendimiento, herramienta_menor_pct: herramienta_menor_pct || 0 };
+          // Limpiar undefineds
+          Object.keys(cleanDetalle).forEach(k => cleanDetalle[k] === undefined && delete cleanDetalle[k]);
+          await apuDetalleService.update(id, cleanDetalle);
           break;
+        }
         case 'DELETE_APU_DETALLE':
           await apuDetalleService.remove(action.payload);
           break;
@@ -725,34 +847,16 @@ async function syncToSupabase(action, state) {
 
         // Presupuesto
         case 'ADD_PRESUPUESTO_ITEM': {
-          try {
-            const sanitized = { ...action.payload };
-            if ('fecha_inicio' in action.payload) sanitized.fecha_inicio = action.payload.fecha_inicio || null;
-            if ('fecha_fin' in action.payload) sanitized.fecha_fin = action.payload.fecha_fin || null;
-            
-            await presupuestoService.create(sanitized);
-          } catch (err) {
-            try {
-              const { asignado_a_cuadrilla, num_cuadrillas, fecha_inicio, fecha_fin, descripcion, predecesor_item_num, ...clean } = action.payload;
-              await presupuestoService.create(clean);
-            } catch (e2) { console.warn('[SyncQueue] Fallback ADD also failed:', e2); }
-          }
+          const uid = await getUserId();
+          await presupuestoService.create({ ...action.payload, user_id: uid });
+          break;
+        }
+        case 'ADD_PRESUPUESTO_ITEMS_BATCH': {
+          await presupuestoService.createBatch(action.payload);
           break;
         }
         case 'UPDATE_PRESUPUESTO_ITEM': {
-          try {
-            const sanitized = { ...action.payload };
-            // Solo sanitizar fechas si vienen en el payload explicitly
-            if ('fecha_inicio' in action.payload) sanitized.fecha_inicio = action.payload.fecha_inicio || null;
-            if ('fecha_fin' in action.payload) sanitized.fecha_fin = action.payload.fecha_fin || null;
-            
-            await presupuestoService.update(action.payload.id, sanitized);
-          } catch (err) {
-            try {
-              const { asignado_a_cuadrilla, num_cuadrillas, fecha_inicio, fecha_fin, descripcion, predecesor_item_num, ...clean } = action.payload;
-              await presupuestoService.update(action.payload.id, clean);
-            } catch (e2) { console.warn('[SyncQueue] Fallback UPDATE also failed:', e2); }
-          }
+          await presupuestoService.update(action.payload.id, action.payload);
           break;
         }
         case 'DELETE_PRESUPUESTO_ITEM':
@@ -862,7 +966,6 @@ async function syncToSupabase(action, state) {
           } catch (err) {
             const errMsg = err?.message || String(err);
             if (errMsg.includes('column') || errMsg.includes('schema cache')) {
-              // Intento 1: Fallback sin campos nuevos
               try {
                 const { nombres, apellidos, rol_proyecto, tareas_asignadas, arl_numero, arl_url, ...clean } = action.payload;
                 const fullName = [nombres, apellidos].filter(Boolean).join(' ');
@@ -871,11 +974,10 @@ async function syncToSupabase(action, state) {
                   nombre: fullName || 'Sin Nombre' 
                 });
               } catch (err2) {
-                // Intento 2: Minimalismo Extremo
-                const { id, email, cargo_id, user_id } = action.payload;
+                const { id, email, cargo_id, user_id, telefono, whatsapp, telegram_id } = action.payload;
                 const fullName = [action.payload.nombres, action.payload.apellidos].filter(Boolean).join(' ');
                 await personalService.create({ 
-                  id, email, cargo_id, user_id, 
+                  id, email, cargo_id, user_id, telefono, whatsapp, telegram_id,
                   nombre: fullName || 'Sin Nombre' 
                 });
               }
@@ -895,10 +997,10 @@ async function syncToSupabase(action, state) {
             const errMsg = err?.message || String(err);
             if (errMsg.includes('column') || errMsg.includes('schema cache')) {
               try {
-                const { id, email, cargo_id, user_id, salario_base, profesion, unidad_pago, cedula, app_role } = action.payload;
+                const { id, email, cargo_id, user_id, salario_base, profesion, unidad_pago, cedula, app_role, telefono, whatsapp, telegram_id } = action.payload;
                 const fullName = [action.payload.nombres, action.payload.apellidos].filter(Boolean).join(' ');
                 await personalService.update(id, { 
-                  id, email, cargo_id, user_id, 
+                  id, email, cargo_id, user_id, telefono, whatsapp, telegram_id,
                   nombre: fullName || 'Sin Nombre',
                   salario_base: salario_base || 0,
                   profesion: profesion || '',
@@ -938,7 +1040,7 @@ async function syncToSupabase(action, state) {
             await cargosService.create(cargoToSync);
           } catch (err) {
             if (err.message?.includes('column') || err.message?.includes('cache')) {
-              const { recargo_cop, recargo_pct, ...clean } = cargoToSync;
+              const { recargo_cop, recargo_pct, factor_multiplicador, ...clean } = cargoToSync;
               await cargosService.create(clean);
             } else throw err;
           }
@@ -949,7 +1051,7 @@ async function syncToSupabase(action, state) {
             await cargosService.update(action.payload.id, action.payload);
           } catch (err) {
             if (err.message?.includes('column') || err.message?.includes('cache')) {
-              const { recargo_cop, recargo_pct, ...clean } = action.payload;
+              const { recargo_cop, recargo_pct, factor_multiplicador, ...clean } = action.payload;
               await cargosService.update(action.payload.id, clean);
             } else throw err;
           }
@@ -960,12 +1062,11 @@ async function syncToSupabase(action, state) {
 
         case 'ADD_CARGO_DETALLE':
           try {
-            // El reducer genera el id, pero action.payload es el original sin id
             const detallePayload = { ...action.payload, id: action.payload.id || `det-${Date.now()}-${Math.random().toString(36).substr(2,5)}` };
             await cargoDetalleService.create(detallePayload);
           } catch (err) {
-            if (err.message?.includes('table') || err.message?.includes('cache')) {
-              console.warn("⚠️ Cargo Detalle table not found, keeping data in local state only.");
+            if (err.message?.includes('table') || err.message?.includes('cache') || err.message?.includes('violates foreign key')) {
+              console.warn("⚠️ Cargo Detalle sync:", err.message);
             } else throw err;
           }
           break;
@@ -980,24 +1081,21 @@ async function syncToSupabase(action, state) {
           break;
         case 'UPDATE_CARGO_DETALLE':
           try {
+            const uid = await getUserId();
             if (db()) {
-              await db().from('cargo_detalle').upsert(action.payload);
+              await db().from('cargo_detalle').upsert({ ...action.payload, user_id: uid });
             }
           } catch (err) {
-            console.warn("⚠️ Error updating cargo_detalle, possibly missing column:", err.message);
+            console.warn("⚠️ Error updating cargo_detalle:", err.message);
           }
           break;
 
         case 'ADD_PERSON_PROYECTO':
         case 'UPDATE_PERSON_PROYECTO':
           try {
-            if (db()) {
-              // Asegurar que payload incluya tareas_asignadas si existe
-              await db().from('personal_proyecto').upsert({
-                ...action.payload,
-                updated_at: now()
-              });
-            }
+            // Limpieza de campos que pueden causar conflictos de tipo en Supabase
+            const { tareas_asignadas, equipo_padre_id, ...sanitized } = action.payload;
+            await personalProyectoService.create(sanitized);
           } catch (err) {
             console.error("⚠️ Error sync personal_proyecto:", err.message);
           }
@@ -1053,7 +1151,13 @@ async function syncToSupabase(action, state) {
           await checklistService.remove(action.payload);
           break;
         case 'ADD_ITEM_DOCUMENT':
-          await itemDocumentsService.create(action.payload);
+          try {
+            await itemDocumentsService.create(action.payload);
+          } catch (docErr) {
+            // Si la tabla no tiene columna 'meta', reintentar sin ella
+            const { meta, ...basicPayload } = action.payload;
+            await itemDocumentsService.create(basicPayload);
+          }
           break;
         case 'DELETE_ITEM_DOCUMENT':
           await itemDocumentsService.remove(action.payload);
@@ -1088,9 +1192,49 @@ async function syncToSupabase(action, state) {
             } else throw err;
           }
           break;
+
+        // ── Marketplace Sync ──
+        case 'ADD_MK_TIENDA':
+          try { await mkTiendasService.create(action.payload); } catch(e) { console.warn('⚠️ mk_tiendas sync:', e.message); }
+          break;
+        case 'UPDATE_MK_TIENDA':
+          try { await mkTiendasService.update(action.payload.id, action.payload); } catch(e) { console.warn('⚠️ mk_tiendas sync:', e.message); }
+          break;
+        case 'DELETE_MK_TIENDA':
+        case 'DELETE_MK_TIENDA_COMPLETA':
+          try { await mkTiendasService.remove(action.payload); } catch(e) { console.warn('⚠️ mk_tiendas sync:', e.message); }
+          break;
+        case 'ADD_MK_PUNTO_VENTA':
+          try { await mkPuntosVentaService.create(action.payload); } catch(e) { console.warn('⚠️ mk_puntos_venta sync:', e.message); }
+          break;
+        case 'UPDATE_MK_PUNTO_VENTA':
+          try { await mkPuntosVentaService.update(action.payload.id, action.payload); } catch(e) { console.warn('⚠️ mk_puntos_venta sync:', e.message); }
+          break;
+        case 'DELETE_MK_PUNTO_VENTA':
+        case 'DELETE_MK_PUNTO_VENTA_COMPLETA':
+          try { await mkPuntosVentaService.remove(action.payload); } catch(e) { console.warn('⚠️ mk_puntos_venta sync:', e.message); }
+          break;
+        case 'ADD_MK_OFERTA':
+          try { await mkOfertasService.create(action.payload); } catch(e) { console.warn('⚠️ mk_ofertas sync:', e.message); }
+          break;
+        case 'UPDATE_MK_OFERTA':
+          try { await mkOfertasService.update(action.payload.id, action.payload); } catch(e) { console.warn('⚠️ mk_ofertas sync:', e.message); }
+          break;
+        case 'DELETE_MK_OFERTA':
+          try { await mkOfertasService.remove(action.payload); } catch(e) { console.warn('⚠️ mk_ofertas sync:', e.message); }
+          break;
+        case 'ADD_MK_PEDIDO':
+          try { await mkPedidosService.create(action.payload); } catch(e) { console.warn('⚠️ mk_pedidos sync:', e.message); }
+          break;
+        case 'UPDATE_MK_PEDIDO':
+          try { await mkPedidosService.update(action.payload.id, action.payload); } catch(e) { console.warn('⚠️ mk_pedidos sync:', e.message); }
+          break;
+        case 'DELETE_MK_PEDIDO':
+          try { await mkPedidosService.remove(action.payload); } catch(e) { console.warn('⚠️ mk_pedidos sync:', e.message); }
+          break;
       }
     } catch (err) {
-      console.error(`[SyncQueue] Error en ${action.type}:`, err?.message || err, err);
+      console.warn('[Sync] Error en', action.type);
     }
   });
 }
@@ -1103,7 +1247,7 @@ export function StoreProvider({ children }) {
 
   const calcularDatosCargo = useCallback((cargoId, visited = new Set()) => {
     const cargo = state.cargos.find(c => c.id === cargoId);
-    if (visited.has(cargoId)) return { precio: 0, factor: 1, precioHora: 0 };
+    if (visited.has(cargoId)) return { precio: 0, factor: 1, precioHora: 0, factorMultiplicador: 1 };
     visited.add(cargoId);
 
     const smlv = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000;
@@ -1111,24 +1255,27 @@ export function StoreProvider({ children }) {
     const h_dia = parseFloat(state.config?.find(c => c.clave === 'HORAS_DIA')?.valor) || 8;
     const integrantes = state.cargoDetalles.filter(d => d.cargo_padre_id === cargoId);
     
+    const factorMult = Number(cargo?.factor_multiplicador) || 1.0;
+
     // Si no tiene integrantes y no existe el cargo, devolver defaults
     if (integrantes.length === 0) {
-      if (!cargo) return { precio: 0, factor: 1, precioHora: 0 };
+      if (!cargo) return { precio: 0, factor: 1, precioHora: 0, factorMultiplicador: 1 };
+      const baseFactor = Number(cargo.factor_smlv) || 1;
+      const totalFactor = baseFactor * factorMult;
       return { 
-        precio: Number(cargo.precio_unitario) || 0, 
-        factor: Number(cargo.factor_smlv) || 1,
-        precioHora: (smlv * (Number(cargo.factor_smlv) || 1)) / h_mes
+        precio: Math.round((smlv * totalFactor)), 
+        factor: totalFactor,
+        precioHora: (smlv * totalFactor) / h_mes,
+        factorMultiplicador: factorMult
       };
     }
 
     // Es una cuadrilla: Sumar costos horarios de integrantes
-    // Funciona incluso si el cargo padre aún no está en state (creación nueva)
     let totalCostoHora = 0;
     let sumaFactores = 0;
     
     integrantes.forEach(det => {
       const subRes = calcularDatosCargo(det.cargo_hijo_id, new Set(visited));
-      // Usar factor sobreescrito si existe, sino el factor del integrante
       const factorEfectivo = det.factor_smlv ? Number(det.factor_smlv) : subRes.factor;
       
       const costoHoraEfectivo = (smlv * factorEfectivo) / h_mes;
@@ -1136,14 +1283,20 @@ export function StoreProvider({ children }) {
       sumaFactores += factorEfectivo;
     });
 
-    const totalFactor = sumaFactores;
+    // El factor de la cuadrilla es la suma de los factores de sus integrantes * multiplicador del padre
+    const totalFactor = sumaFactores * factorMult;
     
     // Aplicar recargos sobre la base sumada (usar valores del cargo si existe, o 0)
     const recargoCop = Number(cargo?.recargo_cop) || 0;
     const recargoPct = Number(cargo?.recargo_pct) || 0;
-    let finalPrecioHora = totalCostoHora + recargoCop / h_mes;
+    
+    // El costo base ya incluye los multiplicadores de los hijos. 
+    // Aplicamos el multiplicador del padre al costo total sumado.
+    let baseCostoHora = totalCostoHora * factorMult;
+    let finalPrecioHora = baseCostoHora + recargoCop / h_mes;
+    
     if (recargoPct > 0) {
-      finalPrecioHora += totalCostoHora * (recargoPct / 100);
+      finalPrecioHora += baseCostoHora * (recargoPct / 100);
     }
 
     // Escalar precio según unidad del padre
@@ -1152,7 +1305,12 @@ export function StoreProvider({ children }) {
     if (u === 'día' || u === 'dia') finalPrecio = finalPrecioHora * h_dia;
     if (u === 'mes') finalPrecio = finalPrecioHora * h_mes;
 
-    return { precio: Math.round(finalPrecio), factor: totalFactor, precioHora: finalPrecioHora };
+    return { 
+      precio: Math.round(finalPrecio), 
+      factor: totalFactor, 
+      precioHora: finalPrecioHora,
+      factorMultiplicador: factorMult
+    };
   }, [state.cargos, state.cargoDetalles, state.config]);
 
   const getApuLaborRequirements = useCallback((apuId, multiplier = 1, requirements = {}) => {
@@ -1248,11 +1406,17 @@ export function StoreProvider({ children }) {
       for (const det of detalles) {
         const cant = Number(det.cantidad) || 0;
         const desp = Number(det.desperdicio_pct) || 0;
+        const hmPct = Number(det.herramienta_menor_pct) || 0;
         const factor = cant * (1 + desp / 100);
+        const hmFactor = 1 + hmPct / 100; // Herramienta menor applies to labor
 
         if (det.insumo_id) {
           const insumo = state.insumos.find((i) => i.id === det.insumo_id);
-          total += factor * (Number(insumo?.precio_unitario) || 0);
+          let precioIns = Number(insumo?.precio_unitario) || 0;
+          if (precioIns === 0) {
+            precioIns = calcularPrecioMercado(det.insumo_id, state.mkOfertas, '')?.precio_mercado || 0;
+          }
+          total += factor * precioIns;
         } else if (det.cargo_id) {
           const { precio: precioConsolidado } = calcularDatosCargo(det.cargo_id);
           let precio = precioConsolidado;
@@ -1273,10 +1437,10 @@ export function StoreProvider({ children }) {
             else if (uDet === 'día' || uDet === 'dia') precio = p_hr * 8;
             
             // Consolidado: Usamos cantidad directa para todo por petición del usuario
-            total += factor * precio;
+            total += factor * precio * hmFactor;
           } else {
             // Caso por defecto (respaldo)
-            total += factor * precio;
+            total += factor * precio * hmFactor;
           }
         } else if (det.apu_hijo_id) {
           total += factor * calcularCostoAPU(det.apu_hijo_id, new Set(visited));
@@ -1284,7 +1448,7 @@ export function StoreProvider({ children }) {
       }
       return total;
     },
-    [state.apuDetalles, state.insumos, state.cargos]
+    [state.apuDetalles, state.insumos, state.cargos, state.mkOfertas]
   );
 
   const calcularCostoMO = useCallback(
@@ -1326,7 +1490,7 @@ export function StoreProvider({ children }) {
   const calcularPresupuesto = useCallback(
     (proyectoId) => {
       const proyecto = state.proyectos.find((p) => p.id === proyectoId);
-      if (!proyecto) return { costoDirecto: 0, admin: 0, imprevistos: 0, utilidad: 0, totalAIU: 0, gran_total: 0 };
+      if (!proyecto) return { costoDirecto: 0, admin: 0, imprevistos: 0, utilidad: 0, iva: 0, retefuente: 0, totalAIU: 0, gran_total: 0 };
 
       const items = state.presupuestoItems.filter((pi) => pi.proyecto_id === proyectoId);
       const costoDirecto = items.reduce((sum, item) => {
@@ -1338,14 +1502,24 @@ export function StoreProvider({ children }) {
       const imprevVal = (costoDirecto * (proyecto.aiu_imprev || 0)) / 100;
       const utilVal = (costoDirecto * (proyecto.aiu_utilidad || 0)) / 100;
       const totalAIU = adminVal + imprevVal + utilVal;
+      const subtotalConAIU = costoDirecto + totalAIU;
+      const ivaVal = (subtotalConAIU * (proyecto.aiu_iva || 0)) / 100;
+      const reteVal = (subtotalConAIU * (proyecto.aiu_retefuente || 0)) / 100;
 
       return {
         costoDirecto,
         admin: adminVal,
         imprevistos: imprevVal,
         utilidad: utilVal,
+        iva: ivaVal,
+        retefuente: reteVal,
         totalAIU,
-        gran_total: costoDirecto + totalAIU,
+        gran_total: subtotalConAIU + ivaVal - reteVal,
+        pctAdmin: proyecto.aiu_admin || 0,
+        pctImprev: proyecto.aiu_imprev || 0,
+        pctUtil: proyecto.aiu_utilidad || 0,
+        pctIva: proyecto.aiu_iva || 0,
+        pctRete: proyecto.aiu_retefuente || 0,
       };
     },
     [state.proyectos, state.presupuestoItems, calcularCostoAPU]
@@ -1422,6 +1596,11 @@ export function StoreProvider({ children }) {
         else if (action.type === 'ADD_CARGO') payload.codigo = generateNextCode(state.cargos, 'CAR');
       }
 
+      // Saneamiento de apu_id para evitar errores de UUID en Postgres
+      if (action.type === 'ADD_PRESUPUESTO_ITEM' && payload.apu_id === '') {
+        payload.apu_id = null;
+      }
+
       // Valores por defecto específicos
       if (action.type === 'ADD_PROYECTO') {
         payload.aiu_admin = payload.aiu_admin ?? 10;
@@ -1430,6 +1609,14 @@ export function StoreProvider({ children }) {
       }
       
       normalizedAction.payload = payload;
+    }
+
+    if (action.type === 'ADD_PRESUPUESTO_ITEMS_BATCH' && Array.isArray(action.payload)) {
+      normalizedAction.payload = action.payload.map(item => ({
+        ...item,
+        id: item.id || crypto.randomUUID(),
+        apu_id: item.apu_id === '' ? null : item.apu_id
+      }));
     }
 
     // Usar la acción normalizada de aquí en adelante
@@ -1477,6 +1664,8 @@ export function StoreProvider({ children }) {
         processWithdrawal(item.apu_id, action.payload.cantidad_incremental);
       }
     }
+
+    // --- Fin de Normalización ---
 
     baseDispatch(finalAction);
     if (isSupabaseConfigured() && finalAction.type !== 'LOAD_ALL') {
@@ -1532,7 +1721,7 @@ export function StoreProvider({ children }) {
               const id = crypto.randomUUID();
               data.cargos.push({ ...role, id, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
               // Despachar a Supabase en segundo plano
-              cargosService.create({ ...role, id }).catch(console.error);
+              cargosService.create({ ...role, id }).catch(e => console.warn(`[Seed] Nota: No se pudo sincronizar el rol base "${role.nombre}" en la nube (RLS). Esto es normal en modo restringido.`));
             });
           }
 
@@ -1571,7 +1760,7 @@ export function StoreProvider({ children }) {
                       // Ultra-minimal
                       try {
                         await personalService.create({ id: newProfile.id, email: newProfile.email, nombre: newProfile.nombre, user_id: newProfile.user_id });
-                      } catch (e3) { console.warn('[AutoProfile] No se pudo persistir:', e3?.message); }
+                      } catch (e3) { console.warn('[AutoProfile] No se pudo persistir: ' + (e3?.message || String(e3))); }
                     }
                   }
                 })();
@@ -1579,7 +1768,7 @@ export function StoreProvider({ children }) {
               }
             }
           } catch (profileErr) {
-            console.warn('[AutoProfile] No se pudo auto-crear perfil:', profileErr?.message);
+            console.warn('[AutoProfile] No se pudo auto-crear perfil: ' + (profileErr?.message || String(profileErr)));
           }
 
           baseDispatch({ 
@@ -1592,7 +1781,7 @@ export function StoreProvider({ children }) {
           setIsOnline(true);
         }
       } catch (err) {
-        console.error('[Hydration] Error loading data:', err);
+        console.error(`🔴 [Hydration] Fallo fatal: ${err.message || String(err)}`);
         setIsOnline(false);
       } finally {
         setDataLoading(false);
@@ -1658,7 +1847,7 @@ export function StoreProvider({ children }) {
 
       return true;
     } catch (e) {
-      console.error("Error clearing database:", e);
+      console.error(`Error clearing database: ${e.message || String(e)}`);
       throw e;
     }
   };

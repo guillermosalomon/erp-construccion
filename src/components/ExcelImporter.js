@@ -52,7 +52,7 @@ export default function ExcelImporter({ onImport, onClose, title = "Importar des
         setMapping(newMapping);
 
       } catch (err) {
-        console.error("Error parsing Excel:", err);
+        console.error(`Error parsing Excel: ${err.message || String(err)}`);
         setError("Error al leer el archivo. Asegúrate de que sea un archivo Excel válido.");
       }
     };

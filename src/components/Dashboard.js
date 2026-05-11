@@ -11,6 +11,7 @@ export default function Dashboard() {
     const [showTemplates, setShowTemplates] = useState(false);
     const fileInputRef = useRef(null);
     const [importMode, setImportMode] = useState('REPLACE'); // 'REPLACE' o 'MERGE'
+    const [importProgress, setImportProgress] = useState(null); // { current, total, table }
 
     const handleExport = async () => {
       const name = prompt("Nombre de la plantilla:", "Mi Plantilla ERP");
@@ -41,10 +42,15 @@ export default function Dashboard() {
       reader.onload = async (event) => {
         try {
           const templateData = JSON.parse(event.target.result);
-          await templateService.importTemplate(templateData, importMode);
+          setImportProgress({ current: 0, total: 1, table: 'Iniciando...' });
+          await templateService.importTemplate(templateData, importMode, (current, total, table) => {
+            setImportProgress({ current, total, table });
+          });
+          setImportProgress(null);
           alert("¡Plantilla cargada con éxito!");
           window.location.reload();
         } catch (err) {
+          setImportProgress(null);
           alert("Error al cargar: " + err.message);
         }
       };
@@ -206,11 +212,67 @@ export default function Dashboard() {
           >
             🧪 Generar Demo E2E
           </button>
-          <div className={`status-badge ${state.isOnline ? 'online' : 'offline'}`}>
-            {state.isOnline ? '● Supabase Conectado' : '○ Modo Local / Demo'}
+          <button 
+            className="btn btn-secondary btn-sm"
+            onClick={async () => {
+              if(!confirm('⚠️ ¿ESTÁS SEGURO? Se borrarán TODOS los datos permanentemente.')) return;
+              try {
+                await clearDatabase();
+                alert('¡Base de datos reiniciada correctamente!');
+                window.location.reload();
+              } catch (e) {
+                alert('Error al reiniciar: ' + (e.message || String(e)));
+              }
+            }}
+            style={{ color: 'var(--color-danger)', fontWeight: 600 }}
+          >
+            🔄 Reiniciar Base de Datos
+          </button>
+          <div className={`status-badge ${state.isOnline ? 'online' : 'offset'}`} style={{ 
+            background: state.isOnline ? '#dcfce7' : '#f1f5f9',
+            color: state.isOnline ? '#166534' : '#64748b',
+            padding: '4px 12px',
+            borderRadius: '20px',
+            fontSize: '11px',
+            fontWeight: 600
+          }}>
+            {state.isOnline ? '● Supabase Online' : '○ Modo Local / Plantilla'}
           </div>
         </div>
       </div>
+
+      {/* MODAL DE PROGRESO DE IMPORTACIÓN */}
+      {importProgress && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.8)', zIndex: 9999,
+          display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(4px)'
+        }}>
+          <div style={{
+            background: '#fff', padding: '40px', borderRadius: '16px',
+            width: '400px', maxWidth: '90%', textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+          }}>
+            <h2 style={{ margin: '0 0 10px', color: '#0f172a' }}>Cargando Plantilla</h2>
+            <p style={{ color: '#64748b', marginBottom: 20, fontSize: 14 }}>
+              Procesando <strong>{importProgress.table}</strong>...<br/>
+              ({importProgress.current} de {importProgress.total} registros)
+            </p>
+            
+            <div style={{ width: '100%', height: 12, background: '#e2e8f0', borderRadius: 6, overflow: 'hidden' }}>
+              <div style={{ 
+                width: `${(importProgress.current / importProgress.total) * 100}%`, 
+                height: '100%', 
+                background: 'var(--color-primary)', 
+                transition: 'width 0.1s linear'
+              }} />
+            </div>
+            
+            <p style={{ marginTop: 15, fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>
+              Por favor, no cierres ni recargues esta página.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="page-body">
         {/* Main Stats Grid */}

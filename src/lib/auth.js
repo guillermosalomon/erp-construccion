@@ -125,6 +125,11 @@ export function AuthProvider({ children }) {
           apellidos: parts.slice(1).join(' ') || '',
           profesion: metadata.profesion || '',
           app_role: metadata.role || 'ADMIN',
+          tipo_documento: metadata.tipo_documento || 'CC',
+          cedula: metadata.cedula || '',
+          ciudad: metadata.ciudad || '',
+          pais: metadata.pais || 'Colombia',
+          plan: metadata.plan || 'free',
           user_id: data.user.id
         });
       } catch (e) {

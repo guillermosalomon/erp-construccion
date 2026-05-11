@@ -161,18 +161,37 @@ export default function CuadrillaPortalView() {
     
     const myName = user?.user_metadata?.nombre || '';
 
+    // Identificar equipos (EQUIPO) a los que pertenece el cargo del usuario
+    const myParentTeamIds = state.cargos
+      .filter(c => c.tipo === 'EQUIPO' && state.cargoDetalles.some(d => d.cargo_padre_id === c.id && d.cargo_id === myProfile.cargo_id))
+      .map(c => c.id);
+
     const dirAssigned = state.presupuestoItems.filter(i => {
       if (tasksProjectId && i.proyecto_id !== tasksProjectId) return false;
       const assignedSignatures = (i.asignado_a_cuadrilla || '').split(',').map(s => s.trim()).filter(Boolean);
+      
+      // Si soy supervisor, veo todo lo asignado en el proyecto
       if (isSup && assignedSignatures.length > 0) return true;
-      const hasMyCrew = assignedSignatures.some(sig => {
+
+      const hasMatch = assignedSignatures.some(sig => {
         const parts = sig.split(':');
-        if (parts.length < 2) return false;
-        return myCrewIndices.includes(parseInt(parts[1]));
+        if (parts.length < 2) {
+          // Check directo por ID de persona o nombre (legacy)
+          return sig.toLowerCase() === cuadrillaId.toLowerCase() || sig.toLowerCase() === myName.toLowerCase();
+        }
+        
+        const targetCargoId = parts[0];
+        const targetIdx = parseInt(parts[1]);
+        
+        // Coincidencia con mi cargo individual O con mi equipo maestro
+        const isMyCargo = targetCargoId === myProfile.cargo_id;
+        const isMyParentTeam = myParentTeamIds.includes(targetCargoId);
+        const isMySlot = myCrewIndices.includes(targetIdx);
+
+        return (isMyCargo || isMyParentTeam) && isMySlot;
       });
-      const isMeDirect = assignedSignatures.includes(cuadrillaId.toLowerCase()) || 
-                        assignedSignatures.includes(myName.toLowerCase());
-      return hasMyCrew || isMeDirect;
+
+      return hasMatch;
     }).map(i => i.id);
 
     const notesAssigned = state.notas.filter(n => {

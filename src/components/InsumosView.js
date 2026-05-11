@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@/store/StoreContext';
 import ExcelImporter from './ExcelImporter';
+import { calcularPrecioMercado, calcularDiferencia } from '@/lib/price-engine';
 
 const TIPOS = [
   { value: 'MATERIAL', label: 'Material', tagClass: 'tag-material' },
@@ -10,13 +11,37 @@ const TIPOS = [
   { value: 'TRANSPORTE', label: 'Transporte', tagClass: 'tag-transporte' },
 ];
 
-const UNIDADES = ['un', 'kg', 'm', 'm2', 'm3', 'lt', 'gl', 'hr', 'día', 'viaje', 'saco', 'varilla', 'pliego', 'rollo'];
+
+
+const UNIDADES = ['un', 'kg', 'Lb', 'ML', 'm2', 'm3', 'lt', 'Gal', 'Bto', 'Var', 'Jgo', 'Hr', 'Día', 'Ton', 'Bolsa', 'Pliego', 'rollo', 'Caps'];
+
+const MARCAS = [
+  'Sin Marca',
+  'Corona',
+  'Argos',
+  'Cemex',
+  'Sika',
+  'Pintuco',
+  'Toxement',
+  'Pavco',
+  'Gerfor',
+  'Ternium',
+  'Acesco',
+  'Bosch',
+  'DeWalt',
+  'Makita',
+  'Stanley',
+  'Caterpillar',
+  'Otro'
+];
 
 const emptyForm = {
   nombre: '',
   tipo: 'MATERIAL',
   unidad: 'un',
   precio_unitario: '',
+  categoria_id: '',
+  marca: 'Sin Marca',
   notas: '',
 };
 
@@ -30,6 +55,8 @@ export default function InsumosView() {
   const [form, setForm] = useState(emptyForm);
   const [search, setSearch] = useState('');
   const [filterTipo, setFilterTipo] = useState('');
+  const [filterCategoria, setFilterCategoria] = useState('');
+  const [marcaFilters, setMarcaFilters] = useState({});
 
   const filteredInsumos = useMemo(() => {
     return state.insumos.filter((i) => {
@@ -38,9 +65,10 @@ export default function InsumosView() {
         i.nombre.toLowerCase().includes(search.toLowerCase()) ||
         i.codigo.toLowerCase().includes(search.toLowerCase());
       const matchTipo = !filterTipo || i.tipo === filterTipo;
-      return matchSearch && matchTipo;
+      const matchCat = !filterCategoria || i.categoria_id === filterCategoria;
+      return matchSearch && matchTipo && matchCat;
     });
-  }, [state.insumos, search, filterTipo]);
+  }, [state.insumos, search, filterTipo, filterCategoria]);
 
   const openCreate = () => {
     setForm(emptyForm);
@@ -54,6 +82,8 @@ export default function InsumosView() {
       tipo: insumo.tipo,
       unidad: insumo.unidad,
       precio_unitario: String(insumo.precio_unitario),
+      categoria_id: insumo.categoria_id || '',
+      marca: insumo.marca || 'Sin Marca',
       notas: insumo.notas || '',
     });
     setEditingId(insumo.id);
@@ -65,6 +95,7 @@ export default function InsumosView() {
     const payload = {
       ...form,
       precio_unitario: parseFloat(form.precio_unitario) || 0,
+      categoria_id: form.categoria_id === '' ? null : form.categoria_id,
     };
 
     if (editingId) {
@@ -105,6 +136,58 @@ export default function InsumosView() {
     dispatch({ type: 'ADD_INSUMOS_BATCH', payload: data });
   };
 
+  const [loadingSeed, setLoadingSeed] = useState(false);
+
+  const handleLoadSeedInsumos = async () => {
+    setLoadingSeed(true);
+    try {
+      console.log('[SeedImport] Fetching seed-insumos.json...');
+      const res = await fetch('/seed-insumos.json');
+      if (!res.ok) {
+        alert('Error: No se pudo leer el archivo seed-insumos.json (HTTP ' + res.status + ')');
+        setLoadingSeed(false);
+        return;
+      }
+      const data = await res.json();
+      const insumos = data?.insumos;
+      console.log('[SeedImport] Insumos leídos:', insumos?.length);
+      
+      if (!Array.isArray(insumos) || insumos.length === 0) {
+        alert('El archivo de catálogo está vacío o tiene formato inválido.');
+        setLoadingSeed(false);
+        return;
+      }
+
+      // Filtrar insumos que ya existen (por nombre)
+      const existingNames = new Set(state.insumos.map(i => i.nombre.toLowerCase()));
+      const insumosPayload = insumos
+        .filter(i => i.nombre && !existingNames.has(i.nombre.toLowerCase()))
+        .map(i => ({
+          nombre: i.nombre,
+          tipo: i.tipo || 'MATERIAL',
+          unidad: i.unidad || 'un',
+          precio_unitario: i.precio_unitario || 0,
+          categoria_id: null,
+          notas: i.categoria ? `Cat: ${i.categoria}` : '',
+        }));
+
+      console.log('[SeedImport] Nuevos insumos a importar:', insumosPayload.length);
+
+      if (insumosPayload.length === 0) {
+        alert('Todos los insumos del catálogo ya existen en el sistema.');
+        setLoadingSeed(false);
+        return;
+      }
+
+      dispatch({ type: 'ADD_INSUMOS_BATCH', payload: insumosPayload });
+      alert(`✅ ${insumosPayload.length} insumos importados exitosamente.`);
+    } catch (err) {
+      console.error('[SeedImport] Error:', err);
+      alert('Error al cargar el catálogo: ' + err.message);
+    }
+    setLoadingSeed(false);
+  };
+
   return (
     <>
       <div className="page-header">
@@ -115,6 +198,9 @@ export default function InsumosView() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+          <button className="btn btn-ghost" onClick={handleLoadSeedInsumos} disabled={loadingSeed} title="Importar catálogo de construcción desde APU_ERP.xlsx" style={{ fontSize: 12 }}>
+            {loadingSeed ? '⏳ Importando...' : '📦 Catálogo Base'}
+          </button>
           <button className="btn btn-secondary" onClick={() => setShowImport(true)}>
             📤 Importación Masiva
           </button>
@@ -154,6 +240,17 @@ export default function InsumosView() {
               <option key={t.value} value={t.value}>{t.label}</option>
             ))}
           </select>
+          <select
+            className="form-select"
+            value={filterCategoria}
+            onChange={(e) => setFilterCategoria(e.target.value)}
+            style={{ width: 180 }}
+          >
+            <option value="">Todas las categorías</option>
+            {state.categorias?.map((cat) => (
+              <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+            ))}
+          </select>
           <div className="toolbar-spacer" />
           <span style={{ fontSize: 12, color: 'var(--color-text-tertiary)' }}>
             {filteredInsumos.length} registro{filteredInsumos.length !== 1 ? 's' : ''}
@@ -170,30 +267,69 @@ export default function InsumosView() {
                     <th>Código</th>
                     <th>Nombre</th>
                     <th>Tipo</th>
+                    <th>Categoría</th>
                     <th>Unidad</th>
-                    <th>Responsable</th>
                     <th style={{ textAlign: 'right' }}>Precio Unit.</th>
-                    <th style={{ width: 100 }}>Acciones</th>
+                    <th style={{ textAlign: 'right' }}>Mercado</th>
+                    <th style={{ width: 60 }}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredInsumos.map((insumo) => {
                     const tipoInfo = TIPOS.find((t) => t.value === insumo.tipo);
+                    const mercado = calcularPrecioMercado(insumo.id, state.mkOfertas, '', marcaFilters[insumo.id] || '');
+                    
                     return (
                       <tr key={insumo.id}>
                         <td><code style={{ fontSize: 12 }}>{insumo.codigo}</code></td>
-                        <td style={{ fontWeight: 500 }}>{insumo.nombre}</td>
                         <td>
-                          <span className={`tag ${tipoInfo?.tagClass || ''}`}>
-                            {tipoInfo?.label || insumo.tipo}
-                          </span>
+                          <input 
+                            className="inline-edit-input"
+                            style={{ fontWeight: 600, width: '100%' }}
+                            defaultValue={insumo.nombre}
+                            onBlur={(e) => {
+                              if (e.target.value !== insumo.nombre) {
+                                dispatch({ type: 'UPDATE_INSUMO', payload: { id: insumo.id, nombre: e.target.value } });
+                              }
+                            }}
+                          />
                         </td>
-                        <td>{insumo.unidad}</td>
-                        <td style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>{insumo.responsable_email || '—'}</td>
+                        <td>
+                          <select 
+                            className="inline-edit-input"
+                            style={{ width: '100%', fontSize: 10 }}
+                            value={insumo.tipo}
+                            onChange={(e) => dispatch({ type: 'UPDATE_INSUMO', payload: { id: insumo.id, tipo: e.target.value } })}
+                          >
+                            {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                          </select>
+                        </td>
+                        <td>
+                          <select 
+                            className="inline-edit-input"
+                            style={{ width: '100%', fontSize: 10 }}
+                            value={insumo.categoria_id || ''}
+                            onChange={(e) => dispatch({ type: 'UPDATE_INSUMO', payload: { id: insumo.id, categoria_id: e.target.value === '' ? null : e.target.value } })}
+                          >
+                            <option value="">Sin Categoría</option>
+                            {state.categorias?.map(cat => <option key={cat.id} value={cat.id}>{cat.nombre}</option>)}
+                          </select>
+                        </td>
+                        <td>
+                          <select 
+                            className="inline-edit-input"
+                            style={{ width: '100%', fontSize: 10 }}
+                            value={insumo.unidad}
+                            onChange={(e) => dispatch({ type: 'UPDATE_INSUMO', payload: { id: insumo.id, unidad: e.target.value } })}
+                          >
+                            {UNIDADES.map(u => <option key={u} value={u}>{u}</option>)}
+                          </select>
+                        </td>
                         <td style={{ textAlign: 'right' }}>
                           <input
+                            key={`price-${insumo.id}-${insumo.precio_unitario}-${mercado?.precio_mercado}`}
                             type="number"
-                            defaultValue={insumo.precio_unitario}
+                            defaultValue={Number(insumo.precio_unitario) === 0 && mercado ? mercado.precio_mercado : insumo.precio_unitario}
                             onBlur={(e) => {
                               const newVal = parseFloat(e.target.value) || 0;
                               if (newVal !== insumo.precio_unitario) {
@@ -204,8 +340,33 @@ export default function InsumosView() {
                               if (e.key === 'Enter') e.target.blur();
                             }}
                             className="inline-edit-input"
-                            style={{ textAlign: 'right', width: 120 }}
+                            style={{ 
+                              textAlign: 'right', 
+                              width: 120,
+                              color: Number(insumo.precio_unitario) === 0 && mercado ? '#8b5cf6' : 'inherit',
+                              fontWeight: Number(insumo.precio_unitario) === 0 && mercado ? 700 : 'normal'
+                            }}
+                            title={Number(insumo.precio_unitario) === 0 && mercado ? 'Reflejando precio de mercado (Marketplace)' : ''}
                           />
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          {(() => {
+                            if (!mercado) return <span style={{ fontSize: 10, color: '#cbd5e1' }}>—</span>;
+                            const diff = calcularDiferencia(insumo.precio_unitario, mercado.precio_mercado);
+                            const diffColor = diff.direccion === 'abajo' ? '#16a34a' : diff.direccion === 'arriba' ? '#ef4444' : '#64748b';
+                            const diffBg = diff.direccion === 'abajo' ? '#f0fdf4' : diff.direccion === 'arriba' ? '#fef2f2' : '#f8fafc';
+                            return (
+                              <div>
+                                <div style={{ fontSize: 12, fontWeight: 700, color: '#2563eb' }}>{formatCurrency(mercado.precio_mercado)}</div>
+                                <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end', alignItems: 'center', marginTop: 2 }}>
+                                  <span style={{ fontSize: 9, padding: '1px 5px', borderRadius: 3, fontWeight: 700, color: diffColor, background: diffBg }}>
+                                    {diff.porcentaje > 0 ? '+' : ''}{diff.porcentaje}%
+                                  </span>
+                                  <span style={{ fontSize: 9, color: '#94a3b8' }}>{mercado.num_ofertas} oferta{mercado.num_ofertas !== 1 ? 's' : ''}</span>
+                                </div>
+                              </div>
+                            );
+                          })()}
                         </td>
                         <td>
                           <div style={{ display: 'flex', gap: 4 }}>
@@ -283,6 +444,19 @@ export default function InsumosView() {
                     placeholder="Cemento Portland Tipo I"
                     required
                   />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Categoría *</label>
+                  <select
+                    className="form-select"
+                    value={form.categoria_id || ''}
+                    onChange={(e) => setForm({ ...form, categoria_id: e.target.value })}
+                  >
+                    <option value="">Sin Categoría</option>
+                    {state.categorias?.map((cat) => (
+                      <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-row">
                   <div className="form-group">

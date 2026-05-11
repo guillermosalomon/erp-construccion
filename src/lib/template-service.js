@@ -64,11 +64,18 @@ export const templateService = {
   /**
    * Importa una plantilla (Reemplazo o Fusión)
    */
-  async importTemplate(templateData, mode = 'REPLACE') {
+  async importTemplate(templateData, mode = 'REPLACE', onProgress) {
     if (!templateData || !templateData.data) throw new Error("Plantilla inválida");
 
     const { data } = templateData;
     const oldToNewIds = {}; // Mapeo para mantener integridad referencial
+    
+    // Contar total de elementos
+    let totalItems = 0;
+    Object.values(data).forEach(arr => {
+      if (Array.isArray(arr)) totalItems += arr.length;
+    });
+    let currentItem = 0;
 
     // Helper para insertar y mapear IDs
     const insertAndMap = async (items, service, tableName, idField = 'id') => {
@@ -90,13 +97,46 @@ export const templateService = {
           }
         });
 
+        // Limpieza estricta de campos calculados por el frontend (causan error 400 en Supabase)
+        if (tableName === 'apu') {
+          delete cleanItem.categoria_apu;
+          delete cleanItem.costo_total;
+          delete cleanItem.v_presupuesto;
+        } else if (tableName === 'apu_detalle') {
+          delete cleanItem.insumo;
+          delete cleanItem.cargo;
+          delete cleanItem.apu_hijo;
+          delete cleanItem.costo;
+          delete cleanItem.subtotal;
+        } else if (tableName === 'presupuesto_items') {
+          delete cleanItem.apu;
+          delete cleanItem.avance_fisico;
+          delete cleanItem.avance_financiero;
+          delete cleanItem.costo_total;
+          delete cleanItem.v_presupuesto;
+          delete cleanItem.avance_pct;
+        } else if (tableName === 'insumos') {
+          delete cleanItem.salario_mensual;
+          delete cleanItem.rol;
+          delete cleanItem.unidad_pago;
+          delete cleanItem.responsable_email;
+          delete cleanItem.categoria;
+          delete cleanItem.foto;
+        }
+
         try {
           const result = await service.create(cleanItem);
           if (result && result.id) {
             oldToNewIds[oldId] = result.id;
           }
         } catch (e) {
-          console.warn(`Error importando en ${tableName}:`, e);
+          console.warn(`Error importando en ${tableName}: ${e.message || String(e)}`);
+        }
+        
+        // Report progress
+        currentItem++;
+        if (onProgress) {
+          onProgress(currentItem, totalItems, tableName);
         }
       }
     };

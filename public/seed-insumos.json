@@ -1,0 +1,2721 @@
+{
+  "categorias": [
+    "BASICOS",
+    "ACEROS",
+    "MADERA",
+    "FERRETERIA",
+    "TUBERIAS Y ACCESORIOS",
+    "ELECTRICOS",
+    "VIDRIERIA",
+    "CERRAJERIA",
+    "CARPINTERIA METALICA",
+    "CARPINTERIA MADERA",
+    "QUIMICOS",
+    "MARMOLES NACIONALES",
+    "MARMOLES IMPORTADOS",
+    "CERAMICAS",
+    "PINTURAS",
+    "ESPACATO",
+    "PIEDRAS",
+    "GRESS",
+    "GUADUA BASA Y SOBREBASA",
+    "ALQUILER DE EQUIPOS"
+  ],
+  "insumos": [
+    {
+      "nombre": "Cegrís 50 kg",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceblanco 50 kg",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Arena lavada",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "m3",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Arena de peña",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "m3",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Triturado comun",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "m3",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Triturado selec.",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "m3",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rajón",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "m3",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Recebo",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "m3",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Agua",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "lt",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 1/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 3/8\"",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 1/2\"x6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 5/8\"x6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 3/4\"x6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 7/8\"x6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 1\"x6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Alambre de amarre",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tabla ordinaria",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Varenga 4x4 cm",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Varenga 5x5 cm",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Liston 5x11 cm",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Guadua 5 mt",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puntilla 1\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puntilla 1 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puntilla 2 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puntilla 2\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ladrillo cuadrilon 7x12x20",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ladrillo adobon 7x15X25",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo cemento 8\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo cemento 6\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo cemento 4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo cem 4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo gress 8\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo gress 6",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo gress 4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo gress 4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC San 8\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC San 6\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC San 4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC San 3\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC San 2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tee San 6\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tee San 4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tee San 3\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tee San 2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo San 6\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo San 4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo San 3\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo San 2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC ALL 8\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC ALL 6\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC ALL 4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC ALL 3\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC ALL 2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC Pr 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC Pr 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo PVC Pr 1\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tee Presion 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tee Presion 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo Presion 1/2",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo Presion 3/4",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "ARM Pres 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "ARM Pres 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "ARH Pres 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "ARH Pres 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Registro 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Registro 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Llave PD 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Llave PD 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Llave bola 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Llave Bola 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cheque 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cheque 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Grifo 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Niple HG 1/2\" 10",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Niple HG 3/4\" 10",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo HG 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo HG 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "TUBERIAS Y ACCESORIOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "PVC conduit 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "PVC conduit 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "PVC conduit 1\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Curva 90 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Curva 90 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Curva 90 1\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Adapt Term 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Caja galv 2x4",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Caja galv oct 4x4",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Caja Toma espec",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Soldadura PVC",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Limpiador PVC",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Toma sencillo",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Toma doble",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Toma tripolar20a",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Interruptor senc",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Interruptor conm",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Plafon Porcelana",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Caja contador",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tablero 4 circuit",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Capacete 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Capacete 1\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tornillos plafon",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Breacker 15 amp",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Breacker 40 amp",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Alam alum cal 6",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Alam cob cal 6",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Alam cob cal 8",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Alam cob cal 10",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Alam cob cal 12",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cinta aislante",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "rollo",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Baldosa cemento",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Guardaes bald",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rev ceram 20x20",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rev ceram 30x30",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rev ceram 40x40",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pav ceram 20x20",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pav ceram 30x30",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pav ceram 40x40",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pegacor pegadit",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Concolor",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Color mineral",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Winn aluminio",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Winn plastico",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pegante Boxer",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pintura en vinilo",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Imprimante vinilo",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Vinilo pisos",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pintura esmalte",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pintura en laca",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Solvente thinner",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Yeso para estuco",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Caolin",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Estuco profesion",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Estuco exterior",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ventana lamina",
+      "tipo": "MATERIAL",
+      "categoria": "VIDRIERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Antepecho 3/8\"",
+      "tipo": "MATERIAL",
+      "categoria": "CERRAJERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puerta met 90 cm",
+      "tipo": "MATERIAL",
+      "categoria": "CARPINTERIA METALICA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puerta met 1.00",
+      "tipo": "MATERIAL",
+      "categoria": "CARPINTERIA METALICA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puerta met 1.20 2 ho",
+      "tipo": "MATERIAL",
+      "categoria": "CARPINTERIA METALICA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puerta entamb 70",
+      "tipo": "MATERIAL",
+      "categoria": "CARPINTERIA MADERA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puerta entamb 80",
+      "tipo": "MATERIAL",
+      "categoria": "CARPINTERIA MADERA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Puerta entamb 90",
+      "tipo": "MATERIAL",
+      "categoria": "CARPINTERIA MADERA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Bisagra aluminio 3\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Vidrio 3 mm",
+      "tipo": "MATERIAL",
+      "categoria": "VIDRIERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Vidrio 4 mm",
+      "tipo": "MATERIAL",
+      "categoria": "VIDRIERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Vidrio 5 mm",
+      "tipo": "MATERIAL",
+      "categoria": "VIDRIERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Masilla",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "List.achapo 5x11",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Vig achapo 7x15",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Guardaesc.madera",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 5 mmx6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 6 mmx6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acero 8 mmx6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ac 9.5 mmx6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ac 10.5 mmx6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ac 12 mmx6 mt",
+      "tipo": "MATERIAL",
+      "categoria": "ACEROS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Adoquin MR 46",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Adoquin MR 50",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo cement 12\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo cement 10\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Aros HF Alcantar",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cal apagada",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Marmolina",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cinta enmascarar",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "rollo",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Papel periodico",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Colbon",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Sikaestuco 20 Kg",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Prado en capote",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Asfalto sol T190",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Subbase granular",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m3",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Base granular",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m3",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tierra veg + trans",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m3",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cera plast emulsi",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Granito No 1",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Granito No 2",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Granito No 3",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Granito No 4",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Gravilla No 1",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Gravilla No 2",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Gravilla No 3",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Gravilla No 4",
+      "tipo": "MATERIAL",
+      "categoria": "BASICOS",
+      "unidad": "saco",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tab Gress 20x10",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tab Gress 25x25",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tab Gress 30x30",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Bloq esmeril 16",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Bloq esmeril 60",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Bloq esmeril 100",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tromp esmer 60",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tromp esmer 100",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Piedra pulid 60",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Piedra pulid 100",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Canaleta Preinpal",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Teja AC Num 4",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Teja AC Num 5",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Teja AC Num 6",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Teja AC Num 8",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Teja AC Num 10",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Teja eternit # 6",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Caballete fijo",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Amarras",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ganchos",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Gancho teja eternit 55mm",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Igas techo",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Canal PVC",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Union Canal Bajan",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Union canal",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Soportes canal",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tapa canal",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Bajante PVC",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Union bajante",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Adaptador",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Soportes bajante",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Codo bajante",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Lubricante silicon",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Hidrosello",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Aceite quemado",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Sika 1",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Sikacrete",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Sifón PVC 2\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rejilla alum 2\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rejilla alum 3\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Valv pozuelo 2\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Valv pozuelo 3\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Conduit met 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Conduit met 3/4\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Conduit met 1\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Claraboya AC 4",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Claraboya AC 6",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Silicona 300 cc",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tej ventilac AC 4",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tej ventilac AC 6",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cinta teflón",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "rollo",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Un cond PVC1/2",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Un cond PVC3/4",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Un cond PVC 1",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Un cond met 1/2",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Un cond met 3/4",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Un cond met 1\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cur cond met1/2",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cur cond met 3/4",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cur cond met 1\"",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Boton timbre",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Zumbador timbre",
+      "tipo": "MATERIAL",
+      "categoria": "ELECTRICOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Dilatacion bronce",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acido Oxalico",
+      "tipo": "MATERIAL",
+      "categoria": "QUIMICOS",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acido Muriatico",
+      "tipo": "MATERIAL",
+      "categoria": "QUIMICOS",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Raj marmol Valle",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Raj marmol huila",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Raj marmol beige",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Raj marmol crema",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Raj marmol gris",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Raj marmol rosad",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "NACIONALES",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rosa Huila",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Negro Caracol",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Gris Putumayo",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Gris Perla",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rosa Tacueyo",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rio Claro",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Travertino",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES NACIONALES",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Mulata Campiña",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Verde Andes",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Café Pinto",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Trav. Peruano",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Crema Marfil",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ghiandone",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rossaporrino",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Verde Ubatuba",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rojo Guayana",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Negro Absoluto",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Labrador Claro",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Labrador Oscuro",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Jaspe",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Café Baltico",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Gris Guayana",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Sierra Chica",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Giallo San Fco.",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Baldosa de granito DURORECH Tex",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Baldosa de granito MELATO 33 Cm",
+      "tipo": "MATERIAL",
+      "categoria": "MARMOLES IMPORTADOS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 30 x 30",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 25 x 25",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceram 30,5 x 30,5",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 20 x 25",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 33 x 33",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 11 x 22",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 30 x 40 cm",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 35 x 35",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 40 x 40",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceram 20.5 x 20.5",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceram 20.5 x 25",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceram 20.5 x 30",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 50 x 50",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 55 x 55",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Ceramica 60 x 60",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Gabinete servicio",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Incrustac. Acuacer",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Incrustac. Royal",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Incrustac. Stilo",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Remates Porcel.",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Remates Tracia",
+      "tipo": "MATERIAL",
+      "categoria": "CERAMICAS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tubo cort. Ducha",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Viniltex int y ext.",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Anticorrosiva gris",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Esmalte mate",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Esmalte sintetico",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Barniz Vitriflex",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tintilla p/ madera",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pintura Wash Primer  A",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Catalizador Wash Primer  B",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pintura P /Trafico",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tapaporos",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Carburo x 10 Kg",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Lija de agua 180",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Lija de agua 400",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Lija de agua 600",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Disolvente Thiner",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Brocha Nylon 4\"",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Brocha nylon 2\"",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Brocha Nylon 1\"",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Espacatto Blanco Huila",
+      "tipo": "MATERIAL",
+      "categoria": "ESPACATO",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Espacatto Negro Caracol",
+      "tipo": "MATERIAL",
+      "categoria": "ESPACATO",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Espacatto Travertino",
+      "tipo": "MATERIAL",
+      "categoria": "ESPACATO",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Espacatto Gris Huila",
+      "tipo": "MATERIAL",
+      "categoria": "ESPACATO",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Espacatto Beige Huila",
+      "tipo": "MATERIAL",
+      "categoria": "ESPACATO",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Espacatto Piedra Muñeca",
+      "tipo": "MATERIAL",
+      "categoria": "ESPACATO",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Piedra Bogotana",
+      "tipo": "MATERIAL",
+      "categoria": "PIEDRAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Piedra Blanca",
+      "tipo": "MATERIAL",
+      "categoria": "PIEDRAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Piedra Muñeca",
+      "tipo": "MATERIAL",
+      "categoria": "PIEDRAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Piedra Coralina",
+      "tipo": "MATERIAL",
+      "categoria": "PIEDRAS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tableta 20 x 10 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GRESS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tableta 10 x 10 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GRESS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tablón 25 x 25 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GRESS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tablón 33 x 33 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GRESS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tablón rojo Romana 15 x 15",
+      "tipo": "MATERIAL",
+      "categoria": "GRESS",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Guadua D = 10 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GUADUA BASA Y SOBREBASA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Guadua D = 12 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GUADUA BASA Y SOBREBASA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Guadua D = 14 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GUADUA BASA Y SOBREBASA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Guadua D = 16 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GUADUA BASA Y SOBREBASA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Guadua D = 18 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GUADUA BASA Y SOBREBASA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Esterilla A = 40 cm",
+      "tipo": "MATERIAL",
+      "categoria": "GUADUA BASA Y SOBREBASA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Latilla de guadua 3x1 cm x 1 mt",
+      "tipo": "MATERIAL",
+      "categoria": "GUADUA BASA Y SOBREBASA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Baldosa guad 40x40",
+      "tipo": "MATERIAL",
+      "categoria": "GUADUA BASA Y SOBREBASA",
+      "unidad": "m2",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Eucalipto D = 10 cm",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Eucalipto D = 12 cm",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Eucalipto D = 14 cm",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Eucalipto D = 16 cm",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Eucalipto D = 18 cm",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Eucalipto D = 20 cm",
+      "tipo": "MATERIAL",
+      "categoria": "MADERA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Varilla roscada 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tuerca 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Arandela plana 1/2\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Varilla roscada 3/8\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tuerca 3/8\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Arandela plana 3/8\"",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Malla con vena",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Acido borico",
+      "tipo": "MATERIAL",
+      "categoria": "QUIMICOS",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Borax",
+      "tipo": "MATERIAL",
+      "categoria": "QUIMICOS",
+      "unidad": "kg",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Silicona capsula",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Lamina tablex 2 cm 1,20x2,40 mt",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Base Bituminosa Pegante XL parquet",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Base PVA Pegante XL madera",
+      "tipo": "MATERIAL",
+      "categoria": "FERRETERIA",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Laca de poliuretano para pisos",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Glicol disolvente",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Lija P/ metal 80-100-240-320-400-1000",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Tintilla para madera",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Laca poliuretano 2 componentes",
+      "tipo": "MATERIAL",
+      "categoria": "PINTURAS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Aceite de linaza",
+      "tipo": "MATERIAL",
+      "categoria": "QUIMICOS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Trementina",
+      "tipo": "MATERIAL",
+      "categoria": "QUIMICOS",
+      "unidad": "gl",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Andamios = Rend * M de O",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "m",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Transporte (Ton)",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "un",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Motoniveladora",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Cilindro vibrador",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Carrotanque agua",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Retroexcavadora",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Mezcladora",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Regla vibratoria",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Volqueta",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Equipo topograf",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "día",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Rana compactad",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Vibrador",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Bloqueadora vivr",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Compres y soplete",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pulid Granit agua",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Pulidor disc diam",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Hidrolavadora de 2200 P.S.I.",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    },
+    {
+      "nombre": "Desvastadora para madera",
+      "tipo": "EQUIPO",
+      "categoria": "ALQUILER DE EQUIPOS",
+      "unidad": "hr",
+      "precio_unitario": 0
+    }
+  ]
+}

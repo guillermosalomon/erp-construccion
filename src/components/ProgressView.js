@@ -172,7 +172,7 @@ export default function ProgressView({ contextProyectoId }) {
         texto: `📝 (Supervisor) se añadió a la lista: "${newChecklistItem}"`,
         author_id: user?.id,
         author_name: user?.user_metadata?.nombre || 'Supervisor',
-        meta: { scope: scope === 'RESUMEN' ? 'SUPERVISION_LOG' : scope, type: 'activity' }
+        meta: { scope: scope, type: 'activity' }
       }
     });
     setNewChecklistItem('');
@@ -250,7 +250,7 @@ export default function ProgressView({ contextProyectoId }) {
           texto: `📎 Documento oficial cargado por Supervisión: ${file.name}`,
           author_id: user?.id,
           author_name: user?.user_metadata?.nombre || 'Supervisor',
-          meta: { scope: scope === 'RESUMEN' ? 'SUPERVISION_LOG' : scope, type: 'activity' }
+          meta: { scope: scope, type: 'activity' }
         }
       });
     } catch (err) {
@@ -285,9 +285,12 @@ export default function ProgressView({ contextProyectoId }) {
         texto: text || '',
         photo_url: photoUrl,
         status: 'Recibido',
+        author_id: user?.id,
+        author_name: user?.user_metadata?.nombre || user?.email || 'Admin',
         created_at: new Date().toISOString(),
         meta: { 
           scope: currentScope,
+          type: 'chat',
           created_at: new Date().toISOString()
         }
       }
@@ -298,15 +301,17 @@ export default function ProgressView({ contextProyectoId }) {
 
   const submitReply = (parentId, currentScope) => {
     if (!replyText.trim()) return;
+    const parentNote = state.notas.find(n => n.id === parentId);
+    const citation = parentNote ? `> 💬 ${parentNote.author_name || 'Usuario'}: "${(parentNote.texto || '').substring(0, 80)}${parentNote.texto?.length > 80 ? '...' : ''}"\n\n` : '';
     dispatch({
       type: 'ADD_NOTE',
       payload: {
         presupuesto_item_id: selectedItemId,
-        texto: replyText,
-        parent_id: parentId,
+        texto: `${citation}${replyText}`,
         author_id: user?.id,
         author_name: user?.user_metadata?.nombre || user?.email,
-        meta: { scope: currentScope, type: 'reply' }
+        status: 'Aprobado',
+        meta: { scope: currentScope, type: 'chat' }
       }
     });
     setReplyText('');
@@ -319,11 +324,86 @@ export default function ProgressView({ contextProyectoId }) {
       type: 'UPDATE_NOTE',
       payload: { id: noteId, changes: { status: newStatus } }
     });
-    // Si la nota está vinculada a un checklist item, actualizarlo también
-    if (note?.checklist_item_id && newStatus === 'Aprobado') {
+    // Registrar la acción en el chat del canal
+    const currentScope = panelTab === 'resumen' ? 'RESUMEN' : `CUAD_${panelTab.split('-')[1]}`;
+    const statusEmoji = newStatus === 'Aprobado' ? '✅' : newStatus === 'Rechazado' ? '❌' : newStatus === 'Revisado' ? '🔍' : '📋';
+    const notePreview = (note?.texto || '').substring(0, 60);
+    dispatch({
+      type: 'ADD_NOTE',
+      payload: {
+        presupuesto_item_id: note?.presupuesto_item_id || selectedItemId,
+        texto: `${statusEmoji} Reporte marcado como ${newStatus.toUpperCase()}:\n"${notePreview}${note?.texto?.length > 60 ? '...' : ''}"`,
+        author_id: user?.id,
+        author_name: user?.user_metadata?.nombre || user?.email || 'Admin',
+        status: 'Aprobado',
+        meta: { scope: currentScope, type: 'activity' }
+      }
+    });
+
+    // ── Mapear estado de nota → estado de evento operativo ──
+    const eventStatus = newStatus === 'Aprobado' ? 'APROBADO' 
+                      : newStatus === 'Rechazado' ? 'RECHAZADO' 
+                      : newStatus === 'Revisado' ? 'EN_REVISION' 
+                      : null;
+
+    // ── Propagar a avance/asistencia vinculado ──
+    if (note?.meta?.source_id && note?.meta?.source_type && eventStatus) {
+      // Conexión directa por ID (notas nuevas)
+      if (note.meta.source_type === 'avance') {
+        dispatch({ type: 'UPDATE_AVANCE', payload: { id: note.meta.source_id, changes: { estado: eventStatus } } });
+      } else if (note.meta.source_type === 'asistencia') {
+        dispatch({ type: 'UPDATE_ASISTENCIA', payload: { id: note.meta.source_id, changes: { estado: eventStatus } } });
+      }
+    } else if (eventStatus && note?.meta?.type === 'activity') {
+      // Fallback: buscar por contenido de texto y item (notas legacy sin source_id)
+      const txt = (note?.texto || '').toLowerCase();
+      const itemId = note?.presupuesto_item_id;
+      const notePhoto = note?.file_url || note?.photo_url;
+      
+      if (txt.includes('avance') || txt.includes('🚀')) {
+        // Buscar avance del mismo ítem, cercano en tiempo o por foto
+        const match = state.avances?.find(a => 
+          a.presupuesto_item_id === itemId && 
+          (notePhoto && a.foto_url === notePhoto)
+        ) || state.avances?.find(a => 
+          a.presupuesto_item_id === itemId &&
+          Math.abs(new Date(a.created_at || a.fecha) - new Date(note.created_at)) < 60000
+        );
+        if (match) {
+          dispatch({ type: 'UPDATE_AVANCE', payload: { id: match.id, changes: { estado: eventStatus } } });
+        }
+      } else if (txt.includes('llegada') || txt.includes('salida') || txt.includes('☀️') || txt.includes('🌙')) {
+        const match = state.controlAsistencia?.find(a =>
+          a.presupuesto_item_id === itemId &&
+          (notePhoto && a.foto_url === notePhoto)
+        ) || state.controlAsistencia?.find(a =>
+          a.presupuesto_item_id === itemId &&
+          Math.abs(new Date(a.fecha_hora || a.created_at) - new Date(note.created_at)) < 60000
+        );
+        if (match) {
+          dispatch({ type: 'UPDATE_ASISTENCIA', payload: { id: match.id, changes: { estado: eventStatus } } });
+        }
+      }
+    }
+
+    // ── Propagar a checklist item vinculado ──
+    if (newStatus === 'Aprobado' && note?.checklist_item_id) {
+      const reportedPct = Number(note.meta?.porcentaje) || 100;
       dispatch({
         type: 'UPDATE_CHECKLIST_ITEM',
-        payload: { id: note.checklist_item_id, changes: { completado: true, estado_aprobacion: 'APROBADO' } }
+        payload: { id: note.checklist_item_id, changes: { 
+          porcentaje_avance: reportedPct,
+          completado: reportedPct >= 100,
+          estado_aprobacion: 'APROBADO' 
+        }}
+      });
+    } else if (newStatus === 'Rechazado' && note?.checklist_item_id) {
+      dispatch({
+        type: 'UPDATE_CHECKLIST_ITEM',
+        payload: { id: note.checklist_item_id, changes: { 
+          estado_aprobacion: 'PENDIENTE',
+          completado: false
+        }}
       });
     }
   };
@@ -332,6 +412,7 @@ export default function ProgressView({ contextProyectoId }) {
     switch (status) {
       case 'Aprobado': return '#22c55e';
       case 'Revisado': return '#eab308';
+      case 'Rechazado': return '#ef4444';
       default: return '#3b82f6';
     }
   };
@@ -435,10 +516,14 @@ export default function ProgressView({ contextProyectoId }) {
   }, [selectedItemId, currentItem?.id, state.personal, state.apuDetalles]);
 
   const calculateDateEnd = (item) => {
-    if (!item.fecha_inicio || !item.num_cuadrillas) return null;
+    if (!item.fecha_inicio) return null;
     const apu = state.apus.find(a => a.id === item.apu_id);
     const rendimiento = Number(apu?.rendimiento) || 1; 
-    const crews = Number(item.num_cuadrillas) || 1;
+    let crews = Number(item.num_cuadrillas) || 1;
+    if (item.asignado_a_cuadrilla) {
+      const validAssignments = item.asignado_a_cuadrilla.split(',').filter(s => s && s.includes(':'));
+      if (validAssignments.length > 0) crews = validAssignments.length;
+    }
     const days = Math.ceil(item.cantidad / (rendimiento * crews));
     
     let current = new Date(item.fecha_inicio);
@@ -1058,11 +1143,12 @@ export default function ProgressView({ contextProyectoId }) {
                         
                         const tabs = [
                           { key: 'resumen', label: '📋 Resumen' },
-                          ...(hasMO ? Array.from({ length: nCuad }).map((_, i) => {
-                            const isAssigned = cargoIds.some(cid => assignedSignatures.includes(`${cid}:${i}`));
-                            if (!isAssigned) return null;
-                            return { key: `cuad-${i}`, label: `${cargoLabel}-${i + 1}`, idx: i };
-                          }).filter(Boolean) : [])
+                          ...(nCuad > 0 ? Array.from({ length: nCuad })
+                            .filter((_, i) => cargoIds.some(cid => assignedSignatures.includes(`${cid}:${i}`)))
+                            .map((_, i) => {
+                              const label = hasMO ? `${cargoLabel} ${String.fromCharCode(65 + i)}-${i + 1}` : `Cuadrilla ${String.fromCharCode(65 + i)}-${i + 1}`;
+                              return { key: `cuad-${i}`, label, idx: i };
+                            }) : [])
                         ];
 
                         if (panelTab !== 'resumen' && !tabs.find(t => t.key === panelTab)) {
@@ -1179,7 +1265,16 @@ export default function ProgressView({ contextProyectoId }) {
                                   </div>
                                   <div className="form-group">
                                     <label className="form-label">N° Cuadrillas</label>
-                                    <input type="number" className="form-input btn-sm" value={currentItem?.num_cuadrillas || 1} onChange={(e) => handleUpdateItem(selectedItemId, { num_cuadrillas: e.target.value })} min="1" />
+                                    {currentItem?.asignado_a_cuadrilla && currentItem.asignado_a_cuadrilla.includes(':') ? (
+                                      <div className="form-static btn-sm" style={{ fontWeight: 700, color: 'var(--color-accent)', fontSize: 13, padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: 4, background: '#f8fafc' }} title="Definido por la cantidad de veces que se asignó la tarea en módulo Personal">
+                                        {(() => {
+                                          const count = (currentItem.asignado_a_cuadrilla || '').split(',').filter(s => s && s.includes(':')).length;
+                                          return count > 0 ? count : (currentItem?.num_cuadrillas || 1);
+                                        })()} 🔒
+                                      </div>
+                                    ) : (
+                                      <input type="number" className="form-input btn-sm" value={currentItem?.num_cuadrillas || 1} onChange={(e) => handleUpdateItem(selectedItemId, { num_cuadrillas: e.target.value })} min="1" />
+                                    )}
                                   </div>
                                   <div className="form-group">
                                     <label className="form-label">🔑 Supervisor (Administración)</label>
@@ -1196,39 +1291,42 @@ export default function ProgressView({ contextProyectoId }) {
                                       const supIds = supervisors.map(s => s.personal_id);
                                       const available = state.personal.filter(p => !supIds.includes(p.id));
                                       return (
-                                        <>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                                           {supPersons.map(({ person: p, aId }) => (
-                                            <div key={aId} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 11, padding: '4px 8px', marginTop: 4, background: '#eef2ff', borderRadius: 6, border: '1px solid #c7d2fe' }}>
+                                            <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 11, background: '#f8fafc', padding: '6px 10px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
                                               <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6366f1' }}>
                                                 <span>🔑</span>
-                                                <span style={{ fontWeight: 500 }}>{p.nombres || p.nombre} {p.apellidos || ''}</span>
-                                                <span style={{ color: '#94a3b8', fontSize: 9 }}>({p.email})</span>
+                                                <span style={{ fontWeight: 600 }}>{p.nombre}</span>
                                               </div>
-                                              <button onClick={() => dispatch({ type: 'DELETE_PERSON_PROYECTO', payload: aId })} style={{ border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 12, fontWeight: 700, padding: '0 4px' }}>✕</button>
+                                              <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444', padding: '2px 6px', minWidth: 'auto' }} onClick={() => dispatch({ type: 'DELETE_PERSON_PROYECTO', payload: aId })}>✕</button>
                                             </div>
                                           ))}
-                                          <select className="form-select btn-sm" style={{ fontSize: 11, marginTop: 4, borderColor: '#c7d2fe' }} value="" onChange={(e) => {
-                                            const pid = e.target.value;
-                                            if (!pid) return;
-                                            const person = state.personal.find(p => p.id === pid);
-                                            dispatch({ type: 'ADD_PERSON_PROYECTO', payload: {
-                                              id: crypto.randomUUID(),
-                                              personal_id: pid,
-                                              proyecto_id: currentItem?.proyecto_id,
-                                              cargo_id: cargoIds[0],
-                                              unidades_asignadas: 0,
-                                              salario_pactado: person?.salario_base || 0,
-                                              unidad_pactada: 'SUPERVISOR',
-                                              tareas_asignadas: []
-                                            }});
+                                          <select className="form-select" style={{ fontSize: 11, padding: '4px 8px', borderColor: '#c7d2fe' }} defaultValue="" onChange={(e) => { 
+                                            const pid = e.target.value; 
+                                            if (!pid) return; 
+                                            const person = state.personal.find(pp => pp.id === pid);
+                                            dispatch({ type: 'ADD_PERSON_PROYECTO', payload: { 
+                                              id: crypto.randomUUID(), 
+                                              personal_id: pid, 
+                                              proyecto_id: currentItem.proyecto_id, 
+                                              cargo_id: cargoIds[0] || null, 
+                                              unidades_asignadas: 0, 
+                                              salario_pactado: person?.salario_base || 0, 
+                                              unidad_pactada: 'SUPERVISOR', 
+                                              tareas_asignadas: [] 
+                                            }}); 
+                                            e.target.value = ''; 
                                           }}>
                                             <option value="">+ Asignar supervisor...</option>
                                             {available.map(p => <option key={p.id} value={p.id}>{p.nombres || p.nombre} {p.apellidos || ''}</option>)}
                                           </select>
-                                        </>
+                                        </div>
                                       );
                                     })()}
                                   </div>
+
+
+
                                   <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
                                     <input type="checkbox" checked={currentItem?.is_unlocked || false} onChange={(e) => handleUpdateItem(selectedItemId, { is_unlocked: e.target.checked })} />
                                     <label style={{ fontSize: 10, fontWeight: 700 }}>🔓 Desbloqueo Manual</label>
@@ -1237,46 +1335,7 @@ export default function ProgressView({ contextProyectoId }) {
                                 </div>
                               ) : (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                  <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <span>👥 Equipo de Trabajo</span>
-                                    <span style={{ fontSize: 10, background: '#eef2ff', color: '#6366f1', padding: '2px 6px', borderRadius: 4 }}>
-                                      {panelTab.split('-')[1] ? `Canal ${Number(panelTab.split('-')[1]) + 1}` : ''}
-                                    </span>
-                                  </div>
-                                  {(() => {
-                                    const cuadIdx = Number(panelTab.split('-')[1]);
-                                    const assignments = state.personalProyecto.filter(ap => 
-                                      ap.proyecto_id === currentItem?.proyecto_id && 
-                                      ap.cuadrilla_idx === cuadIdx &&
-                                      ap.unidad_pactada !== 'SUPERVISOR'
-                                    );
-
-                                    if (assignments.length === 0) {
-                                      return <div style={{ fontSize: 11, color: '#94a3b8', fontStyle: 'italic', padding: '12px', textAlign: 'center', background: '#f8fafc', borderRadius: 8, border: '1px dashed #e2e8f0' }}>No hay personal asignado a este canal</div>;
-                                    }
-
-                                    return assignments.map(ap => {
-                                      const p = state.personal.find(pp => pp.id === ap.personal_id);
-                                      const cargo = state.cargos.find(c => c.id === ap.cargo_id);
-                                      return (
-                                        <div key={ap.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10, background: '#fff', borderRadius: 10, border: '1px solid #e2e8f0', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}>
-                                          <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2e8f0', overflow: 'hidden', flexShrink: 0 }}>
-                                            {p?.foto_url ? <img src={p.foto_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : '👤'}
-                                          </div>
-                                          <div style={{ flex: 1, minWidth: 0 }}>
-                                            <div style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                              {p ? (p.nombres || p.nombre) : 'Desconocido'} {p?.apellidos || ''}
-                                            </div>
-                                            <div style={{ fontSize: 9, fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>
-                                              {cargo?.nombre || 'Operativo'}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      );
-                                    });
-                                  })()}
-                                  
-                                  <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px dashed #e2e8f0' }}>
+                                  <div style={{ marginTop: 4, paddingTop: 8 }}>
                                     <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', marginBottom: 8 }}>MÉTRICAS DE RENDIMIENTO</div>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                                       <div style={{ background: '#f0fdf4', padding: '8px', borderRadius: 8, border: '1px solid #dcfce7' }}>
@@ -1363,7 +1422,18 @@ export default function ProgressView({ contextProyectoId }) {
                                               <div 
                                                 onClick={(e) => { 
                                                   e.stopPropagation(); 
-                                                  dispatch({ type: 'UPDATE_CHECKLIST_ITEM', payload: { id: check.id, changes: { estado_aprobacion: isApproved ? 'PENDIENTE' : 'APROBADO' } } }); 
+                                                  const newState = isApproved ? 'PENDIENTE' : 'APROBADO';
+                                                  dispatch({ type: 'UPDATE_CHECKLIST_ITEM', payload: { id: check.id, changes: { estado_aprobacion: newState } } });
+                                                  // Registrar en el chat del canal
+                                                  const scope = panelTab === 'resumen' ? 'RESUMEN' : `CUAD_${panelTab.split('-')[1]}`;
+                                                  dispatch({ type: 'ADD_NOTE', payload: {
+                                                    presupuesto_item_id: currentItem.id,
+                                                    texto: `${newState === 'APROBADO' ? '🔓 Checklist DESBLOQUEADO' : '🔒 Checklist BLOQUEADO'}: "${check.texto}"`,
+                                                    author_id: user?.id,
+                                                    author_name: user?.user_metadata?.nombre || user?.email || 'Admin',
+                                                    status: 'Aprobado',
+                                                    meta: { scope, type: 'activity' }
+                                                  }});
                                                 }}
                                                 style={{ width: 24, height: 24, borderRadius: 6, background: isComplete ? '#dcfce7' : (isApproved ? '#ecfdf5' : '#f1f5f9'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer', transition: 'all 0.2s' }}
                                                 title={isApproved ? 'Bloquear' : 'Desbloquear'}>
@@ -1399,7 +1469,19 @@ export default function ProgressView({ contextProyectoId }) {
                                           </div>
                                           {/* ✕ gris para rechazar */}
                                           <button 
-                                            onClick={(e) => { e.stopPropagation(); dispatch({ type: 'UPDATE_CHECKLIST_ITEM', payload: { id: check.id, changes: { estado_aprobacion: 'RECHAZADO' } } }); }}
+                                            onClick={(e) => { e.stopPropagation(); 
+                                              dispatch({ type: 'UPDATE_CHECKLIST_ITEM', payload: { id: check.id, changes: { estado_aprobacion: 'RECHAZADO' } } });
+                                              // Registrar en el chat del canal
+                                              const scope = panelTab === 'resumen' ? 'RESUMEN' : `CUAD_${panelTab.split('-')[1]}`;
+                                              dispatch({ type: 'ADD_NOTE', payload: {
+                                                presupuesto_item_id: currentItem.id,
+                                                texto: `❌ Checklist ELIMINADO: "${check.texto}"`,
+                                                author_id: user?.id,
+                                                author_name: user?.user_metadata?.nombre || user?.email || 'Admin',
+                                                status: 'Aprobado',
+                                                meta: { scope, type: 'activity' }
+                                              }});
+                                            }}
                                             style={{ width: 18, height: 18, borderRadius: 4, border: 'none', background: 'transparent', color: '#94a3b8', fontSize: 11, cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
                                             title="Eliminar ítem">
                                             ✕
@@ -1413,15 +1495,158 @@ export default function ProgressView({ contextProyectoId }) {
                                 {/* Documentos se muestra ahora en el overlay del Visor BIM */}
                               </div>
 
-                              {/* COLUMNA DERECHA: Mensajes */}
+                              {/* COLUMNA DERECHA: Supervisión + Cuadrilla + Mensajes */}
                               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                              {/* CANAL ADMINISTRATIVO: Supervisión (solo en Resumen) */}
+                              {panelTab === 'resumen' && <details open style={{ background: '#fff', borderBottom: '1px solid #e2e8f0' }}>
+                                <summary style={{ 
+                                  padding: '10px 16px', cursor: 'pointer', fontSize: 11, fontWeight: 800, 
+                                  color: '#475569', display: 'flex', alignItems: 'center', gap: 8,
+                                  listStyle: 'none', userSelect: 'none'
+                                }}>
+                                  <span style={{ transition: 'transform 0.2s' }}>▶</span>
+                                  👥 Equipo de Supervisión
+                                  {(() => {
+                                    const count = state.personalProyecto.filter(ap => 
+                                      ap.proyecto_id === currentItem?.proyecto_id && 
+                                      (ap.unidad_pactada === 'SUPERVISOR_GENERAL' || ap.unidad_pactada === 'SUPERVISOR')
+                                    ).length;
+                                    return count > 0 ? <span style={{ fontSize: 9, background: '#eef2ff', color: '#6366f1', padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>{count}</span> : null;
+                                  })()}
+                                </summary>
+                                <div style={{ padding: '8px 16px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                  {(() => {
+                                    const generalSups = state.personalProyecto.filter(ap => 
+                                      ap.proyecto_id === currentItem?.proyecto_id && 
+                                      ap.unidad_pactada === 'SUPERVISOR_GENERAL'
+                                    );
+                                    const adminSups = state.personalProyecto.filter(ap => 
+                                      ap.proyecto_id === currentItem?.proyecto_id && 
+                                      ap.unidad_pactada === 'SUPERVISOR'
+                                    );
+                                    const allSups = [
+                                      ...generalSups.map(ap => ({ ...ap, role: 'Supervisión General' })),
+                                      ...adminSups.map(ap => ({ ...ap, role: 'Supervisor (Adm.)' }))
+                                    ];
+                                    if (allSups.length === 0) return (
+                                      <div style={{ fontSize: 10, color: '#94a3b8', fontStyle: 'italic', textAlign: 'center', padding: 8 }}>
+                                        Sin supervisores asignados
+                                      </div>
+                                    );
+                                    return allSups.map(ap => {
+                                      const p = state.personal.find(pp => pp.id === ap.personal_id);
+                                      if (!p) return null;
+                                      const isOnline = state.usuarios?.some(u => u.email === p.email && u.last_seen && (Date.now() - new Date(u.last_seen).getTime()) < 300000);
+                                      const initials = (p.nombres || p.nombre || '?').charAt(0).toUpperCase();
+                                      return (
+                                        <div key={ap.id} style={{ 
+                                          display: 'flex', alignItems: 'center', gap: 8, 
+                                          background: ap.role === 'Supervisión General' ? '#fef3c7' : '#eef2ff', 
+                                          padding: '6px 10px', borderRadius: 10, 
+                                          border: `1px solid ${ap.role === 'Supervisión General' ? '#fde68a' : '#c7d2fe'}`
+                                        }}>
+                                          <div style={{ position: 'relative', flexShrink: 0 }}>
+                                            <div style={{ 
+                                              width: 28, height: 28, borderRadius: '50%', 
+                                              background: ap.role === 'Supervisión General' ? '#f59e0b' : '#6366f1', 
+                                              color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                                              fontSize: 12, fontWeight: 800 
+                                            }}>
+                                              {initials}
+                                            </div>
+                                            <div style={{ 
+                                              position: 'absolute', bottom: -1, right: -1, 
+                                              width: 9, height: 9, borderRadius: '50%', 
+                                              background: isOnline ? '#22c55e' : '#94a3b8', 
+                                              border: '2px solid white' 
+                                            }} />
+                                          </div>
+                                          <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                                            <span style={{ fontSize: 10, fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.nombres || p.nombre} {p.apellidos || ''}</span>
+                                            <span style={{ fontSize: 8, fontWeight: 600, color: ap.role === 'Supervisión General' ? '#92400e' : '#4338ca' }}>
+                                              {ap.role} • {isOnline ? '🟢 En línea' : '⚪ Desconectado'}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      );
+                                    });
+                                  })()}
+                                </div>
+                              </details>}
+                              {/* CANAL OPERATIVO: Equipo de Cuadrilla (solo en tabs cuadrilla) */}
+                              {panelTab.startsWith('cuad-') && (() => {
+                                const cuadIdx = Number(panelTab.split('-')[1]);
+                                const cuadAssignments = state.personalProyecto.filter(ap => 
+                                  ap.proyecto_id === currentItem?.proyecto_id && 
+                                  ap.cuadrilla_idx === cuadIdx &&
+                                  ap.unidad_pactada !== 'SUPERVISOR' &&
+                                  ap.unidad_pactada !== 'SUPERVISOR_GENERAL'
+                                );
+                                return (
+                                  <details open style={{ background: '#fff', borderBottom: '1px solid #e2e8f0' }}>
+                                    <summary style={{ 
+                                      padding: '10px 16px', cursor: 'pointer', fontSize: 11, fontWeight: 800, 
+                                      color: '#475569', display: 'flex', alignItems: 'center', gap: 8,
+                                      listStyle: 'none', userSelect: 'none'
+                                    }}>
+                                      <span style={{ transition: 'transform 0.2s' }}>▶</span>
+                                      🔧 Equipo de Cuadrilla {String.fromCharCode(65 + cuadIdx)}-{cuadIdx + 1}
+                                      {cuadAssignments.length > 0 && <span style={{ fontSize: 9, background: '#f0f9ff', color: '#0369a1', padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>{cuadAssignments.length}</span>}
+                                    </summary>
+                                    <div style={{ padding: '8px 16px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                      {cuadAssignments.length === 0 ? (
+                                        <div style={{ fontSize: 10, color: '#94a3b8', fontStyle: 'italic', textAlign: 'center', padding: 8 }}>
+                                          Sin personal asignado a esta cuadrilla
+                                        </div>
+                                      ) : cuadAssignments.map(ap => {
+                                        const p = state.personal.find(pp => pp.id === ap.personal_id);
+                                        if (!p) return null;
+                                        const cargo = state.cargos.find(c => c.id === ap.cargo_id);
+                                        const isOnline = state.usuarios?.some(u => u.email === p.email && u.last_seen && (Date.now() - new Date(u.last_seen).getTime()) < 300000);
+                                        const initials = (p.nombres || p.nombre || '?').charAt(0).toUpperCase();
+                                        return (
+                                          <div key={ap.id} style={{ 
+                                            display: 'flex', alignItems: 'center', gap: 8, 
+                                            background: '#f0f9ff', padding: '6px 10px', borderRadius: 10, 
+                                            border: '1px solid #bae6fd'
+                                          }}>
+                                            <div style={{ position: 'relative', flexShrink: 0 }}>
+                                              <div style={{ 
+                                                width: 28, height: 28, borderRadius: '50%', 
+                                                background: '#0ea5e9', color: '#fff', 
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                                                fontSize: 12, fontWeight: 800, overflow: 'hidden'
+                                              }}>
+                                                {p.foto_url ? <img src={p.foto_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : initials}
+                                              </div>
+                                              <div style={{ 
+                                                position: 'absolute', bottom: -1, right: -1, 
+                                                width: 9, height: 9, borderRadius: '50%', 
+                                                background: isOnline ? '#22c55e' : '#94a3b8', 
+                                                border: '2px solid white' 
+                                              }} />
+                                            </div>
+                                            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                                              <span style={{ fontSize: 10, fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.nombres || p.nombre} {p.apellidos || ''}</span>
+                                              <span style={{ fontSize: 8, fontWeight: 600, color: '#0c4a6e' }}>
+                                                {cargo?.nombre || 'Operativo'} • {isOnline ? '🟢 En línea' : '⚪ Desconectado'}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </details>
+                                );
+                              })()}
                               <div className="notes-wall" style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
                               {(() => {
                                 const filteredNotes = itemNotes.filter(n => {
                                   const nScope = n.meta?.scope || 'RESUMEN';
                                   const isSupervisionLog = n.meta?.scope === 'SUPERVISION_LOG';
+                                  if (n.parent_id) return false; // Notas legacy de hilos: se ocultan, las nuevas son mensajes planos
                                   return nScope === currentScope || (currentScope === 'RESUMEN' && isSupervisionLog);
-                                });
+                                }).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
                                   return filteredNotes.map(note => (
                                     <div key={note.id} className="note-card" style={{ marginBottom: 16, borderLeft: note.meta?.type === 'tech_report' ? '4px solid #3b82f6' : 'none', paddingLeft: note.meta?.type === 'tech_report' ? 12 : 0 }}>
@@ -1443,40 +1668,30 @@ export default function ProgressView({ contextProyectoId }) {
                                           style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', padding: '4px 8px', borderRadius: 6, background: 'white', border: '1px solid #e2e8f0', cursor: 'pointer' }}>
                                           💬 {replyingTo === note.id ? 'Cancelar' : 'Comentar'}
                                         </button>
-                                        <button onClick={() => updateNoteStatus(note.id, 'Revisado')} style={{ fontSize: 10, fontWeight: 800, color: '#eab308', padding: '4px 8px', borderRadius: 6, background: '#fefce8', border: 'none', cursor: 'pointer' }}>Revisar</button>
-                                        <button onClick={() => updateNoteStatus(note.id, 'Aprobado')} style={{ fontSize: 10, fontWeight: 800, color: '#22c55e', padding: '4px 8px', borderRadius: 6, background: '#f0fdf4', border: 'none', cursor: 'pointer' }}>Aprobar</button>
+                                        {note.status === 'Revisado' ? (
+                                          <button onClick={() => updateNoteStatus(note.id, 'Rechazado')} style={{ fontSize: 10, fontWeight: 800, color: '#ef4444', padding: '4px 8px', borderRadius: 6, background: '#fef2f2', border: 'none', cursor: 'pointer' }}>❌ Rechazar</button>
+                                        ) : note.status !== 'Aprobado' && note.status !== 'Rechazado' ? (
+                                          <button onClick={() => updateNoteStatus(note.id, 'Revisado')} style={{ fontSize: 10, fontWeight: 800, color: '#eab308', padding: '4px 8px', borderRadius: 6, background: '#fefce8', border: 'none', cursor: 'pointer' }}>Revisar</button>
+                                        ) : null}
+                                        {note.status !== 'Aprobado' && (
+                                          <button onClick={() => updateNoteStatus(note.id, 'Aprobado')} style={{ fontSize: 10, fontWeight: 800, color: '#22c55e', padding: '4px 8px', borderRadius: 6, background: '#f0fdf4', border: 'none', cursor: 'pointer' }}>Aprobar</button>
+                                        )}
                                       </div>
 
-                                      {/* HILOS EN ADMIN */}
-                                      {(() => {
-                                        const replies = state.notas?.filter(r => r.parent_id === note.id) || [];
-                                        return (
-                                          <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8, paddingLeft: 16, borderLeft: '2px solid #f1f5f9' }}>
-                                            {replies.map(r => (
-                                              <div key={r.id} style={{ background: '#fff', padding: '10px 14px', borderRadius: 12, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9 }}>
-                                                  <span style={{ fontWeight: 800, color: '#1e293b' }}>{r.author_name}</span>
-                                                  <span style={{ color: '#94a3b8' }}>{new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                                </div>
-                                                <div style={{ fontSize: 11, color: '#475569', marginTop: 4 }}>{r.texto}</div>
-                                              </div>
-                                            ))}
-                                            {replyingTo === note.id && (
-                                              <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                                                <input 
-                                                  type="text" 
-                                                  placeholder="Responder a este reporte..." 
-                                                  style={{ flex: 1, padding: '8px 12px', borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 11 }}
-                                                  value={replyText}
-                                                  onChange={e => setReplyText(e.target.value)}
-                                                  onKeyDown={e => e.key === 'Enter' && submitReply(note.id, currentScope)}
-                                                />
-                                                <button onClick={() => submitReply(note.id, currentScope)} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '0 12px', borderRadius: 10, fontWeight: 700, fontSize: 11 }}>Enviar</button>
-                                              </div>
-                                            )}
-                                          </div>
-                                        );
-                                      })()}
+                                      {/* Input de respuesta con cita */}
+                                      {replyingTo === note.id && (
+                                        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                                          <input 
+                                            type="text" 
+                                            placeholder="Responder a este mensaje..." 
+                                            style={{ flex: 1, padding: '8px 12px', borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 11 }}
+                                            value={replyText}
+                                            onChange={e => setReplyText(e.target.value)}
+                                            onKeyDown={e => e.key === 'Enter' && submitReply(note.id, currentScope)}
+                                          />
+                                          <button onClick={() => submitReply(note.id, currentScope)} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '0 12px', borderRadius: 10, fontWeight: 700, fontSize: 11 }}>Enviar</button>
+                                        </div>
+                                      )}
                                     </div>
                                   ));
                               })()}

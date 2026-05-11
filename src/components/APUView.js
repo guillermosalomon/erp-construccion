@@ -3,8 +3,10 @@
 import { useState, useMemo } from 'react';
 import APUModal from './APUModal';
 import { useStore } from '@/store/StoreContext';
+import { calcularPrecioMercado } from '@/lib/price-engine';
 
 const UNIDADES = ['un', 'kg', 'm', 'm2', 'm3', 'lt', 'gl', 'hr', 'día', 'viaje', 'saco'];
+
 
 const emptyForm = {
   nombre: '',
@@ -13,12 +15,13 @@ const emptyForm = {
   rendimiento: '1',
 };
 
-export default function APUView({ tipo = 'BASICO' }) {
+export default function APUView() {
   const { state, dispatch, calcularCostoAPU } = useStore();
   const [activeApuId, setActiveApuId] = useState(null);
   const [showApuModal, setShowApuModal] = useState(false);
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState(null);
+  const [categoriaFilter, setCategoriaFilter] = useState('Todos');
   const [detalleForm, setDetalleForm] = useState({ 
     tipo_linea: 'insumo', 
     insumo_id: '', 
@@ -27,25 +30,42 @@ export default function APUView({ tipo = 'BASICO' }) {
     cantidad: '', 
     rendimiento: '',
     unidad_detalle: '',
-    desperdicio_pct: '0' 
+    desperdicio_pct: '0',
+    herramienta_menor_pct: '0'
   });
 
-  const isCompuesto = tipo === 'COMPUESTO';
-  const title = isCompuesto ? 'APU Compuestos' : 'APU Básicos';
-  const subtitle = isCompuesto
-    ? 'Actividades de obra compuestas por APUs básicos y/o insumos'
-    : 'Elementos básicos compuestos por insumos';
+  const title = 'Análisis de Precios Unitarios';
+  const subtitle = 'Actividades de obra compuestas por insumos, mano de obra y sub-APUs';
 
   const apusFiltered = useMemo(() => {
     return state.apus
-      .filter((a) => a.tipo === tipo)
+      .filter((a) =>
+        categoriaFilter === 'Todos' || (a.categoria_apu || 'Otros') === categoriaFilter
+      )
       .filter(
         (a) =>
           !search ||
           a.nombre.toLowerCase().includes(search.toLowerCase()) ||
           a.codigo.toLowerCase().includes(search.toLowerCase())
       );
-  }, [state.apus, tipo, search]);
+  }, [state.apus, categoriaFilter, search]);
+
+  const categoriasList = useMemo(() => {
+    return ['Todos', ...Array.from(new Set(state.apus.map(a => a.categoria_apu || 'Otros'))).filter(c => c !== 'Otros').sort(), 'Otros'];
+  }, [state.apus]);
+
+  // Conteo por categoría para las badges
+  const conteoCategoria = useMemo(() => {
+    const conteo = { 'Todos': 0 };
+    categoriasList.forEach(c => { if (c !== 'Todos') conteo[c] = 0; });
+    
+    state.apus.forEach(a => {
+      const cat = a.categoria_apu || 'Otros';
+      if (conteo[cat] !== undefined) conteo[cat]++;
+      conteo['Todos']++;
+    });
+    return conteo;
+  }, [state.apus, categoriasList]);
 
   const getDetalles = (apuId) =>
     state.apuDetalles.filter((d) => d.apu_id === apuId);
@@ -67,9 +87,10 @@ export default function APUView({ tipo = 'BASICO' }) {
     
     const newId = generateId();
     const payload = { 
-      id: newId, // Asignamos ID desde aquí para poder abrir el modal inmediatamente
+      id: newId,
       nombre, 
-      tipo, 
+      tipo: 'COMPUESTO',
+      categoria_apu: categoriaFilter !== 'Todos' ? categoriaFilter : 'Otros',
       v_presupuesto: 0, 
       unidad: 'un', 
       rendimiento: 1,
@@ -78,7 +99,6 @@ export default function APUView({ tipo = 'BASICO' }) {
     
     dispatch({ type: 'ADD_APU', payload });
     
-    // Abrir el editor automáticamente para el nuevo APU
     setActiveApuId(newId);
     setShowApuModal(true);
   };
@@ -106,6 +126,7 @@ export default function APUView({ tipo = 'BASICO' }) {
       rendimiento: parseFloat(detalleForm.rendimiento) || null,
       unidad_detalle: detalleForm.unidad_detalle || null,
       desperdicio_pct: parseFloat(detalleForm.desperdicio_pct) || 0,
+      herramienta_menor_pct: detalleForm.tipo_linea === 'cargo' ? (parseFloat(detalleForm.herramienta_menor_pct) || 0) : 0,
     };
 
     if ((!payload.insumo_id && !payload.apu_hijo_id && !payload.cargo_id) || payload.cantidad <= 0) return;
@@ -115,7 +136,7 @@ export default function APUView({ tipo = 'BASICO' }) {
     }
 
     dispatch({ type: 'ADD_APU_DETALLE', payload });
-    setDetalleForm({ ...detalleForm, insumo_id: '', cargo_id: '', apu_hijo_id: '', cantidad: '', rendimiento: '', unidad_detalle: '' });
+    setDetalleForm({ ...detalleForm, insumo_id: '', cargo_id: '', apu_hijo_id: '', cantidad: '', rendimiento: '', unidad_detalle: '', herramienta_menor_pct: '0' });
   };
 
   const handleCantidadChange = (val) => {
@@ -140,7 +161,7 @@ export default function APUView({ tipo = 'BASICO' }) {
     dispatch({ type: 'DELETE_APU_DETALLE', payload: detalleId });
   };
 
-  // Available sub-APUs (for COMPUESTO only: show BASICO APUs, exclude self)
+  // Available sub-APUs (exclude self)
   const availableSubAPUs = state.apus.filter(
     (a) => a.id !== expandedId
   );
@@ -159,7 +180,7 @@ export default function APUView({ tipo = 'BASICO' }) {
 
       <div className="page-body">
         {/* Toolbar */}
-        <div className="toolbar">
+        <div className="toolbar" style={{ flexWrap: 'wrap', gap: 12 }}>
           <div className="search-bar">
             <svg className="search-bar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8" />
@@ -169,11 +190,34 @@ export default function APUView({ tipo = 'BASICO' }) {
               className="form-input"
               type="text"
               placeholder="Buscar APU..."
-              value={search}
+              value={search || ''}
               onChange={(e) => setSearch(e.target.value)}
               style={{ paddingLeft: 36, width: 280 }}
             />
           </div>
+
+          <select
+            className="form-select"
+            value={categoriaFilter}
+            onChange={(e) => setCategoriaFilter(e.target.value)}
+            style={{ 
+              fontSize: 12, 
+              fontWeight: 600, 
+              padding: '8px 12px', 
+              borderRadius: 8,
+              minWidth: 220,
+              background: categoriaFilter !== 'Todos' ? '#eff6ff' : undefined,
+              borderColor: categoriaFilter !== 'Todos' ? '#3b82f6' : undefined,
+              color: categoriaFilter !== 'Todos' ? '#1d4ed8' : undefined,
+            }}
+          >
+            {categoriasList.map(cat => (
+              <option key={cat} value={cat}>
+                {cat === 'Todos' ? `📋 Todas las Categorías (${conteoCategoria['Todos']})` : `${cat} (${conteoCategoria[cat] || 0})`}
+              </option>
+            ))}
+          </select>
+
           <div className="toolbar-spacer" />
           <span style={{ fontSize: 12, color: 'var(--color-text-tertiary)' }}>
             {apusFiltered.length} APU{apusFiltered.length !== 1 ? 's' : ''}
@@ -201,9 +245,10 @@ export default function APUView({ tipo = 'BASICO' }) {
                         ▸
                       </span>
                       <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
                           <code style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{apu.codigo}</code>
                           <h3 style={{ fontSize: 14, fontWeight: 600 }}>{apu.nombre}</h3>
+                          <span style={{ fontSize: 9, padding: '2px 8px', background: '#f0f9ff', color: '#0369a1', borderRadius: 10, fontWeight: 600, border: '1px solid #bae6fd', whiteSpace: 'nowrap' }}>{apu.categoria_apu || 'Otros'}</span>
                         </div>
                         <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2 }}>
                           {apu.unidad} · Rend: {apu.rendimiento} · {detalles.length} línea{detalles.length !== 1 ? 's' : ''}
@@ -237,7 +282,7 @@ export default function APUView({ tipo = 'BASICO' }) {
                                 <th>Tipo</th>
                                 <th>Recurso</th>
                                 <th>Unidad</th>
-                                <th style={{ textAlign: 'right' }}>Rendimiento</th>
+                                <th style={{ textAlign: 'right' }}>{/* Rendimiento oculto para MO */}</th>
                                 <th style={{ textAlign: 'right' }}>Cantidad</th>
                                 <th style={{ textAlign: 'right' }}>Desp. %</th>
                                 <th style={{ textAlign: 'right' }}>P. Unit.</th>
@@ -256,7 +301,7 @@ export default function APUView({ tipo = 'BASICO' }) {
                                   if (ins) {
                                     recursoNombre = ins.nombre;
                                     recursoUnidad = ins.unidad;
-                                    precioUnit = Number(ins.precio_unitario) || 0;
+                                    precioUnit = Number(ins.precio_unitario) || calcularPrecioMercado(ins.id, state.mkOfertas, '')?.precio_mercado || 0;
                                   }
                                 } else if (det.cargo_id) {
                                   const cargo = state.cargos.find(c => c.id === det.cargo_id);
@@ -291,10 +336,11 @@ export default function APUView({ tipo = 'BASICO' }) {
 
                                 const cant = Number(det.cantidad) || 0;
                                 const desp = Number(det.desperdicio_pct) || 0;
+                                const hmPct = Number(det.herramienta_menor_pct) || 0;
                                 
                                 // Subtotal simplificado (Cantidad * Precio)
                                 const subtotal = det.cargo_id 
-                                  ? (precioUnit * cant)
+                                  ? (precioUnit * cant * (1 + hmPct / 100))
                                   : (cant * (1 + desp / 100) * precioUnit);
 
                                 return (
@@ -307,10 +353,10 @@ export default function APUView({ tipo = 'BASICO' }) {
                                     <td style={{ fontWeight: 500 }}>{recursoNombre}</td>
                                     <td>{recursoUnidad}</td>
                                     <td style={{ textAlign: 'right' }}>
-                                      {det.cargo_id ? Number(det.cantidad || 0).toFixed(2) : (Number(det.cantidad) > 0 ? (1/Number(det.cantidad)).toFixed(2) : '—')}
-                                    </td>
+                                       {/* Oculto según solicitud */}
+                                     </td>
                                     <td style={{ textAlign: 'right' }}>{cant.toFixed(2)}</td>
-                                    <td style={{ textAlign: 'right' }}>{det.cargo_id ? '—' : `${desp}%`}</td>
+                                    <td style={{ textAlign: 'right' }}>{det.cargo_id ? (hmPct > 0 ? `${hmPct}% H.M.` : '—') : `${desp}%`}</td>
                                     <td style={{ textAlign: 'right' }}>
                                       <span className="currency">{formatCurrency(precioUnit)}</span>
                                     </td>
@@ -349,7 +395,7 @@ export default function APUView({ tipo = 'BASICO' }) {
 
                       {detalles.length === 0 && (
                         <div style={{ padding: 'var(--space-lg)', textAlign: 'center', color: 'var(--color-text-tertiary)', fontSize: 13 }}>
-                          Sin líneas de detalle. Agrega insumos{isCompuesto ? ' o sub-APUs' : ''} debajo.
+                          Sin líneas de detalle. Agrega insumos, mano de obra o sub-APUs debajo.
                         </div>
                       )}
 
@@ -363,7 +409,6 @@ export default function APUView({ tipo = 'BASICO' }) {
                         gap: 'var(--space-sm)',
                         flexWrap: 'wrap',
                       }}>
-                          {isCompuesto && (
                           <div className="form-group" style={{ minWidth: 100 }}>
                             <label className="form-label" style={{ fontSize: 10 }}>Tipo línea</label>
                             <select
@@ -377,7 +422,6 @@ export default function APUView({ tipo = 'BASICO' }) {
                               <option value="apu">Sub-APU</option>
                             </select>
                           </div>
-                          )}
 
                         <div className="form-group" style={{ flex: 1, minWidth: 200 }}>
                           <label className="form-label" style={{ fontSize: 10 }}>
@@ -439,28 +483,42 @@ export default function APUView({ tipo = 'BASICO' }) {
                             >
                               <option value="Hora">Hora</option>
                               <option value="Día">Día</option>
+                              <option value="Mes">Mes</option>
                             </select>
                           </div>
                         )}
 
-                        <div className="form-group" style={{ width: 90 }}>
-                          <label className="form-label" style={{ fontSize: 10 }}>
-                            {detalleForm.tipo_linea === 'cargo' ? 'Tiempo (R)' : 'Rendimiento'}
-                          </label>
-                          <input
-                            type="number"
-                            step="0.01"
-                            className="form-input"
-                            value={detalleForm.rendimiento}
-                            onChange={(e) => setDetalleForm({ 
-                              ...detalleForm, 
-                              rendimiento: e.target.value, 
-                              cantidad: detalleForm.tipo_linea === 'cargo' ? e.target.value : (e.target.value > 0 ? (1/e.target.value).toFixed(4) : 0) 
-                            })}
-                            style={{ fontSize: 12 }}
-                            placeholder="Ej: 8"
-                          />
-                        </div>
+                        {detalleForm.tipo_linea === 'cargo' ? (
+                          <div className="form-group" style={{ width: 90 }}>
+                            <label className="form-label" style={{ fontSize: 10 }}>% H.M.</label>
+                            <input
+                              type="number"
+                              step="1"
+                              className="form-input"
+                              value={detalleForm.herramienta_menor_pct || ''}
+                              onChange={(e) => setDetalleForm({ ...detalleForm, herramienta_menor_pct: e.target.value })}
+                              style={{ fontSize: 12 }}
+                              placeholder="Ej: 5"
+                            />
+                          </div>
+                        ) : (
+                          <div className="form-group" style={{ width: 90 }}>
+                            <label className="form-label" style={{ fontSize: 10 }}>Rendimiento</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              className="form-input"
+                              value={detalleForm.rendimiento || ''}
+                              onChange={(e) => setDetalleForm({ 
+                                ...detalleForm, 
+                                rendimiento: e.target.value, 
+                                cantidad: e.target.value > 0 ? (1/e.target.value).toFixed(4) : 0 
+                              })}
+                              style={{ fontSize: 12 }}
+                              placeholder="Ej: 8"
+                            />
+                          </div>
+                        )}
 
                         <div className="form-group" style={{ width: 90 }}>
                           <label className="form-label" style={{ fontSize: 10 }}>Cantidad</label>
@@ -468,7 +526,7 @@ export default function APUView({ tipo = 'BASICO' }) {
                             type="number"
                             step="0.01"
                             className="form-input"
-                            value={detalleForm.cantidad}
+                            value={detalleForm.cantidad || ''}
                             onChange={(e) => setDetalleForm({ 
                               ...detalleForm, 
                               cantidad: e.target.value, 
@@ -485,7 +543,7 @@ export default function APUView({ tipo = 'BASICO' }) {
                             <input
                               type="number"
                               className="form-input"
-                              value={detalleForm.desperdicio_pct}
+                              value={detalleForm.desperdicio_pct || ''}
                               onChange={(e) => setDetalleForm({ ...detalleForm, desperdicio_pct: e.target.value })}
                               style={{ fontSize: 12 }}
                             />
@@ -509,12 +567,12 @@ export default function APUView({ tipo = 'BASICO' }) {
         ) : (
           <div className="card">
             <div className="empty-state">
-              <div className="empty-state-icon">{isCompuesto ? '🏗️' : '🧱'}</div>
-              <h3>No hay {title.toLowerCase()}</h3>
+              <div className="empty-state-icon">🧱</div>
+              <h3>No hay APUs{categoriaFilter !== 'Todos' ? ` en "${categoriaFilter}"` : ''}</h3>
               <p>
                 {search
-                  ? 'No se encontraron resultados.'
-                  : `Crea tu primer APU ${isCompuesto ? 'compuesto' : 'básico'} para comenzar.`}
+                  ? 'No se encontraron resultados para tu búsqueda.'
+                  : 'Crea tu primer Análisis de Precio Unitario para comenzar.'}
               </p>
               {!search && (
                 <button className="btn btn-primary" onClick={openCreate}>

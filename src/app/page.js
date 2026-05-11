@@ -21,6 +21,12 @@ import CuadrillaPortalView from '@/components/CuadrillaPortalView';
 import NominaView from '@/components/NominaView';
 import PersonalView from '@/components/PersonalView';
 import CargosView from '@/components/CargosView';
+import MarketplaceView from '@/components/MarketplaceView';
+import PuntoVentaView from '@/components/PuntoVentaView';
+import HistorialPOSView from '@/components/HistorialPOSView';
+import VendedorPortalView from '@/components/VendedorPortalView';
+import CRMView from '@/components/CRMView';
+import ChatView from '@/components/ChatView';
 
 const BIMViewer = dynamic(() => import('@/components/BIMViewer'), { ssr: false });
 
@@ -52,7 +58,7 @@ function BIMViewerStandalone() {
 
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
-  const { dataLoading } = useStore();
+  const { state, dataLoading } = useStore();
   const [activeSection, setActiveSection] = useState('dashboard');
   const [activeProyectoId, setActiveProyectoId] = useState(null);
 
@@ -93,10 +99,20 @@ export default function Home() {
   if (!user) {
     return <LoginView />;
   }
+  // Resolve effective role: prefer app_role from personal table (admin can change it), fallback to auth metadata
+  const personalRecord = state.personal?.find(p => p.email === user.email || p.user_id === user.id);
+  let userRole = (personalRecord?.app_role || user.user_metadata?.role || '').toUpperCase();
+  
+  // BYPASS DE EMERGENCIA PARA EL ADMINISTRADOR
+  if (user?.email === 'gsalo90@outlook.com') userRole = 'ADMIN';
 
-  // Role-based interception: Field workers and mobile roles use isolated field portal
+  // Role-based interception: Mobile/field workers
+  if (userRole === 'TIENDA') {
+    return <VendedorPortalView />;
+  }
+
   const fieldRoles = ['CUADRILLA', 'GERENCIA', 'INTERVENTOR', 'ING_RESIDENTE', 'ARQ_RESIDENTE', 'PRACTICANTE', 'ALMACEN'];
-  if (fieldRoles.includes(user.user_metadata?.role)) {
+  if (fieldRoles.includes(userRole)) {
     return <CuadrillaPortalView />;
   }
 
@@ -138,10 +154,8 @@ export default function Home() {
         return <PersonalView />;
       case 'cargos':
         return <CargosView />;
-      case 'apu-basicos':
-        return <APUView tipo="BASICO" />;
-      case 'apu-compuestos':
-        return <APUView tipo="COMPUESTO" />;
+      case 'apu':
+        return <APUView />;
       case 'proyectos':
         return <ProyectosView onOpenHub={handleOpenHub} />;
       case 'project_hub':
@@ -165,6 +179,16 @@ export default function Home() {
         return <FinanceView />;
       case 'nomina':
         return <NominaView />;
+      case 'marketplace':
+        return <MarketplaceView />;
+      case 'punto-venta':
+        return <PuntoVentaView />;
+      case 'historial-pos':
+        return <HistorialPOSView />;
+      case 'crm':
+        return <CRMView />;
+      case 'chat-history':
+        return <ChatView />;
       default:
         return <Dashboard />;
     }
@@ -179,6 +203,43 @@ export default function Home() {
       <main className="main-content">
         {renderSection()}
       </main>
+
+      {/* Botón flotante de Telegram */}
+      <a 
+        href="https://t.me/Kalarti_bot" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        style={{
+          position: 'fixed',
+          bottom: '30px',
+          right: '30px',
+          width: '60px',
+          height: '60px',
+          backgroundColor: '#0088cc',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 15px rgba(0, 136, 204, 0.4)',
+          cursor: 'pointer',
+          zIndex: 9999,
+          transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s',
+          color: 'white',
+          fontSize: '30px',
+          textDecoration: 'none'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1) rotate(10deg)';
+          e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 136, 204, 0.6)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
+          e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 136, 204, 0.4)';
+        }}
+        title="Hablar con Copiloto Telegram"
+      >
+        ✈️
+      </a>
     </div>
   );
 }

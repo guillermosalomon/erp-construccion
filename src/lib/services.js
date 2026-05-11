@@ -9,20 +9,71 @@ import { supabase } from './supabase';
 const db = () => supabase; // shorthand — null si no hay credenciales
 
 /* ─── Helper: get current user ID ─── */
-async function getUserId() {
+let cachedUserId = null;
+export async function getUserId() {
   if (!db()) return null;
-  const { data: { user } } = await db().auth.getUser();
-  return user?.id || null;
+  if (cachedUserId) return cachedUserId;
+  
+  // Usar getSession en lugar de getUser evita peticiones HTTP innecesarias por cada fila insertada
+  const { data: { session } } = await db().auth.getSession();
+  if (session?.user?.id) {
+    cachedUserId = session.user.id;
+    return cachedUserId;
+  }
+  
+  return null;
 }
+
+/* ─── Categorías ─── */
+export const categoriasService = {
+  async getAll() {
+    if (!db()) return null;
+    const { data, error } = await db().from('categorias').select('*').order('created_at', { ascending: true });
+    if (error) {
+      error.message = `[categoriasService.getAll] ${error.message}`;
+      throw error;
+    }
+    return data;
+  },
+  async create(categoria) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const { data, error } = await db().from('categorias').insert({ ...categoria, user_id: uid }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('categorias').update({ ...changes, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async remove(id) {
+    if (!db()) return null;
+    const { error } = await db().from('categorias').delete().eq('id', id);
+    if (error) throw error;
+    return true;
+  }
+};
 
 
 /* ─── Insumos ─── */
 export const insumosService = {
   async getAll() {
     if (!db()) return null;
-    const { data, error } = await db().from('insumos').select('*').order('created_at', { ascending: true });
-    if (error) throw error;
-    return data;
+    // Paginar para superar el límite de 1000 filas
+    let all = [];
+    let from = 0;
+    const PAGE = 1000;
+    while (true) {
+      const { data, error } = await db().from('insumos').select('*').order('created_at', { ascending: true }).range(from, from + PAGE - 1);
+      if (error) { error.message = `[insumosService.getAll] ${error.message}`; throw error; }
+      if (!data || data.length === 0) break;
+      all = all.concat(data);
+      if (data.length < PAGE) break;
+      from += PAGE;
+    }
+    return all;
   },
   async create(insumo) {
     if (!db()) return null;
@@ -39,11 +90,21 @@ export const insumosService = {
   },
   async createBatch(insumos) {
     if (!db()) return null;
+    if (!Array.isArray(insumos)) {
+      console.error('createBatch: insumos no es un array', typeof insumos);
+      return null;
+    }
     const uid = await getUserId();
     const itemsWithUid = insumos.map(i => ({ ...i, user_id: uid }));
-    const { data, error } = await db().from('insumos').insert(itemsWithUid).select();
-    if (error) throw error;
-    return data;
+    // Insert in chunks of 50 to avoid Supabase limits
+    const results = [];
+    for (let i = 0; i < itemsWithUid.length; i += 50) {
+      const chunk = itemsWithUid.slice(i, i + 50);
+      const { data, error } = await db().from('insumos').insert(chunk).select();
+      if (error) throw error;
+      if (data) results.push(...data);
+    }
+    return results;
   },
   async remove(id) {
     if (!db()) return null;
@@ -57,9 +118,19 @@ export const insumosService = {
 export const apuService = {
   async getAll() {
     if (!db()) return null;
-    const { data, error } = await db().from('apu').select('*').order('created_at', { ascending: true });
-    if (error) throw error;
-    return data;
+    // Paginar para superar el límite de 1000 filas
+    let all = [];
+    let from = 0;
+    const PAGE = 1000;
+    while (true) {
+      const { data, error } = await db().from('apu').select('*').order('created_at', { ascending: true }).range(from, from + PAGE - 1);
+      if (error) { error.message = `[apuService.getAll] ${error.message}`; throw error; }
+      if (!data || data.length === 0) break;
+      all = all.concat(data);
+      if (data.length < PAGE) break;
+      from += PAGE;
+    }
+    return all;
   },
   async create(apu) {
     if (!db()) return null;
@@ -86,9 +157,19 @@ export const apuService = {
 export const apuDetalleService = {
   async getAll() {
     if (!db()) return null;
-    const { data, error } = await db().from('apu_detalle').select('*').order('created_at', { ascending: true });
-    if (error) throw error;
-    return data;
+    // Paginar para superar el límite de 1000 filas
+    let all = [];
+    let from = 0;
+    const PAGE = 1000;
+    while (true) {
+      const { data, error } = await db().from('apu_detalle').select('*').order('created_at', { ascending: true }).range(from, from + PAGE - 1);
+      if (error) throw error;
+      if (!data || data.length === 0) break;
+      all = all.concat(data);
+      if (data.length < PAGE) break;
+      from += PAGE;
+    }
+    return all;
   },
   async create(detalle) {
     if (!db()) return null;
@@ -122,7 +203,13 @@ export const proyectosService = {
   async create(proyecto) {
     if (!db()) return null;
     const uid = await getUserId();
-    const { data, error } = await db().from('proyectos').insert({ ...proyecto, user_id: uid }).select().single();
+    const user = (await db().auth.getUser()).data?.user;
+    const { data, error } = await db().from('proyectos').insert({ 
+      ...proyecto, 
+      user_id: uid,
+      plataforma_origen: 'erp',
+      creado_por: user?.email || 'ERP Web',
+    }).select().single();
     if (error) throw error;
     return data;
   },
@@ -144,9 +231,18 @@ export const proyectosService = {
 export const presupuestoService = {
   async getAll() {
     if (!db()) return null;
-    const { data, error } = await db().from('presupuesto_items').select('*').order('orden', { ascending: true });
-    if (error) throw error;
-    return data;
+    let all = [];
+    let from = 0;
+    const PAGE = 1000;
+    while (true) {
+      const { data, error } = await db().from('presupuesto_items').select('*').order('orden', { ascending: true }).range(from, from + PAGE - 1);
+      if (error) throw error;
+      if (!data || data.length === 0) break;
+      all = all.concat(data);
+      if (data.length < PAGE) break;
+      from += PAGE;
+    }
+    return all;
   },
   async create(item) {
     if (!db()) return null;
@@ -471,7 +567,7 @@ export const personalService = {
         
       return publicUrl;
     } catch (e) {
-      console.error('Error uploading document:', e);
+      console.error(`Error uploading document: ${e.message || String(e)}`);
       // Retornar una URL base64 simulada en demo o si falla el bucket
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -487,7 +583,10 @@ export const cargosService = {
   async getAll() {
     if (!db()) return null;
     const { data, error } = await db().from('cargos').select('*');
-    if (error) throw error;
+    if (error) {
+      error.message = `[cargosService.getAll] ${error.message}`;
+      throw error;
+    }
     return data;
   },
   async create(cargo) {
@@ -570,10 +669,10 @@ export const personalProyectoService = {
     if (error) throw error;
     return data;
   },
-  async create(asignacion) {
+  async create(assignment) {
     if (!db()) return null;
-    const uid = await getUserId();
-    const { data, error } = await db().from('personal_proyecto').upsert({ ...asignacion, user_id: uid }).select().maybeSingle();
+    // Eliminamos user_id ya que la tabla personal_proyecto no lo tiene en este esquema
+    const { data, error } = await db().from('personal_proyecto').upsert(assignment).select().single();
     if (error) throw error;
     return data;
   },
@@ -637,57 +736,6 @@ export const itemDocumentsService = {
   }
 };
 
-/* ─── Hydration: carga todos los datos iniciales ─── */
-export async function loadAllData() {
-  if (!db()) return null;
-
-  // Envoltura para hacer cada llamada resiliente
-  const safeLoad = async (promise) => {
-    try {
-      const res = await promise;
-      return res || [];
-    } catch (e) {
-      console.warn('[Hydration] Partial failure:', e);
-      return [];
-    }
-  };
-
-  const [
-    insumos, apus, apuDetalles, proyectos, presupuestoItems, 
-    bimLinks, avances, notas, bodegas, inventario, 
-    pagos, usuarios, personal, cargos, config, cargoDetalles,
-    personalProyecto, itemChecklistItems, itemDocuments, controlAsistencia
-  ] = await Promise.all([
-    safeLoad(insumosService.getAll()),
-    safeLoad(apuService.getAll()),
-    safeLoad(apuDetalleService.getAll()),
-    safeLoad(proyectosService.getAll()),
-    safeLoad(presupuestoService.getAll()),
-    safeLoad(bimLinksService.getAll()),
-    safeLoad(obraAvancesService.getAll()),
-    safeLoad(notesService.getAll()),
-    safeLoad(bodegaService.getAll()),
-    safeLoad(inventarioService.getAll()),
-    safeLoad(pagosService.getAll()),
-    safeLoad(usuariosService.getAll()),
-    safeLoad(personalService.getAll()),
-    safeLoad(cargosService.getAll()),
-    safeLoad(configService.getAll()),
-    safeLoad(cargoDetalleService.getAll()),
-    safeLoad(personalProyectoService.getAll()),
-    safeLoad(checklistService.getAll()),
-    safeLoad(itemDocumentsService.getAll()),
-    safeLoad(asistenciaService.getAll()),
-  ]);
-
-  return {
-    insumos, apus, apuDetalles, proyectos, presupuestoItems,
-    bimLinks, avances, notas, bodegas, inventario,
-    pagos, usuarios, personal, cargos, config, cargoDetalles,
-    personalProyecto, itemChecklistItems, itemDocuments, controlAsistencia
-  };
-}
-
 /* ─── Configuración Global (SMLV, etc.) ─── */
 export const configService = {
   async getAll() {
@@ -704,6 +752,249 @@ export const configService = {
       .upsert({ clave, valor, user_id: uid }, { onConflict: 'clave' })
       .select()
       .maybeSingle();
+    if (error) throw error;
+    return data;
+  }
+};
+
+/* ─── Marketplace: Tiendas ─── */
+export const mkTiendasService = {
+  async getAll() {
+    if (!db()) return null;
+    try {
+      const { data, error } = await db().from('mk_tiendas').select('*');
+      if (error) throw error;
+      return data;
+    } catch { return []; }
+  },
+  async create(tienda) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const { data, error } = await db().from('mk_tiendas').insert({ ...tienda, user_id: uid }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('mk_tiendas').update(changes).eq('id', id).select().maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+  async remove(id) {
+    if (!db()) return null;
+
+    // DIAGNÓSTICO PROFUNDO
+    let checkInfo = "No se pudo verificar";
+    try {
+      const { data: chk } = await db().from('mk_tiendas').select('id, user_id').eq('id', id);
+      if (chk && chk.length > 0) checkInfo = `Sí existe. user_id=${chk[0].user_id}`;
+      else checkInfo = "NO EXISTE en DB para este usuario (RLS o ID erróneo)";
+    } catch(e) {}
+
+    const { data, error } = await db().from('mk_tiendas').delete().eq('id', id).select();
+    if (error) {
+      if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('db-error', { detail: "Error FK/Permisos al eliminar Tienda: " + error.message }));
+      throw error;
+    }
+    if (!data || data.length === 0) {
+      if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('db-error', { detail: `Fallo borrado silencioso (0 filas). ID intentado: ${id}. Estado en BD: ${checkInfo}` }));
+      throw new Error("No rows deleted");
+    }
+    return true;
+  },
+};
+
+/* ─── Marketplace: Puntos de Venta ─── */
+export const mkPuntosVentaService = {
+  async getAll() {
+    if (!db()) return null;
+    try {
+      const { data, error } = await db().from('mk_puntos_venta').select('*');
+      if (error) throw error;
+      return data;
+    } catch { return []; }
+  },
+  async create(pv) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const { data, error } = await db().from('mk_puntos_venta').insert({ ...pv, user_id: uid }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('mk_puntos_venta').update(changes).eq('id', id).select().maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+  async remove(id) {
+    if (!db()) return null;
+
+    // DIAGNÓSTICO PROFUNDO
+    let checkInfo = "No se pudo verificar";
+    try {
+      const { data: chk } = await db().from('mk_puntos_venta').select('id, user_id').eq('id', id);
+      if (chk && chk.length > 0) checkInfo = `Sí existe. user_id=${chk[0].user_id}`;
+      else checkInfo = "NO EXISTE en DB para este usuario (RLS o ID erróneo)";
+    } catch(e) {}
+
+    const { data, error } = await db().from('mk_puntos_venta').delete().eq('id', id).select();
+    if (error) {
+      if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('db-error', { detail: "Error FK/Permisos al eliminar Punto de Venta: " + error.message }));
+      throw error;
+    }
+    if (!data || data.length === 0) {
+      if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('db-error', { detail: `Fallo borrado silencioso (0 filas). ID PV: ${id}. Estado en BD: ${checkInfo}` }));
+      throw new Error("No rows deleted");
+    }
+    return true;
+  },
+};
+
+/* ─── Marketplace: Ofertas ─── */
+export const mkOfertasService = {
+  async getAll() {
+    if (!db()) return null;
+    try {
+      const { data, error } = await db().from('mk_ofertas').select('*');
+      if (error) throw error;
+      return data;
+    } catch { return []; }
+  },
+  async create(oferta) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const { data, error } = await db().from('mk_ofertas').insert({ ...oferta, user_id: uid }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('mk_ofertas').update(changes).eq('id', id).select().maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+  async remove(id) {
+    if (!db()) return null;
+    const { error } = await db().from('mk_ofertas').delete().eq('id', id);
+    if (error) {
+      if (typeof window !== 'undefined') window.alert("Error eliminando Oferta: " + error.message);
+      throw error;
+    }
+    return true;
+  },
+};
+
+/* ─── Marketplace: Pedidos ─── */
+export const mkPedidosService = {
+  async getAll() {
+    if (!db()) return null;
+    try {
+      const { data, error } = await db().from('mk_pedidos').select('*');
+      if (error) throw error;
+      return data;
+    } catch { return []; }
+  },
+  async create(pedido) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const { data, error } = await db().from('mk_pedidos').insert({ ...pedido, user_id: uid }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('mk_pedidos').update(changes).eq('id', id).select().maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+  async remove(id) {
+    if (!db()) return null;
+    const { error } = await db().from('mk_pedidos').delete().eq('id', id);
+    if (error) {
+      if (typeof window !== 'undefined') window.alert("Error eliminando Pedido: " + error.message);
+      throw error;
+    }
+    return true;
+  },
+};
+
+/* ─── Hydration: carga todos los datos iniciales ─── */
+export async function loadAllData() {
+  if (!db()) return null;
+
+  // Envoltura para hacer cada llamada resiliente con timeout
+  const withTimeout = (promise, ms = 10000) => {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), ms))
+    ]);
+  };
+
+  const safeLoad = async (promise, name = 'unknown') => {
+    try {
+      const res = await withTimeout(promise, 10000);
+      return res || [];
+    } catch (e) {
+      const isTimeout = e?.message === 'TIMEOUT';
+      const errorMsg = isTimeout 
+        ? `⏱️ [Hydration] Timeout en "${name}" (>10s) — usando datos vacíos`
+        : `🔴 [Hydration] Fallo en "${name}": ${e?.message || e?.code || 'Error desconocido'}`;
+      console.warn(errorMsg);
+      return [];
+    }
+  };
+
+  const [
+    categorias, insumos, apus, apuDetalles, proyectos, presupuestoItems, 
+    bimLinks, avances, notas, bodegas, inventario, 
+    pagos, usuarios, personal, cargos, config, cargoDetalles,
+    personalProyecto, itemChecklistItems, itemDocuments, controlAsistencia,
+    mkTiendas, mkPuntosVenta, mkOfertas, mkPedidos, chatCotizaciones
+  ] = await Promise.all([
+    safeLoad(categoriasService.getAll(), 'categorias'),
+    safeLoad(insumosService.getAll(), 'insumos'),
+    safeLoad(apuService.getAll(), 'apus'),
+    safeLoad(apuDetalleService.getAll(), 'apu_detalles'),
+    safeLoad(proyectosService.getAll(), 'proyectos'),
+    safeLoad(presupuestoService.getAll(), 'presupuesto_items'),
+    safeLoad(bimLinksService.getAll(), 'bim_links'),
+    safeLoad(obraAvancesService.getAll(), 'avances'),
+    safeLoad(notesService.getAll(), 'notas'),
+    safeLoad(bodegaService.getAll(), 'bodegas'),
+    safeLoad(inventarioService.getAll(), 'inventario'),
+    safeLoad(pagosService.getAll(), 'pagos'),
+    safeLoad(usuariosService.getAll(), 'usuarios'),
+    safeLoad(personalService.getAll(), 'personal'),
+    safeLoad(cargosService.getAll(), 'cargos'),
+    safeLoad(configService.getAll(), 'config'),
+    safeLoad(cargoDetalleService.getAll(), 'cargo_detalles'),
+    safeLoad(personalProyectoService.getAll(), 'personal_proyecto'),
+    safeLoad(checklistService.getAll(), 'checklist'),
+    safeLoad(itemDocumentsService.getAll(), 'documents'),
+    safeLoad(asistenciaService.getAll(), 'asistencia'),
+    // Marketplace
+    safeLoad(mkTiendasService.getAll(), 'mk_tiendas'),
+    safeLoad(mkPuntosVentaService.getAll(), 'mk_puntos_venta'),
+    safeLoad(mkOfertasService.getAll(), 'mk_ofertas'),
+    safeLoad(mkPedidosService.getAll(), 'mk_pedidos'),
+    safeLoad(chatCotizacionesService.getAll(), 'chat_cotizaciones'),
+  ]);
+
+  return {
+    categorias, insumos, apus, apuDetalles, proyectos, presupuestoItems,
+    bimLinks, avances, notas, bodegas, inventario,
+    pagos, usuarios, personal, cargos, config, cargoDetalles,
+    personalProyecto, itemChecklistItems, itemDocuments, controlAsistencia,
+    mkTiendas, mkPuntosVenta, mkOfertas, mkPedidos, chatCotizaciones
+  };
+}
+
+/* ─── Chat Cotizaciones ─── */
+export const chatCotizacionesService = {
+  async getAll() {
+    if (!db()) return null;
+    const { data, error } = await db().from('chat_cotizaciones').select('*').order('created_at', { ascending: false });
     if (error) throw error;
     return data;
   }
