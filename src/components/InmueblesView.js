@@ -133,9 +133,15 @@ export default function InmueblesView() {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('¿Está seguro de que desea eliminar este inmueble? Puede revertir esta acción usando la opción "Deshacer" en el menú superior.')) {
-      dispatch({ type: 'DELETE_INMUEBLE', payload: id });
+  const handleDelete = async (id) => {
+    if (window.confirm('¿Está seguro de que desea eliminar este inmueble?')) {
+      try {
+        const { error } = await supabase.from('inmuebles').delete().eq('id', id);
+        if (error) throw error;
+        fetchInmuebles();
+      } catch (err) {
+        alert('Error al eliminar inmueble: ' + err.message);
+      }
     }
   };
 
@@ -176,14 +182,25 @@ export default function InmueblesView() {
 
     if (selectedInmueble) {
       payload.id = selectedInmueble.id;
-      dispatch({ type: 'UPDATE_INMUEBLE', payload: payload });
+      try {
+        const { error } = await supabase.from('inmuebles').update(payload).eq('id', payload.id);
+        if (error) throw error;
+        fetchInmuebles();
+        setShowModal(false);
+      } catch(err) {
+        alert('Error al actualizar inmueble: ' + err.message);
+      }
     } else {
-      payload.id = generateId();
       payload.user_id = user?.id;
-      dispatch({ type: 'ADD_INMUEBLE', payload: payload });
+      try {
+        const { error } = await supabase.from('inmuebles').insert([payload]);
+        if (error) throw error;
+        fetchInmuebles();
+        setShowModal(false);
+      } catch(err) {
+        alert('Error al crear inmueble: ' + err.message);
+      }
     }
-    
-    setShowModal(false);
   };
 
   return (
