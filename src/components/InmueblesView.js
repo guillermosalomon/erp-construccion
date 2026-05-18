@@ -101,10 +101,10 @@ export default function InmueblesView() {
         leads_count: 0
       })) || [];
       
-      dispatch({ type: 'SET_INMUEBLES', payload: formatted.length > 0 ? formatted : mockInmuebles });
+      dispatch({ type: 'SET_INMUEBLES', payload: formatted });
     } catch (err) {
-      console.error('Error fetching inmuebles (using mock data):', err);
-      dispatch({ type: 'SET_INMUEBLES', payload: mockInmuebles });
+      console.error('Error fetching inmuebles:', err);
+      dispatch({ type: 'SET_INMUEBLES', payload: [] });
     } finally {
       setLoading(false);
     }
