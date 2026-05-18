@@ -27,8 +27,7 @@ export async function POST(request) {
         }
 
         // Llamar a la IA (Gemini)
-        // Usamos gemini-1.5-flash por ser rápido e ideal para chats
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
         
         // Estructuramos el prompt con el contexto y el mensaje del usuario
         const prompt = `${SYSTEM_PROMPT}\n\nCliente dice: "${incomingMessage}"\n\nRespuesta de Kalarti:`;
