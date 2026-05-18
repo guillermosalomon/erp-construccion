@@ -262,8 +262,39 @@ const mockInmuebles = [
                   )}
                 </div>
                 
-                {/* Carrusel miniatura (Gallery) */}
-                <div style={{ background: '#1e293b', padding: '12px', display: 'flex', gap: '12px', overflowX: 'auto' }}>
+              </div>
+              
+              {/* Lado derecho: Info */}
+              <div className="info-container" style={{ padding: '32px', overflowY: 'auto', background: '#f8fafc' }}>
+                <div style={{ fontSize: '32px', fontWeight: '900', color: '#2563eb', marginBottom: '8px' }}>
+                  {formatCurrency(selectedInmueble.precio)}
+                </div>
+                <div style={{ color: '#64748b', fontSize: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  📍 {selectedInmueble.direccion}, {selectedInmueble.ciudad}
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px' }}>
+                  <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '4px' }}>Habitaciones</div>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>{selectedInmueble.habitaciones}</div>
+                  </div>
+                  <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '4px' }}>Baños</div>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>{selectedInmueble.banos}</div>
+                  </div>
+                  <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '4px' }}>Área Construida</div>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>{selectedInmueble.area_construida} m²</div>
+                  </div>
+                  <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '4px' }}>Parqueaderos</div>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>{selectedInmueble.parqueaderos}</div>
+                  </div>
+                </div>
+                
+                {/* Carrusel miniatura (Gallery) movido aquí */}
+                <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0f172a', marginBottom: '12px' }}>Fotos Adicionales o Video 📹 (Múltiple)</h3>
+                <div style={{ background: '#f1f5f9', padding: '12px', display: 'flex', gap: '12px', overflowX: 'auto', borderRadius: '12px', marginBottom: '32px', border: '1px solid #e2e8f0' }}>
                   {/* Thumbnail del Tour 360 si existe */}
                   {selectedInmueble.tour_360_url && (
                     <div 
@@ -305,35 +336,6 @@ const mockInmuebles = [
                       <img src={foto.url} alt="Foto Extra" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
                     </div>
                   ))}
-                </div>
-              </div>
-              
-              {/* Lado derecho: Info */}
-              <div className="info-container" style={{ padding: '32px', overflowY: 'auto', background: '#f8fafc' }}>
-                <div style={{ fontSize: '32px', fontWeight: '900', color: '#2563eb', marginBottom: '8px' }}>
-                  {formatCurrency(selectedInmueble.precio)}
-                </div>
-                <div style={{ color: '#64748b', fontSize: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  📍 {selectedInmueble.direccion}, {selectedInmueble.ciudad}
-                </div>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px' }}>
-                  <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '4px' }}>Habitaciones</div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>{selectedInmueble.habitaciones}</div>
-                  </div>
-                  <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '4px' }}>Baños</div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>{selectedInmueble.banos}</div>
-                  </div>
-                  <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '4px' }}>Área Construida</div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>{selectedInmueble.area_construida} m²</div>
-                  </div>
-                  <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '4px' }}>Parqueaderos</div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>{selectedInmueble.parqueaderos}</div>
-                  </div>
                 </div>
 
                 <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0f172a', marginBottom: '12px' }}>Descripción</h3>
