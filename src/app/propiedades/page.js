@@ -132,7 +132,7 @@ export default function PropiedadesMarketplace() {
         justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 
       }}>
         <Link href="/" style={{ fontSize: '24px', fontWeight: '800', color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ background: '#f59e0b', color: '#0f172a', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}>K</div>
+          <img src="/icon.png" alt="Kalarti Logo" style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'contain' }} />
           KALARTI Market
         </Link>
         <div style={{ display: 'flex', gap: '20px' }}>

@@ -129,7 +129,7 @@ export default function MarketplaceProductos() {
         justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 
       }}>
         <Link href="/" style={{ fontSize: '24px', fontWeight: '800', color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ background: '#3b82f6', color: '#0f172a', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}>K</div>
+          <img src="/icon.png" alt="Kalarti Logo" style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'contain' }} />
           KALARTI Materiales
         </Link>
         <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>

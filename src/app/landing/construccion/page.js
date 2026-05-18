@@ -62,7 +62,7 @@ function Navbar() {
         <nav className={`lp-navbar ${scrolled ? 'lp-navbar--scrolled' : ''}`}>
             <div className="lp-nav-container">
                 <div className="lp-nav-logo">
-                    <div className="lp-logo-emblem">K</div>
+                    <img src="/icon.png" alt="Kalarti Logo" style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'contain' }} />
                     <span className="lp-logo-text">KALARTI</span>
                     <span className="lp-logo-tagline">Constructores y Consultores</span>
                 </div>
@@ -377,7 +377,7 @@ function Footer() {
             <div className="lp-container">
                 <div className="lp-footer-content">
                     <div className="lp-footer-brand">
-                        <div className="lp-nav-logo"><div className="lp-logo-emblem">K</div><span className="lp-logo-text" style={{ color: '#fff' }}>KALARTI</span></div>
+                        <div className="lp-nav-logo"><img src="/icon.png" alt="Kalarti Logo" style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'contain' }} /><span className="lp-logo-text" style={{ color: '#fff' }}>KALARTI</span></div>
                         <p>Constructores y Consultores S.A.S.</p>
                         <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Cra 28a No 17-15 Ed. Antonella Of. 401 — Pasto, Nariño</p>
                     </div>

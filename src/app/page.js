@@ -303,7 +303,7 @@ export default function KalartiHub() {
 
       <nav className="hub-nav">
         <Link href="/" className="nav-brand">
-          <div className="nav-logo-k">K</div>
+          <img src="/icon.png" alt="Kalarti Logo" style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'contain' }} />
           KALARTI
         </Link>
         <div className="nav-links">
