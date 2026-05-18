@@ -8,7 +8,7 @@ import { useStore } from '@/store/StoreContext';
 // Mock data en caso de que la tabla aún no esté creada en Supabase
 const mockInmuebles = [
   {
-    id: '1',
+    id: '11111111-1111-4111-a111-111111111111',
     titulo: 'Casa Moderna de Lujo',
     descripcion: 'Hermosa casa moderna con piscina y acabados de lujo. Excelente iluminación y ubicación.',
     precio: 850000000,
@@ -34,7 +34,7 @@ const mockInmuebles = [
     created_at: new Date().toISOString()
   },
   {
-    id: '2',
+    id: '22222222-2222-4222-a222-222222222222',
     titulo: 'Apartamento Penthouse Centro',
     descripcion: 'Penthouse con vista 360 a la ciudad, espacios amplios y diseño minimalista.',
     precio: 620000000,
