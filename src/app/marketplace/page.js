@@ -102,6 +102,27 @@ export default function MarketplaceProductos() {
 
   return (
     <div style={{ fontFamily: 'Inter, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <style>{`
+        .search-bar-flex {
+          display: flex;
+          gap: 8px;
+          flex-direction: row;
+        }
+        @media (max-width: 768px) {
+          .search-bar-flex {
+            flex-direction: column !important;
+          }
+          nav {
+            flex-direction: column;
+            padding: 20px !important;
+            gap: 12px;
+          }
+          .nav-links {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+        }
+      `}</style>
       {/* HEADER PUBLICO */}
       <nav style={{ 
         background: '#0f172a', padding: '20px 40px', display: 'flex', 
@@ -111,7 +132,7 @@ export default function MarketplaceProductos() {
           <div style={{ background: '#3b82f6', color: '#0f172a', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}>K</div>
           KALARTI Materiales
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
           <select 
             value={selectedPais}
             onChange={(e) => setSelectedPais(e.target.value)}
@@ -136,8 +157,8 @@ export default function MarketplaceProductos() {
         </p>
 
         {/* Barra de Filtros */}
-        <div style={{ 
-          background: 'white', padding: '8px', borderRadius: '12px', display: 'flex', gap: '8px', 
+        <div className="search-bar-flex" style={{ 
+          background: 'white', padding: '8px', borderRadius: '12px', 
           maxWidth: '900px', margin: '0 auto', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' 
         }}>
           <input 
@@ -154,7 +175,7 @@ export default function MarketplaceProductos() {
               <option key={ciudad} value={ciudad}>📍 {ciudad}</option>
             ))}
           </select>
-          <button style={{ background: '#3b82f6', color: 'white', padding: '0 32px', borderRadius: '8px', border: 'none', fontWeight: '700', fontSize: '16px', cursor: 'pointer' }}>
+          <button style={{ background: '#3b82f6', color: 'white', padding: '16px 32px', borderRadius: '8px', border: 'none', fontWeight: '700', fontSize: '16px', cursor: 'pointer' }}>
             Buscar
           </button>
         </div>

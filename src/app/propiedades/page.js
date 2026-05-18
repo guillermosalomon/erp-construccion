@@ -100,6 +100,11 @@ const mockInmuebles = [
         .info-container {
           flex: 1;
         }
+        .search-bar-flex {
+          display: flex;
+          gap: 8px;
+          flex-direction: row;
+        }
         @media (max-width: 768px) {
           .modal-content-flex {
             flex-direction: column !important;
@@ -107,13 +112,16 @@ const mockInmuebles = [
           }
           .media-container {
             flex: none !important;
-            height: 40vh !important;
+            height: 60vh !important;
             width: 100% !important;
           }
           .info-container {
             flex: none !important;
             overflow-y: visible !important;
             padding: 20px !important;
+          }
+          .search-bar-flex {
+            flex-direction: column !important;
           }
         }
       `}</style>
@@ -143,8 +151,8 @@ const mockInmuebles = [
         </p>
 
         {/* Barra de Filtros */}
-        <div style={{ 
-          background: 'white', padding: '8px', borderRadius: '12px', display: 'flex', gap: '8px', 
+        <div className="search-bar-flex" style={{ 
+          background: 'white', padding: '8px', borderRadius: '12px', 
           maxWidth: '800px', margin: '0 auto', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' 
         }}>
           <select 
@@ -163,7 +171,7 @@ const mockInmuebles = [
             placeholder="Ciudad, zona o palabra clave..." 
             style={{ flex: 2, padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '16px', outline: 'none' }} 
           />
-          <button style={{ background: '#f59e0b', color: '#0f172a', padding: '0 32px', borderRadius: '8px', border: 'none', fontWeight: '700', fontSize: '16px', cursor: 'pointer' }}>
+          <button style={{ background: '#f59e0b', color: '#0f172a', padding: '16px 32px', borderRadius: '8px', border: 'none', fontWeight: '700', fontSize: '16px', cursor: 'pointer' }}>
             Buscar
           </button>
         </div>
