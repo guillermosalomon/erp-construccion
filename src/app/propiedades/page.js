@@ -90,6 +90,33 @@ export default function PropiedadesMarketplace() {
 
   return (
     <div style={{ fontFamily: 'Inter, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <style>{`
+        .modal-content-flex {
+          flex-direction: row;
+        }
+        .media-container {
+          flex: 2;
+        }
+        .info-container {
+          flex: 1;
+        }
+        @media (max-width: 768px) {
+          .modal-content-flex {
+            flex-direction: column !important;
+            overflow-y: auto !important;
+          }
+          .media-container {
+            flex: none !important;
+            height: 40vh !important;
+            width: 100% !important;
+          }
+          .info-container {
+            flex: none !important;
+            overflow-y: visible !important;
+            padding: 20px !important;
+          }
+        }
+      `}</style>
       {/* HEADER PUBLICO */}
       <nav style={{ 
         background: '#0f172a', padding: '20px 40px', display: 'flex', 
@@ -206,9 +233,9 @@ export default function PropiedadesMarketplace() {
               <button onClick={() => setSelectedInmueble(null)} style={{ background: '#f1f5f9', border: 'none', width: '40px', height: '40px', borderRadius: '50%', fontSize: '20px', cursor: 'pointer', color: '#64748b' }}>✕</button>
             </div>
             
-            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+            <div className="modal-content-flex" style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
               {/* Lado izquierdo: Media (360 o Imagen) */}
-              <div style={{ flex: 2, background: '#000', position: 'relative' }}>
+              <div className="media-container" style={{ background: '#000', position: 'relative' }}>
                 {selectedInmueble.tour_360_url ? (
                   <iframe 
                     width="100%" 
@@ -232,7 +259,7 @@ export default function PropiedadesMarketplace() {
               </div>
               
               {/* Lado derecho: Info */}
-              <div style={{ flex: 1, padding: '32px', overflowY: 'auto', background: '#f8fafc' }}>
+              <div className="info-container" style={{ padding: '32px', overflowY: 'auto', background: '#f8fafc' }}>
                 <div style={{ fontSize: '32px', fontWeight: '900', color: '#2563eb', marginBottom: '8px' }}>
                   {formatCurrency(selectedInmueble.precio)}
                 </div>

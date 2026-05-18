@@ -76,6 +76,8 @@ export default function InmueblesView() {
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [selectedInmueble, setSelectedInmueble] = useState(null);
   const [leads, setLeads] = useState([]);
+  const [fotosAdicionales, setFotosAdicionales] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (inmuebles.length === 0) {
@@ -124,9 +126,51 @@ export default function InmueblesView() {
     }
   };
 
-  const openEditModal = (inmueble) => {
+  const openEditModal = async (inmueble) => {
     setSelectedInmueble(inmueble);
+    setFotosAdicionales([]);
     setShowModal(true);
+    
+    if (inmueble) {
+      try {
+        const { data } = await supabase.from('inmueble_fotos').select('*').eq('inmueble_id', inmueble.id).order('orden');
+        if (data) {
+          setFotosAdicionales(data.map(f => ({ id: f.id, url: f.url, descripcion: f.descripcion || '', isExisting: true })));
+        }
+      } catch (e) {
+        console.error('Error fetching photos:', e);
+      }
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    const newFotos = files.map(f => ({
+      file: f,
+      url: URL.createObjectURL(f),
+      descripcion: f.name,
+      isExisting: false
+    }));
+    setFotosAdicionales(prev => [...prev, ...newFotos]);
+    e.target.value = ''; // reset input
+  };
+
+  const removeFoto = async (index) => {
+    const foto = fotosAdicionales[index];
+    if (foto.isExisting) {
+      if (window.confirm('¿Eliminar esta foto de la base de datos?')) {
+        await supabase.from('inmueble_fotos').delete().eq('id', foto.id);
+        setFotosAdicionales(prev => prev.filter((_, i) => i !== index));
+      }
+    } else {
+      setFotosAdicionales(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateFotoDesc = (index, desc) => {
+    const newFotos = [...fotosAdicionales];
+    newFotos[index].descripcion = desc;
+    setFotosAdicionales(newFotos);
   };
 
   const formatCurrency = (value) => {
@@ -168,38 +212,59 @@ export default function InmueblesView() {
       estado: fd.get('estado')
     };
     
-    // Simulación de carga local para preview de la imagen de portada y adicionales
-    const portadaFile = fd.get('portada_file');
-    if (portadaFile && portadaFile.size > 0) {
-      payload.portada_url = URL.createObjectURL(portadaFile);
-    }
+    let currentInmuebleId = selectedInmueble ? selectedInmueble.id : null;
     
-    const fotosExtraFiles = fd.getAll('fotos_adicionales');
-    if (fotosExtraFiles && fotosExtraFiles.length > 0 && fotosExtraFiles[0].size > 0) {
-      // Simular subir fotos y guardar en metadata / JSON. 
-      // Por ahora, como es UI prototype, podríamos inyectarlos o instruir usar bucket final.
-    }
-
-    if (selectedInmueble) {
-      payload.id = selectedInmueble.id;
-      try {
+    setUploading(true);
+    try {
+      // 1. Guardar inmueble principal
+      if (currentInmuebleId) {
+        payload.id = currentInmuebleId;
         const { error } = await supabase.from('inmuebles').update(payload).eq('id', payload.id);
         if (error) throw error;
-        fetchInmuebles();
-        setShowModal(false);
-      } catch(err) {
-        alert('Error al actualizar inmueble: ' + err.message);
-      }
-    } else {
-      payload.user_id = user?.id;
-      try {
-        const { error } = await supabase.from('inmuebles').insert([payload]);
+      } else {
+        payload.user_id = user?.id;
+        const { data, error } = await supabase.from('inmuebles').insert([payload]).select().single();
         if (error) throw error;
-        fetchInmuebles();
-        setShowModal(false);
-      } catch(err) {
-        alert('Error al crear inmueble: ' + err.message);
+        currentInmuebleId = data.id;
       }
+
+      // 2. Guardar fotos adicionales
+      for (let i = 0; i < fotosAdicionales.length; i++) {
+        const foto = fotosAdicionales[i];
+        if (!foto.isExisting && foto.file) {
+          // Subir a storage
+          const fileExt = foto.file.name.split('.').pop();
+          const fileName = `${currentInmuebleId}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const filePath = `propiedades/${fileName}`;
+          
+          const { error: uploadError } = await supabase.storage.from('inmuebles').upload(filePath, foto.file);
+          
+          if (uploadError) {
+            console.error('Error subiendo foto:', uploadError);
+            continue; // Si falla el bucket, continua con el resto pero no inserta en BD
+          }
+          
+          const { data: { publicUrl } } = supabase.storage.from('inmuebles').getPublicUrl(filePath);
+          
+          await supabase.from('inmueble_fotos').insert({
+            inmueble_id: currentInmuebleId,
+            url: publicUrl,
+            descripcion: foto.descripcion,
+            orden: i,
+            tipo: 'FOTO'
+          });
+        } else if (foto.isExisting) {
+          // Solo actualizar descripción/orden si cambió
+          await supabase.from('inmueble_fotos').update({ descripcion: foto.descripcion, orden: i }).eq('id', foto.id);
+        }
+      }
+
+      fetchInmuebles();
+      setShowModal(false);
+    } catch(err) {
+      alert('Error guardando inmueble: ' + err.message + '. Asegúrate de haber creado el bucket "inmuebles" en Storage.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -341,10 +406,27 @@ export default function InmueblesView() {
                   </div>
                 </div>
 
-                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px dashed #cbd5e1' }}>
-                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600', color: '#334155' }}>Subir Fotos Adicionales o Video 📹 (Múltiple)</label>
-                    <input type="file" name="fotos_adicionales" accept="image/*,video/*" multiple style={{ width: '100%', padding: '8px' }} />
-                    <span style={{ fontSize: '11px', color: '#64748b' }}>Soporta carga múltiple de imágenes y videos cortos. Se almacenarán en Supabase Storage (requiere bucket 'inmuebles').</span>
+                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px dashed #cbd5e1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: '600', color: '#334155' }}>Subir Fotos Adicionales o Video 📹 (Múltiple)</label>
+                  <input type="file" multiple accept="image/*,video/*" onChange={handleFileSelect} style={{ width: '100%', padding: '8px', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '16px' }} />
+                  
+                  {fotosAdicionales.length > 0 && (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
+                      {fotosAdicionales.map((foto, index) => (
+                        <div key={index} style={{ display: 'flex', gap: '12px', background: 'white', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', alignItems: 'center' }}>
+                          <img src={foto.url} alt="preview" style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '6px' }} />
+                          <div style={{ flex: 1 }}>
+                            <input type="text" value={foto.descripcion} onChange={(e) => updateFotoDesc(index, e.target.value)} placeholder="Nombre o descripción (Ej. Sala, Cocina)" style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '13px' }} />
+                            {foto.isExisting && <div style={{ fontSize: '11px', color: '#10b981', marginTop: '4px' }}>Guardada en nube</div>}
+                          </div>
+                          <button type="button" onClick={() => removeFoto(index)} style={{ background: '#fee2e2', color: '#ef4444', border: 'none', width: '32px', height: '32px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <p style={{ fontSize: '11px', color: '#64748b', marginTop: '12px', marginBottom: 0 }}>
+                    Soporta carga múltiple de imágenes y videos cortos. Se almacenarán en Supabase Storage (requiere bucket 'inmuebles').
+                  </p>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr', gap: '16px' }}>
@@ -420,8 +502,10 @@ export default function InmueblesView() {
             </div>
             
             <div style={{ padding: '16px 24px', borderTop: '1px solid #e2e8f0', background: '#f8fafc', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-              <button type="button" onClick={() => setShowModal(false)} style={{ padding: '10px 16px', background: 'white', border: '1px solid #cbd5e1', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Cancelar</button>
-              <button type="submit" style={{ padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Guardar</button>
+              <button type="button" onClick={() => setShowModal(false)} disabled={uploading} style={{ padding: '10px 16px', background: 'white', border: '1px solid #cbd5e1', borderRadius: '8px', fontWeight: '600', cursor: uploading ? 'not-allowed' : 'pointer' }}>Cancelar</button>
+              <button type="submit" disabled={uploading} style={{ padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: uploading ? 'not-allowed' : 'pointer' }}>
+                {uploading ? 'Guardando (Puede tardar)...' : 'Guardar'}
+              </button>
             </div>
           </form>
         </div>
