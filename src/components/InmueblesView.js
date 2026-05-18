@@ -212,9 +212,26 @@ export default function InmueblesView() {
       estado: fd.get('estado')
     };
     
+    setUploading(true);
+    
+    // Guardar portada_url si se subió un archivo
+    const portadaFile = fd.get('portada_file');
+    if (portadaFile && portadaFile.size > 0) {
+      const fileExt = portadaFile.name.split('.').pop();
+      const fileName = `portada_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `propiedades/${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage.from('inmuebles').upload(filePath, portadaFile);
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('inmuebles').getPublicUrl(filePath);
+        payload.portada_url = publicUrl;
+      } else {
+        console.error('Error subiendo imagen de portada:', uploadError);
+      }
+    }
+    
     let currentInmuebleId = selectedInmueble ? selectedInmueble.id : null;
     
-    setUploading(true);
     try {
       // 1. Guardar inmueble principal
       if (currentInmuebleId) {
