@@ -722,3 +722,15 @@ body {
 .dropdown-item:hover {
   background: var(--color-surface-hover);
 }
+
+/* ── Chat Actions ── */
+.chat-message-container .message-actions {
+  opacity: 0 !important;
+  visibility: hidden;
+  transition: all 0.2s ease;
+}
+
+.chat-message-container:hover .message-actions {
+  opacity: 1 !important;
+  visibility: visible;
+}

@@ -309,7 +309,8 @@ export default function KalartiHub() {
         <div className="nav-links">
           <a href="#ecosistema">Ecosistema</a>
           <Link href="/landing/construccion">Servicios</Link>
-          <Link href="/erp">Marketplace</Link>
+          <Link href="/propiedades">Inmuebles</Link>
+          <Link href="/marketplace">Marketplace B2B</Link>
           <Link href="/erp" className="btn-erp">Acceso ERP / Login</Link>
         </div>
       </nav>
@@ -384,7 +385,7 @@ export default function KalartiHub() {
               <p className="card-desc">
                 Compra de materiales, alquiler de maquinaria y productos de ferreterías afiliadas directamente desde tus presupuestos.
               </p>
-              <Link href="/erp" className="card-link">
+              <Link href="/marketplace" className="card-link">
                 Explorar Productos ➔
               </Link>
             </div>
@@ -396,7 +397,7 @@ export default function KalartiHub() {
               <p className="card-desc">
                 Explora el portafolio de proyectos inmobiliarios, casas y apartamentos disponibles desarrollados por la red Kalarti.
               </p>
-              <Link href="/erp" className="card-link">
+              <Link href="/propiedades" className="card-link">
                 Ver Proyectos ➔
               </Link>
             </div>

@@ -149,13 +149,13 @@ export default function ProyectosView({ onOpenHub }) {
   };
 
   const handleDelete = (id) => {
-    if (confirm('¿Eliminar este registro?')) {
-      if (viewMode === 'proyectos') {
+    const item = state.proyectos.find(p => p.id === id);
+    if (viewMode === 'proyectos') {
+      if (confirm(`¿Estás seguro de que deseas eliminar el proyecto "${item?.nombre}"? Se perderán todos sus ítems de presupuesto vinculados.`)) {
         dispatch({ type: 'DELETE_PROYECTO', payload: id });
-      } else {
-        // En una app real llamaríamos a un servicio para borrar cotización
-        alert('Funcionalidad de borrado de cotizaciones en desarrollo.');
       }
+    } else {
+      alert('Funcionalidad de borrado de cotizaciones en desarrollo.');
     }
   };
 

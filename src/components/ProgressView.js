@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth';
 import { storageService } from '@/lib/services';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-export default function ProgressView({ contextProyectoId }) {
+export default function ProgressView({ contextProyectoId, defaultTab }) {
   const { state, dispatch, calcularCostoMO, calcularDatosCargo } = useStore();
   const [selectedProyectoId, setSelectedProyectoId] = useState('');
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -26,7 +26,7 @@ export default function ProgressView({ contextProyectoId }) {
   const [isResizingX2, setIsResizingX2] = useState(false);
   const [viewerTab, setViewerTab] = useState('visor'); // 'visor' | 'docs'
   const [viewMode, setViewMode] = useState('laptop'); // 'tablet', 'laptop', 'monitor'
-  const [panelTab, setPanelTab] = useState('resumen'); // 'resumen' or cuadrilla index
+  const [panelTab, setPanelTab] = useState(defaultTab || 'resumen'); // 'resumen', 'bitacora' or cuadrilla index
   const [newChecklistItem, setNewChecklistItem] = useState('');
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
   const { user } = useAuth();
@@ -97,9 +97,17 @@ export default function ProgressView({ contextProyectoId }) {
   const effectiveProyectoId = contextProyectoId || selectedProyectoId;
 
   // Calculations
-  const presupuestoItems = state.presupuestoItems.filter(pi => pi.proyecto_id === effectiveProyectoId);
+  const presupuestoItems = useMemo(() => state.presupuestoItems.filter(pi => pi.proyecto_id === effectiveProyectoId), [state.presupuestoItems, effectiveProyectoId]);
   const bimLinks = state.bimLinks.filter(l => l.proyecto_id === effectiveProyectoId);
+  
   const itemNotes = state.notas.filter(n => n.presupuesto_item_id === selectedItemId);
+  
+  const projectNotes = useMemo(() => {
+    const itemIds = presupuestoItems.map(i => i.id);
+    return state.notas.filter(n => itemIds.includes(n.presupuesto_item_id)).sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  }, [state.notas, presupuestoItems]);
+
+  const effectiveNotes = panelTab === 'bitacora' ? projectNotes : itemNotes;
   
   const elementToItemMap = useMemo(() => {
     const map = {};
@@ -504,9 +512,10 @@ export default function ProgressView({ contextProyectoId }) {
       
       if (moDetails.length > 0) {
         // Buscamos personal que tenga uno de los cargos del APU
-        const matchingPerson = state.personal.find(p => 
-          moDetails.some(d => d.cargo_id === p.cargo_id)
-        );
+        const matchingPerson = state.personal.find(p => {
+          const personCargos = Array.isArray(p.cargos_ids) && p.cargos_ids.length > 0 ? p.cargos_ids : (p.cargo_id ? [p.cargo_id] : []);
+          return moDetails.some(d => personCargos.includes(d.cargo_id));
+        });
         
         if (matchingPerson) {
           handleUpdateItem(selectedItemId, { asignado_a_cuadrilla: matchingPerson.email || matchingPerson.nombre });
@@ -1112,11 +1121,18 @@ export default function ProgressView({ contextProyectoId }) {
                 </div>
               </div>
 
-              <div className="resizer-y" onMouseDown={() => setIsResizingY(true)}></div>
+              {panelTab !== 'bitacora' && <div className="resizer-y" onMouseDown={() => setIsResizingY(true)}></div>}
 
-              <div className="collaboration-panel" style={{ height: `${100 - splitY}%`, flex: 'none' }}>
+              <div 
+                className="collaboration-panel" 
+                style={{ 
+                  height: panelTab === 'bitacora' ? '100%' : `${100 - splitY}%`, 
+                  flex: panelTab === 'bitacora' ? 1 : 'none',
+                  borderTop: panelTab === 'bitacora' ? 'none' : '1px solid var(--color-border)'
+                }}
+              >
                 <div className="panel-header">
-                  <h3>Panel Detallado & Colaboración</h3>
+                  <h3>{panelTab === 'bitacora' ? 'Canal de Proyecto (Bitácora Unificada)' : 'Panel Detallado & Colaboración'}</h3>
                 </div>
                 {selectedItemId && currentItem ? (
                   <div className="detail-flex" style={{ display: 'flex', height: 'calc(100% - 50px)', overflow: 'hidden' }}>
@@ -1143,6 +1159,7 @@ export default function ProgressView({ contextProyectoId }) {
                         
                         const tabs = [
                           { key: 'resumen', label: '📋 Resumen' },
+                          { key: 'bitacora', label: '💬 Bitácora (Canal)' },
                           ...(nCuad > 0 ? Array.from({ length: nCuad })
                             .filter((_, i) => cargoIds.some(cid => assignedSignatures.includes(`${cid}:${i}`)))
                             .map((_, i) => {
@@ -1377,13 +1394,48 @@ export default function ProgressView({ contextProyectoId }) {
                         
                         return (
                           <>
-                            {/* 2 COLUMNAS: Izq (Checklist + Docs) | Der (Mensajes) */}
+                             {/* 2 COLUMNAS: Izq (Channels Sidebar + Checklist) | Der (Mensajes) */}
                             <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                               
-                              {/* COLUMNA IZQUIERDA: Checklist + Documentos */}
-                              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', borderRight: '1px solid #e2e8f0', overflow: 'hidden' }}>
-                                {/* Checklist Técnico */}
-                                <div style={{ padding: 16, background: '#fff', flex: 1, overflowY: 'auto' }}>
+                              {/* COLUMNA IZQUIERDA: Canales (en modo bitacora) o Checklist */}
+                              <div style={{ width: panelTab === 'bitacora' ? 240 : '40%', display: 'flex', flexDirection: 'column', borderRight: '1px solid #e2e8f0', overflow: 'hidden', flex: 'none' }}>
+                                {panelTab === 'bitacora' ? (
+                                  <div style={{ padding: 16, background: '#fff', flex: 1, overflowY: 'auto' }}>
+                                    <h4 style={{ fontSize: 11, fontWeight: 800, color: '#64748b', marginBottom: 12, textTransform: 'uppercase' }}>Canales de Actividad</h4>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                      <button 
+                                        onClick={() => setSelectedItemId(null)}
+                                        style={{ 
+                                          padding: '8px 12px', borderRadius: 8, border: 'none', textAlign: 'left', fontSize: 12, cursor: 'pointer',
+                                          background: !selectedItemId ? '#eff6ff' : 'transparent',
+                                          color: !selectedItemId ? '#2563eb' : '#64748b',
+                                          fontWeight: !selectedItemId ? 700 : 500
+                                        }}
+                                      >
+                                        🌐 Proyecto General
+                                      </button>
+                                      <div style={{ height: 1, background: '#f1f5f9', margin: '8px 0' }} />
+                                      {presupuestoItems.map(item => (
+                                        <button 
+                                          key={item.id}
+                                          onClick={() => setSelectedItemId(item.id)}
+                                          style={{ 
+                                            padding: '8px 12px', borderRadius: 8, border: 'none', textAlign: 'left', fontSize: 11, cursor: 'pointer',
+                                            background: selectedItemId === item.id ? '#eff6ff' : 'transparent',
+                                            color: selectedItemId === item.id ? '#2563eb' : '#64748b',
+                                            fontWeight: selectedItemId === item.id ? 700 : 500,
+                                            display: 'flex', justifyContent: 'space-between'
+                                          }}
+                                        >
+                                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>#{item.nombre}</span>
+                                          {state.notas.filter(n => n.presupuesto_item_id === item.id && n.status === 'Recibido').length > 0 && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ef4444' }} />}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  /* Checklist Técnico */
+                                  <div style={{ padding: 16, background: '#fff', flex: 1, overflowY: 'auto' }}>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                                     <span style={{ fontSize: 11, fontWeight: 800, color: '#64748b' }}>📝 CHECKLIST TÉCNICO</span>
                                     <span style={{ fontSize: 10, color: '#3b82f6', fontWeight: 800 }}>
@@ -1491,8 +1543,8 @@ export default function ProgressView({ contextProyectoId }) {
                                     })}
                                   </div>
                                 </div>
-
-                                {/* Documentos se muestra ahora en el overlay del Visor BIM */}
+                              )}
+                              {/* Documentos se muestra ahora en el overlay del Visor BIM */}
                               </div>
 
                               {/* COLUMNA DERECHA: Supervisión + Cuadrilla + Mensajes */}
@@ -1636,12 +1688,12 @@ export default function ProgressView({ contextProyectoId }) {
                                         );
                                       })}
                                     </div>
-                                  </details>
+                                          </details>
                                 );
                               })()}
                               <div className="notes-wall" style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
                               {(() => {
-                                const filteredNotes = itemNotes.filter(n => {
+                                const filteredNotes = effectiveNotes.filter(n => {
                                   const nScope = n.meta?.scope || 'RESUMEN';
                                   const isSupervisionLog = n.meta?.scope === 'SUPERVISION_LOG';
                                   if (n.parent_id) return false; // Notas legacy de hilos: se ocultan, las nuevas son mensajes planos
@@ -1654,6 +1706,11 @@ export default function ProgressView({ contextProyectoId }) {
                                         <span className="note-status" style={{ background: getStatusColor(note.status) }}>{note.status || 'Recibido'}</span>
                                         {note.meta?.type === 'tech_report' && <span style={{ fontSize: 9, fontWeight: 900, color: '#3b82f6', marginLeft: 8 }}>📑 REPORTE TÉCNICO</span>}
                                         <span style={{ fontSize: 10, fontWeight: 800, color: '#64748b', marginLeft: 8 }}>{note.author_name}</span>
+                                        {panelTab === 'bitacora' && !selectedItemId && (
+                                            <span style={{ fontSize: 9, color: '#2563eb', fontWeight: 800, marginLeft: 8 }}>
+                                              📍 {presupuestoItems.find(i => i.id === note.presupuesto_item_id)?.nombre || 'General'}
+                                            </span>
+                                         )}
                                         <span className="note-date">{new Date(note.created_at).toLocaleString('es-CO', { hour: '2-digit', minute: '2-digit' })}</span>
                                       </div>
                                       <div className="note-text" style={{ fontSize: 12, marginTop: 4, whiteSpace: 'pre-wrap' }}>{note.texto}</div>

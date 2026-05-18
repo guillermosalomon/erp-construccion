@@ -12,6 +12,7 @@ function getWelcome(nombre) {
          `📈 /avance — Reportar avance de actividad\n` +
          `📝 /informe — Enviar informe diario\n` +
          `📦 /pedido — Solicitar materiales a bodega\n` +
+         `📋 /perfil — Completar tu perfil\n` +
          `📋 /ayuda — Más opciones`;
 }
 

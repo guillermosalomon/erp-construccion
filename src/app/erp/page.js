@@ -22,6 +22,7 @@ import NominaView from '@/components/NominaView';
 import PersonalView from '@/components/PersonalView';
 import CargosView from '@/components/CargosView';
 import MarketplaceView from '@/components/MarketplaceView';
+import InmueblesView from '@/components/InmueblesView';
 import PuntoVentaView from '@/components/PuntoVentaView';
 import HistorialPOSView from '@/components/HistorialPOSView';
 import VendedorPortalView from '@/components/VendedorPortalView';
@@ -61,6 +62,17 @@ export default function Home() {
   const { state, dispatch, dataLoading } = useStore();
   const [activeSection, setActiveSection] = useState('dashboard');
   const [activeProyectoId, setActiveProyectoId] = useState(null);
+
+  // Muro de Seguridad: Si no es corporativo, redirigir al Marketplace
+  useEffect(() => {
+    if (user) {
+      const allowedEmails = ['gsalo90@outlook.com', 'guillermosalomonsolarte@gmail.com', 'arq.guillermo_salomon@kalarti.com'];
+      const isCorporate = user.email?.endsWith('@kalarti.com') || allowedEmails.includes(user.email);
+      if (!isCorporate && activeSection === 'dashboard') {
+        setActiveSection('marketplace');
+      }
+    }
+  }, [user, activeSection]);
 
   // Listener: navegar a Personal y abrir perfil desde otros módulos
   useEffect(() => {
@@ -104,7 +116,8 @@ export default function Home() {
   let userRole = (personalRecord?.app_role || user.user_metadata?.role || '').toUpperCase();
   
   // BYPASS DE EMERGENCIA PARA EL ADMINISTRADOR
-  if (user?.email === 'gsalo90@outlook.com') userRole = 'ADMIN';
+  const adminEmails = ['gsalo90@outlook.com', 'guillermosalomonsolarte@gmail.com', 'arq.guillermo_salomon@kalarti.com'];
+  if (adminEmails.includes(user?.email)) userRole = 'ADMIN';
 
   // Role-based interception: Mobile/field workers
   if (userRole === 'TIENDA') {
@@ -181,6 +194,8 @@ export default function Home() {
         return <NominaView />;
       case 'marketplace':
         return <MarketplaceView />;
+      case 'inmuebles':
+        return <InmueblesView />;
       case 'punto-venta':
         return <PuntoVentaView />;
       case 'historial-pos':

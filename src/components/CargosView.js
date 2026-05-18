@@ -11,15 +11,25 @@ const emptyForm = {
   precio_unitario: '0',
   factor_smlv: '1.0',
   factor_multiplicador: '1.0',
-  categoria: 'Mano de Obra Directa',
+  categoria: 'cuadrilla',
 };
 
-const CATEGORIAS_CARGO = ['Oficina (Escritorio)', 'Campo (Móvil)', 'Mano de Obra Directa', 'Comercio (Ventas)'];
+const CATEGORIAS_CARGO = [
+  { value: 'admin', label: '🔑 Admin' },
+  { value: 'oficina', label: '🏢 Oficina' },
+  { value: 'operativo', label: '🏗️ Campo' },
+  { value: 'cuadrilla', label: '📲 Cuadrilla' },
+  { value: 'supervisor', label: '⭐ Supervisor' },
+  { value: 'bodega', label: '📦 Bodega' },
+  { value: 'tienda', label: '🛒 Tienda' },
+  { value: 'cliente', label: '👁️ Cliente' }
+];
 
-export default function CargosView() {  const { state, dispatch, calcularDatosCargo } = useStore();
+export default function CargosView() {  const { state, dispatch, calcularDatosCargo, getCargoProjectUsage, getCargoApuUsage } = useStore();
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [isReloading, setIsReloading] = useState(false);
   const [form, setForm] = useState({ ...emptyForm, factor_smlv: '1.0', factor_multiplicador: '1.0', recargo_cop: 0, recargo_pct: 0 });
   const [search, setSearch] = useState('');
   const [newMemberId, setNewMemberId] = useState('');
@@ -70,18 +80,20 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
 
   const handleSeedRoles = () => {
     const seed = [
-      { nombre: 'Administrador', categoria: 'Oficina (Escritorio)', factor_smlv: 3.5, unidad: 'Mes', codigo: 'ADM-001' },
-      { nombre: 'Director de Proyectos', categoria: 'Oficina (Escritorio)', factor_smlv: 8.0, unidad: 'Mes', codigo: 'DIR-001' },
-      { nombre: 'Dir Financiero', categoria: 'Oficina (Escritorio)', factor_smlv: 6.0, unidad: 'Mes', codigo: 'FIN-001' },
-      { nombre: 'Contabilidad', categoria: 'Oficina (Escritorio)', factor_smlv: 4.0, unidad: 'Mes', codigo: 'CON-001' },
-      { nombre: 'Gerencia', categoria: 'Campo (Móvil)', factor_smlv: 10.0, unidad: 'Mes', codigo: 'GER-001' },
-      { nombre: 'Interventor', categoria: 'Campo (Móvil)', factor_smlv: 8.0, unidad: 'Mes', codigo: 'INT-001' },
-      { nombre: 'Ing. Residente', categoria: 'Campo (Móvil)', factor_smlv: 4.5, unidad: 'Mes', codigo: 'RES-001' },
-      { nombre: 'Arq. Residente', categoria: 'Campo (Móvil)', factor_smlv: 4.5, unidad: 'Mes', codigo: 'RES-002' },
-      { nombre: 'Practicante', categoria: 'Campo (Móvil)', factor_smlv: 1.0, unidad: 'Mes', codigo: 'PRA-001' },
-      { nombre: 'Almacén (Bodega)', categoria: 'Campo (Móvil)', factor_smlv: 1.5, unidad: 'Mes', codigo: 'ALM-001' },
-      { nombre: 'Admin Tienda', categoria: 'Comercio (Ventas)', factor_smlv: 2.0, unidad: 'Mes', codigo: 'VEN-001' },
-      { nombre: 'Vendedor', categoria: 'Comercio (Ventas)', factor_smlv: 1.2, unidad: 'Mes', codigo: 'VEN-002' },
+      { nombre: 'Administrador', categoria: 'admin', factor_smlv: 3.5, unidad: 'Mes', codigo: 'ADM-001' },
+      { nombre: 'Director de Proyectos', categoria: 'admin', factor_smlv: 8.0, unidad: 'Mes', codigo: 'DIR-001' },
+      { nombre: 'Dir Financiero', categoria: 'admin', factor_smlv: 6.0, unidad: 'Mes', codigo: 'FIN-001' },
+      { nombre: 'Contabilidad', categoria: 'admin', factor_smlv: 4.0, unidad: 'Mes', codigo: 'CON-001' },
+      { nombre: 'Gerencia', categoria: 'operativo', factor_smlv: 10.0, unidad: 'Mes', codigo: 'GER-001' },
+      { nombre: 'Interventor', categoria: 'operativo', factor_smlv: 8.0, unidad: 'Mes', codigo: 'INT-001' },
+      { nombre: 'Supervisor General', categoria: 'supervisor', factor_smlv: 5.0, unidad: 'Mes', codigo: 'SUP-001' },
+      { nombre: 'Ing. Residente', categoria: 'operativo', factor_smlv: 4.5, unidad: 'Mes', codigo: 'RES-001' },
+      { nombre: 'Arq. Residente', categoria: 'operativo', factor_smlv: 4.5, unidad: 'Mes', codigo: 'RES-002' },
+      { nombre: 'Practicante', categoria: 'cuadrilla', factor_smlv: 1.0, unidad: 'Mes', codigo: 'PRA-001' },
+      { nombre: 'Almacén (Bodega)', categoria: 'bodega', factor_smlv: 1.5, unidad: 'Mes', codigo: 'ALM-001' },
+      { nombre: 'Admin Tienda', categoria: 'tienda', factor_smlv: 2.0, unidad: 'Mes', codigo: 'VEN-001' },
+      { nombre: 'Vendedor', categoria: 'tienda', factor_smlv: 1.2, unidad: 'Mes', codigo: 'VEN-002' },
+      { nombre: 'Cliente', categoria: 'cliente', factor_smlv: 0.0, unidad: 'Mes', codigo: 'CLI-001' },
     ];
 
     seed.forEach(item => {
@@ -135,23 +147,24 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
   };
 
   const handleDuplicate = (cargo) => {
+    setIsReloading(true);
     const newId = crypto.randomUUID();
-    const members = state.cargoDetalles.filter(d => d.cargo_padre_id === cargo.id);
-    dispatch({ type: 'ADD_CARGO', payload: { 
-      ...cargo, 
-      id: newId, 
-      nombre: cargo.nombre + ' (Copia)',
-      codigo: 'MO-' + Date.now().toString(36).toUpperCase(),
-    }});
-    members.forEach(det => {
-      dispatch({ type: 'ADD_CARGO_DETALLE', payload: {
-        id: crypto.randomUUID(),
-        cargo_padre_id: newId,
-        cargo_hijo_id: det.cargo_hijo_id,
-        cantidad: det.cantidad,
-        factor_smlv: det.factor_smlv,
-      }});
-    });
+    const originalDetalles = state.cargoDetalles.filter(d => d.cargo_padre_id === cargo.id);
+    const detailIds = originalDetalles.map(() => crypto.randomUUID());
+
+    const payload = {
+      originalId: cargo.id,
+      newId,
+      newNombre: cargo.nombre + ' (Copia)',
+      newCodigo: 'MO-' + Date.now().toString(36).toUpperCase(),
+      detailIds
+    };
+
+    dispatch({ type: 'DUPLICATE_CARGO', payload });
+
+    setTimeout(() => {
+      setIsReloading(false);
+    }, 600);
   };
 
   const formatCurrency = (val) =>
@@ -175,6 +188,24 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
           </button>
         </div>
       </div>
+
+      {isReloading && (
+        <div style={{ height: 3, width: '100%', background: '#f1f5f9', position: 'relative', overflow: 'hidden', marginTop: -16, marginBottom: 13 }}>
+          <div className="progress-bar-loading" style={{ 
+            position: 'absolute', 
+            height: '100%', 
+            width: '40%', 
+            background: '#3b82f6',
+            animation: 'loading 1s infinite ease-in-out'
+          }} />
+          <style>{`
+            @keyframes loading {
+              0% { left: -40%; }
+              100% { left: 100%; }
+            }
+          `}</style>
+        </div>
+      )}
 
       <div className="page-body">
         {/* SMLV Config Bar */}
@@ -255,13 +286,14 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
               <thead>
                 <tr>
                   <th>Código</th>
-                  <th>Categoría</th>
+                  <th>Rol App</th>
                   <th>Tipo</th>
                   <th>Nombre del Cargo / Equipo</th>
                   <th>Unidad</th>
                   <th style={{ textAlign: 'right' }}>Factor SMLV</th>
                   <th style={{ textAlign: 'right' }}>F. Mult.</th>
                   <th style={{ textAlign: 'right' }}>Tarifa Real</th>
+                  <th>APU ASOCIADOS</th>
                   <th style={{ width: 100 }}>Acciones</th>
                 </tr>
               </thead>
@@ -274,16 +306,26 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                     <tr key={cargo.id}>
                       <td><code>{cargo.codigo}</code></td>
                       <td>
-                        <span style={{ 
-                          fontSize: 10, 
-                          padding: '2px 6px', 
-                          borderRadius: 4, 
-                          background: cargo.categoria?.includes('Oficina') ? '#dbeafe' : cargo.categoria?.includes('Campo') ? '#dcfce7' : cargo.categoria?.includes('Comercio') ? '#fef3c7' : '#f1f5f9',
-                          color: cargo.categoria?.includes('Oficina') ? '#1e40af' : cargo.categoria?.includes('Campo') ? '#166534' : cargo.categoria?.includes('Comercio') ? '#92400e' : '#475569',
-                          fontWeight: 600
-                        }}>
-                          {cargo.categoria || 'Mano de Obra'}
-                        </span>
+                        {(() => {
+                          const CAT_STYLES = {
+                            admin:      { bg: '#dbeafe', color: '#1e40af', icon: '🔑' },
+                            oficina:    { bg: '#e0f2fe', color: '#0369a1', icon: '🏢' },
+                            operativo:  { bg: '#dcfce7', color: '#166534', icon: '🏗️' },
+                            cuadrilla:  { bg: '#f1f5f9', color: '#475569', icon: '📲' },
+                            supervisor: { bg: '#fef3c7', color: '#92400e', icon: '⭐' },
+                            bodega:     { bg: '#fce7f3', color: '#9d174d', icon: '📦' },
+                            tienda:     { bg: '#fff7ed', color: '#c2410c', icon: '🛒' },
+                            cliente:    { bg: '#f0fdf4', color: '#15803d', icon: '👁️' },
+                          };
+                          const cat = (cargo.categoria || '').toLowerCase();
+                          const s = CAT_STYLES[cat] || CAT_STYLES.cuadrilla;
+                          const label = CATEGORIAS_CARGO.find(c => c.value === cat)?.label || cargo.categoria || 'Cuadrilla';
+                          return (
+                            <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: s.bg, color: s.color, fontWeight: 600 }}>
+                              {label}
+                            </span>
+                          );
+                        })()}
                       </td>
                       <td>
                         <span className={`badge ${isCrew ? 'badge-primary' : 'badge-light'}`}>
@@ -351,10 +393,66 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                         {formatCurrency(data.precio)}
                       </td>
                       <td>
+                        <div style={{ maxWidth: 200 }}>
+                          {(() => {
+                            const apus = getCargoApuUsage(cargo.id);
+                            if (apus.length === 0) return <span style={{ fontSize: 9, color: '#94a3b8' }}>Sin uso</span>;
+                            return (
+                              <details className="apu-dropdown" style={{ cursor: 'pointer' }}>
+                                <summary style={{ fontSize: 10, fontWeight: 600, color: 'var(--color-primary)', listStyle: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <span>📦 {apus.length} APUs</span>
+                                  <span style={{ fontSize: 8 }}>▼</span>
+                                </summary>
+                                <div style={{ 
+                                  marginTop: 4, 
+                                  padding: 6, 
+                                  background: '#fff', 
+                                  border: '1px solid #e2e8f0', 
+                                  borderRadius: 4, 
+                                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                                  position: 'absolute',
+                                  zIndex: 10,
+                                  maxHeight: 150,
+                                  overflowY: 'auto',
+                                  width: 180
+                                }}>
+                                  {apus.map(a => (
+                                    <div key={a.id} style={{ fontSize: 9, padding: '4px 0', borderBottom: '1px solid #f1f5f9', whiteSpace: 'normal', color: '#475569' }}>
+                                      <strong>{a.codigo}</strong>: {a.nombre}
+                                    </div>
+                                  ))}
+                                </div>
+                              </details>
+                            );
+                          })()}
+                        </div>
+                      </td>
+                      <td>
                         <div style={{ display: 'flex', gap: 4 }}>
+                          <button className="btn btn-ghost btn-sm" onClick={() => handleDuplicate(cargo)} title="Duplicar">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                          </button>
                           <button className="btn btn-ghost btn-sm" onClick={() => openEdit(cargo)} title="Editar">✏️</button>
-                          <button className="btn btn-ghost btn-sm" onClick={() => handleDuplicate(cargo)} title="Duplicar">📋</button>
-                          <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-danger)' }} onClick={() => dispatch({ type: 'DELETE_CARGO', payload: cargo.id })} title="Eliminar">🗑️</button>
+                          {(() => {
+                            const apuCount = getCargoApuUsage(cargo.id).length;
+                            const personalCount = state.personal.filter(p => (p.cargos_ids || []).includes(cargo.id) || p.cargo_id === cargo.id).length;
+                            const isLocked = apuCount > 0 || personalCount > 0;
+                            if (isLocked) {
+                              return (
+                                <button className="btn btn-ghost btn-sm" disabled title={`No se puede eliminar: ${apuCount > 0 ? apuCount + ' APU(s) asociados' : ''}${apuCount > 0 && personalCount > 0 ? ' + ' : ''}${personalCount > 0 ? personalCount + ' persona(s) vinculada(s)' : ''}`} style={{ color: '#94a3b8', cursor: 'not-allowed', opacity: 0.6 }}>🔒</button>
+                              );
+                            }
+                            return (
+                              <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-danger)' }} onClick={() => {
+                                if (confirm(`¿Eliminar el cargo "${cargo.nombre}"? Esta acción no se puede deshacer.`)) {
+                                  dispatch({ type: 'DELETE_CARGO', payload: cargo.id });
+                                }
+                              }} title="Eliminar">🗑️</button>
+                            );
+                          })()}
                         </div>
                       </td>
                     </tr>
@@ -388,13 +486,13 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Categoría *</label>
+                    <label className="form-label">Rol App *</label>
                     <select
                       className="form-select"
                       value={form.categoria}
                       onChange={(e) => setForm({ ...form, categoria: e.target.value })}
                     >
-                      {CATEGORIAS_CARGO.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                      {CATEGORIAS_CARGO.map(cat => <option key={cat.value} value={cat.value}>{cat.label}</option>)}
                     </select>
                   </div>
                   <div className="form-row">
@@ -528,7 +626,11 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
                                 />
                               </td>
                               <td>
-                                <button className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'DELETE_CARGO_DETALLE', payload: det.id })}>✕</button>
+                                <button className="btn btn-ghost btn-sm" onClick={() => {
+                                  if (confirm('¿Quitar este integrante del equipo?')) {
+                                    dispatch({ type: 'DELETE_CARGO_DETALLE', payload: det.id });
+                                  }
+                                }}>✕</button>
                               </td>
                             </tr>
                           );

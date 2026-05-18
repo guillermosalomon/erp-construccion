@@ -21,6 +21,7 @@ export default function APUView() {
   const [showApuModal, setShowApuModal] = useState(false);
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState(null);
+  const [isReloading, setIsReloading] = useState(false);
   const [categoriaFilter, setCategoriaFilter] = useState('Todos');
   const [detalleForm, setDetalleForm] = useState({ 
     tipo_linea: 'insumo', 
@@ -109,10 +110,33 @@ export default function APUView() {
   };
 
   const handleDelete = (id) => {
-    if (confirm('¿Eliminar este APU y todas sus líneas de detalle?')) {
+    const item = state.apus.find(a => a.id === id);
+    if (confirm(`¿Estás seguro de que deseas eliminar el APU "${item?.nombre || 'seleccionado'}"? Se eliminarán también sus detalles vinculados.`)) {
       dispatch({ type: 'DELETE_APU', payload: id });
       if (expandedId === id) setExpandedId(null);
     }
+  };
+
+  const handleDuplicate = (apu) => {
+    setIsReloading(true);
+    const newId = generateId();
+    const originalDetalles = getDetalles(apu.id);
+    const detailIds = originalDetalles.map(() => generateId());
+
+    const payload = {
+      originalId: apu.id,
+      newId,
+      newNombre: `${apu.nombre} (Copia)`,
+      newCodigo: `${newId.slice(0, 4)}${apu.codigo.slice(-4)}`.toUpperCase(),
+      detailIds
+    };
+    
+    dispatch({ type: 'DUPLICATE_APU', payload });
+    
+    setTimeout(() => {
+      setIsReloading(false);
+      setExpandedId(newId);
+    }, 600);
   };
 
   // ── CRUD Detalle lines ──
@@ -158,7 +182,9 @@ export default function APUView() {
   };
 
   const handleDeleteDetalle = (detalleId) => {
-    dispatch({ type: 'DELETE_APU_DETALLE', payload: detalleId });
+    if (confirm('¿Deseas quitar este elemento del detalle del APU?')) {
+      dispatch({ type: 'DELETE_APU_DETALLE', payload: detalleId });
+    }
   };
 
   // Available sub-APUs (exclude self)
@@ -177,6 +203,24 @@ export default function APUView() {
           + Nuevo APU
         </button>
       </div>
+
+      {isReloading && (
+        <div style={{ height: 3, width: '100%', background: '#f1f5f9', position: 'relative', overflow: 'hidden', marginTop: -16, marginBottom: 13 }}>
+          <div className="progress-bar-loading" style={{ 
+            position: 'absolute', 
+            height: '100%', 
+            width: '40%', 
+            background: '#3b82f6',
+            animation: 'loading 1s infinite ease-in-out'
+          }} />
+          <style>{`
+            @keyframes loading {
+              0% { left: -40%; }
+              100% { left: 100%; }
+            }
+          `}</style>
+        </div>
+      )}
 
       <div className="page-body">
         {/* Toolbar */}
@@ -264,6 +308,12 @@ export default function APUView() {
                         <div style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>por {apu.unidad}</div>
                       </div>
                       <div style={{ display: 'flex', gap: 4 }} onClick={(e) => e.stopPropagation()}>
+                        <button className="btn btn-ghost btn-sm" onClick={() => handleDuplicate(apu)} title="Duplicar">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                          </svg>
+                        </button>
                         <button className="btn btn-ghost btn-sm" onClick={() => openEdit(apu)} title="Editar">✏️</button>
                         <button className="btn btn-ghost btn-sm" onClick={() => handleDelete(apu.id)} title="Eliminar" style={{ color: 'var(--color-danger)' }}>🗑️</button>
                       </div>

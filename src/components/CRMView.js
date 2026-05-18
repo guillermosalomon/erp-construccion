@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useStore } from '@/store/StoreContext';
 
 const emptyClient = {
   nombre:'', empresa:'', nit:'', email:'', telefono:'', whatsapp:'', telegram_id:'',
@@ -15,6 +16,7 @@ const ESTADOS = [
 const ORIGENES = ['manual','telegram','whatsapp','web','referido'];
 
 export default function CRMView() {
+  const { state } = useStore();
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -174,6 +176,7 @@ export default function CRMView() {
                   <th>Contacto</th>
                   <th>Ciudad</th>
                   <th>Estado</th>
+                  <th>Proyectos / Cotizaciones</th>
                   <th>Origen</th>
                   <th>Acciones</th>
                 </tr>
@@ -184,52 +187,82 @@ export default function CRMView() {
                   const isSelected = selectedClient?.id === c.id;
                   return (
                     <tr key={c.id} onClick={() => setSelectedClient(c)} style={{ cursor:'pointer', background: isSelected ? '#f0f9ff' : undefined }}>
-                      <td>
-                        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                          <div style={{ width:36, height:36, borderRadius:'50%', background:'linear-gradient(135deg,#6366f1,#8b5cf6)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:14 }}>
-                            {(c.nombre||'?')[0].toUpperCase()}
-                          </div>
-                          <div>
-                            <div style={{ fontWeight:600, fontSize:13 }}>{c.nombre}</div>
-                            <div style={{ fontSize:10, color:'#64748b' }}>
-                              {c.empresa || 'Independiente'} 
-                              {c.plataforma === 'telegram' ? ' • 📱 Telegram' : (c.origen === 'whatsapp' ? ' • 💬 WhatsApp' : '')}
-                              {c.creado_por ? ` • 👤 ${c.creado_por.split('@')[0]}` : ''}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div style={{ display:'flex', flexDirection:'column', gap:2 }}>
-                          {c.email && <span style={{ fontSize:11 }}>📧 {c.email}</span>}
-                          {c.telefono && <span style={{ fontSize:11 }}>📱 {c.telefono}</span>}
-                        </div>
-                      </td>
-                      <td style={{ fontSize:12 }}>{c.ciudad || '—'}</td>
-                      <td>
-                        <span style={{ padding:'3px 10px', borderRadius:20, fontSize:10, fontWeight:700, background:`${ei.color}18`, color:ei.color, border:`1px solid ${ei.color}40` }}>
-                          {ei.icon} {ei.label}
-                        </span>
-                      </td>
-                      <td>
-                        {(() => {
-                          const platform = c.plataforma || c.plataforma_origen || c.origen || 'manual';
-                          const icons = { telegram: '📱', whatsapp: '💬', erp: '💻', manual: '✏️', web: '🌐', referido: '🤝' };
-                          const colors = { telegram: '#0088cc', whatsapp: '#25d366', erp: '#6366f1', manual: '#94a3b8', web: '#f59e0b', referido: '#8b5cf6' };
-                          const color = colors[platform] || '#94a3b8';
-                          return (
-                            <span style={{ padding:'2px 8px', borderRadius:10, fontSize:10, fontWeight:600, background:`${color}18`, color, border:`1px solid ${color}30` }}>
-                              {icons[platform] || '📋'} {platform}
-                            </span>
-                          );
-                        })()}
-                      </td>
-                      <td>
-                        <div style={{ display:'flex', gap:4 }}>
-                          <button className="btn btn-ghost btn-sm" onClick={(e) => { e.stopPropagation(); openEdit(c); }}>✏️</button>
-                          <button className="btn btn-ghost btn-sm" style={{ color:'#ef4444' }} onClick={(e) => { e.stopPropagation(); handleDelete(c.id); }}>🗑️</button>
-                        </div>
-                      </td>
+                      {(() => {
+                        const clientesProyectos = state.proyectos.filter(p => p.cliente === c.nombre);
+                        return (
+                          <>
+                            <td>
+                              <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                                <div style={{ width:36, height:36, borderRadius:'50%', background:'linear-gradient(135deg,#6366f1,#8b5cf6)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:14 }}>
+                                  {(c.nombre||'?')[0].toUpperCase()}
+                                </div>
+                                <div>
+                                  <div style={{ fontWeight:600, fontSize:13 }}>{c.nombre}</div>
+                                  <div style={{ fontSize:10, color:'#64748b' }}>
+                                    {c.empresa || 'Independiente'} 
+                                    {c.plataforma === 'telegram' ? ' • 📱 Telegram' : (c.origen === 'whatsapp' ? ' • 💬 WhatsApp' : '')}
+                                    {c.creado_por ? ` • 👤 ${c.creado_por.split('@')[0]}` : ''}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <div style={{ display:'flex', flexDirection:'column', gap:2 }}>
+                                {c.email && <span style={{ fontSize:11 }}>📧 {c.email}</span>}
+                                {c.telefono && <span style={{ fontSize:11 }}>📱 {c.telefono}</span>}
+                              </div>
+                            </td>
+                            <td style={{ fontSize:12 }}>{c.ciudad || '—'}</td>
+                            <td>
+                              <span style={{ padding:'3px 10px', borderRadius:20, fontSize:10, fontWeight:700, background:`${ei.color}18`, color:ei.color, border:`1px solid ${ei.color}40` }}>
+                                {ei.icon} {ei.label}
+                              </span>
+                            </td>
+                            <td>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                                {clientesProyectos.map(p => {
+                                  const isCot = p.estado === 'PLANEACION' || p.codigo?.startsWith('COT-');
+                                  return (
+                                    <span key={p.id} style={{ 
+                                      fontSize: 9, 
+                                      padding: '2px 6px', 
+                                      borderRadius: 4, 
+                                      background: isCot ? '#fefce8' : '#fff7ed', 
+                                      color: isCot ? '#854d0e' : '#9a3412', 
+                                      border: `1px solid ${isCot ? '#fef08a' : '#ffedd5'}`,
+                                      whiteSpace: 'nowrap'
+                                    }} title={p.nombre}>
+                                      {isCot ? '📑' : '🏗️'} {p.codigo || p.nombre}
+                                    </span>
+                                  );
+                                })}
+                                {clientesProyectos.length === 0 && (
+                                  <span style={{ fontSize: 9, color: '#94a3b8' }}>Sin vínculos</span>
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              {(() => {
+                                const platform = c.plataforma || c.plataforma_origen || c.origen || 'manual';
+                                const icons = { telegram: '📱', whatsapp: '💬', erp: '💻', manual: '✏️', web: '🌐', referido: '🤝' };
+                                const colors = { telegram: '#0088cc', whatsapp: '#25d366', erp: '#6366f1', manual: '#94a3b8', web: '#f59e0b', referido: '#8b5cf6' };
+                                const color = colors[platform] || '#94a3b8';
+                                return (
+                                  <span style={{ padding:'2px 8px', borderRadius:10, fontSize:10, fontWeight:600, background:`${color}18`, color, border:`1px solid ${color}30` }}>
+                                    {icons[platform] || '📋'} {platform}
+                                  </span>
+                                );
+                              })()}
+                            </td>
+                            <td>
+                              <div style={{ display:'flex', gap:4 }}>
+                                <button className="btn btn-ghost btn-sm" onClick={(e) => { e.stopPropagation(); openEdit(c); }}>✏️</button>
+                                <button className="btn btn-ghost btn-sm" style={{ color:'#ef4444' }} onClick={(e) => { e.stopPropagation(); handleDelete(c.id); }}>🗑️</button>
+                              </div>
+                            </td>
+                          </>
+                        );
+                      })()}
                     </tr>
                   );
                 })}
@@ -278,6 +311,28 @@ export default function CRMView() {
               <div style={{ fontSize:10, color:'#94a3b8', marginTop:8 }}>
                 Creado: {fmt(selectedClient.created_at)}
               </div>
+              
+              {/* Proyectos y Cotizaciones del cliente */}
+              <div style={{ marginTop:20 }}>
+                <div style={{ fontSize:11, fontWeight:700, color:'#9a3412', marginBottom:8, borderBottom:'1px solid #ffedd5', paddingBottom:4 }}>📊 Actividad (Proyectos/Cotiz)</div>
+                <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                  {state.proyectos.filter(p => p.cliente === selectedClient.nombre).map(p => {
+                    const isCot = p.estado === 'PLANEACION' || p.codigo?.startsWith('COT-');
+                    return (
+                      <div key={p.id} style={{ padding:8, background:isCot ? '#fefce8' : '#fff7ed', borderRadius:8, border:`1px solid ${isCot ? '#fef08a' : '#ffedd5'}` }}>
+                        <div style={{ fontSize:11, fontWeight:700, color:isCot ? '#854d0e' : '#9a3412' }}>{isCot ? '📑' : '🏗️'} {p.nombre}</div>
+                        <div style={{ display:'flex', justifyContent:'space-between', marginTop:4 }}>
+                          <span style={{ fontSize:10, color:isCot ? '#a16207' : '#c2410c' }}>{p.codigo || 'S/N'}</span>
+                          <span style={{ fontSize:10, padding:'1px 5px', borderRadius:10, background:isCot ? '#fef08a' : '#ffedd5' }}>{p.estado}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {state.proyectos.filter(p => p.cliente === selectedClient.nombre).length === 0 && (
+                    <div style={{ fontSize:11, color:'#94a3b8', fontStyle:'italic' }}>No hay actividad vinculada</div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {linkedPersonal ? (
@@ -295,7 +350,29 @@ export default function CRMView() {
               <div style={{ marginTop:20, padding:12, background:'#f8fafc', borderRadius:10, border:'1px solid #e2e8f0' }}>
                 <div style={{ fontSize:11, fontWeight:700, color:'#64748b', marginBottom:8 }}>🏗️ Vínculo con Personal</div>
                 <div style={{ fontSize:11, color:'#94a3b8' }}>Este cliente no está registrado como personal interno.</div>
-                <button className="btn btn-ghost btn-sm" style={{ width:'100%', marginTop:8, fontSize:10 }} onClick={() => alert('Próximamente: Crear perfil de personal desde CRM')}>+ Crear Perfil de Personal</button>
+                <button className="btn btn-ghost btn-sm" style={{ width:'100%', marginTop:8, fontSize:10 }} onClick={async () => {
+                  const c = selectedClient;
+                  if (!c) return;
+                  const newId = crypto.randomUUID();
+                  const nombre = c.nombre || 'Sin Nombre';
+                  try {
+                    const payload = {
+                      id: newId,
+                      nombre,
+                      email: c.email || null,
+                      telefono: c.telefono || null,
+                      whatsapp: c.whatsapp || null,
+                      telegram_id: c.telegram_id || null,
+                      app_role: 'cliente',
+                      profesion: 'Cliente',
+                    };
+                    await supabase.from('personal').upsert(payload, { onConflict: 'id' });
+                    alert(`✅ Perfil de personal creado para "${nombre}"`);
+                    loadLinkedPersonal(c);
+                  } catch (err) {
+                    alert('❌ Error al crear perfil: ' + (err.message || err));
+                  }
+                }}>+ Crear Perfil de Personal</button>
               </div>
             )}
 

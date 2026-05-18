@@ -180,7 +180,7 @@ async function getUserRole(chatUserId) {
   const { data: persona } = await supabase.from('personal')
     .select('nombre, app_role').eq('email', data.email).maybeSingle();
   
-  return persona ? { role: persona.app_role, nombre: persona.nombre } : null;
+  return persona ? { role: persona.app_role, nombre: persona.nombre, email: data.email } : null;
 }
 
 async function logMessage(chatUserId, direccion, texto, tipo = 'chat', metadata = {}) {
@@ -466,6 +466,19 @@ async function updateCRMClient(clienteId, updates) {
   return !error;
 }
 
+async function getPersonalByEmail(email) {
+  await ensureAuth();
+  const { data } = await supabase.from('personal').select('*').eq('email', email).maybeSingle();
+  return data;
+}
+
+async function updatePersonalProfile(email, updates) {
+  await ensureAuth();
+  const { error } = await supabase.from('personal').update(updates).eq('email', email);
+  if (error) console.error('[DB] Error updating personal profile:', error.message);
+  return !error;
+}
+
 async function getPersonal() {
   await ensureAuth();
   const { data } = await supabase.from('personal').select('*').limit(50);
@@ -621,6 +634,47 @@ async function getCliente(id) {
   return data;
 }
 
+async function getChannel(projectId, type = 'proyecto') {
+  await ensureAuth();
+  const query = supabase.from('telegram_channels').select('*');
+  if (type === 'proyecto') query.eq('proyecto_id', projectId).eq('tipo', 'proyecto');
+  else query.eq('cuadrilla_id', projectId).eq('tipo', 'cuadrilla');
+  const { data } = await query.maybeSingle();
+  return data;
+}
+
+async function upsertChannel(channelData) {
+  await ensureAuth();
+  const { data, error } = await supabase.from('telegram_channels').upsert(channelData, { onConflict: 'proyecto_id, tipo' }).select().single();
+  if (error) console.error('[DB] Error upserting channel:', error.message);
+  return data;
+}
+
+async function getProjectMembers(proyectoId) {
+  await ensureAuth();
+  // Get supervisors and assigned personnel
+  const { data: assignments } = await supabase.from('personal_proyecto')
+    .select('personal_id, personal(nombre, telegram_id, app_role)')
+    .eq('proyecto_id', proyectoId);
+  
+  // Get client
+  const { data: proyecto } = await supabase.from('proyectos')
+    .select('cliente_id, clientes(nombre, telegram_id)')
+    .eq('id', proyectoId).single();
+
+  return {
+    personnel: (assignments || []).map(a => a.personal),
+    client: proyecto?.clientes
+  };
+}
+
+async function getCrewMembers(cargoId) {
+  await ensureAuth();
+  const { data } = await supabase.from('personal').select('nombre, telegram_id')
+    .eq('cargo_id', cargoId);
+  return data || [];
+}
+
 module.exports = {
   ensureAuth,
   syncIdentity,
@@ -652,6 +706,15 @@ module.exports = {
   crearInformeDiario,
   createPresupuestoItems,
   getPersonal,
+  getPersonalByEmail,
+  updatePersonalProfile,
   searchClientes,
-  getCliente
+  getCliente,
+  getChannel,
+  upsertChannel,
+  getProjectMembers,
+  getCrewMembers,
+  searchPersonal,
+  createPersonal,
+  getCargos
 };

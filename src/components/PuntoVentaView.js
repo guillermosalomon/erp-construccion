@@ -97,7 +97,7 @@ export default function PuntoVentaView() {
   };
 
   const handleEliminarTienda = (id) => {
-    if (!confirm('¿Eliminar esta tienda y todos sus puntos de venta?')) return;
+    if (!confirm('¿Estás seguro de ELIMINAR COMPLETAMENTE esta tienda, sus puntos de venta y ofertas? Esta acción es irreversible.')) return;
     dispatch({ type: 'DELETE_MK_TIENDA_COMPLETA', payload: id });
     setSelectedTiendaId(null);
     setSelectedPV(null);
@@ -117,7 +117,7 @@ export default function PuntoVentaView() {
   };
 
   const handleEliminarPV = (id) => {
-    if (!confirm('¿Eliminar este punto de venta y todas sus ofertas?')) return;
+    if (!confirm('¿Estás seguro de ELIMINAR este punto de venta y todas sus ofertas vinculadas?')) return;
     dispatch({ type: 'DELETE_MK_PUNTO_VENTA_COMPLETA', payload: id });
     if (selectedPV?.id === id) setSelectedPV(null);
   };
@@ -496,7 +496,41 @@ export default function PuntoVentaView() {
                         </div>
                       ) : (
                         <table className="data-table">
-                          <thead><tr><th>Producto</th><th>Tipo</th><th>Categoría</th><th style={{textAlign:'right'}}>Precio Venta</th><th style={{textAlign:'right'}}>Stock</th><th style={{textAlign:'center'}}>Marketplace</th><th></th></tr></thead>
+                          <thead>
+                            <tr>
+                              <th>Producto</th>
+                              <th>Tipo</th>
+                              <th>Categoría</th>
+                              <th style={{textAlign:'right'}}>Precio Venta</th>
+                              <th style={{textAlign:'right'}}>Stock</th>
+                              <th style={{textAlign:'center'}}>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                  Marketplace
+                                  <label style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', fontSize: 10, fontWeight: 'normal' }}>
+                                    <input 
+                                      type="checkbox" 
+                                      title="Publicar/Ocultar todos"
+                                      checked={
+                                        ofertasPV.filter(o => o.nombre_comercial?.toLowerCase().includes(searchOferta.toLowerCase())).length > 0 && 
+                                        ofertasPV.filter(o => o.nombre_comercial?.toLowerCase().includes(searchOferta.toLowerCase())).every(o => o.publicado_marketplace)
+                                      }
+                                      onChange={(e) => {
+                                        const newValue = e.target.checked;
+                                        const displayed = ofertasPV.filter(o => o.nombre_comercial?.toLowerCase().includes(searchOferta.toLowerCase()));
+                                        displayed.forEach(o => {
+                                          if (o.publicado_marketplace !== newValue) {
+                                            dispatch({ type: 'UPDATE_MK_OFERTA', payload: { id: o.id, publicado_marketplace: newValue } });
+                                          }
+                                        });
+                                      }}
+                                    />
+                                    Todos
+                                  </label>
+                                </div>
+                              </th>
+                              <th></th>
+                            </tr>
+                          </thead>
                           <tbody>
                             {ofertasPV.filter(o => o.nombre_comercial?.toLowerCase().includes(searchOferta.toLowerCase())).map(oferta => {
                               const insumo = state.insumos.find(i => i.id === oferta.insumo_id);
@@ -568,7 +602,11 @@ export default function PuntoVentaView() {
                                       });
                                       setShowOfertaModal(true);
                                     }} style={{ fontSize: 11, marginRight: 4 }}>✏️</button>
-                                    <button className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'DELETE_MK_OFERTA', payload: oferta.id })} style={{ color: '#ef4444', fontSize: 11 }}>🗑️</button>
+                                    <button className="btn btn-ghost btn-sm" onClick={() => {
+                                      if (confirm('¿Eliminar esta oferta del marketplace?')) {
+                                        dispatch({ type: 'DELETE_MK_OFERTA', payload: oferta.id });
+                                      }
+                                    }} style={{ color: '#ef4444', fontSize: 11 }}>🗑️</button>
                                   </td>
                                 </tr>
                               );

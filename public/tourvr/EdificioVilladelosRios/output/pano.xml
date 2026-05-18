@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tour start="node1" apprev="18007" appversion="6.1.10">
+  <panorama id="node1">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="7" levelbias="0.400" leveltileurl="tiles/node1/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="34.9988" fovmode="0">
+      <start tilt="7.01" projection="4" pan="13.43" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node1" title="FACHADA" heading="34.9988" customnodeid="" description="" author="" datetime="1/01/2016 2:35 a.m." tags="Piso1|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-0.96" target="" skinid="ht_node" id="Point01" title="ACCESO" pan="-354.29" description="" url="{node2}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node2">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="9" levelbias="0.400" leveltileurl="tiles/node2/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="-5.75517" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node2" title="ACCESO" heading="-5.75517" customnodeid="" description="" author="" datetime="28/08/2022 3:28 p.m." tags="Piso1|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-19.8" target="" skinid="ht_node" id="Point01" title="FACHADA" pan="-215.69" description="" url="{node1}"/>
+      <hotspot tilt="-3.82" target="" skinid="ht_node" id="Point02" title="Punto Fijo Piso 1" pan="-6.98" description="" url="{node3}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node3">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="8" levelbias="0.400" leveltileurl="tiles/node3/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="303.784" fovmode="0">
+      <start tilt="-2.26" projection="4" pan="-54.29" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node3" title="Punto Fijo Piso 1" heading="303.784" customnodeid="" description="" author="" datetime="28/08/2022 3:29 p.m." tags="Piso1|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-4.12" target="" skinid="ht_node" id="Point01" title="COCINA, COMEDOR" pan="-54.21" description="" url="{node4}"/>
+      <hotspot tilt="-2.81" target="" skinid="ht_node" id="Point02" title="ACCESO" pan="-244.29" description="" url="{node2}"/>
+      <hotspot tilt="24.5" target="21.7/-10.0/70.0" skinid="ht_node" id="Point03" title="Punto Fijo Piso 2" pan="-309.36" description="" url="{node5}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node4">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="12.014" levelbias="0.400" leveltileurl="tiles/node4/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0.634768">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="0.411354" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node4" title="COCINA, COMEDOR" heading="0.411354" customnodeid="" description="" author="" datetime="28/08/2022 3:31 p.m." tags="Piso1|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-0.73" target="54.2/-12.5/70.0" skinid="ht_node" id="Point01" title="Punto Fijo Piso 1" pan="-185.46" description="" url="{node3}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node5">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="5" levelbias="0.400" leveltileurl="tiles/node5/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="272.751" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node5" title="Punto Fijo Piso 2" heading="272.751" customnodeid="" description="" author="" datetime="28/08/2022 3:33 p.m." tags="Piso2|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-28.55" target="70.5/-24.0/70.0" skinid="ht_node" id="Point01" title="Punto Fijo Piso 1" pan="-38.73" description="" url="{node3}"/>
+      <hotspot tilt="-3.56" target="" skinid="ht_node" id="Point02" title="ALCOBA 1" pan="-81.65" description="" url="{node7}"/>
+      <hotspot tilt="-3.19" target="" skinid="ht_node" id="Point03" title="ALCOBA 2" pan="-268.06" description="" url="{node6}"/>
+      <hotspot tilt="26.12" target="-1.7/-3.6/70.0" skinid="ht_node" id="Point04" title="Punto Fijo Piso 3" pan="-13.74" description="" url="{node8}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node7">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="4" levelbias="0.400" leveltileurl="tiles/node7/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="-29.5173" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node7" title="ALCOBA 1" heading="-29.5173" customnodeid="" description="" author="" datetime="28/08/2022 3:35 p.m." tags="Piso2|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-2.18" target="80.3/-12.4/70.0" skinid="ht_node" id="Point01" title="Punto Fijo Piso 2" pan="-212.5" description="" url="{node5}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node6">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="8" levelbias="0.400" leveltileurl="tiles/node6/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="213.222" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node6" title="ALCOBA 2" heading="213.222" customnodeid="" description="" author="" datetime="28/08/2022 3:34 p.m." tags="Piso2|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-2.49" target="-59.9/-11.9/70.0" skinid="ht_node" id="Point01" title="Punto Fijo Piso 2" pan="-146.68" description="" url="{node5}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node8">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="5" levelbias="0.400" leveltileurl="tiles/node8/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="-102.43" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node8" title="Punto Fijo Piso 3" heading="-102.43" customnodeid="" description="" author="" datetime="28/08/2022 3:37 p.m." tags="Piso3|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-33.85" target="-52.7/-21.0/70.0" skinid="ht_node" id="Point01" title="Punto Fijo Piso 2" pan="-53.89" description="" url="{node5}"/>
+      <hotspot tilt="22.81" target="0.0/0.0/70.0" skinid="ht_node" id="Point02" title="ESTUDIO" pan="-30.91" description="" url="{node11}"/>
+      <hotspot tilt="-3.28" target="" skinid="ht_node" id="Point03" title="ALCOBA 3" pan="-101.06" description="" url="{node10}"/>
+      <hotspot tilt="-4.98" target="" skinid="ht_node" id="Point04" title="ALCOBA 5 PRINCIPAL" pan="-283.34" description="" url="{node9}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node10">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="5" levelbias="0.400" leveltileurl="tiles/node10/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="-44.058" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node10" title="ALCOBA 3" heading="-44.058" customnodeid="" description="" author="" datetime="28/08/2022 3:37 p.m." tags="Piso3|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-17.77" target="68.9/-10.9/70.0" skinid="ht_node" id="Point01" title="Punto Fijo Piso 3" pan="-223.9" description="" url="{node8}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node9">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="7" levelbias="0.400" leveltileurl="tiles/node9/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="221.883" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node9" title="ALCOBA 5 PRINCIPAL" heading="221.883" customnodeid="" description="" author="" datetime="28/08/2022 3:39 p.m." tags="Piso3|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-15.61" target="-80.2/-8.2/70.0" skinid="ht_node" id="Point01" title="Punto Fijo Piso 3" pan="-140.4" description="" url="{node8}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node11">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="4" levelbias="0.400" leveltileurl="tiles/node11/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="-25.2329" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node11" title="ESTUDIO" heading="-25.2329" customnodeid="" description="" author="" datetime="28/08/2022 3:40 p.m." tags="Piso4|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-6.48" target="0.0/0.0/70.0" skinid="ht_node" id="Point01" title="PATIO DE ROPAS" pan="-209.06" description="" url="{node12}"/>
+      <hotspot tilt="-31.52" target="-69.7/-14.3/70.0" skinid="ht_node" id="Point02" title="Punto Fijo Piso 3" pan="-276.95" description="" url="{node8}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node12">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="8" levelbias="0.400" leveltileurl="tiles/node12/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="-148.065" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node12" title="PATIO DE ROPAS" heading="-148.065" customnodeid="" description="" author="" datetime="28/08/2022 3:41 p.m." tags="Piso4|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-13.19" target="82.1/-23.0/70.0" skinid="ht_node" id="Point01" title="ESTUDIO" pan="-148.54" description="" url="{node11}"/>
+      <hotspot tilt="0.19" target="" skinid="ht_node" id="Point02" title="TERRAZA" pan="-355.64" description="" url="{node13}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <panorama id="node13">
+    <input overlap="1" levelbiashidpi="1.000" leveltilesize="510" levelingpitch="8" levelbias="0.400" leveltileurl="tiles/node13/cf_%c/l_%l/c_%x/tile_%y.jpg" width="1440" height="1440" levelingroll="0">
+      <level predecode="0" preload="0" width="1440" height="1440"/>
+      <level predecode="0" preload="0" width="720" height="720"/>
+      <level predecode="1" preload="1" width="360" height="360"/>
+      <preview strip="1" color="0x808080"/>
+    </input>
+    <view pannorth="-180.362" fovmode="0">
+      <start tilt="0" projection="4" pan="0" fov="70"/>
+      <flyin tilt="-90" projection="9" pan="0" fov="170"/>
+      <min tilt="-90" pan="0" fovpixel="2"/>
+      <max tilt="90" fovstereographic="270" pan="360" fov="120" fovfisheye="360" scaletofit="1"/>
+    </view>
+    <userdata latitude="" info="" copyright="" source="" nodeid="node13" title="TERRAZA" heading="-180.362" customnodeid="" description="" author="" datetime="28/08/2022 3:42 p.m." tags="Piso4|Tour Edificio Villa de los Rios" longitude="" comment=""/>
+    <hotspots wordwrap="1" width="180" height="20">
+      <label enabled="1" textcolor="0x000000" borderalpha="1" backgroundalpha="1" background="1" textalpha="1" borderradius="1" wordwrap="1" backgroundcolor="0xffffff" bordercolor="0x000000" border="1" width="180" height="20"/>
+      <polystyle borderalpha="1" handcursor="1" backgroundalpha="0.25098" mode="0" backgroundcolor="0x0000ff" bordercolor="0x0000ff"/>
+      <hotspot tilt="-1.21" target="83.1/-22.7/70.0" skinid="ht_node" id="Point01" title="ESTUDIO" pan="-197.61" description="" url="{node11}"/>
+    </hotspots>
+    <media/>
+    <transition zoomafteroutfov="20" enabled="1" zoomin="0" type="crossdissolve" zoomafterinfov="90" zoomfov="20" blendcolor="0x000000" softedge="0" zoomspeed="2" zoomoutpause="1" blendtime="1" zoomout="0"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control simulatemass="1" rubberband="0" lockedmouse="0" contextfullscreen="1" speedwheel="1" lockedkeyboardzoom="0" invertwheel="0" invertcontrol="1" lockedkeyboard="0" dblclickfullscreen="0" hideabout="0" sensitivity="8" lockedwheel="0" contextprojections="0"/>
+  </panorama>
+  <masternode>
+    <userdata latitude="" info="" copyright="" source="" nodeid="master" title="" heading="0" customnodeid="" description="" author="" datetime="" tags="" longitude="" comment=""/>
+  </masternode>
+</tour>

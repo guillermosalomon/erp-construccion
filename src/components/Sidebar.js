@@ -29,24 +29,11 @@ export default function Sidebar({ activeSection, onNavigate }) {
     return state.personal.find(p => p.email?.toLowerCase() === user.email?.toLowerCase());
   }, [user, state.personal]);
 
-  const handleNuclearReset = async () => {
-    if (!confirm('⚠️ ¿ESTÁS SEGURO? Se borrarán TODOS los datos permanentemente.')) return;
-    
-    try {
-      if (!user) return alert('Debes estar logueado.');
 
-      alert('Iniciando limpieza total del sistema... Por favor espera.');
-      
-      await clearDatabase();
-      
-      alert('¡SISTEMA REINICIADO! La base de datos está vacía.');
-      window.location.reload();
-    } catch (err) {
-      alert('Error: ' + err.message);
-    }
-  };
+  const allowedEmails = ['gsalo90@outlook.com', 'guillermosalomonsolarte@gmail.com', 'arq.guillermo_salomon@kalarti.com'];
+  const isCorporate = user?.email?.endsWith('@kalarti.com') || allowedEmails.includes(user?.email);
 
-  const navItems = [
+  const fullNavItems = [
     {
       label: 'Principal',
       items: [
@@ -102,6 +89,7 @@ export default function Sidebar({ activeSection, onNavigate }) {
         { id: 'punto-venta', name: 'Punto de Venta', icon: '🏪' },
         { id: 'historial-pos', name: 'Historial POS', icon: '📋' },
         { id: 'marketplace', name: 'Marketplace', icon: '🛒' },
+        { id: 'inmuebles', name: 'Inmuebles', icon: '🏢' },
       ],
     },
     {
@@ -112,6 +100,24 @@ export default function Sidebar({ activeSection, onNavigate }) {
       ],
     },
   ];
+
+  const clientNavItems = [
+    {
+      label: 'Comercio',
+      items: [
+        { id: 'marketplace', name: 'Marketplace', icon: '🛒' },
+      ],
+    },
+    {
+      label: 'Mi Cuenta',
+      items: [
+        { id: 'chat-history', name: 'Mis Cotizaciones', icon: '💬' },
+        { id: 'telegram-chat', name: 'Asistente Virtual', icon: '✈️', onClick: () => window.open('https://t.me/Kalarti_bot', '_blank') },
+      ],
+    },
+  ];
+
+  const navItems = isCorporate ? fullNavItems : clientNavItems;
 
   const userEmail = user?.email || '';
   const userInitial = userEmail.charAt(0).toUpperCase() || '?';
@@ -270,15 +276,6 @@ export default function Sidebar({ activeSection, onNavigate }) {
         textAlign: 'center',
       }}>
         Fase 12 — v0.12.0
-      </div>
-      <div className="sidebar-footer" style={{ padding: '0 16px 16px' }}>
-        <button 
-          onClick={handleNuclearReset}
-          className="btn btn-primary" 
-          style={{ width: '100%', background: '#ef4444', border: 'none', fontSize: 10, fontWeight: 800 }}
-        >
-          🔄 REINICIAR SISTEMA
-        </button>
       </div>
     </aside>
   );

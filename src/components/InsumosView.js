@@ -48,7 +48,7 @@ const emptyForm = {
 const UNIDADES_PAGO = ['Mes', 'Día', 'Hora'];
 
 export default function InsumosView() {
-  const { state, dispatch } = useStore();
+  const { state, dispatch, getInsumoApuUsage } = useStore();
   const [showModal, setShowModal] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -124,7 +124,7 @@ export default function InsumosView() {
       return;
     }
 
-    if (confirm('¿Está seguro de eliminar este insumo? Esta acción no se puede deshacer.')) {
+    if (confirm(`¿Estás seguro de que deseas eliminar el insumo "${item.nombre}"? Esta acción no se puede deshacer.`)) {
       dispatch({ type: 'DELETE_INSUMO', payload: id });
     }
   };
@@ -271,6 +271,7 @@ export default function InsumosView() {
                     <th>Unidad</th>
                     <th style={{ textAlign: 'right' }}>Precio Unit.</th>
                     <th style={{ textAlign: 'right' }}>Mercado</th>
+                    <th>APU Asociados</th>
                     <th style={{ width: 60 }}>Acciones</th>
                   </tr>
                 </thead>
@@ -369,6 +370,41 @@ export default function InsumosView() {
                           })()}
                         </td>
                         <td>
+                          <div style={{ maxWidth: 200 }}>
+                            {(() => {
+                              const apus = getInsumoApuUsage(insumo.id);
+                              if (apus.length === 0) return <span style={{ fontSize: 9, color: '#94a3b8' }}>Sin uso</span>;
+                              return (
+                                <details className="apu-dropdown" style={{ cursor: 'pointer' }}>
+                                  <summary style={{ fontSize: 10, fontWeight: 600, color: '#6366f1', listStyle: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                    <span>📦 {apus.length} APUs</span>
+                                    <span style={{ fontSize: 8 }}>▼</span>
+                                  </summary>
+                                  <div style={{ 
+                                    marginTop: 4, 
+                                    padding: 6, 
+                                    background: '#fff', 
+                                    border: '1px solid #e2e8f0', 
+                                    borderRadius: 4, 
+                                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                                    position: 'absolute',
+                                    zIndex: 10,
+                                    maxHeight: 150,
+                                    overflowY: 'auto',
+                                    width: 180
+                                  }}>
+                                    {apus.map(a => (
+                                      <div key={a.id} style={{ fontSize: 9, padding: '4px 0', borderBottom: '1px solid #f1f5f9', whiteSpace: 'normal', color: '#475569' }}>
+                                        <strong>{a.codigo}</strong>: {a.nombre}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </details>
+                              );
+                            })()}
+                          </div>
+                        </td>
+                        <td>
                           <div style={{ display: 'flex', gap: 4 }}>
                             <button
                               className="btn btn-ghost btn-sm"
@@ -377,14 +413,26 @@ export default function InsumosView() {
                             >
                               ✏️
                             </button>
-                            <button
-                              className="btn btn-ghost btn-sm"
-                              onClick={() => handleDelete(insumo.id)}
-                              title="Eliminar"
-                              style={{ color: 'var(--color-danger)' }}
-                            >
-                              🗑️
-                            </button>
+                            {(() => {
+                              const apuCount = getInsumoApuUsage(insumo.id).length;
+                              const hasInventory = state.inventario.some(t => t.insumo_id === insumo.id);
+                              const isLocked = apuCount > 0 || hasInventory;
+                              if (isLocked) {
+                                return (
+                                  <button className="btn btn-ghost btn-sm" disabled title={`No se puede eliminar: ${apuCount > 0 ? apuCount + ' APU(s) asociados' : ''}${apuCount > 0 && hasInventory ? ' + ' : ''}${hasInventory ? 'tiene movimientos de inventario' : ''}`} style={{ color: '#94a3b8', cursor: 'not-allowed', opacity: 0.6 }}>🔒</button>
+                                );
+                              }
+                              return (
+                                <button
+                                  className="btn btn-ghost btn-sm"
+                                  onClick={() => handleDelete(insumo.id)}
+                                  title="Eliminar"
+                                  style={{ color: 'var(--color-danger)' }}
+                                >
+                                  🗑️
+                                </button>
+                              );
+                            })()}
                           </div>
                         </td>
                       </tr>

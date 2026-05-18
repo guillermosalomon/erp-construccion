@@ -143,7 +143,6 @@ export default function Dashboard() {
                 overflow: 'hidden'
               }}>
                 <button className="dropdown-item" onClick={handleExport}>📥 Guardar Local</button>
-                <button className="dropdown-item" onClick={() => handleImportClick('REPLACE')}>📤 Cargar (Reemplazar)</button>
                 <button className="dropdown-item" onClick={() => handleImportClick('MERGE')}>➕ Cargar (Fusionar)</button>
                 <div style={{ height: 1, background: '#f1f5f9' }} />
                 <button className="dropdown-item" onClick={handleCloudUpload}>☁️ Compartir en Nube</button>
@@ -151,83 +150,7 @@ export default function Dashboard() {
             )}
           </div>
 
-          <button 
-            className="btn btn-primary btn-sm"
-            onClick={async () => {
-              if(!confirm('¿Deseas generar los datos de prueba E2E?')) return;
-              try {
-                const toast = (msg) => console.log('Seed:', msg);
-                const { supabase } = await import('@/lib/supabase');
-                
-                // Get UID from session
-                const { data: { session } } = await supabase.auth.getSession();
-                const uid = session?.user?.id;
-                if (!uid) throw new Error('No hay sesión de usuario activa.');
 
-                const ts = Date.now();
-                
-                // 1. Insumos
-                const { data: i1, error: errI1 } = await supabase.from('insumos').insert({ user_id: uid, codigo: 'MAT-E2E-'+ts, nombre: 'Cemento Portland', tipo: 'MATERIAL', unidad: 'Bolsa', precio_unitario: 25000 }).select().single();
-                if (errI1 || !i1) throw new Error('Error Insumo 1: ' + (errI1?.message || 'null'));
-                const { data: i2, error: errI2 } = await supabase.from('insumos').insert({ user_id: uid, codigo: 'MO-E2E-'+ts, nombre: 'Oficial Albañil', tipo: 'MANO_OBRA', unidad: 'Día', precio_unitario: 80000 }).select().single();
-                if (errI2 || !i2) throw new Error('Error Insumo 2: ' + (errI2?.message || 'null'));
-                
-                // 2. APU
-                const { data: a1, error: errA1 } = await supabase.from('apu').insert({ user_id: uid, codigo: 'AB-E2E-'+ts, nombre: 'Muro de Mampostería', tipo: 'BASICO', unidad: 'm2', rendimiento: 10 }).select().single();
-                if (errA1 || !a1) throw new Error('Error APU: ' + (errA1?.message || 'null'));
-                
-                // 3. APU Detalles
-                const { error: e3 } = await supabase.from('apu_detalle').insert([
-                  { user_id: uid, apu_id: a1.id, insumo_id: i1.id, cantidad: 0.5, desperdicio_pct: 5 },
-                  { user_id: uid, apu_id: a1.id, insumo_id: i2.id, cantidad: 0.1, desperdicio_pct: 0 }
-                ]);
-                if(e3) throw new Error('Error Detalles APU: ' + e3.message);
-                
-                // 4. Proyecto
-                const { data: p1, error: e4 } = await supabase.from('proyectos').insert({ user_id: uid, codigo: 'PRY-E2E-'+ts, nombre: 'Proyecto Prueba End-to-End', cliente: 'Cliente E2E', estado: 'PLANIFICACION', aiu_admin: 10, aiu_imprev: 5, aiu_utilidad: 5 }).select().single();
-                if(e4 || !p1) throw new Error('Error Proyecto: ' + (e4?.message || 'null data'));
-                
-                // 5. Bodega
-                const { data: b1, error: e5 } = await supabase.from('bodegas').insert({ user_id: uid, proyecto_id: p1.id, nombre: 'Bodega Principal E2E' }).select().single();
-                if(e5 || !b1) throw new Error('Error Bodega: ' + (e5?.message || 'null data'));
-                
-                // 6. Inventario
-                const { error: e6 } = await supabase.from('inventario_transacciones').insert([{ user_id: uid, bodega_id: b1.id, insumo_id: i1.id, tipo: 'ENTRADA', cantidad: 100, motivo: 'Inventario Inicial' }]);
-                if(e6) throw new Error('Error Inventario: ' + e6.message);
-
-                // 7. Presupuesto
-                const { error: e7 } = await supabase.from('presupuesto_items').insert({ user_id: uid, proyecto_id: p1.id, apu_id: a1.id, cantidad: 50, capitulo: 'OBRA NEGRA', num_cuadrillas: 2, fecha_inicio: new Date().toISOString().split('T')[0] });
-                if(e7) throw new Error('Error Presupuesto: ' + e7.message);
-                
-                // 8. Pago
-                const { error: e8 } = await supabase.from('pagos_cliente').insert({ proyecto_id: p1.id, valor_bruto: 1000000, iva: 19, retencion_garantia: 5, valor_neto: 1140000, fecha: new Date().toISOString().split('T')[0] });
-                if(e8) throw new Error('Error Pago: ' + e8.message);
-                
-                alert('¡Datos de prueba generados exitosamente! Por favor refresca la aplicación u oprime "Bodega Móvil".');
-                window.location.reload();
-              } catch (e) {
-                alert('Error generando datos: ' + e.message);
-              }
-            }}
-          >
-            🧪 Generar Demo E2E
-          </button>
-          <button 
-            className="btn btn-secondary btn-sm"
-            onClick={async () => {
-              if(!confirm('⚠️ ¿ESTÁS SEGURO? Se borrarán TODOS los datos permanentemente.')) return;
-              try {
-                await clearDatabase();
-                alert('¡Base de datos reiniciada correctamente!');
-                window.location.reload();
-              } catch (e) {
-                alert('Error al reiniciar: ' + (e.message || String(e)));
-              }
-            }}
-            style={{ color: 'var(--color-danger)', fontWeight: 600 }}
-          >
-            🔄 Reiniciar Base de Datos
-          </button>
           <div className={`status-badge ${state.isOnline ? 'online' : 'offset'}`} style={{ 
             background: state.isOnline ? '#dcfce7' : '#f1f5f9',
             color: state.isOnline ? '#166534' : '#64748b',

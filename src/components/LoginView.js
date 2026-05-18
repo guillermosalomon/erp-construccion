@@ -42,25 +42,34 @@ export default function LoginView() {
         // Demo mode — login auto
       }
     } else if (mode === 'register') {
-      const maxStep = role === 'admin' ? 4 : 3;
-      if (step < 3) { setStep(step + 1); setLoading(false); return; }
-      if (step === 3 && role === 'admin') { setStep(4); setLoading(false); return; }
-      // Final step — create account
-      if (step === maxStep) {
-        if (role === 'admin' && !paymentConfirmed) {
-          setLoading(false);
-          return;
-        }
-        const { error } = await register(email, password, { 
-          nombre, role: role.toUpperCase(), profesion,
-          tipo_documento: tipoDoc, cedula: numDoc, ciudad, pais,
-          plan: role === 'admin' ? 'admin_pro' : 'free',
-          metodo_pago: role === 'admin' ? paymentMethod : null,
+      if (step < 2) { setStep(step + 1); setLoading(false); return; }
+      
+      // Enviar como Lead en el último paso
+      try {
+        const payload = {
+          nombre: nombre || 'Usuario ERP',
+          email: email,
+          telefono: password, // Usamos la variable password temporalmente para guardar el teléfono en el form
+          ciudad: ciudad,
+          servicio: role === 'admin' ? 'suscripcion_erp' : role === 'tienda' ? 'afiliado_ferreteria' : 'cliente_general',
+          mensaje: `Solicitud de cuenta: ${role.toUpperCase()}`
+        };
+
+        const res = await fetch('/api/marketing/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
-        if (!error) {
-          setMsg(isConfigured ? '✅ Cuenta creada. Revisa tu email para confirmar.' : '✅ Cuenta demo creada.');
-          setMode('login'); setStep(1); setPaymentConfirmed(false); setPaymentMethod('');
+
+        if (res.ok) {
+          setMsg('✅ ¡Solicitud enviada! Un asesor te contactará por WhatsApp para activar tu cuenta.');
+          setMode('login'); setStep(1); setPassword('');
+        } else {
+          const errData = await res.json();
+          setMsg(`❌ Error: ${errData.error || 'No se pudo enviar la solicitud'}`);
         }
+      } catch (err) {
+        setMsg('❌ Error de conexión al enviar la solicitud.');
       }
     } else if (mode === 'reset') {
       const { error } = await resetPassword(email);
@@ -251,11 +260,23 @@ export default function LoginView() {
             </div>
           )}
 
-          {/* ═══ REGISTER MODE — Step 1: Cuenta ═══ */}
+          {/* ═══ REGISTER MODE — Step 1: Datos de Contacto ═══ */}
           {mode === 'register' && step === 1 && (
             <>
               <div style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 8, marginBottom: 16, fontSize: 12, color: '#64748b', borderLeft: '3px solid #2563eb' }}>
-                <strong>Paso 1 de 3</strong> — Credenciales de acceso
+                <strong>Paso 1 de 2</strong> — Información de contacto
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={labelStyle}>Nombre completo / Empresa *</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  placeholder="Tu nombre o empresa"
+                  required
+                  style={{ marginTop: 6 }}
+                />
               </div>
               <div style={{ marginBottom: 16 }}>
                 <label style={labelStyle}>Correo electrónico *</label>
@@ -266,104 +287,48 @@ export default function LoginView() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="correo@ejemplo.com"
                   required
-                  autoComplete="email"
+                  style={{ marginTop: 6 }}
+                />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={labelStyle}>Teléfono / WhatsApp *</label>
+                <input
+                  className="form-input"
+                  type="tel"
+                  value={password} // re-usamos estado password para no crear uno nuevo
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="+57 300 000 0000"
+                  required
                   style={{ marginTop: 6 }}
                 />
               </div>
               <div style={{ marginBottom: 24 }}>
-                <label style={labelStyle}>Contraseña *</label>
+                <label style={labelStyle}>Ciudad / Ubicación *</label>
                 <input
                   className="form-input"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
+                  type="text"
+                  value={ciudad}
+                  onChange={(e) => setCiudad(e.target.value)}
+                  placeholder="Ej: Bogotá"
                   required
-                  minLength={6}
-                  autoComplete="new-password"
                   style={{ marginTop: 6 }}
                 />
               </div>
             </>
           )}
 
-          {/* ═══ REGISTER MODE — Step 2: Datos Personales ═══ */}
+          {/* ═══ REGISTER MODE — Step 2: Plan/Rol ═══ */}
           {mode === 'register' && step === 2 && (
             <>
               <div style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 8, marginBottom: 16, fontSize: 12, color: '#64748b', borderLeft: '3px solid #2563eb' }}>
-                <strong>Paso 2 de 3</strong> — Información personal
-              </div>
-              <div style={{ marginBottom: 16 }}>
-                <label style={labelStyle}>Nombre completo *</label>
-                <input
-                  className="form-input"
-                  type="text"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  placeholder="Tu nombre completo"
-                  required
-                  style={{ marginTop: 6 }}
-                />
-              </div>
-              <div style={{ marginBottom: 16 }}>
-                <label style={labelStyle}>Profesión</label>
-                <input
-                  className="form-input"
-                  type="text"
-                  value={profesion}
-                  onChange={(e) => setProfesion(e.target.value)}
-                  placeholder="Ej: Ingeniero Civil, Arquitecto..."
-                  list="reg-profesion-options"
-                  style={{ marginTop: 6 }}
-                />
-              </div>
-              <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>Documento de Identidad</label>
-                  <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-                    <select className="form-select" style={{ width: 85, fontSize: 11 }} value={tipoDoc} onChange={(e) => setTipoDoc(e.target.value)}>
-                      <option value="CC">🇨🇴 CC</option>
-                      <option value="CE">🌐 CE</option>
-                      <option value="PP">✈️ PP</option>
-                    </select>
-                    <input className="form-input" style={{ flex: 1 }} value={numDoc} onChange={(e) => setNumDoc(e.target.value)} placeholder={tipoDoc === 'PP' ? 'Nº Pasaporte' : 'Nº Documento'} />
-                  </div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>Ciudad</label>
-                  <input className="form-input" value={ciudad} onChange={(e) => setCiudad(e.target.value)} placeholder="Ej: Bogotá" list="reg-ciudad-options" style={{ marginTop: 6 }} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>País</label>
-                  <select className="form-select" value={pais} onChange={(e) => setPais(e.target.value)} style={{ marginTop: 6 }}>
-                    <option value="Colombia">🇨🇴 Colombia</option>
-                    <option value="México">🇲🇽 México</option>
-                    <option value="Perú">🇵🇪 Perú</option>
-                    <option value="Ecuador">🇪🇨 Ecuador</option>
-                    <option value="Chile">🇨🇱 Chile</option>
-                    <option value="Argentina">🇦🇷 Argentina</option>
-                    <option value="Panamá">🇵🇦 Panamá</option>
-                    <option value="Costa Rica">🇨🇷 Costa Rica</option>
-                    <option value="Venezuela">🇻🇪 Venezuela</option>
-                    <option value="España">🇪🇸 España</option>
-                    <option value="Estados Unidos">🇺🇸 Estados Unidos</option>
-                    <option value="Otro">🌍 Otro</option>
-                  </select>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* ═══ REGISTER MODE — Step 3: Plan/Rol ═══ */}
-          {mode === 'register' && step === 3 && (
-            <>
-              <div style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 8, marginBottom: 16, fontSize: 12, color: '#64748b', borderLeft: '3px solid #2563eb' }}>
-                <strong>Paso 3 de 3</strong> — Selecciona tu tipo de cuenta
+                <strong>Paso 2 de 2</strong> — ¿Qué tipo de cuenta deseas crear?
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
-                {PLANS.map(plan => {
+                {[
+                  { value: 'admin', icon: '🏗️', name: 'Constructores (ERP)', desc: 'Gestión de proyectos y APU', color: '#2563eb', bg: '#eff6ff' },
+                  { value: 'tienda', icon: '🏪', name: 'Ferreterías (Afiliados)', desc: 'Vende tus insumos y materiales', color: '#d97706', bg: '#fffbeb' },
+                  { value: 'cliente', icon: '👥', name: 'Cliente General', desc: 'Cotizaciones y Marketplace', color: '#16a34a', bg: '#f0fdf4' }
+                ].map(plan => {
                   const isSelected = role === plan.value;
                   return (
                     <button
@@ -388,88 +353,10 @@ export default function LoginView() {
                       <div style={{ fontSize: 22, marginBottom: 6 }}>{plan.icon}</div>
                       <div style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', marginBottom: 2 }}>{plan.name}</div>
                       <div style={{ fontSize: 10, color: '#64748b', marginBottom: 6, lineHeight: 1.3 }}>{plan.desc}</div>
-                      <div style={{ 
-                        fontSize: 11, 
-                        fontWeight: 700, 
-                        color: plan.price === 'Gratis' ? '#16a34a' : '#2563eb',
-                        padding: '3px 8px',
-                        background: plan.price === 'Gratis' ? '#dcfce7' : '#dbeafe',
-                        borderRadius: 6,
-                        display: 'inline-block',
-                      }}>
-                        {plan.price}
-                      </div>
-                      {plan.priceNote && (
-                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4 }}>{plan.priceNote}</div>
-                      )}
                     </button>
                   );
                 })}
               </div>
-            </>
-          )}
-
-          {/* ═══ REGISTER MODE — Step 4: Pago (Admin only) ═══ */}
-          {mode === 'register' && step === 4 && (
-            <>
-              <div style={{ padding: '8px 12px', background: '#eff6ff', borderRadius: 8, marginBottom: 16, fontSize: 12, color: '#1e40af', borderLeft: '3px solid #2563eb' }}>
-                <strong>Paso 4 de 4</strong> — Método de pago · <strong>$6 USD/mes</strong>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
-                {[
-                  { id: 'paypal', name: 'PayPal', desc: 'Pago seguro con tu cuenta PayPal', icon: '🅿️', color: '#003087', bg: '#f0f4ff', borderColor: '#a3bffa' },
-                  { id: 'nu', name: 'Nu Colombia', desc: 'Débito o crédito con Nu', icon: '💜', color: '#820AD1', bg: '#faf5ff', borderColor: '#d8b4fe' },
-                  { id: 'bancolombia', name: 'Bancolombia', desc: 'Transferencia o botón Bancolombia', icon: '🏦', color: '#FDDA24', bg: '#fffbeb', borderColor: '#fde68a', textColor: '#92400e' },
-                ].map(pm => {
-                  const isSelected = paymentMethod === pm.id;
-                  return (
-                    <button
-                      key={pm.id}
-                      type="button"
-                      onClick={() => { setPaymentMethod(pm.id); setPaymentConfirmed(false); }}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
-                        borderRadius: 12, cursor: 'pointer', transition: 'all 0.2s',
-                        border: isSelected ? `2.5px solid ${pm.borderColor}` : '2px solid #e2e8f0',
-                        background: isSelected ? pm.bg : 'white',
-                        textAlign: 'left',
-                      }}
-                    >
-                      <div style={{ width: 44, height: 44, borderRadius: 10, background: pm.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0, border: `1px solid ${pm.borderColor}` }}>{pm.icon}</div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: pm.textColor || '#1e293b' }}>{pm.name}</div>
-                        <div style={{ fontSize: 11, color: '#64748b' }}>{pm.desc}</div>
-                      </div>
-                      {isSelected && <div style={{ width: 22, height: 22, borderRadius: '50%', background: pm.color === '#FDDA24' ? '#92400e' : pm.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, flexShrink: 0 }}>✓</div>}
-                    </button>
-                  );
-                })}
-              </div>
-              {paymentMethod && !paymentConfirmed && (
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() => {
-                    // Simular redirección de pago
-                    const urls = {
-                      paypal: 'https://www.paypal.com/paypalme/',
-                      nu: 'https://nu.com.co/',
-                      bancolombia: 'https://www.bancolombia.com/',
-                    };
-                    window.open(urls[paymentMethod], '_blank');
-                    // Marcar como confirmado para permitir crear la cuenta
-                    setTimeout(() => setPaymentConfirmed(true), 1000);
-                  }}
-                  style={{ width: '100%', justifyContent: 'center', padding: '10px 16px', fontSize: 13, marginBottom: 10, background: paymentMethod === 'paypal' ? '#003087' : paymentMethod === 'nu' ? '#820AD1' : '#FDDA24', color: paymentMethod === 'bancolombia' ? '#1e293b' : 'white', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}
-                >
-                  💳 Ir a pagar con {paymentMethod === 'paypal' ? 'PayPal' : paymentMethod === 'nu' ? 'Nu' : 'Bancolombia'}
-                </button>
-              )}
-              {paymentConfirmed && (
-                <div style={{ padding: '10px 14px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, fontSize: 12, color: '#166534', marginBottom: 12, textAlign: 'center' }}>
-                  ✅ Pago procesado. Ahora puedes crear tu cuenta.
-                </div>
-              )}
             </>
           )}
 
@@ -477,15 +364,13 @@ export default function LoginView() {
           <button
             type="submit"
             className="btn btn-primary"
-            disabled={loading || (mode === 'register' && step === 4 && !paymentConfirmed)}
-            style={{ width: '100%', justifyContent: 'center', padding: '10px 16px', fontSize: 14, opacity: (mode === 'register' && step === 4 && !paymentConfirmed) ? 0.5 : 1 }}
+            disabled={loading}
+            style={{ width: '100%', justifyContent: 'center', padding: '10px 16px', fontSize: 14 }}
           >
             {loading && '⏳ '}
             {mode === 'login' && (loading ? 'Entrando...' : 'Entrar')}
-            {mode === 'register' && step < 3 && 'Siguiente →'}
-            {mode === 'register' && step === 3 && role === 'admin' && 'Siguiente → Pago'}
-            {mode === 'register' && step === 3 && role !== 'admin' && (loading ? 'Creando...' : '🚀 Crear Cuenta')}
-            {mode === 'register' && step === 4 && (loading ? 'Creando...' : '🚀 Crear Cuenta')}
+            {mode === 'register' && step === 1 && 'Siguiente →'}
+            {mode === 'register' && step === 2 && (loading ? 'Enviando...' : '🚀 Solicitar Acceso')}
             {mode === 'reset' && (loading ? 'Enviando...' : 'Enviar Enlace')}
           </button>
 

@@ -9,6 +9,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const db = require('./db');
 const copilotCliente = require('./copilot/cliente');
 const copilotCuadrilla = require('./copilot/cuadrilla');
+const onboarding = require('./copilot/onboarding');
 const ai = require('./copilot/ai');
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
@@ -16,6 +17,10 @@ if (!TOKEN) { console.error('❌ Set TELEGRAM_BOT_TOKEN'); process.exit(1); }
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 console.log('🤖 Bot ERP Construcción v2 iniciado...');
+
+// Iniciar Listeners de tiempo real (Notificaciones proactivas)
+const { startRealtime } = require('./realtime');
+startRealtime(bot).catch(e => console.error('❌ Error iniciando Realtime:', e.message));
 
 // Helper para enviar mensajes y registrarlos en el historial del ERP
 async function sendReply(chatId, text, options = {}) {
@@ -146,9 +151,17 @@ bot.onText(/\/start/, async (msg) => {
     if (['admin','operativo','cuadrilla'].includes(role)) {
       menu += '✅ /entrada — Check-in obra\n🔴 /salida — Check-out\n📈 /avance — Reportar avance\n📝 /informe — Informe diario\n';
     }
-    menu += '💰 /cotizar — Cotizar obra\n🔍 /insumos — Buscar materiales\n📁 /categorias — Categorías APU\n🔗 /login — Vincular cuenta\n❓ /ayuda — Comandos';
+    menu += '💰 /cotizar — Cotizar obra\n🔍 /insumos — Buscar materiales\n📁 /categorias — Categorías APU\n📋 /perfil — Completar perfil\n🔗 /login — Vincular cuenta\n❓ /ayuda — Comandos';
     
     await sendReply(msg.chat.id, menu, { parse_mode: 'Markdown' });
+
+    // ── Recordatorio diario de onboarding ──
+    try {
+      const reminder = await onboarding.shouldRemindOnboarding(u.id);
+      if (reminder && reminder.remind) {
+        setTimeout(() => onboarding.sendOnboardingReminder(bot, msg.chat.id, u.id, reminder), 2000);
+      }
+    } catch (e) { console.warn('[Bot] Onboarding reminder error:', e.message); }
   } catch (err) {
     console.error('[Bot] Error in /start:', err.message);
     bot.sendMessage(msg.chat.id, '❌ Lo siento, hubo un error al iniciar el bot. Por favor intenta de nuevo.');
@@ -294,6 +307,24 @@ bot.onText(/\/personal/, async (msg) => {
   await bot.sendMessage(msg.chat.id, txt, {parse_mode:'Markdown'});
 });
 
+// ─── /inmuebles (B2C Public Search) ───
+bot.onText(/\/inmuebles/, async (msg) => {
+  const u = await db.findOrCreateChatUser(msg.from.id, msg.from.first_name, msg.from.username);
+  await db.setConversationState(u.id, 'buscar_inmuebles', 0, {});
+  await bot.sendMessage(msg.chat.id, '🏢 *Marketplace Inmobiliario*\n\n¿Qué tipo de propiedad buscas? (Ej. Casa, Apartamento, Lote) y en qué ciudad:', {parse_mode:'Markdown'});
+});
+
+// ─── /nuevo_inmueble (B2B Agent Upload) ───
+bot.onText(/\/nuevo_inmueble/, async (msg) => {
+  const u = await db.findOrCreateChatUser(msg.from.id, msg.from.first_name, msg.from.username);
+  const userInfo = await db.getUserRole(u.id);
+  if (!userInfo || (userInfo.role !== 'admin' && userInfo.role !== 'operativo')) {
+    return bot.sendMessage(msg.chat.id, '🚫 Acceso denegado. Solo agentes y administradores pueden publicar propiedades.');
+  }
+  await db.setConversationState(u.id, 'crear_inmueble', 1, {});
+  await bot.sendMessage(msg.chat.id, '🏠 *Publicar Nuevo Inmueble*\n\nPaso 1/5: Escribe el título de la propiedad (Ej. Casa Moderna con Piscina):', {parse_mode:'Markdown'});
+});
+
 // ─── /ver (ver presupuesto en cotización) ───
 bot.onText(/\/ver/, async (msg) => {
   const u = await db.findOrCreateChatUser(msg.from.id, msg.from.first_name, msg.from.username);
@@ -352,13 +383,26 @@ bot.onText(/\/cancelar/, async (msg) => {
 bot.onText(/\/ayuda/, async (msg) => {
   await bot.sendMessage(msg.chat.id,
     '🏗️ *Comandos:*\n\n' +
+    '🏢 /inmuebles — Ver propiedades en venta\n' +
     '📊 /cotizar — Cotizar APUs\n🔍 /insumos — Buscar materiales\n📁 /categorias — Categorías\n' +
     '📋 /proyectos — Ver proyectos\n🆕 /nuevoproyecto — Crear proyecto\n' +
     '✅ /entrada — Check-in obra\n🔴 /salida — Check-out obra\n' +
     '📈 /avance — Reportar avance\n📝 /informe — Informe diario\n' +
     '📦 /pedido — Solicitar materiales a bodega\n' +
     '👷 /personal — Ver personal\n🔗 /login — Vincular cuenta\n' +
+    '📋 /perfil — Completar perfil / onboarding\n' +
     '🛒 /micotizacion — Ver cotización\n❌ /cancelar — Cancelar', {parse_mode:'Markdown'});
+});
+
+// ─── /perfil (onboarding) ───
+bot.onText(/\/perfil/, async (msg) => {
+  try {
+    const u = await db.findOrCreateChatUser(msg.from.id, msg.from.first_name, msg.from.username);
+    await onboarding.startOnboarding(bot, msg.chat.id, u.id);
+  } catch (e) {
+    console.error('[Bot] Error in /perfil:', e.message);
+    bot.sendMessage(msg.chat.id, '❌ Error iniciando el onboarding. Intenta de nuevo.');
+  }
 });
 
 // ═══════════════════════════════════════════
@@ -631,11 +675,36 @@ bot.on('voice', handleVoiceMessage);
 bot.on('audio', handleVoiceMessage);
 
 // ═══════════════════════════════════════════
+// PHOTO MESSAGES (Onboarding: selfie, cédula)
+// ═══════════════════════════════════════════
+bot.on('photo', async (msg) => {
+  try {
+    const u = await db.findOrCreateChatUser(msg.from.id, msg.from.first_name, msg.from.username);
+    const st = await db.getConversationState(u.id);
+    if (st?.flujo_actual === 'onboarding') {
+      await onboarding.handleOnboardingPhoto(bot, msg, u.id, st);
+    } else {
+      // Photo received outside onboarding — save as profile photo if user is linked
+      const userInfo = await db.getUserRole(u.id);
+      if (userInfo?.email) {
+        const photo = msg.photo[msg.photo.length - 1];
+        const fileLink = await bot.getFileLink(photo.file_id);
+        await db.updatePersonalProfile(userInfo.email, { foto_url: fileLink });
+        await bot.sendMessage(msg.chat.id, '📸 Foto de perfil actualizada.');
+      }
+    }
+  } catch (e) {
+    console.error('[Bot] Photo handler error:', e.message);
+  }
+});
+
+// ═══════════════════════════════════════════
 // FREE TEXT (state machine)
 // ═══════════════════════════════════════════
 bot.on('message', async (msg) => {
   try {
     if (!msg.text) return;
+    if (msg.photo) return; // Photo with caption — let the photo handler deal with it
   
   const txt = msg.text.trim();
 
@@ -727,10 +796,62 @@ bot.on('message', async (msg) => {
     if (handled !== false) return;
   }
 
+  // Onboarding: completar perfil
+  if (st?.flujo_actual === 'onboarding') {
+    const handled = await onboarding.handleOnboardingFlow(bot, msg, u.id, st, txt);
+    if (handled) return;
+  }
+
   // Buscar insumo
   if (st?.flujo_actual === 'buscar_insumo') {
     await showInsumos(msg.chat.id, txt);
     await db.clearConversationState(u.id);
+    return;
+  }
+
+  // ── Buscar inmueble ──
+  if (st?.flujo_actual === 'buscar_inmuebles') {
+    // Search properties simply matching text logic here or a mock
+    await bot.sendMessage(msg.chat.id, `🔍 Buscando propiedades similares a: "${txt}"...\n\n_Puedes ver todo nuestro catálogo con fotos 360° en https://tu-sitio.com/propiedades_`, {parse_mode:'Markdown'});
+    await db.clearConversationState(u.id);
+    return;
+  }
+
+  // ── Crear Inmueble (Paso a paso) ──
+  if (st?.flujo_actual === 'crear_inmueble') {
+    const dt = st.data_temp || {};
+    if (st.paso === 1) {
+      dt.titulo = txt;
+      await db.setConversationState(u.id, 'crear_inmueble', 2, dt);
+      await bot.sendMessage(msg.chat.id, 'Paso 2/5: Escribe el precio de venta (Ej. 500000000):');
+    } else if (st.paso === 2) {
+      dt.precio = parseInt(txt.replace(/\D/g,'')) || 0;
+      await db.setConversationState(u.id, 'crear_inmueble', 3, dt);
+      await bot.sendMessage(msg.chat.id, 'Paso 3/5: Escribe la dirección o envía la ubicación GPS:');
+    } else if (st.paso === 3) {
+      dt.direccion = txt;
+      await db.setConversationState(u.id, 'crear_inmueble', 4, dt);
+      await bot.sendMessage(msg.chat.id, 'Paso 4/5: Pega el enlace HTML5 del Tour Virtual 360 (generado con Pano2VR/Kuula), o escribe "No":');
+    } else if (st.paso === 4) {
+      dt.tour_360_url = txt.toLowerCase() !== 'no' ? txt : null;
+      await db.setConversationState(u.id, 'crear_inmueble', 5, dt);
+      await bot.sendMessage(msg.chat.id, 'Paso 5/5: Escribe el nombre del propietario actual:');
+    } else if (st.paso === 5) {
+      dt.propietario_nombre = txt;
+      // In a real scenario we'd save to Supabase here
+      const { data, error } = await db.supabase.from('inmuebles').insert({
+        titulo: dt.titulo,
+        precio: dt.precio,
+        direccion: dt.direccion,
+        tour_360_url: dt.tour_360_url,
+        propietario_nombre: dt.propietario_nombre,
+        tipo: 'Casa',
+        operacion: 'VENTA',
+        estado: 'DISPONIBLE'
+      });
+      await bot.sendMessage(msg.chat.id, `✅ ¡Inmueble publicado con éxito en el Marketplace B2C!\n\n🏠 *${dt.titulo}*\n💰 $${dt.precio.toLocaleString('es-CO')}\n\nLos leads que lleguen desde el Marketplace te serán notificados por aquí.`, {parse_mode:'Markdown'});
+      await db.clearConversationState(u.id);
+    }
     return;
   }
 

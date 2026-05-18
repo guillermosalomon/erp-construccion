@@ -86,6 +86,7 @@ const initialState = {
   proyectos: [],
   presupuestoItems: [],
   bimLinks: [],
+  agenda: [],
   avances: [],
   notas: [],
   bodegas: [],
@@ -110,15 +111,17 @@ const initialState = {
   mkTraspasos: [],
   mkTraspasoItems: [],
   chatCotizaciones: [],
+  inmuebles: [],
+  // History (Undo/Redo)
+  history: [],
+  historyIndex: -1,
 };
 
-/* ─── Reducer ─── */
-function storeReducer(state, action) {
-  try {
-    switch (action.type) {
-      // ── Hydration (load from Supabase) ──
-      case 'LOAD_ALL': {
-      // Deduplicar datos entrantes para evitar "Duplicate Key" en React
+/* ─── Base Reducer (Business Logic) ─── */
+function baseStoreReducer(state, action) {
+  switch (action.type) {
+    // ── Hydration (load from Supabase) ──
+    case 'LOAD_ALL': {
       const payload = action.payload || {};
       const deduplicated = {};
       
@@ -136,11 +139,22 @@ function storeReducer(state, action) {
         }
       });
 
-      // Recalcular precios de cargos basados en SMLV para asegurar consistencia
       const config = deduplicated.config || [];
       const smlv = parseFloat(config.find(c => c.clave === 'SMLV')?.valor) || 2200000;
       const h_mes = parseFloat(config.find(c => c.clave === 'HORAS_MES')?.valor) || 192;
       const h_dia = parseFloat(config.find(c => c.clave === 'HORAS_DIA')?.valor) || 8;
+
+      // Normalize legacy category names to new role values
+      const LEGACY_CAT_MAP = {
+        'oficina (escritorio)': 'admin',
+        'campo (móvil)': 'operativo',
+        'campo (movil)': 'operativo',
+        'mano de obra directa': 'cuadrilla',
+        'mano de obra': 'cuadrilla',
+        'comercio (ventas)': 'tienda',
+        'equipo / cuadrilla': 'cuadrilla',
+      };
+      const VALID_ROLES = ['admin', 'oficina', 'operativo', 'cuadrilla', 'supervisor', 'bodega', 'tienda', 'cliente'];
 
       const cargosRecalculados = (deduplicated.cargos || []).map(cargo => {
         const factor = parseFloat(cargo.factor_smlv) || 1.0;
@@ -149,10 +163,17 @@ function storeReducer(state, action) {
         if (unitNorm === 'hora' || unitNorm === 'hr') precio = precio / h_mes;
         else if (unitNorm === 'día' || unitNorm === 'dia') precio = (precio / h_mes) * h_dia;
         
-        return { ...cargo, precio_unitario: Math.round(precio) };
+        // Normalize categoria to role
+        let cat = cargo.categoria || 'cuadrilla';
+        if (!VALID_ROLES.includes(cat.toLowerCase())) {
+          cat = LEGACY_CAT_MAP[cat.toLowerCase()] || 'cuadrilla';
+        } else {
+          cat = cat.toLowerCase();
+        }
+        
+        return { ...cargo, categoria: cat, precio_unitario: Math.round(precio) };
       });
 
-      // Recalcular fechas de fin ausentes durante la hidratación
       const items = (deduplicated.presupuestoItems || []).map(item => {
         if (item.fecha_inicio && !item.fecha_fin) {
           const apu = (deduplicated.apus || []).find(a => a.id === item.apu_id);
@@ -165,7 +186,6 @@ function storeReducer(state, action) {
         return item;
       });
 
-      // --- Reconstrucción de Perfiles de Personal (Legacy -> Estructurado) ---
       const personalReconstruido = (deduplicated.personal || []).map(p => {
         const needsSplit = (!p.nombres || p.nombres.trim() === '') && (p.nombre && p.nombre.trim() !== '');
         if (needsSplit) {
@@ -179,7 +199,6 @@ function storeReducer(state, action) {
         return p;
       });
 
-      // Cargar bimModels desde localStorage
       let savedBimModels = [];
       try {
         const raw = typeof window !== 'undefined' && localStorage.getItem('erp_bim_models');
@@ -195,7 +214,6 @@ function storeReducer(state, action) {
         bimModels: savedBimModels,
       };
     }
-
     case 'UPDATE_CONFIG': {
       const { clave, valor } = action.payload;
       const newConfig = state.config.filter(c => c.clave !== clave);
@@ -216,7 +234,6 @@ function storeReducer(state, action) {
           return { ...cargo, precio_unitario: Math.round(precio), updated_at: now() };
         });
 
-        // 2. Recalcular Personal vinculado (Efecto Reflejo)
         const updatedPersonal = state.personal.map(p => {
           const matchingCargo = updatedCargos.find(c => c.id === p.cargo_id);
           if (matchingCargo) {
@@ -227,7 +244,6 @@ function storeReducer(state, action) {
 
         return { ...state, config: newConfig, cargos: updatedCargos, personal: updatedPersonal };
       }
-
       return { ...state, config: newConfig };
     }
 
@@ -274,6 +290,62 @@ function storeReducer(state, action) {
         apus: [...state.apus, { ...action.payload, id, created_at: now(), updated_at: now() }],
       };
     }
+    case 'DUPLICATE_APU': {
+      const { originalId, newId, newNombre, newCodigo, detailIds } = action.payload;
+      const originalApu = state.apus.find(a => a.id === originalId);
+      if (!originalApu) return state;
+
+      const duplicatedApu = {
+        ...originalApu,
+        id: newId,
+        nombre: newNombre,
+        codigo: newCodigo,
+        created_at: now(),
+        updated_at: now()
+      };
+
+      const originalDetalles = state.apuDetalles.filter(d => d.apu_id === originalId);
+      const duplicatedDetalles = originalDetalles.map((d, i) => ({
+        ...d,
+        id: detailIds[i] || `${newId}_${i}`,
+        apu_id: newId,
+        created_at: now()
+      }));
+
+      return {
+        ...state,
+        apus: [...state.apus, duplicatedApu],
+        apuDetalles: [...state.apuDetalles, ...duplicatedDetalles]
+      };
+    }
+    case 'DUPLICATE_CARGO': {
+      const { originalId, newId, newNombre, newCodigo, detailIds } = action.payload;
+      const original = state.cargos.find(c => c.id === originalId);
+      if (!original) return state;
+
+      const duplicated = {
+        ...original,
+        id: newId,
+        nombre: newNombre,
+        codigo: newCodigo,
+        created_at: now(),
+        updated_at: now()
+      };
+
+      const originalDetalles = state.cargoDetalles.filter(d => d.cargo_padre_id === originalId);
+      const duplicatedDetalles = originalDetalles.map((d, i) => ({
+        ...d,
+        id: detailIds[i] || `${newId}_${i}`,
+        cargo_padre_id: newId,
+        created_at: now()
+      }));
+
+      return {
+        ...state,
+        cargos: [...state.cargos, duplicated],
+        cargoDetalles: [...state.cargoDetalles, ...duplicatedDetalles]
+      };
+    }
     case 'UPDATE_APU':
       return {
         ...state,
@@ -296,6 +368,16 @@ function storeReducer(state, action) {
       return {
         ...state,
         apuDetalles: [...state.apuDetalles, { ...action.payload, id, created_at: now() }],
+      };
+    }
+    case 'ADD_APU_DETALLE_BATCH': {
+      const items = Array.isArray(action.payload) ? action.payload : [];
+      return {
+        ...state,
+        apuDetalles: [
+          ...state.apuDetalles,
+          ...items.map(d => ({ ...d, id: d.id || generateId(), created_at: now() }))
+        ]
       };
     }
     case 'UPDATE_APU_DETALLE':
@@ -323,12 +405,7 @@ function storeReducer(state, action) {
       const id = action.payload.id || generateId();
       return {
         ...state,
-        proyectos: [...state.proyectos, {
-          ...action.payload,
-          id,
-          created_at: now(),
-          updated_at: now(),
-        }],
+        proyectos: [...state.proyectos, { ...action.payload, id, created_at: now(), updated_at: now() }],
       };
     }
     case 'UPDATE_PROYECTO':
@@ -352,11 +429,9 @@ function storeReducer(state, action) {
       const rendimiento = Number(apu?.rendimiento) || 1;
       const numCuadrillas = Number(action.payload.num_cuadrillas) || 1;
       const days = Math.ceil(Number(action.payload.cantidad || 0) / (rendimiento * numCuadrillas));
-      
       const fechaFin = action.payload.fecha_inicio 
         ? calculateEndDate(action.payload.fecha_inicio, days) 
         : action.payload.fecha_fin;
-
       return {
         ...state,
         presupuestoItems: [...state.presupuestoItems, { ...action.payload, id, fecha_fin: fechaFin, created_at: now() }],
@@ -373,25 +448,17 @@ function storeReducer(state, action) {
     case 'UPDATE_PRESUPUESTO_ITEM': {
       const current = state.presupuestoItems.find(i => i.id === action.payload.id);
       if (!current) return state;
-
       const updated = { ...current, ...action.payload };
-      
-      // Forzar tipos numéricos
       const cantidad = parseFloat(updated.cantidad) || 0;
       const numCuadrillas = parseInt(updated.num_cuadrillas) || 1;
-      
       const apu = state.apus.find(a => a.id === updated.apu_id);
       const rendimiento = parseFloat(apu?.rendimiento) || 1;
-      
-      // Recalcular fecha de fin SOLO si cambian campos que afectan la duración
       const schemaChanged = 'cantidad' in action.payload || 'num_cuadrillas' in action.payload || 'fecha_inicio' in action.payload || 'apu_id' in action.payload;
-      
       if (schemaChanged && updated.fecha_inicio) {
         const factorComun = rendimiento * Math.max(1, numCuadrillas);
         const days = factorComun > 0 ? Math.ceil(cantidad / factorComun) : 1;
         updated.fecha_fin = calculateEndDate(updated.fecha_inicio, days);
       }
-
       return {
         ...state,
         presupuestoItems: state.presupuestoItems.map((pi) =>
@@ -400,44 +467,23 @@ function storeReducer(state, action) {
       };
     }
     case 'DELETE_PRESUPUESTO_ITEM':
-      return {
-        ...state,
-        presupuestoItems: state.presupuestoItems.filter((pi) => pi.id !== action.payload),
-      };
+      return { ...state, presupuestoItems: state.presupuestoItems.filter((pi) => pi.id !== action.payload) };
     case 'CLEAR_PRESUPUESTO_ITEMS':
-      return {
-        ...state,
-        presupuestoItems: state.presupuestoItems.filter((pi) => pi.proyecto_id !== action.payload),
-      };
+      return { ...state, presupuestoItems: state.presupuestoItems.filter((pi) => pi.proyecto_id !== action.payload) };
 
     // ── BIM Links ──
     case 'ADD_BIM_LINK':
-      return {
-        ...state,
-        bimLinks: [...state.bimLinks, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }],
-      };
+      return { ...state, bimLinks: [...state.bimLinks, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'DELETE_BIM_LINK':
-      return {
-        ...state,
-        bimLinks: state.bimLinks.filter((l) => l.id !== action.payload),
-      };
+      return { ...state, bimLinks: state.bimLinks.filter((l) => l.id !== action.payload) };
 
     // ── Obra Avances ──
     case 'ADD_AVANCE':
-      return {
-        ...state,
-        avances: [{ estado: 'PENDIENTE', ...action.payload, id: action.payload.id || generateId(), created_at: now() }, ...state.avances],
-      };
+      return { ...state, avances: [{ estado: 'PENDIENTE', ...action.payload, id: action.payload.id || generateId(), created_at: now() }, ...state.avances] };
     case 'UPDATE_AVANCE':
-      return {
-        ...state,
-        avances: state.avances.map((a) => (a.id === action.payload.id ? { ...a, ...action.payload.changes } : a)),
-      };
+      return { ...state, avances: state.avances.map((a) => (a.id === action.payload.id ? { ...a, ...action.payload.changes } : a)) };
     case 'DELETE_AVANCE':
-      return {
-        ...state,
-        avances: state.avances.filter((a) => a.id !== action.payload),
-      };
+      return { ...state, avances: state.avances.filter((a) => a.id !== action.payload) };
 
     // ── Item Notes ──
     case 'ADD_NOTE': {
@@ -472,35 +518,21 @@ function storeReducer(state, action) {
 
     // ── Bodegas ──
     case 'ADD_BODEGA':
-      return {
-        ...state,
-        bodegas: [...state.bodegas, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }],
-      };
+      return { ...state, bodegas: [...state.bodegas, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'DELETE_BODEGA':
-      return {
-        ...state,
-        bodegas: state.bodegas.filter((b) => b.id !== action.payload),
-      };
+      return { ...state, bodegas: state.bodegas.filter((b) => b.id !== action.payload) };
 
     // ── Inventario Movimientos ──
     case 'ADD_INVENTARIO_MOV':
-      return {
-        ...state,
-        inventario: [...state.inventario, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }],
-      };
+      return { ...state, inventario: [...state.inventario, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'UPDATE_INVENTARIO_MOV':
-      return {
-        ...state,
-        inventario: state.inventario.map((i) => (i.id === action.payload.id ? { ...i, ...action.payload.changes } : i)),
-      };
+      return { ...state, inventario: state.inventario.map((i) => (i.id === action.payload.id ? { ...i, ...action.payload.changes } : i)) };
 
-    // ── Marketplace: Tiendas ──
+    // ── Marketplace ──
     case 'ADD_MK_TIENDA':
       return { ...state, mkTiendas: [...state.mkTiendas, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'UPDATE_MK_TIENDA':
       return { ...state, mkTiendas: state.mkTiendas.map(t => t.id === action.payload.id ? { ...t, ...action.payload } : t) };
-    case 'DELETE_MK_TIENDA':
-      return { ...state, mkTiendas: state.mkTiendas.filter(t => t.id !== action.payload) };
     case 'DELETE_MK_TIENDA_COMPLETA':
       return {
         ...state,
@@ -511,13 +543,10 @@ function storeReducer(state, action) {
         personalProyecto: state.personalProyecto.filter(pp => pp.tienda_id !== action.payload)
       };
 
-    // ── Marketplace: Puntos de Venta ──
     case 'ADD_MK_PUNTO_VENTA':
       return { ...state, mkPuntosVenta: [...state.mkPuntosVenta, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'UPDATE_MK_PUNTO_VENTA':
       return { ...state, mkPuntosVenta: state.mkPuntosVenta.map(p => p.id === action.payload.id ? { ...p, ...action.payload } : p) };
-    case 'DELETE_MK_PUNTO_VENTA':
-      return { ...state, mkPuntosVenta: state.mkPuntosVenta.filter(p => p.id !== action.payload) };
     case 'DELETE_MK_PUNTO_VENTA_COMPLETA':
       return {
         ...state,
@@ -527,16 +556,15 @@ function storeReducer(state, action) {
         personalProyecto: state.personalProyecto.filter(pp => pp.punto_venta_id !== action.payload)
       };
 
-    // ── Marketplace: Ofertas (Insumo + Punto de Venta + Precio) ──
     case 'ADD_MK_OFERTA':
       return { ...state, mkOfertas: [...state.mkOfertas, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'UPDATE_MK_OFERTA':
       return { ...state, mkOfertas: state.mkOfertas.map(p => p.id === action.payload.id ? { ...p, ...action.payload } : p) };
     case 'DELETE_MK_OFERTA':
       return { ...state, mkOfertas: state.mkOfertas.filter(p => p.id !== action.payload) };
-    // ── Marketplace: Pedidos ──
+
     case 'ADD_MK_PEDIDO':
-      return { ...state, mkPedidos: [...state.mkPedidos, { ...action.payload, id: action.payload.id || crypto.randomUUID(), created_at: new Date().toISOString() }] };
+      return { ...state, mkPedidos: [...state.mkPedidos, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'UPDATE_MK_PEDIDO':
       return { ...state, mkPedidos: state.mkPedidos.map(p => p.id === action.payload.id ? { ...p, ...action.payload } : p) };
     case 'DELETE_MK_PEDIDO':
@@ -544,7 +572,6 @@ function storeReducer(state, action) {
     case 'ADD_MK_PEDIDO_ITEM':
       return { ...state, mkPedidoItems: [...state.mkPedidoItems, { ...action.payload, id: action.payload.id || generateId() }] };
 
-    // ── Marketplace: Traspasos ──
     case 'ADD_MK_TRASPASO':
       return { ...state, mkTraspasos: [...state.mkTraspasos, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'UPDATE_MK_TRASPASO':
@@ -552,44 +579,41 @@ function storeReducer(state, action) {
     case 'ADD_MK_TRASPASO_ITEM':
       return { ...state, mkTraspasoItems: [...state.mkTraspasoItems, { ...action.payload, id: action.payload.id || generateId() }] };
 
+    // ── Inmuebles ──
+    case 'SET_INMUEBLES':
+      return { ...state, inmuebles: action.payload };
+    case 'ADD_INMUEBLE':
+      return { ...state, inmuebles: [{ ...action.payload, id: action.payload.id || generateId(), created_at: now() }, ...state.inmuebles] };
+    case 'UPDATE_INMUEBLE':
+      return { ...state, inmuebles: state.inmuebles.map(i => i.id === action.payload.id ? { ...i, ...action.payload } : i) };
+    case 'DELETE_INMUEBLE':
+      return { ...state, inmuebles: state.inmuebles.filter(i => i.id !== action.payload) };
+
     // ── Pagos Cliente ──
     case 'ADD_PAGO':
-      return {
-        ...state,
-        pagos: [...state.pagos, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }],
-      };
+      return { ...state, pagos: [...state.pagos, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'DELETE_PAGO':
-      return {
-        ...state,
-        pagos: state.pagos.filter((p) => p.id !== action.payload),
-      };
+      return { ...state, pagos: state.pagos.filter((p) => p.id !== action.payload) };
 
-    // ── Personal (Mano de Obra) ──
-    case 'ADD_PERSON': {
-      const id = action.payload.id || generateId();
-      return {
-        ...state,
-        personal: [...state.personal, { ...action.payload, id, created_at: now(), updated_at: now() }],
-      };
-    }
+    // ── Agenda de Proyecto ──
+    case 'ADD_AGENDA_ITEM':
+      return { ...state, agenda: [{ ...action.payload, id: action.payload.id || generateId(), created_at: now(), estado: action.payload.estado || 'pendiente' }, ...state.agenda] };
+    case 'UPDATE_AGENDA_ITEM':
+      return { ...state, agenda: state.agenda.map((a) => (a.id === action.payload.id ? { ...a, ...action.payload.changes } : a)) };
+    case 'DELETE_AGENDA_ITEM':
+      return { ...state, agenda: state.agenda.filter((a) => a.id !== action.payload) };
+
+    // ── Personal ──
+    case 'ADD_PERSON':
+      return { ...state, personal: [...state.personal, { ...action.payload, id: action.payload.id || generateId(), created_at: now(), updated_at: now() }] };
     case 'UPDATE_PERSON':
-      return {
-        ...state,
-        personal: state.personal.map((p) =>
-          p.id === action.payload.id ? { ...p, ...action.payload, updated_at: now() } : p
-        ),
-      };
+      return { ...state, personal: state.personal.map((p) => p.id === action.payload.id ? { ...p, ...action.payload, updated_at: now() } : p) };
     case 'DELETE_PERSON':
-      return {
-        ...state,
-        personal: state.personal.filter((p) => p.id !== action.payload),
-      };
+      return { ...state, personal: state.personal.filter((p) => p.id !== action.payload) };
 
     case 'ADD_CARGO': {
       const codigo = action.payload.codigo || generateNextCode(state.cargos, 'CAR');
       const id = action.payload.id || generateId();
-
-      // Cálculo de precio basado en SMLV
       const smlv = parseFloat(state.config.find(c => c.clave === 'SMLV')?.valor) || 2200000;
       const h_mes = parseFloat(state.config.find(c => c.clave === 'HORAS_MES')?.valor) || 192;
       const h_dia = parseFloat(state.config.find(c => c.clave === 'HORAS_DIA')?.valor) || 8;
@@ -598,92 +622,44 @@ function storeReducer(state, action) {
       let precio = smlv * factor * fMult;
       if (action.payload.unidad === 'Hora') precio = precio / h_mes;
       if (action.payload.unidad === 'Día') precio = (precio / h_mes) * h_dia;
-
-      // Evitar duplicados si el ID ya existe
-      if (state.cargos.some(c => c.id === id)) {
-        return state;
-      }
-
-      return {
-        ...state,
-        cargos: [...state.cargos, { 
-          ...action.payload, 
-          codigo, 
-          id, 
-          precio_unitario: Math.round(precio),
-          created_at: now(), 
-          updated_at: now() 
-        }],
-      };
+      return { ...state, cargos: [...state.cargos, { ...action.payload, codigo, id, precio_unitario: Math.round(precio), created_at: now(), updated_at: now() }] };
     }
     case 'UPDATE_CARGO': {
       const smlv = parseFloat(state.config.find(c => c.clave === 'SMLV')?.valor) || 2200000;
       const h_mes = parseFloat(state.config.find(c => c.clave === 'HORAS_MES')?.valor) || 192;
       const h_dia = parseFloat(state.config.find(c => c.clave === 'HORAS_DIA')?.valor) || 8;
       const updatedCargo = { ...action.payload };
-      
       if (updatedCargo.factor_smlv !== undefined || updatedCargo.unidad !== undefined || updatedCargo.factor_multiplicador !== undefined) {
         const factor = parseFloat(updatedCargo.factor_smlv ?? state.cargos.find(c => c.id === action.payload.id)?.factor_smlv) || 1.0;
         const fMult = parseFloat(updatedCargo.factor_multiplicador ?? state.cargos.find(c => c.id === action.payload.id)?.factor_multiplicador) || 1.0;
         const unidad = updatedCargo.unidad ?? state.cargos.find(c => c.id === action.payload.id)?.unidad;
-        
         let precio = smlv * factor * fMult;
         const u = unidad?.toLowerCase() || '';
         if (u === 'hora' || u === 'hr') precio = precio / h_mes;
         if (u === 'día' || u === 'dia') precio = (precio / h_mes) * h_dia;
         updatedCargo.precio_unitario = Math.round(precio);
       }
-
-      const newCargos = state.cargos.map((c) =>
-        c.id === action.payload.id ? { ...c, ...updatedCargo, updated_at: now() } : c
-      );
-
-      const targetCargo = newCargos.find(c => c.id === action.payload.id);
-      
-      const newPersonal = state.personal.map(p => {
-        if (p.cargo_id === action.payload.id && targetCargo) {
-          return { ...p, salario_base: targetCargo.precio_unitario, unidad_pago: targetCargo.unidad, updated_at: now() };
-        }
-        return p;
-      });
-
       return {
         ...state,
-        cargos: newCargos,
-        personal: newPersonal,
+        cargos: state.cargos.map((c) => c.id === action.payload.id ? { ...c, ...updatedCargo, updated_at: now() } : c),
+        personal: state.personal.map(p => p.cargo_id === action.payload.id ? { ...p, salario_base: updatedCargo.precio_unitario, updated_at: now() } : p)
       };
     }
     case 'DELETE_CARGO':
-      return {
-        ...state,
-        cargos: state.cargos.filter((c) => c.id !== action.payload),
-      };
-    case 'ADD_CARGO_DETALLE': {
-      const detalleId = action.payload.id || generateId();
-      return { ...state, cargoDetalles: [{ ...action.payload, id: detalleId }, ...state.cargoDetalles] };
-    }
+      return { ...state, cargos: state.cargos.filter((c) => c.id !== action.payload) };
+    case 'ADD_CARGO_DETALLE':
+      return { ...state, cargoDetalles: [{ ...action.payload, id: action.payload.id || generateId() }, ...state.cargoDetalles] };
+    case 'UPDATE_CARGO_DETALLE':
+      return { ...state, cargoDetalles: state.cargoDetalles.map(d => d.id === action.payload.id ? { ...d, ...action.payload } : d) };
     case 'DELETE_CARGO_DETALLE':
       return { ...state, cargoDetalles: state.cargoDetalles.filter(d => d.id !== action.payload) };
-    case 'UPDATE_CARGO_DETALLE':
-      return { 
-        ...state, 
-        cargoDetalles: state.cargoDetalles.map(d => d.id === action.payload.id ? { ...d, ...action.payload } : d) 
-      };
 
-    // --- Personal x Proyecto ---
-    case 'ADD_PERSON_PROYECTO': {
-      const id = action.payload.id || generateId();
-      return { ...state, personalProyecto: [{ ...action.payload, id }, ...state.personalProyecto] };
-    }
+    case 'ADD_PERSON_PROYECTO':
+      return { ...state, personalProyecto: [{ ...action.payload, id: action.payload.id || generateId() }, ...state.personalProyecto] };
     case 'UPDATE_PERSON_PROYECTO':
-      return { 
-        ...state, 
-        personalProyecto: state.personalProyecto.map(p => p.id === action.payload.id ? { ...p, ...action.payload } : p) 
-      };
+      return { ...state, personalProyecto: state.personalProyecto.map(pp => pp.id === action.payload.id ? { ...pp, ...action.payload } : pp) };
     case 'DELETE_PERSON_PROYECTO':
-      return { ...state, personalProyecto: state.personalProyecto.filter(p => p.id !== action.payload) };
-
-    // --- Checklist de Actividades ---
+      return { ...state, personalProyecto: state.personalProyecto.filter(pp => pp.id !== action.payload) };
     case 'ADD_CHECKLIST_ITEM':
       return { ...state, itemChecklistItems: [...state.itemChecklistItems, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'UPDATE_CHECKLIST_ITEM':
@@ -697,14 +673,10 @@ function storeReducer(state, action) {
       };
     case 'DELETE_CHECKLIST_ITEM':
       return { ...state, itemChecklistItems: state.itemChecklistItems.filter(it => it.id !== action.payload) };
-
-    // --- Documentos de Actividad ---
     case 'ADD_ITEM_DOCUMENT':
       return { ...state, itemDocuments: [...state.itemDocuments, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'DELETE_ITEM_DOCUMENT':
       return { ...state, itemDocuments: state.itemDocuments.filter(d => d.id !== action.payload) };
-
-    // --- Modelos BIM ---
     case 'ADD_BIM_MODEL': {
       const newModels = [...state.bimModels, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }];
       try { localStorage.setItem('erp_bim_models', JSON.stringify(newModels)); } catch(e) {}
@@ -721,12 +693,43 @@ function storeReducer(state, action) {
       return { ...state, bimModels: newModels };
     }
 
-      default:
-        return state;
+    default:
+      return state;
+  }
+}
+
+/* ─── Wrapper Reducer (History + Exceptions) ─── */
+function storeReducer(state, action) {
+  try {
+    if (action.type === 'UNDO') {
+      if (!state.history || state.history.length === 0) return state;
+      const newHistory = [...state.history];
+      const prevState = newHistory.pop();
+      const { history: _h, future: _f, ...currentState } = state;
+      return { ...prevState, history: newHistory, future: [currentState, ...(state.future || [])] };
     }
+    if (action.type === 'REDO') {
+      if (!state.future || state.future.length === 0) return state;
+      const newFuture = [...state.future];
+      const nextState = newFuture.shift();
+      const { history: _h, future: _f, ...currentState } = state;
+      return { ...nextState, history: [...(state.history || []), currentState], future: newFuture };
+    }
+
+    const nextState = baseStoreReducer(state, action);
+
+    const shouldSaveToHistory = !['LOAD_ALL', 'UPDATE_CONFIG'].includes(action.type) && nextState !== state;
+    if (shouldSaveToHistory) {
+      const { history, future, ...stateToSave } = state;
+      return {
+        ...nextState,
+        history: [...(state.history || []), stateToSave].slice(-20),
+        future: []
+      };
+    }
+    return nextState;
   } catch (e) {
-    const errorMsg = `🔴 [StoreReducer] Error crítico en "${action.type}": ${e.message}`;
-    console.error(errorMsg);
+    console.error(`🔴 [StoreReducer] Error en "${action.type}": ${e.message}`);
     return state;
   }
 }
@@ -737,6 +740,7 @@ let syncQueue = Promise.resolve();
 async function syncToSupabase(action, state) {
   if (!isSupabaseConfigured()) return;
 
+  console.log(`[Sync Engine] Processing ${action.type}...`);
   syncQueue = syncQueue.then(async () => {
     try {
       switch (action.type) {
@@ -793,7 +797,26 @@ async function syncToSupabase(action, state) {
           await apuService.remove(action.payload);
           break;
 
+        case 'DUPLICATE_APU': {
+          const { newId } = action.payload;
+          const apu = state.apus.find(a => a.id === newId);
+          const detalles = state.apuDetalles.filter(d => d.apu_id === newId);
+          if (apu) {
+            const { v_presupuesto, costo_total, ...apuClean } = apu;
+            await apuService.create(apuClean);
+            if (detalles.length > 0) {
+              await apuDetalleService.createBatch(detalles);
+            }
+          }
+          break;
+        }
+
         // APU Detalle
+        case 'ADD_APU_DETALLE_BATCH':
+          if (Array.isArray(action.payload)) {
+            await apuDetalleService.createBatch(action.payload);
+          }
+          break;
         case 'ADD_APU_DETALLE': {
           await apuDetalleService.create({ 
             id: action.payload.id, 
@@ -867,6 +890,24 @@ async function syncToSupabase(action, state) {
           break;
 
         // BIM Links
+        case 'ADD_BIM_MODEL':
+          // LocalStorage solo por ahora
+          break;
+        case 'UPDATE_BIM_MODEL':
+          break;
+        case 'DELETE_BIM_MODEL':
+          break;
+
+        case 'ADD_INMUEBLE':
+          await supabase.from('inmuebles').insert([action.payload]);
+          break;
+        case 'UPDATE_INMUEBLE':
+          await supabase.from('inmuebles').update(action.payload).eq('id', action.payload.id);
+          break;
+        case 'DELETE_INMUEBLE':
+          await supabase.from('inmuebles').delete().eq('id', action.payload);
+          break;
+
         case 'ADD_BIM_LINK':
           await bimLinksService.create(action.payload);
           break;
@@ -960,58 +1001,168 @@ async function syncToSupabase(action, state) {
 
         // Personal
         case 'ADD_PERSON': {
-          try {
-            const { arl_numero: _a1, arl_url: _a2, ...createPayload } = action.payload;
-            await personalService.create(createPayload);
-          } catch (err) {
-            const errMsg = err?.message || String(err);
-            if (errMsg.includes('column') || errMsg.includes('schema cache')) {
+          const addPersonSanitized = {
+            id: action.payload.id,
+            nombre: [action.payload.nombres, action.payload.apellidos].filter(Boolean).join(' ') || action.payload.nombre || 'Sin Nombre',
+            email: action.payload.email || null,
+            cargo_id: (action.payload.cargo_id && action.payload.cargo_id.length === 36) ? action.payload.cargo_id : null,
+            cargos_ids: Array.isArray(action.payload.cargos_ids) ? action.payload.cargos_ids : [],
+            telefono: action.payload.telefono || null,
+            whatsapp: action.payload.whatsapp || null,
+            telegram_id: action.payload.telegram_id || null,
+            salario_base: action.payload.salario_base || 0,
+            profesion: action.payload.profesion || '',
+            unidad_pago: action.payload.unidad_pago || 'Mes',
+            factor_smlv: parseFloat(action.payload.factor_smlv) || null,
+            tipo_documento: action.payload.tipo_documento || 'CC',
+            cedula: action.payload.cedula || null,
+            foto_url: action.payload.foto_url || null,
+            cedula_url: action.payload.cedula_url || null,
+            tp_numero: action.payload.tp_numero || null,
+            tp_url: action.payload.tp_url || null,
+            arl_numero: action.payload.arl_numero || null,
+            arl_url: action.payload.arl_url || null,
+            portafolio_url: action.payload.portafolio_url || null,
+            portafolio_nombre: action.payload.portafolio_nombre || null,
+            hoja_vida_url: action.payload.hoja_vida_url || null,
+            hoja_vida_nombre: action.payload.hoja_vida_nombre || null,
+            diplomas_url: action.payload.diplomas_url || null,
+            diplomas_nombre: action.payload.diplomas_nombre || null,
+            ciudad: action.payload.ciudad || null,
+            direccion_residencia: action.payload.direccion_residencia || null,
+            pais: action.payload.pais || 'Colombia',
+            app_role: action.payload.app_role || 'cuadrilla',
+            posgrados: Array.isArray(action.payload.posgrados) ? action.payload.posgrados : [],
+            salarios_por_cargo: action.payload.salarios_por_cargo || {},
+          };
+          Object.keys(addPersonSanitized).forEach(k => addPersonSanitized[k] === undefined && delete addPersonSanitized[k]);
+
+          // Si tiene cargo_id, verificar que el cargo exista en Supabase primero
+          if (addPersonSanitized.cargo_id) {
+            const cargoLocal = state.cargos.find(c => c.id === addPersonSanitized.cargo_id);
+            if (cargoLocal) {
               try {
-                const { nombres, apellidos, rol_proyecto, tareas_asignadas, arl_numero, arl_url, ...clean } = action.payload;
-                const fullName = [nombres, apellidos].filter(Boolean).join(' ');
-                await personalService.create({ 
-                  ...clean, 
-                  nombre: fullName || 'Sin Nombre' 
+                await cargosService.create({
+                  id: cargoLocal.id, codigo: cargoLocal.codigo, nombre: cargoLocal.nombre,
+                  categoria: cargoLocal.categoria || 'Mano de Obra Directa', factor_smlv: cargoLocal.factor_smlv || 1.0,
+                  unidad: cargoLocal.unidad || 'Mes', precio_unitario: cargoLocal.precio_unitario || 0,
                 });
-              } catch (err2) {
-                const { id, email, cargo_id, user_id, telefono, whatsapp, telegram_id } = action.payload;
-                const fullName = [action.payload.nombres, action.payload.apellidos].filter(Boolean).join(' ');
-                await personalService.create({ 
-                  id, email, cargo_id, user_id, telefono, whatsapp, telegram_id,
-                  nombre: fullName || 'Sin Nombre' 
-                });
-              }
-            } else throw err;
+              } catch (e) { console.warn('[Sync] Pre-sync cargo:', e.message); }
+            }
           }
+
+          // Recursive save: strip offending columns on schema errors
+          const savePersonCreate = async (payload, attempt = 0) => {
+            if (attempt > 10) { console.error('🔴 [Sync] ADD_PERSON: Too many retries'); return; }
+            try {
+              await personalService.create(payload);
+              console.log("[Sync] ADD_PERSON Success:", payload.id);
+            } catch (err) {
+              const msg = err.message || '';
+              // Extract column name from "Could not find the 'xxx' column"
+              const colMatch = msg.match(/Could not find the '(\w+)'/);
+              if (colMatch) {
+                console.warn(`[Sync] ADD_PERSON: Stripping column '${colMatch[1]}' and retrying...`);
+                delete payload[colMatch[1]];
+                return savePersonCreate(payload, attempt + 1);
+              }
+              if (msg.includes('foreign key') || msg.includes('cargo_id')) {
+                payload.cargo_id = null;
+                return savePersonCreate(payload, attempt + 1);
+              }
+              console.error('🔴 [Sync Error] ADD_PERSON:', msg);
+            }
+          };
+          await savePersonCreate(addPersonSanitized);
           break;
         }
         case 'UPDATE_PERSON': {
-          try {
-            const { factor_smlv: _f1, nombres: _n1, apellidos: _a1, rol_proyecto: _rp1, tareas_asignadas: _t1, arl_numero: _arl1, arl_url: _arl2, ...cleanPayload } = action.payload;
-            const fullName = [action.payload.nombres, action.payload.apellidos].filter(Boolean).join(' ');
-            await personalService.update(action.payload.id, { 
-              ...cleanPayload, 
-              nombre: fullName || cleanPayload.nombre || 'Sin Nombre' 
-            });
-          } catch (err) {
-            const errMsg = err?.message || String(err);
-            if (errMsg.includes('column') || errMsg.includes('schema cache')) {
+          const fullName = [action.payload.nombres, action.payload.apellidos].filter(Boolean).join(' ');
+          const updPersonSanitized = {
+            nombre: fullName || action.payload.nombre || 'Sin Nombre',
+            email: action.payload.email || null,
+            cargo_id: (action.payload.cargo_id && action.payload.cargo_id.length === 36) ? action.payload.cargo_id : null,
+            cargos_ids: Array.isArray(action.payload.cargos_ids) ? action.payload.cargos_ids : [],
+            telefono: action.payload.telefono || null,
+            whatsapp: action.payload.whatsapp || null,
+            telegram_id: action.payload.telegram_id || null,
+            salario_base: action.payload.salario_base || 0,
+            profesion: action.payload.profesion || '',
+            unidad_pago: action.payload.unidad_pago || 'Mes',
+            factor_smlv: parseFloat(action.payload.factor_smlv) || null,
+            tipo_documento: action.payload.tipo_documento || 'CC',
+            cedula: action.payload.cedula || null,
+            foto_url: action.payload.foto_url || null,
+            cedula_url: action.payload.cedula_url || null,
+            tp_numero: action.payload.tp_numero || null,
+            tp_url: action.payload.tp_url || null,
+            arl_numero: action.payload.arl_numero || null,
+            arl_url: action.payload.arl_url || null,
+            portafolio_url: action.payload.portafolio_url || null,
+            portafolio_nombre: action.payload.portafolio_nombre || null,
+            hoja_vida_url: action.payload.hoja_vida_url || null,
+            hoja_vida_nombre: action.payload.hoja_vida_nombre || null,
+            diplomas_url: action.payload.diplomas_url || null,
+            diplomas_nombre: action.payload.diplomas_nombre || null,
+            ciudad: action.payload.ciudad || null,
+            direccion_residencia: action.payload.direccion_residencia || null,
+            pais: action.payload.pais || 'Colombia',
+            app_role: action.payload.app_role || 'cuadrilla',
+            posgrados: Array.isArray(action.payload.posgrados) ? action.payload.posgrados : [],
+            salarios_por_cargo: action.payload.salarios_por_cargo || {},
+          };
+          Object.keys(updPersonSanitized).forEach(k => updPersonSanitized[k] === undefined && delete updPersonSanitized[k]);
+
+          // Pre-sync cargo si existe
+          if (updPersonSanitized.cargo_id) {
+            const cargoLocal = state.cargos.find(c => c.id === updPersonSanitized.cargo_id);
+            if (cargoLocal) {
               try {
-                const { id, email, cargo_id, user_id, salario_base, profesion, unidad_pago, cedula, app_role, telefono, whatsapp, telegram_id } = action.payload;
-                const fullName = [action.payload.nombres, action.payload.apellidos].filter(Boolean).join(' ');
-                await personalService.update(id, { 
-                  id, email, cargo_id, user_id, telefono, whatsapp, telegram_id,
-                  nombre: fullName || 'Sin Nombre',
-                  salario_base: salario_base || 0,
-                  profesion: profesion || '',
-                  unidad_pago: unidad_pago || 'Mes',
-                  cedula: cedula || '',
-                  app_role: app_role || 'cuadrilla'
+                await cargosService.create({
+                  id: cargoLocal.id, codigo: cargoLocal.codigo, nombre: cargoLocal.nombre,
+                  categoria: cargoLocal.categoria || 'Mano de Obra Directa', factor_smlv: cargoLocal.factor_smlv || 1.0,
+                  unidad: cargoLocal.unidad || 'Mes', precio_unitario: cargoLocal.precio_unitario || 0,
                 });
-              } catch (err2) {
-                console.error("⚠️ Final fallback error UPDATE_PERSON:", err2.message);
+              } catch (e) { console.warn('[Sync] Pre-sync cargo:', e.message); }
+            }
+          }
+
+          // Recursive save: strip offending columns on schema errors
+          const savePersonUpdate = async (id, payload, attempt = 0) => {
+            if (attempt > 10) { console.error('🔴 [Sync] UPDATE_PERSON: Too many retries'); return; }
+            try {
+              await personalService.update(id, payload);
+              console.log("[Sync] UPDATE_PERSON Success");
+            } catch (err) {
+              const msg = err.message || '';
+              const colMatch = msg.match(/Could not find the '(\w+)'/);
+              if (colMatch) {
+                console.warn(`[Sync] UPDATE_PERSON: Stripping column '${colMatch[1]}' and retrying...`);
+                delete payload[colMatch[1]];
+                return savePersonUpdate(id, payload, attempt + 1);
               }
-            } else throw err;
+              if (msg.includes('foreign key') || msg.includes('cargo_id')) {
+                payload.cargo_id = null;
+                return savePersonUpdate(id, payload, attempt + 1);
+              }
+              console.error('🔴 [Sync Error] UPDATE_PERSON:', msg);
+            }
+          };
+          await savePersonUpdate(action.payload.id, updPersonSanitized);
+          // Cross-sync dirección → Cliente CRM
+          if (action.payload.email && (action.payload.direccion_residencia || action.payload.ciudad)) {
+            try {
+              const linkedClient = state.clientes.find(c => c.email === action.payload.email || c.telegram_id === action.payload.telegram_id);
+              if (linkedClient) {
+                const crmUpdates = {};
+                if (action.payload.direccion_residencia) crmUpdates.direccion = action.payload.direccion_residencia;
+                if (action.payload.ciudad) crmUpdates.ciudad = action.payload.ciudad;
+                if (Object.keys(crmUpdates).length > 0) {
+                  await clientesService.update(linkedClient.id, crmUpdates);
+                  console.log('[Sync] Cross-sync dirección Personal → CRM:', linkedClient.nombre);
+                }
+              }
+            } catch (e) { console.warn('[Sync] Cross-sync dirección error:', e.message); }
           }
           break;
         }
@@ -1021,7 +1172,6 @@ async function syncToSupabase(action, state) {
 
         // Cargos
         case 'ADD_CARGO': {
-          // Generar codigo aquí (el state en este closure es pre-dispatch, así que no podemos leerlo del state)
           const codigo = action.payload.codigo || `CAR-${Date.now()}`;
           const smlvVal = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000;
           const hMes = parseFloat(state.config?.find(c => c.clave === 'HORAS_MES')?.valor) || 192;
@@ -1031,18 +1181,34 @@ async function syncToSupabase(action, state) {
           if (action.payload.unidad === 'Hora') precioCalc = precioCalc / hMes;
           if (action.payload.unidad === 'Día') precioCalc = (precioCalc / hMes) * hDia;
 
-          const cargoToSync = { 
-            ...action.payload, 
+          // Solo campos conocidos de la tabla 'cargos'
+          const cargoToSync = {
+            id: action.payload.id,
             codigo,
-            precio_unitario: Math.round(precioCalc)
+            nombre: action.payload.nombre,
+            categoria: action.payload.categoria || 'Mano de Obra Directa',
+            factor_smlv: factorVal,
+            unidad: action.payload.unidad || 'Mes',
+            precio_unitario: Math.round(precioCalc),
+            tipo: action.payload.tipo || 'individual',
           };
+
           try {
             await cargosService.create(cargoToSync);
+            console.log("[Sync] ADD_CARGO Success:", cargoToSync.nombre, "(tipo:", cargoToSync.tipo, ")");
           } catch (err) {
-            if (err.message?.includes('column') || err.message?.includes('cache')) {
-              const { recargo_cop, recargo_pct, factor_multiplicador, ...clean } = cargoToSync;
-              await cargosService.create(clean);
-            } else throw err;
+            // Si falla por columna 'tipo' que no existe, reintentar sin ella
+            if (err.message?.includes('column') || err.message?.includes('tipo')) {
+              try {
+                const { tipo, ...withoutTipo } = cargoToSync;
+                await cargosService.create(withoutTipo);
+                console.log("[Sync] ADD_CARGO Success (sin tipo):", cargoToSync.nombre);
+              } catch (err2) {
+                console.error("🔴 [Sync Error] ADD_CARGO:", err2.message);
+              }
+            } else {
+              console.error("🔴 [Sync Error] ADD_CARGO:", err.message);
+            }
           }
           break;
         }
@@ -1060,16 +1226,81 @@ async function syncToSupabase(action, state) {
           await cargosService.remove(action.payload);
           break;
 
-        case 'ADD_CARGO_DETALLE':
-          try {
-            const detallePayload = { ...action.payload, id: action.payload.id || `det-${Date.now()}-${Math.random().toString(36).substr(2,5)}` };
-            await cargoDetalleService.create(detallePayload);
-          } catch (err) {
-            if (err.message?.includes('table') || err.message?.includes('cache') || err.message?.includes('violates foreign key')) {
-              console.warn("⚠️ Cargo Detalle sync:", err.message);
-            } else throw err;
+        case 'DUPLICATE_CARGO': {
+          const { newId } = action.payload;
+          const cargo = state.cargos.find(c => c.id === newId);
+          const detalles = state.cargoDetalles.filter(d => d.cargo_padre_id === newId);
+          if (cargo) {
+            await cargosService.create(cargo);
+            if (detalles.length > 0) {
+              await cargoDetalleService.createBatch(detalles);
+            }
           }
           break;
+        }
+
+        case 'ADD_CARGO_DETALLE':
+        case 'UPDATE_CARGO_DETALLE': {
+          try {
+            const detallePayload = { 
+              id: action.payload.id || crypto.randomUUID(),
+              cargo_padre_id: action.payload.cargo_padre_id,
+              cargo_hijo_id: action.payload.cargo_hijo_id,
+              cantidad: action.payload.cantidad || 1,
+              factor_smlv: action.payload.factor_smlv || null,
+            };
+
+            // Pre-sync: asegurar que AMBOS cargos (padre e hijo) existen en Supabase
+            const ensureCargoExists = async (cargoId) => {
+              if (!cargoId) return;
+              const cargoLocal = state.cargos.find(c => c.id === cargoId);
+              if (!cargoLocal) return;
+              try {
+                // Usar cargosService.create que agrega user_id (requerido por RLS)
+                await cargosService.create({
+                  id: cargoLocal.id,
+                  codigo: cargoLocal.codigo,
+                  nombre: cargoLocal.nombre,
+                  categoria: cargoLocal.categoria || 'Mano de Obra Directa',
+                  factor_smlv: cargoLocal.factor_smlv || 1.0,
+                  unidad: cargoLocal.unidad || 'Mes',
+                  precio_unitario: cargoLocal.precio_unitario || 0,
+                });
+                console.log(`[Sync] Pre-synced cargo: ${cargoLocal.nombre}`);
+              } catch (e) { console.warn(`[Sync] Pre-sync cargo ${cargoLocal.nombre}:`, e.message); }
+            };
+
+            await ensureCargoExists(detallePayload.cargo_padre_id);
+            await ensureCargoExists(detallePayload.cargo_hijo_id);
+
+            // Usar cargoDetalleService que agrega user_id (requerido por RLS)
+            try {
+              await cargoDetalleService.create(detallePayload);
+              console.log(`[Sync] ${action.type} Success:`, detallePayload.id);
+            } catch (insertErr) {
+              // Si falla insert por duplicado, intentar con upsert directo
+              if (insertErr.message?.includes('duplicate') || insertErr.message?.includes('unique')) {
+                const uid = await getUserId();
+                const { error: upErr } = await db().from('cargo_detalle').upsert({ ...detallePayload, user_id: uid }, { onConflict: 'id' });
+                if (upErr) console.warn(`⚠️ ${action.type} upsert:`, upErr.message);
+                else console.log(`[Sync] ${action.type} Success (upsert)`);
+              } else {
+                // Quitar campos opcionales e intentar de nuevo
+                console.warn(`[Sync] ${action.type} insert failed: ${insertErr.message}. Retrying with minimal...`);
+                const minPayload = { id: detallePayload.id, cargo_padre_id: detallePayload.cargo_padre_id, cargo_hijo_id: detallePayload.cargo_hijo_id, cantidad: detallePayload.cantidad || 1 };
+                try {
+                  await cargoDetalleService.create(minPayload);
+                  console.log(`[Sync] ${action.type} Success (minimal)`);
+                } catch (minErr) {
+                  console.error(`🔴 [Sync Error] ${action.type}:`, minErr.message);
+                }
+              }
+            }
+          } catch (err) {
+            console.warn(`⚠️ ${action.type}:`, err.message);
+          }
+          break;
+        }
         case 'DELETE_CARGO_DETALLE':
           try {
             await cargoDetalleService.remove(action.payload);
@@ -1079,25 +1310,45 @@ async function syncToSupabase(action, state) {
             } else throw err;
           }
           break;
-        case 'UPDATE_CARGO_DETALLE':
-          try {
-            const uid = await getUserId();
-            if (db()) {
-              await db().from('cargo_detalle').upsert({ ...action.payload, user_id: uid });
-            }
-          } catch (err) {
-            console.warn("⚠️ Error updating cargo_detalle:", err.message);
-          }
-          break;
 
         case 'ADD_PERSON_PROYECTO':
         case 'UPDATE_PERSON_PROYECTO':
           try {
-            // Limpieza de campos que pueden causar conflictos de tipo en Supabase
-            const { tareas_asignadas, equipo_padre_id, ...sanitized } = action.payload;
-            await personalProyectoService.create(sanitized);
+            console.log(`[Sync] ${action.type} payload:`, action.payload);
+            // Intentar con todos los campos primero
+            let ppSanitized = {
+              id: action.payload.id,
+              personal_id: action.payload.personal_id,
+              proyecto_id: action.payload.proyecto_id,
+              cargo_id: action.payload.cargo_id || null,
+              equipo_padre_id: action.payload.equipo_padre_id || null,
+              unidades_asignadas: action.payload.unidades_asignadas || 0,
+              salario_pactado: action.payload.salario_pactado || 0,
+              unidad_pactada: action.payload.unidad_pactada || 'Mes',
+            };
+            // Intentar con campos opcionales
+            try {
+              ppSanitized.tareas_asignadas = action.payload.tareas_asignadas || [];
+              ppSanitized.cuadrilla_idx = action.payload.cuadrilla_idx || 0;
+              await personalProyectoService.create(ppSanitized);
+              console.log(`[Sync] ${action.type} Success (full)`);
+            } catch (fullErr) {
+              // Si falla por columnas, reintentar solo con las básicas
+              console.warn(`[Sync] ${action.type} full failed: ${fullErr.message}. Retrying with core columns...`);
+              const corePayload = {
+                id: action.payload.id,
+                personal_id: action.payload.personal_id,
+                proyecto_id: action.payload.proyecto_id,
+                cargo_id: action.payload.cargo_id || null,
+                unidades_asignadas: action.payload.unidades_asignadas || 0,
+                salario_pactado: action.payload.salario_pactado || 0,
+                unidad_pactada: action.payload.unidad_pactada || 'Mes',
+              };
+              await personalProyectoService.create(corePayload);
+              console.log(`[Sync] ${action.type} Success (core)`);
+            }
           } catch (err) {
-            console.error("⚠️ Error sync personal_proyecto:", err.message);
+            console.error(`🔴 [Sync Error] ${action.type}:`, err.message);
           }
           break;
         case 'DELETE_PERSON_PROYECTO':
@@ -1234,7 +1485,12 @@ async function syncToSupabase(action, state) {
           break;
       }
     } catch (err) {
-      console.warn('[Sync] Error en', action.type);
+      console.error(`🔴 [Sync Error] ${action.type}:`, err.message || err);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('db-error', { 
+          detail: `Fallo al sincronizar ${action.type}: ${err.message || 'Error desconocido'}` 
+        }));
+      }
     }
   });
 }
@@ -1700,14 +1956,15 @@ export function StoreProvider({ children }) {
 
           // --- Auto-Seed de Profesiones de Construcción (Colombia) ---
           const seedRoles = [
-            { codigo: 'CEO-001', nombre: 'Administrador (CEO)', categoria: 'Oficina (Escritorio)', factor_smlv: 12.0, unidad: 'Mes' },
-            { codigo: 'PM-001', nombre: 'Project Manager', categoria: 'Oficina (Escritorio)', factor_smlv: 10.0, unidad: 'Mes' },
-            { codigo: 'ING-001', nombre: 'Ingeniero Civil', categoria: 'Campo (Móvil)', factor_smlv: 6.0, unidad: 'Mes' },
-            { codigo: 'ARQ-001', nombre: 'Arquitecto', categoria: 'Campo (Móvil)', factor_smlv: 6.0, unidad: 'Mes' },
-            { codigo: 'MAES-001', nombre: 'Maestro de Obra', categoria: 'Mano de Obra Directa', factor_smlv: 3.5, unidad: 'Mes' },
-            { codigo: 'OFIC-001', nombre: 'Oficial', categoria: 'Mano de Obra Directa', factor_smlv: 2.0, unidad: 'Mes' },
-            { codigo: 'SOF-001', nombre: 'Sub-Oficial', categoria: 'Mano de Obra Directa', factor_smlv: 1.5, unidad: 'Mes' },
-            { codigo: 'AYU-001', nombre: 'Ayudante', categoria: 'Mano de Obra Directa', factor_smlv: 1.2, unidad: 'Mes' },
+            { codigo: 'CEO-001', nombre: 'Administrador (CEO)', categoria: 'admin', factor_smlv: 12.0, unidad: 'Mes' },
+            { codigo: 'PM-001', nombre: 'Project Manager', categoria: 'admin', factor_smlv: 10.0, unidad: 'Mes' },
+            { codigo: 'ING-001', nombre: 'Ingeniero Civil', categoria: 'operativo', factor_smlv: 6.0, unidad: 'Mes' },
+            { codigo: 'ARQ-001', nombre: 'Arquitecto', categoria: 'operativo', factor_smlv: 6.0, unidad: 'Mes' },
+            { codigo: 'MAES-001', nombre: 'Maestro de Obra', categoria: 'cuadrilla', factor_smlv: 3.5, unidad: 'Mes' },
+            { codigo: 'OFIC-001', nombre: 'Oficial', categoria: 'cuadrilla', factor_smlv: 2.0, unidad: 'Mes' },
+            { codigo: 'SOF-001', nombre: 'Sub-Oficial', categoria: 'cuadrilla', factor_smlv: 1.5, unidad: 'Mes' },
+            { codigo: 'AYU-001', nombre: 'Ayudante', categoria: 'cuadrilla', factor_smlv: 1.2, unidad: 'Mes' },
+            { codigo: 'CLI-001', nombre: 'Cliente', categoria: 'cliente', factor_smlv: 0, unidad: 'Mes' },
           ];
 
           const existingNames = new Set(data.cargos?.map(c => c.nombre) || []);
@@ -1715,13 +1972,31 @@ export function StoreProvider({ children }) {
           
           if (toInsert.length > 0) {
             console.log(`[Seed] Sincronizando ${toInsert.length} roles unificados...`);
-            // Insertar uno por uno mediante dispatches para asegurar sincronización con Supabase si el servicio lo soporta
-            // O mejor, cargar los nuevos en el payload que se carga en el Reducer
             toInsert.forEach(role => {
               const id = crypto.randomUUID();
               data.cargos.push({ ...role, id, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
               // Despachar a Supabase en segundo plano
               cargosService.create({ ...role, id }).catch(e => console.warn(`[Seed] Nota: No se pudo sincronizar el rol base "${role.nombre}" en la nube (RLS). Esto es normal en modo restringido.`));
+            });
+          }
+
+          // --- Auto-Asignar cargo "Cliente" a personas del CRM sin cargo ---
+          const clienteCargo = data.cargos.find(c => c.nombre === 'Cliente');
+          if (clienteCargo && data.personal) {
+            data.personal = data.personal.map(p => {
+              const isClientProfile = (
+                (!p.cargo_id && !p.cargos_ids?.length) && 
+                (p.profesion?.toLowerCase() === 'cliente' || p.app_role === 'cliente' || p.plataforma === 'telegram')
+              );
+              if (isClientProfile) {
+                return { 
+                  ...p, 
+                  cargo_id: clienteCargo.id, 
+                  cargos_ids: [clienteCargo.id],
+                  profesion: p.profesion || 'Cliente'
+                };
+              }
+              return p;
             });
           }
 
@@ -1852,6 +2127,50 @@ export function StoreProvider({ children }) {
     }
   };
 
+  const getInsumoProjectUsage = useCallback((insumoId) => {
+    if (!insumoId) return [];
+    const apuIdsUsingInsumo = new Set(state.apuDetalles.filter(d => d.insumo_id === insumoId).map(d => d.apu_id));
+    return state.proyectos.filter(p => 
+      state.presupuestoItems.some(item => item.proyecto_id === p.id && apuIdsUsingInsumo.has(item.apu_id))
+    );
+  }, [state.apuDetalles, state.presupuestoItems, state.proyectos]);
+
+  const getCargoProjectUsage = useCallback((cargoId) => {
+    if (!cargoId) return [];
+    const apuContainsCargo = (apuId, targetCargoId, visited = new Set()) => {
+      if (visited.has(apuId)) return false;
+      visited.add(apuId);
+      const detalles = state.apuDetalles.filter(d => d.apu_id === apuId);
+      return detalles.some(d => 
+        d.cargo_id === targetCargoId || 
+        (d.apu_hijo_id && apuContainsCargo(d.apu_hijo_id, targetCargoId, visited))
+      );
+    };
+    return state.proyectos.filter(p => 
+      state.presupuestoItems.some(item => item.proyecto_id === p.id && apuContainsCargo(item.apu_id, cargoId))
+    );
+  }, [state.apuDetalles, state.presupuestoItems, state.proyectos]);
+
+  const getInsumoApuUsage = useCallback((insumoId) => {
+    if (!insumoId) return [];
+    const apuIds = new Set(state.apuDetalles.filter(d => d.insumo_id === insumoId).map(d => d.apu_id));
+    return state.apus.filter(a => apuIds.has(a.id));
+  }, [state.apuDetalles, state.apus]);
+
+  const getCargoApuUsage = useCallback((cargoId) => {
+    if (!cargoId) return [];
+    const apuContainsCargo = (apuId, targetCargoId, visited = new Set()) => {
+      if (visited.has(apuId)) return false;
+      visited.add(apuId);
+      const detalles = state.apuDetalles.filter(d => d.apu_id === apuId);
+      return detalles.some(d => 
+        d.cargo_id === targetCargoId || 
+        (d.apu_hijo_id && apuContainsCargo(d.apu_hijo_id, targetCargoId, visited))
+      );
+    };
+    return state.apus.filter(a => apuContainsCargo(a.id, cargoId));
+  }, [state.apuDetalles, state.apus]);
+
 
   return (
     <StoreContext.Provider value={{
@@ -1866,6 +2185,10 @@ export function StoreProvider({ children }) {
       calcularDatosCargo,
       getProjectLaborNeeds,
       getCargoProjectItems,
+      getInsumoProjectUsage,
+      getCargoProjectUsage,
+      getInsumoApuUsage,
+      getCargoApuUsage,
       clearDatabase,
       dataLoading,
       isOnline,

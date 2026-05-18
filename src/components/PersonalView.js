@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useStore } from '@/store/StoreContext';
 import { useAuth } from '@/lib/auth';
 import { personalService } from '@/lib/services';
+import { supabase } from '@/lib/supabase';
 
 const UNIDADES_PAGO = ['Mes', 'Día', 'Hora'];
 
@@ -18,6 +19,7 @@ const emptyForm = {
   tipo_documento: 'CC',
   cedula: '',
   ciudad: '',
+  direccion_residencia: '',
   pais: 'Colombia',
   tp_numero: '',
   foto_url: '',
@@ -32,12 +34,14 @@ const emptyForm = {
   diplomas_url: '',
   diplomas_nombre: '',
   cargo_id: '',
+  cargos_ids: [],
   app_role: 'cuadrilla',
   unidad_pago: 'Mes',
   salario_base: '',
   factor_smlv: '',
   tareas_asignadas: [], 
   posgrados: [],
+  salarios_por_cargo: {},
   perfil_publico: false,
   disponible: true,
   plan: 'free',
@@ -59,9 +63,10 @@ export default function PersonalView() {
   const [newCargoName, setNewCargoName] = useState('');
   const [numCuadrillasMap, setNumCuadrillasMap] = useState({});
   const [activeCuadTab, setActiveCuadTab] = useState({});
+  const [expandedCargoId, setExpandedCargoId] = useState(null);
   
   // Posgrados form temp state
-  const [newPosType, setNewPosType] = useState('Especialización');
+  const [newPosType, setNewPosType] = useState('Pregrado');
   const [newPosName, setNewPosName] = useState('');
 
   // Persistir numCuadrillasMap en localStorage por proyecto
@@ -144,6 +149,51 @@ export default function PersonalView() {
     );
   }, [state.personal, state.personalProyecto, search, selectedProjectId]);
 
+  const handleNotifyPerson = (p) => {
+    const personCargos = Array.isArray(p.cargos_ids) && p.cargos_ids.length > 0 ? p.cargos_ids : (p.cargo_id ? [p.cargo_id] : []);
+    const cargoNames = personCargos.map(cid => state.cargos.find(c => c.id === cid)?.nombre).filter(Boolean).join(', ') || 'Sin cargo';
+    const assignmentsList = state.personalProyecto.filter(ap => ap.personal_id === p.id);
+    const equipos = [...new Set(assignmentsList.map(ap => ap.equipo_padre_id ? state.cargos.find(c => c.id === ap.equipo_padre_id)?.nombre : null).filter(Boolean))];
+    const cuadrillas = [...new Set(assignmentsList.map(ap => `Cuadrilla ${(ap.cuadrilla_idx || 0) + 1}`))];
+    const tareas = assignmentsList.flatMap(ap => (ap.tareas_asignadas || []).map(tid => {
+      const item = state.presupuestoItems?.find(i => i.id === tid);
+      return item?.descripcion || item?.nombre;
+    })).filter(Boolean);
+    const proyectos = assignmentsList.map(ap => state.proyectos.find(pr => pr.id === ap.proyecto_id)?.nombre).filter(Boolean);
+    
+    const fullName = `${p.nombres || p.nombre || ''} ${p.apellidos || ''}`.trim();
+    let msg = `📋 *Aviso de Asignación*\n\n👤 ${fullName}\n🏷️ Cargo(s): ${cargoNames}`;
+    if (proyectos.length) msg += `\n🏗️ Proyecto: ${proyectos.join(', ')}`;
+    if (equipos.length) msg += `\n👥 Equipo: ${equipos.join(', ')}`;
+    if (cuadrillas.length) msg += `\n🔢 ${cuadrillas.join(', ')}`;
+    if (tareas.length) msg += `\n📝 Tareas:\n${tareas.map(t => `  • ${t}`).join('\n')}`;
+    
+    const starRegex = new RegExp('[*]', 'g');
+    const plainMsg = msg.replace(starRegex, '');
+    const phone = (p.whatsapp || p.telefono || '').replace(/[^0-9+]/g, '');
+    const channels = [];
+    if (phone) channels.push({ label: '📱 WhatsApp', action: () => window.open(`https://wa.me/${phone.replace('+','')}?text=${encodeURIComponent(msg)}`, '_blank') });
+    if (p.telegram_id) channels.push({ label: '✈️ Telegram (enviar directo)', action: async () => {
+      try {
+        const resp = await fetch('/api/notify-telegram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ telegramId: p.telegram_id, message: msg })
+        });
+        const data = await resp.json();
+        if (data.ok) alert('✅ Mensaje enviado por Telegram exitosamente.');
+        else alert('⚠️ Error enviando por Telegram: ' + (data.error || 'Desconocido'));
+      } catch (e) { alert('❌ Error de conexión: ' + e.message); }
+    }});
+    if (p.email) channels.push({ label: '📧 Email', action: () => window.open(`mailto:${p.email}?subject=${encodeURIComponent('Aviso de Asignación')}&body=${encodeURIComponent(plainMsg)}`, '_blank') });
+    if (channels.length === 0) { alert('⚠️ No hay datos de contacto (WhatsApp, Telegram o Email) para esta persona.'); return; }
+    if (channels.length === 1) { channels[0].action(); return; }
+    const choice = prompt(`Selecciona canal de envío:\n${channels.map((a, i) => `${i+1}. ${a.label}`).join('\n')}\n\nIngresa el número:`);
+    const idx = choice !== null ? (parseInt(choice) - 1) : -1;
+    if (idx >= 0 && idx < channels.length) channels[idx].action();
+    else if (choice !== null) alert('Opción inválida');
+  };
+
   const openCreate = (cargoId = '') => {
     setEditingId(null);
     setForm({ ...emptyForm, cargo_id: cargoId });
@@ -159,6 +209,11 @@ export default function PersonalView() {
     
     const smlv = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000;
     const factorCalc = person.salario_base ? (person.salario_base / smlv).toFixed(2) : '';
+
+    // Reconstruct cargos_ids from existing data
+    const existingCargosIds = Array.isArray(person.cargos_ids) && person.cargos_ids.length > 0
+      ? person.cargos_ids
+      : (person.cargo_id ? [person.cargo_id] : []);
 
     setForm({
       ...emptyForm,
@@ -179,7 +234,29 @@ export default function PersonalView() {
       arl_url: person.arl_url || '',
       posgrados: Array.isArray(person.posgrados) ? person.posgrados : [],
       tareas_asignadas: assignment?.tareas_asignadas || [],
-      current_equipo: assignment?.equipo_padre_id ? state.cargos.find(c => c.id === assignment.equipo_padre_id)?.nombre : null
+      current_equipo: assignment?.equipo_padre_id ? state.cargos.find(c => c.id === assignment.equipo_padre_id)?.nombre : null,
+      cargos_ids: [...new Set(existingCargosIds)], // deduplicate
+      cargo_id: existingCargosIds[0] || '',
+      salarios_por_cargo: (() => {
+        // Migrate: if person has cargos but no salarios_por_cargo, generate from cargo data
+        const existing = person.salarios_por_cargo || {};
+        if (Object.keys(existing).length > 0) return existing;
+        const smlv = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000;
+        const generated = {};
+        const deduped = [...new Set(existingCargosIds)];
+        deduped.forEach(cid => {
+          const cargo = state.cargos.find(c => c.id === cid);
+          if (cargo) {
+            generated[cid] = {
+              salario_pactado: Math.round((cargo.factor_smlv ?? 1) * smlv),
+              unidad: cargo.unidad || person.unidad_pago || 'Mes',
+              factor_smlv: cargo.factor_smlv ?? 1,
+              rol_sugerido: deriveRoleFromCargo(cargo)
+            };
+          }
+        });
+        return generated;
+      })(),
     });
 
     setIsOtherCargo(false);
@@ -275,10 +352,107 @@ export default function PersonalView() {
     }));
   };
 
+  // Calcular salario total como suma de todos los cargos asignados
+  const calcularSalarioTotal = (cargosIds) => {
+    let totalMes = 0;
+    for (const cid of cargosIds) {
+      const data = calcularDatosCargo(cid);
+      totalMes += (data.precioHora * h_mes) || 0;
+    }
+    return Math.round(totalMes);
+  };
+  // Helper: derive app_role from cargo category (categories ARE roles now)
+  const deriveRoleFromCargo = (cargo) => {
+    const cat = (cargo?.categoria || '').toLowerCase();
+    const VALID_ROLES = ['admin', 'oficina', 'operativo', 'cuadrilla', 'supervisor', 'bodega', 'tienda', 'cliente'];
+    if (VALID_ROLES.includes(cat)) return cat;
+    // Legacy fallback for old category names
+    const nombre = (cargo?.nombre || '').toLowerCase();
+    if (cat.includes('oficina') || nombre.includes('admin') || nombre.includes('ceo')) return 'admin';
+    if (cat.includes('campo')) return 'operativo';
+    if (cat.includes('comercio') || cat.includes('venta')) return 'tienda';
+    if (cat.includes('cliente') || nombre.includes('cliente')) return 'cliente';
+    if (nombre.includes('supervisor')) return 'supervisor';
+    if (nombre.includes('bodega')) return 'bodega';
+    return 'cuadrilla';
+  };
+
+  // Helper: recalculate totals from salarios_por_cargo
+  const recalcSalary = (salariosPorCargo) => {
+    const smlv = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000;
+    const total = Object.values(salariosPorCargo).reduce((sum, s) => sum + (parseFloat(s.salario_pactado) || 0), 0);
+    return { salario_base: String(total), factor_smlv: String((total / smlv).toFixed(2)) };
+  };
+
+  const handleAddCargo = (cargoId) => {
+    if (!cargoId || cargoId === 'NEW') return;
+    if ((form.cargos_ids || []).includes(cargoId)) return;
+    const cargo = state.cargos.find(c => c.id === cargoId);
+    if (!cargo) return;
+    const smlv = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000;
+    const cargoSalario = Math.round((cargo.factor_smlv ?? 1) * smlv);
+    const newCargosIds = [...new Set([...(form.cargos_ids || []), cargoId])]; // deduplicate
+    const newSalarios = {
+      ...(form.salarios_por_cargo || {}),
+      [cargoId]: {
+        salario_pactado: cargoSalario,
+        unidad: cargo.unidad || 'Mes',
+        factor_smlv: cargo.factor_smlv ?? 1,
+        rol_sugerido: deriveRoleFromCargo(cargo)
+      }
+    };
+    const totals = recalcSalary(newSalarios);
+    const primaryCargo = state.cargos.find(c => c.id === newCargosIds[0]);
+    setForm(f => ({
+      ...f,
+      cargos_ids: newCargosIds,
+      cargo_id: newCargosIds[0] || '',
+      profesion: f.profesion || cargo.nombre,
+      salarios_por_cargo: newSalarios,
+      ...totals,
+      app_role: deriveRoleFromCargo(primaryCargo || cargo),
+      tareas_asignadas: selectedProjectId ? getCargoProjectItems(selectedProjectId, cargoId).map(t => t.id) : []
+    }));
+  };
+
+  const handleRemoveCargo = (cargoId) => {
+    const newCargosIds = (form.cargos_ids || []).filter(id => id !== cargoId);
+    const newSalarios = { ...(form.salarios_por_cargo || {}) };
+    delete newSalarios[cargoId];
+    const totals = recalcSalary(newSalarios);
+    const primaryCargo = newCargosIds.length > 0 ? state.cargos.find(c => c.id === newCargosIds[0]) : null;
+    setForm(f => ({
+      ...f,
+      cargos_ids: newCargosIds,
+      cargo_id: newCargosIds[0] || '',
+      salarios_por_cargo: newSalarios,
+      ...totals,
+      app_role: primaryCargo ? deriveRoleFromCargo(primaryCargo) : f.app_role,
+    }));
+  };
+
+  // Update a specific cargo's salary config
+  const handleUpdateCargoSalario = (cargoId, field, value) => {
+    const smlv = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000;
+    const newSalarios = { ...(form.salarios_por_cargo || {}) };
+    const current = newSalarios[cargoId] || {};
+    newSalarios[cargoId] = { ...current, [field]: value };
+    // If factor changed, recalc salary. If salary changed, recalc factor.
+    if (field === 'factor_smlv') {
+      newSalarios[cargoId].salario_pactado = Math.round(parseFloat(value || 0) * smlv);
+    } else if (field === 'salario_pactado') {
+      newSalarios[cargoId].factor_smlv = parseFloat(((parseFloat(value || 0)) / smlv).toFixed(2));
+    }
+    const totals = recalcSalary(newSalarios);
+    setForm(f => ({ ...f, salarios_por_cargo: newSalarios, ...totals }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let finalCargoId = form.cargo_id;
-    if (finalCargoId === 'NEW' && newCargoName) {
+    let finalCargosIds = [...(form.cargos_ids || [])];
+    let finalCargoId = finalCargosIds[0] || form.cargo_id || null;
+
+    if (form.cargo_id === 'NEW' && newCargoName) {
       const newCargo = {
         id: crypto.randomUUID(),
         nombre: newCargoName,
@@ -287,18 +461,34 @@ export default function PersonalView() {
         unidad: 'Mes'
       };
       dispatch({ type: 'ADD_CARGO', payload: newCargo });
-      finalCargoId = newCargo.id;
+      finalCargosIds = [...finalCargosIds, newCargo.id];
+      finalCargoId = finalCargosIds[0] || newCargo.id;
     }
+
+    // Build profession string from all assigned cargos
+    const professionNames = finalCargosIds
+      .map(cid => state.cargos.find(c => c.id === cid)?.nombre)
+      .filter(Boolean);
 
     const globalPayload = {
       ...form,
       cargo_id: finalCargoId,
-      profesion: state.cargos.find(c => c.id === finalCargoId)?.nombre || form.profesion || newCargoName,
+      cargos_ids: [...new Set(finalCargosIds)], // deduplicate
+      salarios_por_cargo: form.salarios_por_cargo || {},
+      profesion: professionNames.length > 0 ? professionNames.join(' / ') : form.profesion || newCargoName,
       nombre: (form.nombres + ' ' + form.apellidos).trim(),
       salario_base: parseFloat(form.salario_base) || 0
     };
 
-    const existingPerson = state.personal.find(p => p.email?.toLowerCase() === form.email?.toLowerCase());
+    // Priority: if editing, always update. Otherwise check by email or name.
+    const existingPerson = editingId 
+      ? state.personal.find(p => p.id === editingId)
+      : (state.personal.find(p => p.email && form.email && p.email.toLowerCase() === form.email.toLowerCase())
+        || state.personal.find(p => {
+          const pName = (p.nombres || p.nombre || '').toLowerCase().trim();
+          const fName = ((form.nombres || '') + ' ' + (form.apellidos || '')).toLowerCase().trim();
+          return pName && fName && pName === fName;
+        }));
     let personToLink = existingPerson;
 
     if (!existingPerson) {
@@ -631,6 +821,52 @@ export default function PersonalView() {
             
             return (
               <section style={{ marginBottom: 32 }}>
+                <div className="card" style={{ marginBottom: 20, borderLeft: '4px solid var(--color-accent)', background: '#f0f9ff' }}>
+                  <div style={{ padding: 16 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--color-accent)' }}>⭐ Supervisión General del Proyecto</div>
+                        <div style={{ fontSize: 11, color: '#64748b' }}>Responsables de la coordinación global de todas las cuadrillas</div>
+                      </div>
+                    </div>
+                    
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
+                      {state.personalProyecto.filter(ap => ap.proyecto_id === selectedProjectId && ap.unidad_pactada === 'SUPERVISOR' && !ap.cargo_id).map(ap => {
+                        const p = state.personal.find(pers => pers.id === ap.personal_id);
+                        if (!p) return null;
+                        return (
+                          <div key={ap.id} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'white', padding: '6px 12px', borderRadius: 8, border: '1px solid #bae6fd', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                            <span style={{ fontSize: 14 }}>🔑</span>
+                            <span style={{ fontWeight: 600, fontSize: 12 }}>{p.nombres || p.nombre} {p.apellidos || ''}</span>
+                            <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444', padding: '2px 6px' }} onClick={() => { if(confirm(`¿Quitar a ${p.nombres || p.nombre} como Supervisor General?`)) dispatch({ type: 'DELETE_PERSON_PROYECTO', payload: ap.id }); }}>✕</button>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <select className="form-select" style={{ borderColor: 'var(--color-accent)', background: '#fff' }} defaultValue="" onChange={(e) => {
+                      const pid = e.target.value;
+                      if (!pid) return;
+                      dispatch({ type: 'ADD_PERSON_PROYECTO', payload: {
+                        id: crypto.randomUUID(),
+                        personal_id: pid,
+                        proyecto_id: selectedProjectId,
+                        cargo_id: null,
+                        unidades_asignadas: 0,
+                        salario_pactado: state.personal.find(p => p.id === pid)?.salario_base || 0,
+                        unidad_pactada: 'SUPERVISOR',
+                        tareas_asignadas: []
+                      }});
+                      e.target.value = '';
+                    }}>
+                      <option value="">+ Asignar Supervisor General al Proyecto...</option>
+                      {state.personal.filter(p => !state.personalProyecto.some(ap => ap.proyecto_id === selectedProjectId && ap.personal_id === p.id && ap.unidad_pactada === 'SUPERVISOR' && !ap.cargo_id)).map(p => (
+                        <option key={p.id} value={p.id}>{p.nombres || p.nombre} {p.apellidos || ''} ({p.email})</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
                 <h3 style={{ marginBottom: 16 }}>📋 Roles Requeridos (Presupuesto)</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
                   {Object.entries(projectNeeds).map(([cargoId, metrics]) => {
@@ -698,7 +934,10 @@ export default function PersonalView() {
                               return rolesToShow.map((role, idx) => {
                               const assigned = state.personalProyecto.filter(ap => ap.proyecto_id === selectedProjectId && ap.cargo_id === role.id && ap.unidad_pactada !== 'SUPERVISOR' && (ap.cuadrilla_idx === cuadIdx || (!ap.cuadrilla_idx && cuadIdx === 0)));
                               const aPersons = assigned.map(ap => ({ p: state.personal.find(pp => pp.id === ap.personal_id), aId: ap.id })).filter(a => a.p);
-                              const candidates = state.personal.filter(p => (p.cargo_id === role.id || p.profesion === role.nombre) && !assigned.some(ap => ap.personal_id === p.id));
+                              const candidates = state.personal.filter(p => {
+                                const personCargos = Array.isArray(p.cargos_ids) && p.cargos_ids.length > 0 ? p.cargos_ids : (p.cargo_id ? [p.cargo_id] : []);
+                                return (personCargos.includes(role.id) || p.profesion === role.nombre) && !assigned.some(ap => ap.personal_id === p.id);
+                              });
                               return (
                                 <div key={`${role.id}-${idx}-${cuadIdx}`} style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', marginBottom: 4 }}>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
@@ -716,7 +955,7 @@ export default function PersonalView() {
                                     </div>
                                   ))}
                                   {candidates.length > 0 ? (
-                                    <select className="form-select" style={{ fontSize: 11, padding: '4px 8px', marginTop: 4 }} defaultValue="" onChange={(e) => { const pid = e.target.value; if (!pid) return; const pr = state.personal.find(pp => pp.id === pid); if (!pr) return; dispatch({ type: 'ADD_PERSON_PROYECTO', payload: { id: crypto.randomUUID(), personal_id: pid, proyecto_id: selectedProjectId, cargo_id: role.id, unidades_asignadas: 1, salario_pactado: pr.salario_base || 0, unidad_pactada: pr.unidad_pago || 'Mes', tareas_asignadas: [], cuadrilla_idx: cuadIdx }}); e.target.value = ''; }}>
+                                    <select className="form-select" style={{ fontSize: 11, padding: '4px 8px', marginTop: 4 }} defaultValue="" onChange={(e) => { const pid = e.target.value; if (!pid) return; const pr = state.personal.find(pp => pp.id === pid); if (!pr) return; dispatch({ type: 'ADD_PERSON_PROYECTO', payload: { id: crypto.randomUUID(), personal_id: pid, proyecto_id: selectedProjectId, cargo_id: role.id, equipo_padre_id: cargoId, unidades_asignadas: 1, salario_pactado: pr.salario_base || 0, unidad_pactada: pr.unidad_pago || 'Mes', tareas_asignadas: [], cuadrilla_idx: cuadIdx }}); e.target.value = ''; }}>
                                       <option value="">Asignar {role.nombre}...</option>
                                       {candidates.map(p => <option key={p.id} value={p.id}>{p.nombres || p.nombre} {p.apellidos || ''} — {p.email}</option>)}
                                     </select>
@@ -752,11 +991,11 @@ export default function PersonalView() {
                                   const isHere = assignments.includes(currentSignature);
                                   const groupAssignments = assignments.filter(a => a.startsWith(`${cargoId}:`));
                                   const totalInGroup = groupAssignments.length;
-                                  let bgColor = '#f1f5f9'; let textColor = '#64748b'; let label = '⚪ Libre';
+                                  let bgColor = '#f1f5f9'; let textColor = '#64748b'; let borderColor = '#e2e8f0';
                                   if (isHere) {
-                                    if (totalInGroup > 1) { bgColor = '#ffedd5'; textColor = '#d97706'; label = '🟠 Repetido'; } 
-                                    else { bgColor = '#dcfce7'; textColor = '#166534'; label = '🟢 Asignado'; }
-                                  } else if (totalInGroup > 0) { bgColor = '#f1f5f9'; textColor = '#64748b'; label = '🚫 Ocupada'; }
+                                    if (totalInGroup > 1) { bgColor = '#ffedd5'; textColor = '#d97706'; borderColor = '#fed7aa'; } 
+                                    else { bgColor = '#dcfce7'; textColor = '#166534'; borderColor = '#bbf7d0'; }
+                                  } else if (totalInGroup > 0) { bgColor = '#f8fafc'; textColor = '#94a3b8'; borderColor = '#e2e8f0'; }
 
                                   const toggleAssignment = () => {
                                     let newAssignments = [...assignments];
@@ -765,10 +1004,11 @@ export default function PersonalView() {
                                     dispatch({ type: 'UPDATE_PRESUPUESTO_ITEM', payload: { id: item.id, asignado_a_cuadrilla: newAssignments.join(',') } });
                                   };
 
+                                  const apuName = state.apus.find(a => a.id === item.apu_id)?.nombre || item.descripcion || 'Ítem';
+
                                   return (
-                                    <button key={item.id} onClick={toggleAssignment} title={item.descripcion || 'Tarea'} style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid transparent', background: bgColor, color: textColor, fontSize: 9, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: 120, overflow: 'hidden' }}>
-                                      <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }}>{label} {item.descripcion?.slice(0, 15) || 'Ítem'}</div>
-                                      <div style={{ fontSize: 7, opacity: 0.7 }}>{item.cantidad} {state.apus.find(a=>a.id===item.apu_id)?.unidad}</div>
+                                    <button key={item.id} onClick={toggleAssignment} title={`${item.descripcion || 'Tarea'} — ${item.cantidad} ${state.apus.find(a=>a.id===item.apu_id)?.unidad || 'und'}`} style={{ padding: '4px 8px', borderRadius: 6, border: `1px solid ${borderColor}`, background: bgColor, color: textColor, fontSize: 9, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', maxWidth: 160, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                                      {isHere ? '✅ ' : ''}{apuName}
                                     </button>
                                   );
                                 });
@@ -781,7 +1021,7 @@ export default function PersonalView() {
                             {supPersons.map(({ person: p, aId }) => (
                               <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 11, padding: '2px 0' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6366f1' }}><span>🔑</span><span style={{ fontWeight: 500 }}>{p.nombres || p.nombre} {p.apellidos || ''}</span><span style={{ color: '#94a3b8' }}>({p.email})</span></div>
-                                <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444', fontSize: 10, padding: '2px 6px', minWidth: 'auto' }} onClick={() => dispatch({ type: 'DELETE_PERSON_PROYECTO', payload: aId })} title="Quitar">✕</button>
+                                <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444', fontSize: 10, padding: '2px 6px', minWidth: 'auto' }} onClick={() => { if(confirm(`¿Quitar a ${p.nombres || p.nombre} como Supervisor de Cuadrilla?`)) dispatch({ type: 'DELETE_PERSON_PROYECTO', payload: aId }); }} title="Quitar">✕</button>
                               </div>
                             ))}
                             <select className="form-select" style={{ fontSize: 11, padding: '4px 8px', borderColor: '#c7d2fe' }} defaultValue="" onChange={(e) => { const pid = e.target.value; if (!pid) return; dispatch({ type: 'ADD_PERSON_PROYECTO', payload: { id: crypto.randomUUID(), personal_id: pid, proyecto_id: selectedProjectId, cargo_id: cargoId, unidades_asignadas: 0, salario_pactado: 0, unidad_pactada: 'SUPERVISOR', tareas_asignadas: [] }}); e.target.value = ''; }}>
@@ -810,7 +1050,7 @@ export default function PersonalView() {
             <thead>
               <tr>
                 <th>Persona</th>
-                <th>Profesión</th>
+                <th>Cargo</th>
                 {selectedProjectId && <th>Equipo</th>}
                 {selectedProjectId && <th>Cuadrilla</th>}
                 <th>Encargado / Supervisor</th>
@@ -821,22 +1061,37 @@ export default function PersonalView() {
             </thead>
             <tbody>
               {selectedProjectId ? (
-                // === MODO PROYECTO: Mostrar asignaciones de personalProyecto ===
-                state.personalProyecto
-                  .filter(ap => ap.proyecto_id === selectedProjectId || ap.tienda_id === selectedProjectId || ap.punto_venta_id === selectedProjectId)
-                  .map((ap, idx) => {
-                    const p = state.personal.find(pers => pers.id === ap.personal_id);
-                    if (!p) return null;
-                    const c = state.cargos.find(cargo => cargo.id === ap.cargo_id);
-                    const parentCargo = ap.equipo_padre_id ? state.cargos.find(cargo => cargo.id === ap.equipo_padre_id) : null;
-                    const supervisors = state.personalProyecto.filter(asig => 
-                      (asig.proyecto_id === selectedProjectId || asig.tienda_id === selectedProjectId || asig.punto_venta_id === selectedProjectId) && 
-                      asig.cargo_id === (ap.equipo_padre_id || ap.cargo_id) && 
-                      asig.unidad_pactada === 'SUPERVISOR'
+                // === MODO PROYECTO: Mostrar personas únicas con sus roles agrupados ===
+                (() => {
+                  const projectAssignments = state.personalProyecto.filter(ap => 
+                    ap.proyecto_id === selectedProjectId || ap.tienda_id === selectedProjectId || ap.punto_venta_id === selectedProjectId
+                  );
+                  
+                  // Obtener IDs de personas únicas asignadas al proyecto
+                  const uniquePersonIds = [...new Set(projectAssignments.map(ap => ap.personal_id))];
+                  
+                  // Aplicar búsqueda si existe
+                  let personsToShow = uniquePersonIds.map(id => state.personal.find(p => p.id === id)).filter(Boolean);
+                  if (search) {
+                    const s = search.toLowerCase();
+                    personsToShow = personsToShow.filter(p => 
+                      (p.nombres || p.nombre || '').toLowerCase().includes(s) || 
+                      (p.apellidos || '').toLowerCase().includes(s) || 
+                      (p.email || '').toLowerCase().includes(s)
                     );
+                  }
+
+                  return personsToShow.map((p, pIdx) => {
+                    const assignments = projectAssignments.filter(ap => ap.personal_id === p.id);
+                    
+                    // Roles de Supervisión (🔑)
+                    const globalSups = assignments.filter(ap => ap.unidad_pactada === 'SUPERVISOR' && !ap.cargo_id);
+                    const cargoSups = assignments.filter(ap => ap.unidad_pactada === 'SUPERVISOR' && ap.cargo_id);
+                    // Roles de Ejecución (👷)
+                    const workerRoles = assignments.filter(ap => ap.unidad_pactada !== 'SUPERVISOR');
 
                     return (
-                      <tr key={`${ap.id}-${idx}`}>
+                      <tr key={p.id}>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#f1f5f9', overflow: 'hidden', border: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -846,48 +1101,119 @@ export default function PersonalView() {
                               <div style={{ fontWeight: 600 }}>{p.nombres || p.nombre} {p.apellidos || ''}</div>
                               <div style={{ fontSize: 10, color: '#64748b' }}>
                                 {p.email} {p.plataforma === 'telegram' ? ' • 📱 Telegram' : ''}
-                                {p.creado_por ? ` • 👤 ${p.creado_por.split('@')[0]}` : ''}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td style={{ fontWeight: 600 }}>{c?.nombre || p.profesion || '—'}</td>
-                        <td style={{ color: '#3b82f6', fontWeight: 600 }}>{parentCargo?.nombre || '—'}</td>
-                        <td style={{ color: '#10b981', fontWeight: 600 }}>Cuadrilla {(ap.cuadrilla_idx || 0) + 1}</td>
+                        <td style={{ fontSize: 11 }}>
+                          {workerRoles.map(ap => {
+                            const c = state.cargos.find(cargo => cargo.id === ap.cargo_id);
+                            return <div key={ap.id}>• {c?.nombre || '—'}</div>;
+                          })}
+                          {workerRoles.length === 0 && <span style={{ color: '#94a3b8' }}>Supervisión</span>}
+                        </td>
+                        <td style={{ color: '#3b82f6', fontWeight: 600, fontSize: 10 }}>
+                          {(() => {
+                            const equipoIds = [...new Set(workerRoles.map(ap => ap.equipo_padre_id).filter(Boolean))];
+                            if (equipoIds.length === 0) return '—';
+                            return equipoIds.map(eid => {
+                              const ec = state.cargos.find(c => c.id === eid);
+                              return ec?.nombre || '—';
+                            }).join(', ');
+                          })()}
+                        </td>
+                        <td style={{ color: '#10b981', fontWeight: 600, fontSize: 10 }}>
+                          {workerRoles.map(ap => (
+                            <div key={ap.id}>{(ap.cuadrilla_idx || 0) + 1}</div>
+                          ))}
+                          {workerRoles.length === 0 && '—'}
+                        </td>
                         <td>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            {supervisors.map((s, sIdx) => {
-                              const sp = state.personal.find(pers => pers.id === s.personal_id);
-                              return <span key={`${s.id}-${sIdx}`} style={{ fontSize: 10, color: '#6366f1' }}>🔑 {sp?.nombre || 'Supervisor'}</span>;
+                            {/* Supervisor General */}
+                            {globalSups.length > 0 && (
+                              <span style={{ fontSize: 10, color: 'var(--color-accent)', fontWeight: 700 }}>
+                                ⭐ Supervisor General
+                              </span>
+                            )}
+                            {/* Supervisor de Cargo */}
+                            {cargoSups.map(ap => {
+                              const c = state.cargos.find(cargo => cargo.id === ap.cargo_id);
+                              return (
+                                <span key={ap.id} style={{ fontSize: 10, color: '#6366f1', fontWeight: 600 }}>
+                                  🔑 Supervisor {c?.nombre}
+                                </span>
+                              );
                             })}
-                            {supervisors.length === 0 && <span style={{ fontSize: 10, color: '#94a3b8' }}>—</span>}
+                            {/* Quien supervisa a este trabajador */}
+                            {workerRoles.length > 0 && cargoSups.length === 0 && globalSups.length === 0 && (
+                              (() => {
+                                const supsOfWork = projectAssignments.filter(asig => 
+                                  asig.unidad_pactada === 'SUPERVISOR' && 
+                                  workerRoles.some(wr => wr.cargo_id === asig.cargo_id || wr.equipo_padre_id === asig.cargo_id)
+                                );
+                                return supsOfWork.map(s => {
+                                  const sp = state.personal.find(pers => pers.id === s.personal_id);
+                                  return <span key={s.id} style={{ fontSize: 10, color: '#94a3b8' }}>👤 Resp: {sp?.nombres || sp?.nombre}</span>;
+                                });
+                              })()
+                            )}
+                            {globalSups.length === 0 && cargoSups.length === 0 && workerRoles.length === 0 && <span style={{ fontSize: 10, color: '#94a3b8' }}>—</span>}
                           </div>
                         </td>
                         <td>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, maxWidth: 220 }}>
                             {(() => {
-                              const taskIds = Array.isArray(ap.tareas_asignadas) ? ap.tareas_asignadas : [];
-                              if (taskIds.length === 0) return <span style={{ fontSize: 10, color: '#94a3b8' }}>Sin tareas</span>;
-                              return taskIds.map((tid, tIdx) => {
-                                const item = state.presupuestoItems.find(it => String(it.id) === String(tid));
+                              // Build signatures for all worker roles of this person
+                              const signatures = workerRoles.map(ap => `${ap.equipo_padre_id || ap.cargo_id}:${ap.cuadrilla_idx || 0}`);
+                              if (signatures.length === 0) return <span style={{ fontSize: 10, color: '#94a3b8' }}>—</span>;
+                              // Find presupuesto items assigned to any of these signatures
+                              const matchedItems = state.presupuestoItems.filter(pi => {
+                                if (pi.proyecto_id !== selectedProjectId) return false;
+                                const itemSigs = (pi.asignado_a_cuadrilla || '').split(',').filter(Boolean);
+                                return signatures.some(sig => itemSigs.includes(sig));
+                              });
+                              if (matchedItems.length === 0) return <span style={{ fontSize: 10, color: '#94a3b8' }}>—</span>;
+                              return matchedItems.map((item, tIdx) => {
+                                const apuName = state.apus.find(a => a.id === item.apu_id)?.nombre || item.descripcion || 'Ítem';
                                 return (
-                                  <span key={`${tid}-${tIdx}`} style={{ fontSize: 9, padding: '2px 6px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 4, color: '#475569' }}>
-                                    • {item?.descripcion || 'Tarea'}
+                                  <span key={`${item.id}-${tIdx}`} style={{ fontSize: 9, padding: '2px 6px', background: '#dcfce7', border: '1px solid #bbf7d0', borderRadius: 4, color: '#166534', fontWeight: 600 }}>
+                                    ✅ {apuName.length > 18 ? apuName.slice(0, 18) + '…' : apuName}
                                   </span>
                                 );
                               });
                             })()}
                           </div>
                         </td>
-                        <td>{formatCurrency(ap.salario_pactado || p.salario_base)} / {ap.unidad_pactada || p.unidad_pago || 'Mes'}</td>
+                        <td style={{ fontSize: 11 }}>
+                          {(() => {
+                            const spc = p.salarios_por_cargo || {};
+                            const personCargos = [...new Set(Array.isArray(p.cargos_ids) && p.cargos_ids.length > 0 ? p.cargos_ids : (p.cargo_id ? [p.cargo_id] : []))];
+                            if (personCargos.length > 0 && Object.keys(spc).length > 0) {
+                              return personCargos.map(cid => {
+                                const c = state.cargos.find(cc => cc.id === cid);
+                                const cs = spc[cid];
+                                if (!c || !cs) return null;
+                                return <div key={cid} style={{ whiteSpace: 'nowrap' }}>{formatCurrency(cs.salario_pactado)} / {cs.unidad || 'Mes'}</div>;
+                              });
+                            }
+                            // Fallback: show from assignments
+                            return assignments.map(ap => (
+                              <div key={ap.id}>{formatCurrency(ap.salario_pactado)} / {ap.unidad_pactada === 'SUPERVISOR' ? 'Mes' : ap.unidad_pactada}</div>
+                            ));
+                          })()}
+                        </td>
                         <td>
-                          <button className="btn btn-ghost btn-sm" onClick={() => openEdit(p, ap)}>✏️</button>
-                          <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-danger)' }} onClick={() => { if(confirm('¿Eliminar esta asignación?')) dispatch({ type: 'DELETE_PERSON_PROYECTO', payload: ap.id }); }}>🗑️</button>
+                          <div style={{ display: 'flex', gap: 4 }}>
+                            <button className="btn btn-ghost btn-sm" onClick={() => openEdit(p)} title="Editar perfil" style={{ padding: '2px 6px' }}>✏️</button>
+                            <button className="btn btn-ghost btn-sm" title="Notificar asignación" onClick={() => handleNotifyPerson(p)} style={{ fontSize: 12, padding: '2px 6px' }}>📨</button>
+                          </div>
                         </td>
                       </tr>
                     );
-                  })
-              ) : (
+                  });
+                })()
+               ) : (
                 // === MODO GLOBAL: Mostrar todos los trabajadores de la base de datos ===
                 filteredPersonal.map(p => {
                   const cargo = state.cargos.find(c => c.id === p.cargo_id);
@@ -908,20 +1234,73 @@ export default function PersonalView() {
                           </div>
                         </div>
                       </td>
-                      <td>{p.profesion || cargo?.nombre || '—'}</td>
                       <td>
-                        {supProjects.length > 0 ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            {supProjects.map(ap => {
-                              const proy = state.proyectos.find(pr => pr.id === ap.proyecto_id);
-                              return <span key={ap.id} style={{ fontSize: 10, color: '#6366f1', fontWeight: 600 }}>🔑 {proy?.nombre || '—'}</span>;
-                            })}
-                          </div>
-                        ) : <span style={{ fontSize: 10, color: '#94a3b8' }}>—</span>}
+                        {(() => {
+                          const personCargos = Array.isArray(p.cargos_ids) && p.cargos_ids.length > 0 ? p.cargos_ids : (p.cargo_id ? [p.cargo_id] : []);
+                          if (personCargos.length > 0) {
+                            return personCargos.map((cid, idx) => {
+                              const c = state.cargos.find(cc => cc.id === cid);
+                              return c ? (
+                                <span key={cid} style={{
+                                  display: 'inline-block', fontSize: 10, fontWeight: 600,
+                                  padding: '2px 6px', borderRadius: 10, marginRight: 4, marginBottom: 2,
+                                  background: idx === 0 ? '#eff6ff' : '#f1f5f9',
+                                  color: idx === 0 ? '#2563eb' : '#475569',
+                                  border: `1px solid ${idx === 0 ? '#bfdbfe' : '#e2e8f0'}`
+                                }}>
+                                  {idx === 0 ? '⭐ ' : ''}{c.nombre}
+                                </span>
+                              ) : null;
+                            });
+                          }
+                          return p.profesion || '—';
+                        })()}
                       </td>
-                      <td>{formatCurrency(p.salario_base)} / {p.unidad_pago || 'Mes'}</td>
+                      <td>
+                        {(() => {
+                          const assignments = state.personalProyecto.filter(ap => ap.personal_id === p.id);
+                          return assignments.length > 0 ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                              {assignments.map(ap => {
+                                const proy = state.proyectos.find(pr => pr.id === ap.proyecto_id);
+                                const isSup = ap.unidad_pactada === 'SUPERVISOR';
+                                return (
+                                  <span key={ap.id} style={{ 
+                                    fontSize: 9, 
+                                    color: isSup ? '#6366f1' : '#166534', 
+                                    fontWeight: 600,
+                                    background: isSup ? '#eff6ff' : '#f0fdf4',
+                                    padding: '1px 5px',
+                                    borderRadius: 4,
+                                    border: `1px solid ${isSup ? '#bae6fd' : '#bbf7d0'}`,
+                                    whiteSpace: 'nowrap'
+                                  }}>
+                                    {isSup ? '🔑' : '👷'} {proy?.codigo || '—'}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          ) : <span style={{ fontSize: 10, color: '#94a3b8' }}>—</span>;
+                        })()}
+                      </td>
+                      <td style={{ fontSize: 11 }}>
+                        {(() => {
+                          const spc = p.salarios_por_cargo || {};
+                          const personCargos = [...new Set(Array.isArray(p.cargos_ids) && p.cargos_ids.length > 0 ? p.cargos_ids : (p.cargo_id ? [p.cargo_id] : []))];
+                          if (personCargos.length > 0 && Object.keys(spc).length > 0) {
+                            return personCargos.map(cid => {
+                              const c = state.cargos.find(cc => cc.id === cid);
+                              const cs = spc[cid];
+                              if (!cs) return null;
+                              return <div key={cid}>{formatCurrency(cs.salario_pactado)} / {cs.unidad || 'Mes'}</div>;
+                            });
+                          }
+                          return <div>{formatCurrency(p.salario_base)} / {p.unidad_pago || 'Mes'}</div>;
+                        })()}
+                      </td>
                       <td>
                         <button className="btn btn-ghost btn-sm" onClick={() => openEdit(p)}>✏️</button>
+                        <button className="btn btn-ghost btn-sm" title="Notificar asignación" onClick={() => handleNotifyPerson(p)} style={{ fontSize: 12 }}>📨</button>
                         <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-danger)' }} onClick={() => { if (confirm('¿Eliminar trabajador GLOBALMENTE?')) dispatch({ type: 'DELETE_PERSON', payload: p.id }); }}>🗑️</button>
                       </td>
                     </tr>
@@ -973,19 +1352,15 @@ export default function PersonalView() {
                         <input className="form-input" value={form.apellidos || ''} onChange={(e)=>setForm({...form, apellidos: e.target.value})} required />
                       </div>
                     </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label className="form-label">Profesión</label>
-                        <input className="form-input" value={form.profesion || ''} onChange={(e)=>setForm({...form, profesion: e.target.value})} placeholder="Ej: Ingeniero Civil, Maestro..." list="profesion-options" />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Documento de Identidad</label>
-                        <div style={{ display: 'flex', gap: 8 }}>
-                          <select className="form-select" style={{ width: 90, fontSize: 11 }} value={form.tipo_documento || 'CC'} onChange={(e)=>setForm({...form, tipo_documento: e.target.value})}>
-                            <option value="CC">🇨🇴 CC</option><option value="CE">🌐 CE</option><option value="PP">✈️ PP</option>
-                          </select>
-                          <input className="form-input" style={{ flex: 1 }} value={form.cedula || ''} onChange={(e)=>setForm({...form, cedula: e.target.value})} placeholder={form.tipo_documento === 'PP' ? 'Nº Pasaporte' : 'Nº Cédula'} />
-                        </div>
+                    <div className="form-group">
+                      <label className="form-label">Documento de Identidad</label>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <select className="form-select" style={{ width: 90, fontSize: 11 }} value={form.tipo_documento || 'CC'} onChange={(e)=>setForm({...form, tipo_documento: e.target.value})}>
+                          <option value="CC">🇨🇴 CC</option>
+                          <option value="CE">🌐 CE</option>
+                          <option value="PASSPORT">✈️ PP</option>
+                        </select>
+                        <input className="form-input" value={form.cedula || ''} onChange={(e)=>setForm({...form, cedula: e.target.value})} placeholder="Nº Cédula" />
                       </div>
                     </div>
                     <div className="form-row">
@@ -997,6 +1372,10 @@ export default function PersonalView() {
                         <label className="form-label">País</label>
                         <select className="form-select" value={form.pais || 'Colombia'} onChange={(e)=>setForm({...form, pais: e.target.value})}><option value="Colombia">🇨🇴 Colombia</option><option value="Otro">🌍 Otro</option></select>
                       </div>
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">📍 Dirección de Residencia</label>
+                      <input className="form-input" value={form.direccion_residencia || ''} onChange={(e)=>setForm({...form, direccion_residencia: e.target.value})} placeholder="Cra 15 #45-67, Barrio Centro" />
                     </div>
                     <div className="form-row">
                       <div className="form-group">
@@ -1013,29 +1392,103 @@ export default function PersonalView() {
                       </div>
                     </div>
                     <div className="form-group">
-                      <label className="form-label">Cargo (Base Salarial) *</label>
-                      <select className="form-select" value={form.cargo_id || ''} onChange={(e) => {
-                        const cid = e.target.value;
-                        const cargo = state.cargos.find(c => c.id === cid);
-                        if (cargo) {
-                          const data = calcularDatosCargo(cid);
-                          setForm({ ...form, cargo_id: cid, profesion: form.profesion || cargo.nombre, factor_smlv: String(cargo.factor_smlv || 1.0), salario_base: String(Math.round(data.precioHora * h_mes)), tareas_asignadas: selectedProjectId ? getCargoProjectItems(selectedProjectId, cid).map(t => t.id) : [] });
-                        } else setForm({ ...form, cargo_id: cid });
-                      }} required>
-                        <option value="">Seleccionar Cargo...</option>
-                        {['Oficina (Escritorio)', 'Campo (Móvil)', 'Mano de Obra Directa', 'Comercio (Ventas)'].map(cat => {
-                          const filtered = state.cargos.filter(c => c.categoria === cat);
-                          if (filtered.length === 0) return null;
-                          return <optgroup key={cat} label={cat}>{filtered.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}</optgroup>;
+                      <label className="form-label">Cargos Asignados</label>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
+                        {[...new Set(form.cargos_ids || [])].map((cid, idx) => {
+                          const cargo = state.cargos.find(c => c.id === cid);
+                          if (!cargo) return null;
+                          const cs = (form.salarios_por_cargo || {})[cid] || {};
+                          const sal = cs.salario_pactado || 0;
+                          const fmt = n => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(n);
+                          const isOpen = expandedCargoId === cid;
+                          return (
+                            <div key={cid} style={{ borderRadius: 8, border: idx === 0 ? '2px solid #6366f1' : '1px solid #cbd5e1', overflow: 'hidden' }}>
+                              <div onClick={() => setExpandedCargoId(isOpen ? null : cid)} style={{
+                                display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', cursor: 'pointer',
+                                background: idx === 0 ? 'linear-gradient(135deg, #3b82f6, #6366f1)' : '#f1f5f9',
+                                color: idx === 0 ? '#fff' : '#334155', fontSize: 12, fontWeight: 600
+                              }}>
+                                <span style={{ fontSize: 10, opacity: 0.7 }}>{isOpen ? '▼' : '▶'}</span>
+                                {idx === 0 && <span style={{ fontSize: 10 }}>⭐</span>}
+                                <span style={{ flex: 1 }}>{cargo.nombre}</span>
+                                <span style={{ fontWeight: 400, fontSize: 10, opacity: 0.85 }}>{fmt(sal)} / {cs.unidad || 'Mes'}</span>
+                                <button type="button" onClick={(e) => { e.stopPropagation(); handleRemoveCargo(cid); }} style={{
+                                  border: 'none', background: idx === 0 ? 'rgba(255,255,255,0.3)' : '#e2e8f0',
+                                  borderRadius: '50%', width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  cursor: 'pointer', color: idx === 0 ? '#fff' : '#ef4444', fontSize: 11, fontWeight: 700, padding: 0
+                                }}>✕</button>
+                              </div>
+                              {isOpen && (
+                                <div style={{ padding: '10px 12px', background: '#fafbfd', borderTop: '1px solid #e2e8f0' }}>
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                    <div>
+                                      <label style={{ fontSize: 10, color: '#64748b', fontWeight: 600, display: 'block', marginBottom: 2 }}>Unidad</label>
+                                      <select className="form-select" style={{ fontSize: 11, padding: '4px 8px' }} value={cs.unidad || 'Mes'} onChange={(e) => handleUpdateCargoSalario(cid, 'unidad', e.target.value)}>
+                                        {UNIDADES_PAGO.map(u => <option key={u} value={u}>{u}</option>)}
+                                      </select>
+                                    </div>
+                                    <div>
+                                      <label style={{ fontSize: 10, color: '#64748b', fontWeight: 600, display: 'block', marginBottom: 2 }}>Factor (x SMLV)</label>
+                                      <input className="form-input" type="number" step="0.1" style={{ fontSize: 11, padding: '4px 8px' }} value={cs.factor_smlv || ''} onChange={(e) => handleUpdateCargoSalario(cid, 'factor_smlv', e.target.value)} />
+                                    </div>
+                                    <div style={{ gridColumn: 'span 2' }}>
+                                      <label style={{ fontSize: 10, color: '#64748b', fontWeight: 600, display: 'block', marginBottom: 2 }}>Salario Pactado</label>
+                                      <input className="form-input" type="number" style={{ fontSize: 12, padding: '4px 8px', fontWeight: 700 }} value={cs.salario_pactado || ''} onChange={(e) => handleUpdateCargoSalario(cid, 'salario_pactado', e.target.value)} />
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
                         })}
+                        {(form.cargos_ids || []).length === 0 && (
+                          <span style={{ fontSize: 11, color: '#94a3b8', fontStyle: 'italic' }}>Sin cargos asignados — seleccione uno abajo</span>
+                        )}
+                      </div>
+                      <select className="form-select" value="" onChange={(e) => {
+                        const cid = e.target.value;
+                        if (cid === 'NEW') { setIsOtherCargo(true); return; }
+                        handleAddCargo(cid);
+                      }} style={{ borderStyle: 'dashed', borderColor: '#94a3b8', color: '#64748b' }}>
+                        <option value="">+ Agregar Cargo...</option>
+                        {(() => {
+                          const ROLE_LABELS = { admin: '🔑 Admin', oficina: '🏢 Oficina', operativo: '🏗️ Campo', cuadrilla: '📲 Cuadrilla', supervisor: '⭐ Supervisor', bodega: '📦 Bodega', tienda: '🛒 Tienda', cliente: '👁️ Cliente' };
+                          return Object.entries(ROLE_LABELS).map(([role, label]) => {
+                            const filtered = state.cargos.filter(c => {
+                              const cat = (c.categoria || '').toLowerCase();
+                              // Match by exact role or legacy category names
+                              const matchesRole = cat === role || 
+                                (role === 'admin' && cat.includes('oficina')) ||
+                                (role === 'operativo' && cat.includes('campo')) ||
+                                (role === 'cuadrilla' && cat.includes('mano de obra')) ||
+                                (role === 'tienda' && (cat.includes('comercio') || cat.includes('venta')));
+                              return matchesRole && !(form.cargos_ids || []).includes(c.id);
+                            });
+                            if (filtered.length === 0) return null;
+                            return <optgroup key={role} label={label}>{filtered.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}</optgroup>;
+                          });
+                        })()}
                         <option value="NEW">+ Otro Cargo...</option>
                       </select>
+                      {isOtherCargo && (
+                        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                          <input className="form-input" placeholder="Nombre del nuevo cargo..." value={newCargoName} onChange={(e) => setNewCargoName(e.target.value)} style={{ flex: 1 }} />
+                          <button type="button" className="btn btn-primary btn-sm" onClick={() => {
+                            if (!newCargoName) return;
+                            const newCargo = { id: crypto.randomUUID(), nombre: newCargoName, categoria: 'cuadrilla', factor_smlv: 1.0, unidad: 'Mes' };
+                            dispatch({ type: 'ADD_CARGO', payload: newCargo });
+                            handleAddCargo(newCargo.id);
+                            setNewCargoName(''); setIsOtherCargo(false);
+                          }}>Crear</button>
+                          <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setIsOtherCargo(false); setNewCargoName(''); }}>✕</button>
+                        </div>
+                      )}
                     </div>
 
                     <div style={{ marginTop: 16, padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                      <label className="form-label">🎓 Posgrados y Estudios Adicionales</label>
+                      <label className="form-label">🎓 Estudios Académicos</label>
                       <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                        <select className="form-select" style={{ width: 150, fontSize: 11 }} value={newPosType} onChange={(e) => setNewPosType(e.target.value)}><option value="Especialización">Especialización</option><option value="Maestría">Maestría</option><option value="Certificación">Certificación</option></select>
+                        <select className="form-select" style={{ width: 150, fontSize: 11 }} value={newPosType} onChange={(e) => setNewPosType(e.target.value)}><option value="Pregrado">Pregrado</option><option value="Especialización">Especialización</option><option value="Maestría">Maestría</option><option value="Certificación">Certificación</option></select>
                         <input className="form-input" style={{ flex: 1, fontSize: 11 }} placeholder="Nombre del estudio..." value={newPosName} onChange={(e) => setNewPosName(e.target.value)} />
                         <button type="button" className="btn btn-primary btn-sm" onClick={handleAddPosgrado}>+ Agregar</button>
                       </div>
@@ -1048,16 +1501,28 @@ export default function PersonalView() {
                       </div>
                     </div>
 
-                    <div className="form-group" style={{ marginTop: 16 }}>
-                      <label className="form-label">Rol de Aplicación (Permisos) *</label>
-                      <select className="form-select" value={form.app_role} onChange={(e)=>setForm({...form, app_role: e.target.value})} required><option value="cuadrilla">📲 Cuadrilla</option><option value="admin">🔑 Admin</option><option value="bodega">📦 Bodega</option><option value="tienda">🛒 Tienda</option><option value="operativo">🏗️ Campo</option><option value="cliente">👁️ Cliente</option></select>
-                    </div>
-
-                    <div className="form-row">
-                      <div className="form-group"><label className="form-label">Unidad</label><select className="form-select" value={form.unidad_pago} onChange={(e)=>setForm({...form, unidad_pago: e.target.value})}>{UNIDADES_PAGO.map(u => <option key={u} value={u}>{u}</option>)}</select></div>
-                      <div className="form-group"><label className="form-label">Factor (x SMLV)</label><input className="form-input" type="number" step="0.1" value={form.factor_smlv || ''} onChange={(e) => { const f = parseFloat(e.target.value) || 0; const smlv = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000; setForm({ ...form, factor_smlv: e.target.value, salario_base: String(Math.round(f * smlv)) }); }} /></div>
-                      <div className="form-group"><label className="form-label">Salario Pactado *</label><input className="form-input" type="number" value={form.salario_base || ''} onChange={(e) => { const s = parseFloat(e.target.value) || 0; const smlv = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000; setForm({ ...form, salario_base: e.target.value, factor_smlv: (s / smlv).toFixed(2) }); }} required /></div>
-                    </div>
+                    {/* Salary total summary + Role — auto-derived from cargos */}
+                    {(form.cargos_ids || []).length > 0 ? (
+                      <div style={{ marginTop: 8, padding: 10, background: 'linear-gradient(135deg, #f0f9ff, #eff6ff)', borderRadius: 8, border: '1px solid #bfdbfe' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <div style={{ fontSize: 9, color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>💰 Salario Total</div>
+                            <div style={{ fontSize: 18, fontWeight: 800, color: '#1e40af' }}>{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(form.salario_base || 0)}</div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 9, color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>🔑 Rol App</div>
+                            <select className="form-select" style={{ fontSize: 11, padding: '2px 6px', minWidth: 120 }} value={form.app_role} onChange={(e)=>setForm({...form, app_role: e.target.value})} required>
+                              <option value="cuadrilla">📲 Cuadrilla</option><option value="supervisor">⭐ Supervisor</option><option value="admin">🔑 Admin</option><option value="oficina">🏢 Oficina</option><option value="bodega">📦 Bodega</option><option value="tienda">🛒 Tienda</option><option value="operativo">🏗️ Campo</option><option value="cliente">👁️ Cliente</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="form-row" style={{ marginTop: 8 }}>
+                        <div className="form-group"><label className="form-label">Rol *</label><select className="form-select" value={form.app_role} onChange={(e)=>setForm({...form, app_role: e.target.value})} required><option value="cuadrilla">📲 Cuadrilla</option><option value="supervisor">⭐ Supervisor</option><option value="admin">🔑 Admin</option><option value="oficina">🏢 Oficina</option><option value="bodega">📦 Bodega</option><option value="tienda">🛒 Tienda</option><option value="operativo">🏗️ Campo</option><option value="cliente">👁️ Cliente</option></select></div>
+                        <div className="form-group"><label className="form-label">Salario</label><input className="form-input" type="number" value={form.salario_base || ''} onChange={(e) => setForm({...form, salario_base: e.target.value})} /></div>
+                      </div>
+                    )}
                   </>
                 ) : (
                   <div className="stats-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -1074,7 +1539,7 @@ export default function PersonalView() {
           </div>
         </div>
       )}
-      <datalist id="profesion-options"><option value="Ingeniero Civil" /><option value="Arquitecto" /><option value="Maestro de Obra" /></datalist>
+      <datalist id="profesion-options"><option value="Ingeniero Civil" /><option value="Arquitecto" /><option value="Maestro de Obra" /><option value="Administrador de Empresas" /><option value="Técnico en Construcción" /></datalist>
     </>
   );
 }

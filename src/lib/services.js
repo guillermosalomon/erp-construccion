@@ -178,6 +178,14 @@ export const apuDetalleService = {
     if (error) throw error;
     return data;
   },
+  async createBatch(detalles) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const items = detalles.map(d => ({ ...d, user_id: uid }));
+    const { data, error } = await db().from('apu_detalle').insert(items).select();
+    if (error) throw error;
+    return data;
+  },
   async update(id, changes) {
     if (!db()) return null;
     const { data, error } = await db().from('apu_detalle').update(changes).eq('id', id).select().single();
@@ -524,7 +532,8 @@ export const personalService = {
     const uid = await getUserId();
     // Validación básica de integridad: si el cargo_id no es un UUID, ignorarlo
     const cargo_id = (persona.cargo_id && persona.cargo_id.length === 36) ? persona.cargo_id : null;
-    const { data, error } = await db().from('personal').upsert({ ...persona, cargo_id, user_id: uid }, { onConflict: 'email' }).select().maybeSingle();
+    const email = (persona.email && persona.email.trim() !== '') ? persona.email : null;
+    const { data, error } = await db().from('personal').upsert({ ...persona, email, cargo_id, user_id: uid }, { onConflict: 'id' }).select().maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -552,23 +561,20 @@ export const personalService = {
   },
   async uploadDocument(file, fileName) {
     if (!db() || !file) return null;
+    // Try Supabase Storage first, fallback to base64 data URL
     try {
+      const filePath = `${Date.now()}-${fileName}`;
       const { data, error } = await supabase.storage
         .from('personal-docs')
-        .upload(`${Date.now()}-${fileName}`, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+        .upload(filePath, file, { cacheControl: '3600', upsert: false });
       if (error) throw error;
-      
       const { data: { publicUrl } } = supabase.storage
         .from('personal-docs')
         .getPublicUrl(data.path);
-        
       return publicUrl;
     } catch (e) {
-      console.error(`Error uploading document: ${e.message || String(e)}`);
-      // Retornar una URL base64 simulada en demo o si falla el bucket
+      // Bucket may not exist (dev/demo). Fallback to base64 URL.
+      console.warn(`[Upload] Fallback a base64 (${e.message})`);
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result);
@@ -592,7 +598,7 @@ export const cargosService = {
   async create(cargo) {
     if (!db()) return null;
     const uid = await getUserId();
-    const { data, error } = await db().from('cargos').upsert({ ...cargo, user_id: uid }).select().maybeSingle();
+    const { data, error } = await db().from('cargos').upsert({ ...cargo, user_id: uid }, { onConflict: 'id' }).select().maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -622,6 +628,14 @@ export const cargoDetalleService = {
     if (!db()) return null;
     const uid = await getUserId();
     const { data, error } = await db().from('cargo_detalle').insert({ ...detalle, user_id: uid }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async createBatch(detalles) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const items = detalles.map(d => ({ ...d, user_id: uid }));
+    const { data, error } = await db().from('cargo_detalle').insert(items).select();
     if (error) throw error;
     return data;
   },
