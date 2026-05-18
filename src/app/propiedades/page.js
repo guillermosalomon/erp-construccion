@@ -51,10 +51,10 @@ const mockInmuebles = [
   }
 ];
 
-export default function PropiedadesMarketplace() {
   const [inmuebles, setInmuebles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedInmueble, setSelectedInmueble] = useState(null);
+  const [activeMedia, setActiveMedia] = useState(null); // { type: 'tour' | 'image', url: string }
   const [filterTipo, setFilterTipo] = useState('Todos');
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function PropiedadesMarketplace() {
     try {
       const { data, error } = await supabase
         .from('inmuebles')
-        .select('*')
+        .select('*, inmueble_fotos(*)')
         .eq('estado', 'DISPONIBLE')
         .order('created_at', { ascending: false });
         
@@ -180,7 +180,10 @@ export default function PropiedadesMarketplace() {
             {filteredInmuebles.map(inmueble => (
               <div 
                 key={inmueble.id} 
-                onClick={() => setSelectedInmueble(inmueble)}
+                onClick={() => {
+                  setSelectedInmueble(inmueble);
+                  setActiveMedia(inmueble.tour_360_url ? { type: 'tour', url: inmueble.tour_360_url } : { type: 'image', url: inmueble.portada_url });
+                }}
                 style={{ 
                   background: 'white', borderRadius: '16px', overflow: 'hidden', cursor: 'pointer',
                   boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', transition: 'all 0.3s', border: '1px solid #e2e8f0'
@@ -235,27 +238,74 @@ export default function PropiedadesMarketplace() {
             
             <div className="modal-content-flex" style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
               {/* Lado izquierdo: Media (360 o Imagen) */}
-              <div className="media-container" style={{ background: '#000', position: 'relative' }}>
-                {selectedInmueble.tour_360_url ? (
-                  <iframe 
-                    width="100%" 
-                    height="100%" 
-                    frameBorder="0" 
-                    allow="xr-spatial-tracking; gyroscope; accelerometer" 
-                    allowFullScreen 
-                    scrolling="no" 
-                    src={selectedInmueble.tour_360_url}
-                  ></iframe>
-                ) : (
-                  <img src={selectedInmueble.portada_url} alt="Portada" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                )}
+              <div className="media-container" style={{ background: '#000', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+                  {activeMedia?.type === 'tour' ? (
+                    <iframe 
+                      width="100%" 
+                      height="100%" 
+                      frameBorder="0" 
+                      allow="xr-spatial-tracking; gyroscope; accelerometer" 
+                      allowFullScreen 
+                      scrolling="no" 
+                      src={activeMedia.url}
+                    ></iframe>
+                  ) : (
+                    <img src={activeMedia?.url || selectedInmueble.portada_url} alt="Media" style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#0f172a' }} />
+                  )}
+                  
+                  {activeMedia?.type === 'tour' && (
+                    <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '8px 16px', borderRadius: '20px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ display: 'inline-block', width: '10px', height: '10px', background: '#10b981', borderRadius: '50%' }}></span>
+                      Tour Virtual 360°
+                    </div>
+                  )}
+                </div>
                 
-                {selectedInmueble.tour_360_url && (
-                  <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '8px 16px', borderRadius: '20px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ display: 'inline-block', width: '10px', height: '10px', background: '#10b981', borderRadius: '50%' }}></span>
-                    Tour Virtual 360° Activo
-                  </div>
-                )}
+                {/* Carrusel miniatura (Gallery) */}
+                <div style={{ background: '#1e293b', padding: '12px', display: 'flex', gap: '12px', overflowX: 'auto' }}>
+                  {/* Thumbnail del Tour 360 si existe */}
+                  {selectedInmueble.tour_360_url && (
+                    <div 
+                      onClick={() => setActiveMedia({ type: 'tour', url: selectedInmueble.tour_360_url })}
+                      style={{ 
+                        width: '80px', height: '60px', borderRadius: '8px', cursor: 'pointer', flexShrink: 0,
+                        border: activeMedia?.url === selectedInmueble.tour_360_url ? '3px solid #3b82f6' : '3px solid transparent',
+                        background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', position: 'relative'
+                      }}
+                    >
+                      <img src={selectedInmueble.portada_url} alt="Tour 360" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5, borderRadius: '4px' }} />
+                      <div style={{ position: 'absolute', zIndex: 10, fontSize: '24px' }}>👁️</div>
+                    </div>
+                  )}
+                  
+                  {/* Thumbnail de Portada */}
+                  {selectedInmueble.portada_url && (
+                    <div 
+                      onClick={() => setActiveMedia({ type: 'image', url: selectedInmueble.portada_url })}
+                      style={{ 
+                        width: '80px', height: '60px', borderRadius: '8px', cursor: 'pointer', flexShrink: 0,
+                        border: activeMedia?.url === selectedInmueble.portada_url ? '3px solid #3b82f6' : '3px solid transparent'
+                      }}
+                    >
+                      <img src={selectedInmueble.portada_url} alt="Portada" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+                    </div>
+                  )}
+                  
+                  {/* Thumbnails Adicionales */}
+                  {selectedInmueble.inmueble_fotos && selectedInmueble.inmueble_fotos.map(foto => (
+                    <div 
+                      key={foto.id}
+                      onClick={() => setActiveMedia({ type: 'image', url: foto.url })}
+                      style={{ 
+                        width: '80px', height: '60px', borderRadius: '8px', cursor: 'pointer', flexShrink: 0,
+                        border: activeMedia?.url === foto.url ? '3px solid #3b82f6' : '3px solid transparent'
+                      }}
+                    >
+                      <img src={foto.url} alt="Foto Extra" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+                    </div>
+                  ))}
+                </div>
               </div>
               
               {/* Lado derecho: Info */}
