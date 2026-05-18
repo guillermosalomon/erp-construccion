@@ -51,6 +51,7 @@ const mockInmuebles = [
   }
 ];
 
+export default function PropiedadesMarketplace() {
   const [inmuebles, setInmuebles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedInmueble, setSelectedInmueble] = useState(null);
