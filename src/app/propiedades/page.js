@@ -264,9 +264,9 @@ export default function PropiedadesMarketplace() {
                   )}
                   
                   {activeMedia?.type === 'tour' && (
-                    <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '8px 16px', borderRadius: '20px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '8px 16px', borderRadius: '20px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span style={{ display: 'inline-block', width: '10px', height: '10px', background: '#10b981', borderRadius: '50%' }}></span>
-                      Tour Virtual 360°
+                      Tour Virtual
                     </div>
                   )}
                 </div>
