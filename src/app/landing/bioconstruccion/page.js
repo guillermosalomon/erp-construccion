@@ -360,8 +360,8 @@ const GALLERY_ITEMS = [
 ];
 
 const REFERENCES = [
-    { title: "Referencia Estructura Tipo Maloca", img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80" },
-    { title: "Referencia Glamping Eco-Turístico", img: "https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?auto=format&fit=crop&w=800&q=80" }
+    { title: "Referencia Estructura Tipo Maloca", img: "/images/maloca_referencia.png" },
+    { title: "Referencia Glamping Eco-Turístico", img: "/images/glamping_referencia.png" }
 ];
 
 function GallerySection() {

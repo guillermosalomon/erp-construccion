@@ -201,7 +201,7 @@
   position: relative;
   padding: 12rem 0 8rem 0;
   background: linear-gradient(rgba(30, 63, 32, 0.55), rgba(18, 20, 18, 0.75)), 
-              url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=1600&q=80') center/cover;
+              url('/images/portada_pabellon.png') center/cover;
   text-align: center;
   color: #ffffff;
   margin-bottom: 3rem;
