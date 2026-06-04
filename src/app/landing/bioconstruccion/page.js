@@ -45,6 +45,7 @@ function getCookie(name) {
 const WEEKS_DATA = [
   {
     numero: 1,
+    duracion: "1 Semana (24h Teoría, 16h Práctica)",
     titulo: "Análisis del Territorio y Fundamentos Bioclimáticos",
     fase: "Fase 1: Teórica",
     categoria: "fase1",
@@ -54,6 +55,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 2,
+    duracion: "1 Semana (24h Teoría, 16h Práctica)",
     titulo: "Diseño Estructural, Elementos Autoportantes y Modelado a Escala",
     fase: "Fase 1: Teórica",
     categoria: "fase1",
@@ -63,6 +65,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 3,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Silvicultura, Corte y Preservación de la Guadua",
     fase: "Fase 2: Materiales",
     categoria: "fase2",
@@ -72,6 +75,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 4,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Selección y Pruebas de Suelos",
     fase: "Fase 2: Materiales",
     categoria: "fase2",
@@ -81,6 +85,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 5,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Cimentación y Anclajes",
     fase: "Fase 2: Materiales",
     categoria: "fase2",
@@ -90,6 +95,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 6,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Cortes y Ensambles en Guadua",
     fase: "Fase 3: Estructura",
     categoria: "fase3",
@@ -99,6 +105,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 7,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Montaje y Levantamiento Estructural del Glamping",
     fase: "Fase 3: Estructura",
     categoria: "fase3",
@@ -108,6 +115,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 8,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Montaje y Levantamiento Estructural de la Maloca",
     fase: "Fase 3: Estructura",
     categoria: "fase3",
@@ -117,6 +125,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 9,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Estructura de Entrepisos y Cubiertas",
     fase: "Fase 3: Estructura",
     categoria: "fase3",
@@ -126,6 +135,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 10,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Construcción con Tapia Pisada",
     fase: "Fase 4: Envolventes",
     categoria: "fase4",
@@ -135,6 +145,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 11,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Muros de Bahareque Encementado y Tradicional",
     fase: "Fase 4: Envolventes",
     categoria: "fase4",
@@ -144,6 +155,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 12,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Elaboración e Instalación de Adobes",
     fase: "Fase 4: Envolventes",
     categoria: "fase4",
@@ -153,6 +165,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 13,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Pisos de Tierra y Acabados de Muros",
     fase: "Fase 4: Envolventes",
     categoria: "fase4",
@@ -162,6 +175,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 14,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Implementación de Techos Verdes",
     fase: "Fase 5: Experimental",
     categoria: "fase5",
@@ -171,6 +185,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 15,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Implementación de Fachadas de Pared con Vegetación",
     fase: "Fase 5: Experimental",
     categoria: "fase5",
@@ -180,6 +195,7 @@ const WEEKS_DATA = [
   },
   {
     numero: 16,
+    duracion: "1 Semana (8h Teoría, 32h Práctica)",
     titulo: "Detalles Finales, Evaluación y Cierre",
     fase: "Fase 5: Experimental",
     categoria: "fase5",
@@ -233,10 +249,12 @@ function HeroSection() {
                     <p className="bio-hero-subtitle">
                         Programa práctico-teórico de 4 meses: Maloca y Glampings con guadua, bahareque, tapia pisada, adobe y techos verdes.
                     </p>
-                    <div className="bio-hero-badge-container">
-                        <span className="bio-badge-pill">4 Meses</span>
-                        <span className="bio-badge-pill">16 Semanas</span>
-                        <span className="bio-badge-pill">Teórico-Práctico</span>
+                    <div className="bio-hero-badge-container" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem' }}>
+                        <span className="bio-badge-pill">📅 4 Meses</span>
+                        <span className="bio-badge-pill">📆 16 Semanas</span>
+                        <span className="bio-badge-pill">⏱️ 640 Horas Totales</span>
+                        <span className="bio-badge-pill">📖 160h Teoría (25%)</span>
+                        <span className="bio-badge-pill">🔨 480h Práctica (75%)</span>
                     </div>
                 </div>
             </div>
@@ -311,6 +329,35 @@ function ScheduleSection() {
                     <button className={`bio-filter-pill ${activeFilter === 'fase5' ? 'active' : ''}`} onClick={() => handleFilterChange('fase5')}>Fase 5: Experimental</button>
                 </div>
 
+                {/* Resumen General de Fases y Horas de Ejecución */}
+                <div className="bio-phases-summary-grid" style={{ marginBottom: '2.5rem' }}>
+                    <div className="bio-phase-summary-item">
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--bio-accent-green)', marginBottom: '0.3rem' }}>Fase 1: Diseño</div>
+                        <div style={{ fontFamily: 'var(--bio-font-title)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--bio-text-title)', marginBottom: '0.3rem' }}>2 Semanas (~0.5 Mes)</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--bio-text-secondary)', fontWeight: 600 }}>48h Teoría / 32h Práctica (80h)</div>
+                    </div>
+                    <div className="bio-phase-summary-item">
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--bio-accent-earth)', marginBottom: '0.3rem' }}>Fase 2: Materiales</div>
+                        <div style={{ fontFamily: 'var(--bio-font-title)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--bio-text-title)', marginBottom: '0.3rem' }}>3 Semanas (~0.75 Mes)</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--bio-text-secondary)', fontWeight: 600 }}>24h Teoría / 96h Práctica (120h)</div>
+                    </div>
+                    <div className="bio-phase-summary-item">
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--bio-accent-gold)', marginBottom: '0.3rem' }}>Fase 3: Estructuras</div>
+                        <div style={{ fontFamily: 'var(--bio-font-title)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--bio-text-title)', marginBottom: '0.3rem' }}>4 Semanas (1.0 Mes)</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--bio-text-secondary)', fontWeight: 600 }}>32h Teoría / 128h Práctica (160h)</div>
+                    </div>
+                    <div className="bio-phase-summary-item">
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--bio-accent-earth)', marginBottom: '0.3rem' }}>Fase 4: Envolventes</div>
+                        <div style={{ fontFamily: 'var(--bio-font-title)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--bio-text-title)', marginBottom: '0.3rem' }}>4 Semanas (1.0 Mes)</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--bio-text-secondary)', fontWeight: 600 }}>32h Teoría / 128h Práctica (160h)</div>
+                    </div>
+                    <div className="bio-phase-summary-item">
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--bio-accent-green)', marginBottom: '0.3rem' }}>Fase 5: Experimental</div>
+                        <div style={{ fontFamily: 'var(--bio-font-title)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--bio-text-title)', marginBottom: '0.3rem' }}>3 Semanas (~0.75 Mes)</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--bio-text-secondary)', fontWeight: 600 }}>24h Teoría / 96h Práctica (120h)</div>
+                    </div>
+                </div>
+
                 <div className="bio-timeline">
                     {filteredWeeks.map((w) => {
                         const isExpanded = !!expandedWeeks[w.numero];
@@ -341,6 +388,9 @@ function ScheduleSection() {
                                                 <h5>🔨 Práctica</h5>
                                                 <p>{w.practica}</p>
                                             </div>
+                                        </div>
+                                        <div style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--bio-accent-gold)', fontWeight: 600 }}>
+                                            Duración estimada: {w.duracion}
                                         </div>
                                     </div>
                                 )}

@@ -768,3 +768,41 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Phase Summary Grid */
+.bio-phases-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background-color: var(--bio-bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--bio-border);
+  box-shadow: var(--bio-shadow);
+}
+
+.bio-phase-summary-item {
+  text-align: center;
+  position: relative;
+}
+
+.bio-phase-summary-item:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: -0.75rem;
+  top: 10%;
+  height: 80%;
+  width: 1px;
+  background-color: var(--bio-border);
+}
+
+@media (max-width: 992px) {
+  .bio-phase-summary-item:not(:first-child)::before {
+    display: none;
+  }
+  .bio-phases-summary-grid {
+    gap: 1rem;
+  }
+}
+
