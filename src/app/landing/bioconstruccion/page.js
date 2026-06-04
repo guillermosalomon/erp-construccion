@@ -8,7 +8,7 @@
  * - Warm organic cream background (#f6f3eb)
  * - Playfair Display (Serif) typography for elegant headers
  * - Collapsible 16-week timeline with two-column split: Teoría (green bg) and Práctica (yellow bg)
- * - Beautiful image grids showing guadua, tapia, techos verdes, maloca and glamping references.
+ * - Loaded with generated high-quality images for Guadua, Tapia, and Techos Verdes.
  */
 
 import { useState, useEffect } from 'react';
@@ -244,28 +244,28 @@ function HeroSection() {
     );
 }
 
-function QuestionsSection() {
+function ProjectSpecsSection() {
     return (
         <section className="bio-questions">
             <div className="bio-container">
                 <div className="bio-questions-card">
-                    <h3>Preguntas Abiertas para el Usuario</h3>
-                    <p className="bio-questions-intro">Agradecemos tus comentarios sobre los siguientes puntos para ajustar el taller:</p>
+                    <h3>Ficha Técnica del Proyecto Autorizado</h3>
+                    <p className="bio-questions-intro">Especificaciones técnicas finales y planeación de la obra en Yacuanquer, Nariño:</p>
                     <div className="bio-questions-grid">
                         <div className="bio-q-item">
                             <span className="bio-q-icon">👥</span>
                             <h4>Público Objetivo</h4>
-                            <p>¿Profesionales, estudiantes, constructores locales o público general? Esto determinará el nivel técnico.</p>
+                            <p>Dirigido a Estudiantes/Profesionales (Arq./Ing.) y Constructores locales, creando un espacio de co-creación y capacitación real.</p>
                         </div>
                         <div className="bio-q-item">
                             <span className="bio-q-icon">📍</span>
                             <h4>Lugar de Desarrollo</h4>
-                            <p>¿Se cuenta con un lote con características climáticas definidas, o se usará un caso hipotético?</p>
+                            <p>Desarrollado in situ en Yacuanquer, Nariño (altitud 2,600 msnm). Adaptación bioclimática contra heladas y protección de vientos.</p>
                         </div>
                         <div className="bio-q-item">
                             <span className="bio-q-icon">🏗️</span>
-                            <h4>Escala de Construcción</h4>
-                            <p>¿Se planea construir a escala real (1:1)? Es viable en las 16 semanas con un grupo activo.</p>
+                            <h4>Escala de Obra (1:1)</h4>
+                            <p>Construcción real a escala 1:1 de una Maloca comunal y Glampings habitacionales en estructura de Guadua y muros mixtos.</p>
                         </div>
                     </div>
                 </div>
@@ -304,7 +304,7 @@ function ScheduleSection() {
 
                 <div className="bio-filters">
                     <button className={`bio-filter-pill ${activeFilter === 'all' ? 'active' : ''}`} onClick={() => handleFilterChange('all')}>Todas</button>
-                    <button className={`bio-filter-pill ${activeFilter === 'fase1' ? 'active' : ''}`} onClick={() => handleFilterChange('fase1')}>Fase 1: Teórica</button>
+                    <button className={`bio-filter-pill ${activeFilter === 'fase1' ? 'active' : ''}`} onClick={() => handleFilterChange('fase1')}>Fase 1: Teoría</button>
                     <button className={`bio-filter-pill ${activeFilter === 'fase2' ? 'active' : ''}`} onClick={() => handleFilterChange('fase2')}>Fase 2: Materiales</button>
                     <button className={`bio-filter-pill ${activeFilter === 'fase3' ? 'active' : ''}`} onClick={() => handleFilterChange('fase3')}>Fase 3: Estructura</button>
                     <button className={`bio-filter-pill ${activeFilter === 'fase4' ? 'active' : ''}`} onClick={() => handleFilterChange('fase4')}>Fase 4: Envolventes</button>
@@ -354,9 +354,9 @@ function ScheduleSection() {
 }
 
 const GALLERY_ITEMS = [
-    { title: "Guadua Angustifolia Kunth", img: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80" },
-    { title: "Tapia Pisada y Adobe", img: "https://images.unsplash.com/photo-1590069261209-f8e9b8642343?auto=format&fit=crop&w=600&q=80" },
-    { title: "Techos y Fachadas Verdes", img: "https://images.unsplash.com/photo-1535083783855-76ae62b2914e?auto=format&fit=crop&w=600&q=80" }
+    { title: "Guadua Angustifolia Kunth", img: "/images/guadua_construccion.png" },
+    { title: "Tapia Pisada y Adobe", img: "/images/tapia_pisada_muro.png" },
+    { title: "Techos y Fachadas Verdes", img: "/images/techo_verde_glamping.png" }
 ];
 
 const REFERENCES = [
@@ -461,7 +461,7 @@ Mensaje: ${formData.mensaje || 'Sin comentarios adicionales'}
                             <form className="bio-registration-form-box" onSubmit={handleSubmit}>
                                 <h3>Formulario de Inscripción</h3>
                                 <p style={{ fontSize: '0.85rem', color: 'var(--bio-text-secondary)', marginBottom: '1.5rem' }}>
-                                    Completa la encuesta para evaluar tu nivel y coordinar tu cuadrilla técnica de trabajo.
+                                    Completa la encuesta para reservar tu cupo y coordinar tu cuadrilla técnica de trabajo.
                                 </p>
                                 
                                 <div className="bio-input-group">
@@ -586,7 +586,7 @@ export default function LandingBioconstruccion() {
             <link rel="stylesheet" href="/landing-bioconstruccion.css" />
             <Navbar />
             <HeroSection />
-            <QuestionsSection />
+            <ProjectSpecsSection />
             <ScheduleSection />
             <GallerySection />
             <ContactSection />
