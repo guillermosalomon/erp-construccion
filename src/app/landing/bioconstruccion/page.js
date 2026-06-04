@@ -4,11 +4,14 @@
  * Kalarti Bio-Construction Landing Page
  * Route: /landing/bioconstruccion
  * 
- * Self-contained marketing landing page for the Bio-construction Workshop in Yacuanquer, Nariño.
- * Integrates with /api/marketing/lead CRM endpoint.
+ * Self-contained React page styled after the Canva design:
+ * - Warm organic cream background (#f6f3eb)
+ * - Playfair Display (Serif) typography for elegant headers
+ * - Collapsible 16-week timeline with two-column split: Teoría (green bg) and Práctica (yellow bg)
+ * - Beautiful image grids showing guadua, tapia, techos verdes, maloca and glamping references.
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 // ===== TRACKING UTILITY (Shared Kalarti logic) =====
 function captureTrackingParams() {
@@ -21,7 +24,6 @@ function captureTrackingParams() {
         utm_medium: params.get('utm_medium') || getCookie('_kalarti_utm_medium') || '',
         utm_campaign: params.get('utm_campaign') || getCookie('_kalarti_utm_campaign') || '',
     };
-    // Persist to cookies
     Object.entries(tracking).forEach(([key, val]) => {
         if (val) setCookie(`_kalarti_${key}`, val, 90);
     });
@@ -38,6 +40,154 @@ function getCookie(name) {
     const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
     return v ? v.pop() : '';
 }
+
+// ===== WEEKS DATA SOURCE =====
+const WEEKS_DATA = [
+  {
+    numero: 1,
+    titulo: "Análisis del Territorio y Fundamentos Bioclimáticos",
+    fase: "Fase 1: Teórica",
+    categoria: "fase1",
+    descripcion: "Reconocimiento y lectura del lote en Yacuanquer, Nariño. Diagnóstico bioclimático y estrategias pasivas de diseño.",
+    teoria: "Lectura del lugar, asoleamiento, rosa de los vientos, topografía. Criterios de diseño pasivo para Malocas y Glampings.",
+    practica: "Pruebas de campo: reconocimiento de vegetación, orientación in situ, medición de vientos.",
+  },
+  {
+    numero: 2,
+    titulo: "Diseño Estructural, Elementos Autoportantes y Modelado a Escala",
+    fase: "Fase 1: Teórica",
+    categoria: "fase1",
+    descripcion: "Entendimiento de las fuerzas estructurales en guadua y madera. Elaboración de maquetas estructurales.",
+    teoria: "Comportamiento estructural del bambú, esfuerzos de tracción, compresión y flexión. Diseño de módulo autoportante.",
+    practica: "Taller de maquetas a escala (1:20 y 1:10) con micro-bambú. Pruebas de carga.",
+  },
+  {
+    numero: 3,
+    titulo: "Silvicultura, Corte y Preservación de la Guadua",
+    fase: "Fase 2: Materiales",
+    categoria: "fase2",
+    descripcion: "Selección del bambú en el rodal, técnicas de corte y inmunización química por sales de boro.",
+    teoria: "Silvicultura de la guadua, madurez, épocas de corte, inmunización por inmersión y llenado vertical con sales de boro.",
+    practica: "Preparación de soluciones de boro y preservación de culmos de guadua en campo.",
+  },
+  {
+    numero: 4,
+    titulo: "Selección y Pruebas de Suelos",
+    fase: "Fase 2: Materiales",
+    categoria: "fase2",
+    descripcion: "Reconocimiento y clasificación de la tierra local para construir. Ensayos de campo sin laboratorio.",
+    teoria: "Tipos de suelos (arcilla, limo, arena) y pruebas físicas de plasticidad, granulometría y retracción.",
+    practica: "Muestreo de tierra y dosificación de mezclas óptimas para tapia, adobe y bahareque.",
+  },
+  {
+    numero: 5,
+    titulo: "Cimentación y Anclajes",
+    fase: "Fase 2: Materiales",
+    categoria: "fase2",
+    descripcion: "Replantear el lote a escuadra y construir las bases sólidas para las estructuras de guadua y tierra.",
+    teoria: "Interpretación de planos de cimentación, tipos de cimientos y sistemas de anclaje de columnas en guadua.",
+    practica: "Replanteo y trazo a escuadra, excavación y fundición de zapatas con platinas en U.",
+  },
+  {
+    numero: 6,
+    titulo: "Cortes y Ensambles en Guadua",
+    fase: "Fase 3: Estructura",
+    categoria: "fase3",
+    descripcion: "Dominio de herramientas y técnicas de corte de precisión. Fabricación de uniones estructurales.",
+    teoria: "Herramientas de carpintería de bambú y tipos de uniones (boca de pescado, pico de flauta, pasadores).",
+    practica: "Corte y ensamble de uniones de prueba, pre-ensamble de marcos estructurales en tierra.",
+  },
+  {
+    numero: 7,
+    titulo: "Montaje y Levantamiento Estructural del Glamping",
+    fase: "Fase 3: Estructura",
+    categoria: "fase3",
+    descripcion: "Izado e instalación de la estructura principal de guadua para los glampings.",
+    teoria: "Diseño de pórticos sismorresistentes en guadua y sistemas de arriostramiento tridimensional.",
+    practica: "Izado, plomado y montaje de la estructura portante del primer Glamping.",
+  },
+  {
+    numero: 8,
+    titulo: "Montaje y Levantamiento Estructural de la Maloca",
+    fase: "Fase 3: Estructura",
+    categoria: "fase3",
+    descripcion: "Izado de la estructura central de la Maloca, diseño de grandes luces y cerchas espaciales en guadua.",
+    teoria: "Estructuras de grandes luces, anillos de compresión de techos poligonales y seguridad en altura.",
+    practica: "Izado de columnas principales y montaje del anillo central de la Maloca.",
+  },
+  {
+    numero: 9,
+    titulo: "Estructura de Entrepisos y Cubiertas",
+    fase: "Fase 3: Estructura",
+    categoria: "fase3",
+    descripcion: "Construcción de los pisos elevados de los glampings y preparación del soporte de la cubierta.",
+    teoria: "Diseño de viguetas para entrepiso, preparación de esterilla de guadua y correas de cubierta.",
+    practica: "Clavado del piso de esterilla en glamping e instalación de correas en la Maloca.",
+  },
+  {
+    numero: 10,
+    titulo: "Construcción con Tapia Pisada",
+    fase: "Fase 4: Envolventes",
+    categoria: "fase4",
+    descripcion: "Construcción de muros masivos de tierra compactada para aportar inercia térmica en Yacuanquer.",
+    teoria: "Construcción con tapia pisada, formaletas desmontables y juntas de construcción sismorresistente.",
+    practica: "Montaje de formaleta, llenado por capas de 10 cm y apisonado de muros de tapia.",
+  },
+  {
+    numero: 11,
+    titulo: "Muros de Bahareque Encementado y Tradicional",
+    fase: "Fase 4: Envolventes",
+    categoria: "fase4",
+    descripcion: "Estructura interna flexible, colocación de esterilla de guadua y aplicación de pañetes de tierra.",
+    teoria: "Marcos de bahareque tradicional y encementado, latas de guadua y morteros de revoque grueso.",
+    practica: "Instalación de esterilla en los glampings y aplicación de pañete de tierra con paja.",
+  },
+  {
+    numero: 12,
+    titulo: "Elaboración e Instalación de Adobes",
+    fase: "Fase 4: Envolventes",
+    categoria: "fase4",
+    descripcion: "Producción artesanal de bloques de adobe y colocación de muros con mortero de tierra.",
+    teoria: "Diseño de adoberas múltiples, estabilización con fibras largas y secado a la sombra.",
+    practica: "Moldeo de adobes y levantamiento de muros divisorios en el Glamping con mortero de arcilla.",
+  },
+  {
+    numero: 13,
+    titulo: "Pisos de Tierra y Acabados de Muros",
+    fase: "Fase 4: Envolventes",
+    categoria: "fase4",
+    descripcion: "Elaboración de pisos terminados en tierra compactada/adobe y acabados estéticos protectores de muros.",
+    teoria: "Pisos de tierra estabilizada, aceites secantes (linaza), ceras y pinturas naturales a base de cal.",
+    practica: "Construcción de piso de tierra en el Glamping y aplicación de pañete fino en muros.",
+  },
+  {
+    numero: 14,
+    titulo: "Implementación de Techos Verdes",
+    fase: "Fase 5: Experimental",
+    categoria: "fase5",
+    descripcion: "Implementación del techo verde sobre la estructura de guadua. Selección de capas y plantas andinas.",
+    teoria: "Estructura de soporte para techos verdes, cálculo de pesos saturados y capas de geomembranas.",
+    practica: "Colocación de impermeabilización, drenes, sustrato y siembra de suculentas en el techo del Glamping.",
+  },
+  {
+    numero: 15,
+    titulo: "Implementación de Fachadas de Pared con Vegetación",
+    fase: "Fase 5: Experimental",
+    categoria: "fase5",
+    descripcion: "Construcción de una fachada verde experimental y sistemas de riego y monitoreo.",
+    teoria: "Sistemas de fachadas vegetales (fieltros, bolsillos), selección de plantas andinas y riego por gravedad.",
+    practica: "Instalación del sistema de bolsillos en fachada sur de la Maloca y siembra.",
+  },
+  {
+    numero: 16,
+    titulo: "Detalles Finales, Evaluación y Cierre",
+    fase: "Fase 5: Experimental",
+    categoria: "fase5",
+    descripcion: "Recolección de datos bioclimáticos iniciales, terminación de acabados, entrega de proyectos y graduación.",
+    teoria: "Metodologías de monitoreo bioclimático (sensores) y evaluación de confort térmico in situ.",
+    practica: "Instalación de sensores en muros testigo y experimental, detalles finales y clausura.",
+  }
+];
 
 // ===== COMPONENTS =====
 
@@ -62,7 +212,7 @@ function Navbar() {
                 <div className={`bio-nav-links ${mobileOpen ? 'bio-nav-links--open' : ''}`}>
                     <a href="#taller" onClick={() => setMobileOpen(false)}>El Taller</a>
                     <a href="#cronograma" onClick={() => setMobileOpen(false)}>Cronograma</a>
-                    <a href="#vegetacion" onClick={() => setMobileOpen(false)}>Fase Experimental</a>
+                    <a href="#galeria" onClick={() => setMobileOpen(false)}>Referencias</a>
                     <a href="#registro" className="bio-nav-cta" onClick={() => setMobileOpen(false)}>Reservar Cupo</a>
                 </div>
                 <button className="bio-mobile-menu" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menú">
@@ -76,72 +226,161 @@ function Navbar() {
 function HeroSection() {
     return (
         <section className="bio-hero">
-            <div className="bio-hero-shapes">
-                <div className="bio-shape bio-shape-1" />
-                <div className="bio-shape bio-shape-2" />
-                <div className="bio-shape bio-shape-3" />
-            </div>
+            <div className="bio-hero-overlay" />
             <div className="bio-hero-container">
                 <div className="bio-hero-content">
-                    <div className="bio-hero-badge">
-                        <span className="bio-badge-dot" />
-                        Taller Práctico de 4 Meses — Yacuanquer, Nariño
-                    </div>
-                    <h1 className="bio-hero-title">
-                        Aprende y Construye con <span className="bio-gradient-text">Tierra y Guadua</span>
-                    </h1>
+                    <h1 className="bio-hero-title">Taller de Bio-Construcción</h1>
                     <p className="bio-hero-subtitle">
-                        Diseño y edificación de una **Maloca** comunal y **Glampings**. Domina la estructura en guadua, tapia pisada, adobe, bahareque sismorresistente y techos verdes. Dirigido a estudiantes, profesionales y constructores locales.
+                        Programa práctico-teórico de 4 meses: Maloca y Glampings con guadua, bahareque, tapia pisada, adobe y techos verdes.
                     </p>
-                    <div className="bio-hero-actions">
-                        <a href="#registro" className="bio-btn bio-btn-primary bio-btn-lg">
-                            📝 Inscribirse y Evaluar Nivel
-                        </a>
-                        <a href="https://wa.me/573177725056?text=Hola%20Kalarti!%20Me%20interesa%20inscribirme%20al%20Taller%20de%20Bio-Construccion%20en%20Yacuanquer."
-                           className="bio-btn bio-btn-whatsapp bio-btn-lg" target="_blank" rel="noopener">
-                            📱 Escríbenos por WhatsApp
-                        </a>
+                    <div className="bio-hero-badge-container">
+                        <span className="bio-badge-pill">4 Meses</span>
+                        <span className="bio-badge-pill">16 Semanas</span>
+                        <span className="bio-badge-pill">Teórico-Práctico</span>
                     </div>
-                    <div className="bio-hero-trust">
-                        <div className="bio-trust-item">🌿 Construcción Sostenible</div>
-                        <div className="bio-trust-item">🏗️ Sismo-resistencia NSR-10</div>
-                        <div className="bio-trust-item">📍 Yacuanquer, Nariño</div>
-                    </div>
-                </div>
-                <div className="bio-hero-visual">
-                    <div className="bio-hero-card"><div className="bio-card-icon">🎋</div><div className="bio-card-label">Guadua Angustifolia</div><div className="bio-card-value">Estructura</div></div>
-                    <div className="bio-hero-card bio-card-2"><div className="bio-card-icon">🧱</div><div className="bio-card-label">Tapia / Adobe</div><div className="bio-card-value">Masa Térmica</div></div>
-                    <div className="bio-hero-card bio-card-3"><div className="bio-card-icon">🌱</div><div className="bio-card-label">Techo Verde</div><div className="bio-card-value">Fase Exp.</div></div>
                 </div>
             </div>
         </section>
     );
 }
 
-const MODULES = [
-  { num: "01", category: "Teórica & Diseño", title: "Bioclimática y Maquetas", desc: "Análisis de asoleamiento andino, vientos en Yacuanquer y modelado de un elemento autoportante a escala 1:10." },
-  { num: "02", category: "Cimentación", title: "Replanteo y Anclajes", desc: "Silvicultura de la guadua, inmunización por sales de boro, preparación de tierras locales y fundición de zapatas con platinas." },
-  { num: "03", category: "Estructura", title: "Ensambles en Guadua", desc: "Cortes de boca de pescado y pico de flauta. Montaje estructural del esqueleto de la Maloca y Glampings." },
-  { num: "04", category: "Envolventes", title: "Muros Mixtos y Pisos", desc: "Llenado de muros de tapia pisada, tejido de esterillas para bahareque encementado, adobes de tierra y pisos de arcilla sellados." },
-  { num: "05", category: "Investigación", title: "Fachadas y Techos Verdes", desc: "Fase experimental con geomembranas, sustratos livianos térmicos, plantas colgantes andinas y sensores de temperatura." }
-];
-
-function ProgramSection() {
+function QuestionsSection() {
     return (
-        <section className="bio-program" id="taller">
+        <section className="bio-questions">
+            <div className="bio-container">
+                <div className="bio-questions-card">
+                    <h3>Preguntas Abiertas para el Usuario</h3>
+                    <p className="bio-questions-intro">Agradecemos tus comentarios sobre los siguientes puntos para ajustar el taller:</p>
+                    <div className="bio-questions-grid">
+                        <div className="bio-q-item">
+                            <span className="bio-q-icon">👥</span>
+                            <h4>Público Objetivo</h4>
+                            <p>¿Profesionales, estudiantes, constructores locales o público general? Esto determinará el nivel técnico.</p>
+                        </div>
+                        <div className="bio-q-item">
+                            <span className="bio-q-icon">📍</span>
+                            <h4>Lugar de Desarrollo</h4>
+                            <p>¿Se cuenta con un lote con características climáticas definidas, o se usará un caso hipotético?</p>
+                        </div>
+                        <div className="bio-q-item">
+                            <span className="bio-q-icon">🏗️</span>
+                            <h4>Escala de Construcción</h4>
+                            <p>¿Se planea construir a escala real (1:1)? Es viable en las 16 semanas con un grupo activo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function ScheduleSection() {
+    const [activeFilter, setActiveFilter] = useState('all');
+    const [expandedWeeks, setExpandedWeeks] = useState({});
+
+    const toggleWeek = (weekNum) => {
+        setExpandedWeeks(prev => ({
+            ...prev,
+            [weekNum]: !prev[weekNum]
+        }));
+    };
+
+    const handleFilterChange = (filter) => {
+        setActiveFilter(filter);
+    };
+
+    const filteredWeeks = WEEKS_DATA.filter(week => {
+        if (activeFilter === 'all') return true;
+        return week.categoria === activeFilter;
+    });
+
+    return (
+        <section className="bio-schedule" id="cronograma">
             <div className="bio-container">
                 <div className="bio-section-header">
-                    <span className="bio-section-tag">Contenido Técnico</span>
-                    <h2 className="bio-section-title">Estructura del Cronograma (16 Semanas)</h2>
-                    <p className="bio-section-desc">Un recorrido de 4 meses dividido en 5 grandes bloques temáticos prácticos y de investigación.</p>
+                    <h2 className="bio-section-title">Cronograma del Programa</h2>
+                    <p className="bio-section-desc">16 semanas organizadas en 5 fases progresivas — haz clic en cada semana para ver detalles.</p>
                 </div>
-                <div className="bio-program-grid">
-                    {MODULES.map((m, i) => (
-                        <div key={i} className="bio-module-card">
-                            <div className="bio-module-num">{m.num}</div>
-                            <div className="bio-module-cat">{m.category}</div>
-                            <h3>{m.title}</h3>
-                            <p>{m.desc}</p>
+
+                <div className="bio-filters">
+                    <button className={`bio-filter-pill ${activeFilter === 'all' ? 'active' : ''}`} onClick={() => handleFilterChange('all')}>Todas</button>
+                    <button className={`bio-filter-pill ${activeFilter === 'fase1' ? 'active' : ''}`} onClick={() => handleFilterChange('fase1')}>Fase 1: Teórica</button>
+                    <button className={`bio-filter-pill ${activeFilter === 'fase2' ? 'active' : ''}`} onClick={() => handleFilterChange('fase2')}>Fase 2: Materiales</button>
+                    <button className={`bio-filter-pill ${activeFilter === 'fase3' ? 'active' : ''}`} onClick={() => handleFilterChange('fase3')}>Fase 3: Estructura</button>
+                    <button className={`bio-filter-pill ${activeFilter === 'fase4' ? 'active' : ''}`} onClick={() => handleFilterChange('fase4')}>Fase 4: Envolventes</button>
+                    <button className={`bio-filter-pill ${activeFilter === 'fase5' ? 'active' : ''}`} onClick={() => handleFilterChange('fase5')}>Fase 5: Experimental</button>
+                </div>
+
+                <div className="bio-timeline">
+                    {filteredWeeks.map((w) => {
+                        const isExpanded = !!expandedWeeks[w.numero];
+                        return (
+                            <div key={w.numero} className={`bio-timeline-card ${isExpanded ? 'expanded' : ''}`} onClick={() => toggleWeek(w.numero)}>
+                                <div className="bio-card-header">
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                        <span className="bio-week-circle">S{w.numero}</span>
+                                        <div>
+                                            <h4>{w.titulo}</h4>
+                                            <span className="bio-week-phase-label">{w.fase}</span>
+                                        </div>
+                                    </div>
+                                    <span className="bio-arrow-icon">{isExpanded ? '▲' : '▼'}</span>
+                                </div>
+
+                                {isExpanded && (
+                                    <div className="bio-card-details">
+                                        <p style={{ color: 'var(--bio-text-secondary)', marginBottom: '1.2rem', fontSize: '0.9rem' }}>
+                                            {w.descripcion}
+                                        </p>
+                                        <div className="bio-details-grid">
+                                            <div className="bio-detail-box bio-detail-box--teoria">
+                                                <h5>📖 Teoría</h5>
+                                                <p>{w.teoria}</p>
+                                            </div>
+                                            <div className="bio-detail-box bio-detail-box--practica">
+                                                <h5>🔨 Práctica</h5>
+                                                <p>{w.practica}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+const GALLERY_ITEMS = [
+    { title: "Guadua Angustifolia Kunth", img: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80" },
+    { title: "Tapia Pisada y Adobe", img: "https://images.unsplash.com/photo-1590069261209-f8e9b8642343?auto=format&fit=crop&w=600&q=80" },
+    { title: "Techos y Fachadas Verdes", img: "https://images.unsplash.com/photo-1535083783855-76ae62b2914e?auto=format&fit=crop&w=600&q=80" }
+];
+
+const REFERENCES = [
+    { title: "Referencia Estructura Tipo Maloca", img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80" },
+    { title: "Referencia Glamping Eco-Turístico", img: "https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?auto=format&fit=crop&w=800&q=80" }
+];
+
+function GallerySection() {
+    return (
+        <section className="bio-gallery" id="galeria">
+            <div className="bio-container">
+                <div className="bio-gallery-row">
+                    {GALLERY_ITEMS.map((item, idx) => (
+                        <div key={idx} className="bio-gallery-card">
+                            <img src={item.img} alt={item.title} />
+                            <div className="bio-gallery-card-label">{item.title}</div>
+                        </div>
+                    ))}
+                </div>
+                <div className="bio-references-row" style={{ marginTop: '2rem' }}>
+                    {REFERENCES.map((item, idx) => (
+                        <div key={idx} className="bio-reference-card">
+                            <img src={item.img} alt={item.title} />
+                            <div className="bio-reference-card-label">{item.title}</div>
                         </div>
                     ))}
                 </div>
@@ -150,59 +389,9 @@ function ProgramSection() {
     );
 }
 
-function ExperimentalSection() {
-    return (
-        <section className="bio-experimental" id="vegetacion">
-            <div className="bio-container">
-                <div className="bio-experimental-layout">
-                    <div className="bio-exp-content">
-                        <span className="bio-section-tag">Fase de Investigación</span>
-                        <h2>Techos Verdes y Fachadas con Vegetación</h2>
-                        <p>
-                            En el altiplano de Yacuanquer, a 2,600 metros de altitud, la pérdida de temperatura interior por las cubiertas durante la noche es un reto. Implementaremos techos verdes experimentales sobre las estructuras de guadua para actuar como aislantes térmicos naturales.
-                        </p>
-                        <p style={{ marginTop: '1rem' }}>
-                            Evaluaremos su comportamiento mediante sensores de temperatura y humedad, comparando el confort térmico final del bahareque y la tapia pisada con fachadas vegetales que mitiguen el viento helado del Galeras.
-                        </p>
-                        <div className="bio-exp-stats">
-                            <div className="bio-exp-stat"><span>🌡️</span><div><h4>Aislamiento Activo</h4><p>Reducción de heladas internas</p></div></div>
-                            <div className="bio-exp-stat"><span>🌧️</span><div><h4>Drenaje Andino</h4><p>Control de aguas pluviales</p></div></div>
-                        </div>
-                    </div>
-                    <div className="bio-exp-visual">
-                        <div className="bio-exp-box">
-                            <h4>Capas del Techo Verde Experimental</h4>
-                            <ul>
-                                <li><strong>Capa Vegetal:</strong> Suculentas andinas resistentes a heladas.</li>
-                                <li><strong>Sustrato:</strong> Mezcla liviana (Pómez, cascarilla y compost).</li>
-                                <li><strong>Filtro:</strong> Geotextil no tejido de retención.</li>
-                                <li><strong>Drenaje:</strong> Gravilla puzolánica volcánica local.</li>
-                                <li><strong>Impermeabilización:</strong> Geomembrana de PVC / EPDM.</li>
-                                <li><strong>Base:</strong> Esterilla de guadua y correas de soporte.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
 function ContactSection() {
-    const [formData, setFormData] = useState({
-        nombre: '',
-        telefono: '',
-        email: '',
-        perfil: '',
-        nivel: '',
-        mensaje: ''
-    });
-    const [interests, setInterests] = useState({
-        guadua: false,
-        tierra: false,
-        vegetacion: false,
-        bioclimatica: false
-    });
+    const [formData, setFormData] = useState({ nombre: '', telefono: '', email: '', perfil: '', nivel: '', mensaje: '' });
+    const [interests, setInterests] = useState({ guadua: false, tierra: false, vegetacion: false, bioclimatica: false });
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -221,14 +410,12 @@ function ContactSection() {
         setLoading(true);
 
         const activeInterests = Object.keys(interests).filter(k => interests[k]);
-        
-        // Structure custom survey options into the general 'mensaje' field
         const customMessage = `
---- ENCUESTA DE REGISTRO BIO-CONSTRUCCIÓN ---
+--- REGISTRO TALLER BIO-CONSTRUCCIÓN ---
 Perfil: ${formData.perfil}
-Nivel Técnico: ${formData.nivel}
-Áreas de Interés: ${activeInterests.length > 0 ? activeInterests.join(', ') : 'Ninguna seleccionada'}
-Mensaje Adicional: ${formData.mensaje || 'Sin mensaje adicional'}
+Nivel: ${formData.nivel}
+Intereses: ${activeInterests.length > 0 ? activeInterests.join(', ') : 'Ninguno'}
+Mensaje: ${formData.mensaje || 'Sin comentarios adicionales'}
         `.trim();
 
         const tracking = captureTrackingParams();
@@ -236,7 +423,7 @@ Mensaje Adicional: ${formData.mensaje || 'Sin mensaje adicional'}
             nombre: formData.nombre,
             telefono: formData.telefono,
             email: formData.email,
-            servicio: 'otro', // Maps to CRM's leads routing
+            servicio: 'otro',
             ciudad: 'Yacuanquer',
             mensaje: customMessage,
             ...tracking,
@@ -244,100 +431,82 @@ Mensaje Adicional: ${formData.mensaje || 'Sin mensaje adicional'}
         };
 
         try {
-            const res = await fetch('/api/marketing/lead', {
+            await fetch('/api/marketing/lead', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
-            
-            if (res.ok) {
-                setSubmitted(true);
-            } else {
-                throw new Error('API error');
-            }
+            setSubmitted(true);
         } catch (err) {
-            console.error('CRM direct post failed, attempting fallback redirection:', err);
-            // In case of local/offline CORS errors, we still record completion and trigger WhatsApp fallback
+            console.error('Lead post error:', err);
             setSubmitted(true);
         } finally {
             setLoading(false);
-            // WhatsApp Redirection with formatted lead data
             const waMsg = encodeURIComponent(
                 `Hola Kalarti! Me registré al Taller de Bio-Construcción.\n` +
                 `Nombre: ${formData.nombre}\n` +
                 `Perfil: ${formData.perfil}\n` +
-                `Nivel: ${formData.nivel}\n` +
-                `Tel: ${formData.telefono}`
+                `Nivel: ${formData.nivel}`
             );
             window.open(`https://wa.me/573177725056?text=${waMsg}`, '_blank');
         }
     };
 
     return (
-        <section className="bio-contact" id="registro">
+        <section className="bio-contact-section" id="registro">
             <div className="bio-container">
-                <div className="bio-contact-grid">
-                    <div className="bio-contact-info">
-                        <span className="bio-section-tag">Inscripción Abierta</span>
-                        <h2>Reserva tu Cupo e Completa la Encuesta</h2>
-                        <p>
-                            El taller cuenta con cupos limitados para garantizar la seguridad en obra y el aprendizaje de calidad de cada participante.
-                        </p>
-                        <p style={{ marginTop: '1rem' }}>
-                            Al completar este formulario, nuestro equipo evaluará tu perfil para organizar las cuadrillas de trabajo técnico in situ en Yacuanquer. Te contactaremos vía WhatsApp.
-                        </p>
-                        <div className="bio-contact-details">
-                            <div className="bio-contact-item"><span>📍</span><div><strong>Lugar de Obra</strong><p>Yacuanquer, Nariño — Zona Urbana y Rural</p></div></div>
-                            <div className="bio-contact-item"><span>⏰</span><div><strong>Horarios de Obra</strong><p>Lunes a Viernes (8:00 AM - 5:00 PM)</p></div></div>
-                            <div className="bio-contact-item"><span>✉️</span><div><strong>Información General</strong><p>taller@kalarti.com</p></div></div>
-                        </div>
-                    </div>
-                    <div className="bio-form-wrapper">
+                <div className="bio-contact-grid-layout">
+                    <div className="bio-form-wrapper-card">
                         {!submitted ? (
-                            <form className="bio-lead-form" onSubmit={handleSubmit}>
-                                <h3>Encuesta de Registro</h3>
-                                <div className="bio-form-group">
-                                    <label htmlFor="nombre">Nombre Completo *</label>
-                                    <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre" value={formData.nombre} onChange={handleChange} />
-                                </div>
-                                <div className="bio-form-row">
-                                    <div className="bio-form-group">
-                                        <label htmlFor="telefono">WhatsApp *</label>
-                                        <input type="tel" id="telefono" name="telefono" required placeholder="Ej. +57 312 3456789" value={formData.telefono} onChange={handleChange} />
-                                    </div>
-                                    <div className="bio-form-group">
-                                        <label htmlFor="email">Email</label>
-                                        <input type="email" id="email" name="email" placeholder="tu@email.com" value={formData.email} onChange={handleChange} />
-                                    </div>
-                                </div>
+                            <form className="bio-registration-form-box" onSubmit={handleSubmit}>
+                                <h3>Formulario de Inscripción</h3>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--bio-text-secondary)', marginBottom: '1.5rem' }}>
+                                    Completa la encuesta para evaluar tu nivel y coordinar tu cuadrilla técnica de trabajo.
+                                </p>
                                 
-                                <div className="bio-form-row">
-                                    <div className="bio-form-group">
+                                <div className="bio-input-group">
+                                    <label htmlFor="nombre">Nombre Completo *</label>
+                                    <input type="text" id="nombre" name="nombre" required placeholder="Ingresa tu nombre completo" value={formData.nombre} onChange={handleChange} />
+                                </div>
+
+                                <div className="bio-input-row">
+                                    <div className="bio-input-group">
+                                        <label htmlFor="telefono">WhatsApp / Celular *</label>
+                                        <input type="tel" id="telefono" name="telefono" required placeholder="+57 300 123 4567" value={formData.telefono} onChange={handleChange} />
+                                    </div>
+                                    <div className="bio-input-group">
+                                        <label htmlFor="email">Email</label>
+                                        <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" value={formData.email} onChange={handleChange} />
+                                    </div>
+                                </div>
+
+                                <div className="bio-input-row">
+                                    <div className="bio-input-group">
                                         <label htmlFor="perfil">Perfil Profesional *</label>
                                         <select id="perfil" name="perfil" required value={formData.perfil} onChange={handleChange}>
-                                            <option value="">Selecciona perfil</option>
+                                            <option value="">Selecciona tu perfil</option>
                                             <option value="estudiante">Estudiante Universitario</option>
                                             <option value="profesional">Profesional del Sector</option>
-                                            <option value="constructor">Constructor Local / Maestro</option>
+                                            <option value="constructor">Constructor Local</option>
                                             <option value="artesano">Artesano o Carpintero</option>
                                             <option value="otro">Otro / Entusiasta</option>
                                         </select>
                                     </div>
-                                    <div className="bio-form-group">
-                                        <label htmlFor="nivel">Conocimiento en Bio-Construcción *</label>
+                                    <div className="bio-input-group">
+                                        <label htmlFor="nivel">Conocimiento Previo *</label>
                                         <select id="nivel" name="nivel" required value={formData.nivel} onChange={handleChange}>
                                             <option value="">Selecciona tu nivel</option>
                                             <option value="ninguno">Ninguno (Aprender desde cero)</option>
                                             <option value="basico">Básico (Conceptos teóricos)</option>
-                                            <option value="intermedio">Intermedio (Sé hacer muros/maquetas)</option>
+                                            <option value="intermedio">Intermedio (Sé hacer maquetas/muros)</option>
                                             <option value="experto">Avanzado (He construido estructuras)</option>
                                         </select>
                                     </div>
                                 </div>
 
-                                <div className="bio-form-group">
+                                <div className="bio-input-group">
                                     <label>Áreas de Mayor Interés</label>
-                                    <div className="bio-form-checkboxes">
+                                    <div className="bio-form-checkbox-row">
                                         <label className="bio-checkbox-label">
                                             <input type="checkbox" name="guadua" checked={interests.guadua} onChange={handleCheckboxChange} />
                                             Estructuras en Guadua
@@ -357,20 +526,23 @@ Mensaje Adicional: ${formData.mensaje || 'Sin mensaje adicional'}
                                     </div>
                                 </div>
 
-                                <div className="bio-form-group">
-                                    <label htmlFor="mensaje">¿Tienes alguna duda o requerimiento especial?</label>
-                                    <textarea id="mensaje" name="mensaje" rows="2" placeholder="Describe brevemente tus expectativas..." value={formData.mensaje} onChange={handleChange} />
+                                <div className="bio-input-group">
+                                    <label htmlFor="mensaje">Comentarios o Preguntas</label>
+                                    <textarea id="mensaje" name="mensaje" rows="2" placeholder="Escribe tus inquietudes aquí..." value={formData.mensaje} onChange={handleChange} />
                                 </div>
+
                                 <button type="submit" className="bio-btn bio-btn-primary bio-btn-lg bio-btn-full" disabled={loading}>
-                                    {loading ? 'Enviando Registro...' : 'Reservar Cupo y Enviar Encuesta'}
+                                    {loading ? 'Enviando Registro...' : 'Reservar Cupo y Enviar'}
                                 </button>
                             </form>
                         ) : (
-                            <div className="bio-form-success">
+                            <div className="bio-form-success-box">
                                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>🌾</div>
-                                <h3>¡Inscripción Registrada!</h3>
-                                <p>Tus datos y encuesta fueron enviados al CRM de Kalarti Constructores.</p>
-                                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '8px' }}>Se ha abierto una conversación en WhatsApp para coordinar tu ingreso a cuadrilla.</p>
+                                <h3>¡Inscripción Recibida con Éxito!</h3>
+                                <p>Tus datos han sido registrados en el CRM de Kalarti Constructores.</p>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--bio-text-secondary)', marginTop: '8px' }}>
+                                    Se ha abierto una conversación en WhatsApp para coordinar los detalles.
+                                </p>
                                 <a href="https://wa.me/573177725056" className="bio-btn bio-btn-whatsapp" style={{ marginTop: '1.5rem' }} target="_blank" rel="noopener">
                                     Hablar directamente por WhatsApp
                                 </a>
@@ -391,12 +563,12 @@ function Footer() {
                     <div className="bio-footer-brand">
                         <div className="bio-nav-logo"><img src="/icon.png" alt="Kalarti Logo" style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'contain' }} /><span className="bio-logo-text" style={{ color: '#fff' }}>KALARTI</span></div>
                         <p>Constructores y Consultores S.A.S.</p>
-                        <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Oficinas: Cra 28a No 17-15 Ed. Antonella Of. 401 — Pasto, Nariño</p>
+                        <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Cra 28a No 17-15 Ed. Antonella Of. 401 — Pasto, Nariño</p>
                     </div>
                     <div className="bio-footer-links">
-                        <h4>Contacto del Taller</h4>
+                        <h4>Contacto</h4>
                         <a href="tel:+573177725056">+57 317 772 5056</a>
-                        <a href="mailto:taller@kalarti.com">taller@kalarti.com</a>
+                        <a href="mailto:consultoria@kalarti.com">consultoria@kalarti.com</a>
                         <a href="https://kalarti.com" target="_blank" rel="noopener">www.kalarti.com</a>
                     </div>
                 </div>
@@ -408,15 +580,15 @@ function Footer() {
     );
 }
 
-// ===== MAIN PAGE =====
 export default function LandingBioconstruccion() {
     return (
         <div className="bio-landing-page">
             <link rel="stylesheet" href="/landing-bioconstruccion.css" />
             <Navbar />
             <HeroSection />
-            <ProgramSection />
-            <ExperimentalSection />
+            <QuestionsSection />
+            <ScheduleSection />
+            <GallerySection />
             <ContactSection />
             <Footer />
             <a href="https://wa.me/573177725056?text=Hola%20Kalarti!%20Me%20interesa%20el%20Taller%20de%20Bio-Construccion%20en%20Yacuanquer."
