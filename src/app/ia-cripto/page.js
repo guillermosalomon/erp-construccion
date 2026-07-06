@@ -60,7 +60,6 @@ export default function IACriptoPage() {
                   const historyLines = [];
                   const sortedHistory = [...msg.data.ai_console_history];
                   
-                  // Procesar de mas viejo a mas nuevo para la consola
                   for (const aiEvent of sortedHistory) {
                     if (aiEvent.data && aiEvent.data.content) {
                       const model = aiEvent.data.model || '?';
@@ -95,7 +94,6 @@ export default function IACriptoPage() {
                       }
                     }
                   }
-                  // Revertir para que los mas nuevos queden arriba
                   return historyLines.reverse().slice(0, 100);
                 }
                 return prev;
@@ -124,12 +122,10 @@ export default function IACriptoPage() {
 
   // Escuchar si hay actualizaciones en el payload que deban empujar logs a la consola
   useEffect(() => {
-    // Si hay un cambio en las noticias o sentiment, loguear
     if (data.news && data.news.length > 0) {
       const latestNews = data.news[0];
       const timeStr = new Date().toLocaleTimeString('es-CO');
       setConsoleLines(prev => {
-        // Evitar duplicar
         if (prev.some(l => l.message.includes(latestNews.title))) return prev;
         const newLines = [{
           time: timeStr,
@@ -142,7 +138,6 @@ export default function IACriptoPage() {
   }, [data.news]);
 
   useEffect(() => {
-    // Si hay cambios en los bloques detectados
     const timeStr = new Date().toLocaleTimeString('es-CO');
     const symbols = Object.keys(data.institutional_levels || {});
     symbols.forEach(sym => {
@@ -221,6 +216,85 @@ export default function IACriptoPage() {
     if (energy === 'RELEASING') return 'energy-releasing';
     if (energy === 'CHARGING') return 'energy-charging';
     return 'energy-neutral';
+  };
+
+  // ── CÁLCULOS DEL MONITOR DE OPERACIONES Y PNL ──
+  const closedTrades = data.closed_trades || [];
+  const activePositions = data.active_positions || {};
+  const activeGrids = data.active_grids || {};
+
+  let spotPnl = 0;
+  let futuresPnl = 0;
+  let totalPnl = 0;
+  let winCount = 0;
+  let totalClosed = 0;
+
+  closedTrades.forEach(t => {
+    const pnl = t.pnl || 0;
+    if (t.strategy === 'GRID') {
+      spotPnl += pnl;
+    } else {
+      futuresPnl += pnl;
+    }
+    totalPnl += pnl;
+    if (pnl > 0) winCount++;
+    totalClosed++;
+  });
+
+  // PnL Flotante/Latente
+  let floatingSpotPnl = 0;
+  let floatingFuturesPnl = 0;
+
+  Object.entries(activePositions).forEach(([sym, pos]) => {
+    const currPrice = data.prices[sym];
+    if (currPrice && pos.entry_price) {
+      const size = pos.size || 0.0;
+      const pnl = (currPrice - pos.entry_price) * size * (pos.side === 'LONG' ? 1 : -1);
+      if (pos.side === 'SHORT') {
+        floatingFuturesPnl += pnl;
+      } else {
+        floatingSpotPnl += pnl;
+      }
+    }
+  });
+
+  Object.entries(activeGrids).forEach(([sym, grid]) => {
+    floatingSpotPnl += grid.pnl || 0;
+  });
+
+  const totalPnLWithFloating = totalPnl + floatingFuturesPnl + floatingSpotPnl;
+  const finalFuturesPnl = futuresPnl + floatingFuturesPnl;
+  const finalSpotPnl = spotPnl + floatingSpotPnl;
+  const winRate = totalClosed > 0 ? (winCount / totalClosed) * 100 : 0.0;
+
+  // Alineación / Coincidencias
+  let alignmentLabel = 'NEUTRAL';
+  let alignmentColor = '#eab308'; // Amarillo 🟡
+  
+  const activeSyms = Object.keys(activePositions);
+  if (activeSyms.length > 0) {
+    const sides = activeSyms.map(sym => activePositions[sym].side);
+    const allLong = sides.every(s => s === 'LONG');
+    const allShort = sides.every(s => s === 'SHORT');
+    if (allLong) {
+      alignmentLabel = 'ALCISTA';
+      alignmentColor = '#10b981'; // Verde 🟢
+    } else if (allShort) {
+      alignmentLabel = 'BAJISTA';
+      alignmentColor = '#ef4444'; // Rojo 🔴
+    }
+  }
+
+  const formatReason = (reason) => {
+    const map = {
+      'STOP_LOSS': 'Stop Loss',
+      'TAKE_PROFIT': 'Take Profit',
+      'CLIMAX_EXIT': 'Climax Exit',
+      'AI_CLOSE_SIGNAL': 'Cierre IA',
+      'EMERGENCY_PANIC_DISCONNECT': 'Panico Red',
+      'GRID_SELL_FILL': 'Malla Venta',
+    };
+    return map[reason] || reason || '--';
   };
 
   return (
@@ -325,14 +399,13 @@ export default function IACriptoPage() {
           color: #f8fafc;
           font-family: monospace;
         }
-        .ticker-price.up { color: #10b981; }
-        .ticker-price.down { color: #ef4444; }
 
         /* ── Main Layout Grid ── */
         .main-dashboard-grid {
           display: grid;
           grid-template-columns: 2fr 1fr;
           gap: 20px;
+          margin-bottom: 20px;
         }
 
         @media (max-width: 1024px) {
@@ -445,33 +518,134 @@ export default function IACriptoPage() {
         .console-msg-error { color: #f43f5e; }
         .console-msg-whale { color: #eab308; }
 
-        /* ── ERP Summary ── */
-        .erp-grid {
+        /* ── Monitor Panel CSS ── */
+        .monitor-stats-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 10px;
-          margin-bottom: 15px;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 12px;
+          margin-bottom: 20px;
         }
-        .erp-card {
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid #1a2436;
-          border-radius: 4px;
-          padding: 10px;
-          text-align: center;
+        .stat-card {
+          background: rgba(13, 20, 33, 0.7);
+          border: 1px solid #1e293b;
+          border-radius: 6px;
+          padding: 12px;
+          text-align: left;
         }
-        .erp-card-label {
+        .stat-label {
           font-size: 0.65rem;
           color: #64748b;
           text-transform: uppercase;
-        }
-        .erp-card-val {
-          font-size: 1rem;
           font-weight: 700;
-          font-family: monospace;
-          margin-top: 5px;
+          letter-spacing: 0.5px;
         }
-        .erp-card-val.positive { color: #10b981; }
-        .erp-card-val.negative { color: #ef4444; }
+        .stat-value {
+          font-size: 1.15rem;
+          font-weight: 800;
+          font-family: monospace;
+          margin-top: 6px;
+        }
+        .stat-value.positive { color: #10b981; }
+        .stat-value.negative { color: #ef4444; }
+        .stat-value.neutral { color: #eab308; }
+
+        .monitor-tables-layout {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+        @media (max-width: 900px) {
+          .monitor-tables-layout {
+            grid-template-columns: 1fr;
+          }
+        }
+        .visualizer-title {
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 12px;
+          border-left: 3px solid #38bdf8;
+          padding-left: 8px;
+        }
+        .monitor-table-container {
+          background: rgba(2, 6, 23, 0.4);
+          border: 1px solid #1e293b;
+          border-radius: 6px;
+          padding: 10px;
+          min-height: 120px;
+          max-height: 350px;
+          overflow-y: auto;
+        }
+        
+        /* active trade card styled */
+        .active-trade-card {
+          background: rgba(13, 20, 33, 0.9);
+          border: 1px solid #22d3ee;
+          border-radius: 6px;
+          padding: 10px;
+          margin-bottom: 8px;
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.75rem;
+        }
+        .active-trade-card.grid {
+          border-color: #f1c40f;
+        }
+        .card-left {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .side-badge {
+          font-weight: 700;
+          padding: 2px 6px;
+          border-radius: 3px;
+          font-size: 0.65rem;
+          text-transform: uppercase;
+          text-align: center;
+          display: inline-block;
+        }
+        .side-badge.long { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .side-badge.short { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .strat-label {
+          font-size: 0.65rem;
+          font-weight: 600;
+          padding: 2px 6px;
+          border-radius: 3px;
+        }
+        .strat-label.strategy-grid { background: rgba(241, 196, 15, 0.15); color: #f1c40f; }
+        .strat-label.strategy-agent { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+
+        /* table responsive style */
+        .grid-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.75rem;
+          text-align: left;
+        }
+        .grid-table th {
+          color: #64748b;
+          border-bottom: 1px solid #1e293b;
+          padding: 8px;
+          font-weight: 600;
+        }
+        .grid-table td {
+          padding: 8px;
+          border-bottom: 1px solid rgba(30, 41, 59, 0.4);
+          vertical-align: middle;
+        }
+        .pnl.positive { color: #10b981; }
+        .pnl.negative { color: #ef4444; }
+
+        /* Empty message */
+        .grid-empty-msg {
+          font-size: 0.75rem;
+          color: #475569;
+          text-align: center;
+          padding: 30px;
+        }
 
         /* ── News ── */
         .news-item {
@@ -581,63 +755,23 @@ export default function IACriptoPage() {
             </div>
           </div>
 
+        </div>
+
+        {/* Right Column: Console & News */}
+        <div className="col-right">
+
           {/* Consola Interactiva */}
-          <div className="dashboard-panel">
+          <div className="dashboard-panel" style={{ height: 'calc(100% - 20px)', display: 'flex', flexDirection: 'column' }}>
             <div className="panel-title">
               <span>Consola de Operación Local (AI & Risk logs)</span>
             </div>
-            <div className="console-box">
+            <div className="console-box" style={{ flexGrow: 1, height: 'auto', minHeight: '230px' }}>
               {consoleLines.map((line, idx) => (
                 <div key={idx} className="console-line">
                   <span className="console-timestamp">[{line.time}]</span>
                   <span className={`console-msg-${line.type}`}>{line.message}</span>
                 </div>
               ))}
-            </div>
-          </div>
-
-        </div>
-
-        {/* Right Column: ERP / DCA & News */}
-        <div className="col-right">
-
-          {/* ERP Ledgers & DCA */}
-          <div className="dashboard-panel">
-            <div className="panel-title">
-              <span>ERP & DCA Ledger (SQLite)</span>
-            </div>
-            <div className="erp-grid">
-              <div className="erp-card">
-                <span className="erp-card-label">PnL</span>
-                <span className={`erp-card-val ${data.erp_summary.net_pnl >= 0 ? 'positive' : 'negative'}`}>
-                  ${(data.erp_summary.net_pnl || 0.0).toFixed(2)}
-                </span>
-              </div>
-              <div className="erp-card">
-                <span className="erp-card-label">Trades</span>
-                <span className="erp-card-val">{data.erp_summary.total_trades || 0}</span>
-              </div>
-              <div className="erp-card">
-                <span className="erp-card-label">Win Rate</span>
-                <span className="erp-card-val">
-                  {data.erp_summary.win_rate ? (data.erp_summary.win_rate * 100).toFixed(0) + '%' : '--'}
-                </span>
-              </div>
-            </div>
-
-            <div style={{ fontSize: '0.75rem', borderTop: '1px solid #1a2436', paddingTop: '10px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ color: '#64748b' }}>DCA Budget mensual:</span>
-                <span style={{ fontFamily: 'monospace' }}>
-                  ${(data.dca_status.spent_this_month || 0).toFixed(0)} / ${(data.dca_status.monthly_budget || 1000).toFixed(0)}
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#64748b' }}>DCA Compras/Mes:</span>
-                <span style={{ fontFamily: 'monospace' }}>
-                  {data.dca_status.purchases_this_month || 0} / {data.dca_status.max_purchases_per_month || 10}
-                </span>
-              </div>
             </div>
           </div>
 
@@ -649,7 +783,7 @@ export default function IACriptoPage() {
                 {data.news_sentiment.label} ({data.news_sentiment.score ? data.news_sentiment.score.toFixed(1) : '0.0'})
               </span>
             </div>
-            <div className="news-list">
+            <div className="news-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
               {data.news && data.news.length > 0 ? (
                 data.news.map((item, idx) => (
                   <div key={idx} className="news-item">
@@ -663,6 +797,176 @@ export default function IACriptoPage() {
               ) : (
                 <div style={{ fontSize: '0.8rem', color: '#64748b', textAlign: 'center', padding: '15px' }}>
                   Esperando agregador de noticias local...
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ── 📊 MONITOR DE OPERACIONES Y PNL (ANCHO COMPLETO) ── */}
+      <div className="dashboard-panel" style={{ width: '100%' }}>
+        <div className="panel-title">
+          <span>📊 MONITOR DE OPERACIONES Y PNL</span>
+          <span className="panel-badge" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderColor: '#10b981' }}>SIMULADO</span>
+        </div>
+        
+        {/* Tarjetas de Estadísticas Rápidas */}
+        <div className="monitor-stats-grid">
+          <div className="stat-card">
+            <div className="stat-label">PNL TOTAL</div>
+            <div className={`stat-value ${totalPnLWithFloating >= 0 ? 'positive' : 'negative'}`}>
+              ${totalPnLWithFloating.toFixed(2)} USD
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">WIN RATE</div>
+            <div className="stat-value" style={{ color: '#00d4ff' }}>
+              {winRate.toFixed(1)}%
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">PNL AGENTE (IA)</div>
+            <div className={`stat-value ${finalFuturesPnl >= 0 ? 'positive' : 'negative'}`}>
+              ${finalFuturesPnl.toFixed(2)} USD
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">PNL GRID</div>
+            <div className={`stat-value ${finalSpotPnl >= 0 ? 'positive' : 'negative'}`}>
+              ${finalSpotPnl.toFixed(2)} USD
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">ALINEACIÓN</div>
+            <div className="stat-value neutral" style={{ color: alignmentColor }}>
+              {alignmentLabel}
+            </div>
+          </div>
+        </div>
+
+        {/* Tablas Divididas */}
+        <div className="monitor-tables-layout">
+          
+          {/* Columna 1: Operaciones y Grillas Activas */}
+          <div className="monitor-table-section">
+            <div className="visualizer-title">Operaciones y Grillas Activas</div>
+            <div className="monitor-table-container">
+              {Object.keys(activePositions).length === 0 && Object.keys(activeGrids).length === 0 ? (
+                <div className="grid-empty-msg">No hay posiciones ni grillas activas en este momento.</div>
+              ) : (
+                <>
+                  {/* Render Posiciones Activas */}
+                  {Object.entries(activePositions).map(([sym, pos]) => {
+                    const currPrice = data.prices[sym] || pos.entry_price;
+                    const pnl = (currPrice - pos.entry_price) * pos.size * (pos.side === 'LONG' ? 1 : -1);
+                    const pnlPercent = ((currPrice - pos.entry_price) / pos.entry_price * 100) * (pos.side === 'LONG' ? 1 : -1);
+                    const isGrid = pos.strategy === 'GRID';
+                    
+                    return (
+                      <div key={sym} className={`active-trade-card ${isGrid ? 'grid' : 'agent'}`}>
+                        <div className="card-left">
+                          <span className="strat-label strategy-agent">
+                            {pos.side === 'SHORT' ? 'IA FUTUROS' : 'IA SPOT'}
+                          </span>
+                          <span style={{ fontWeight: 700 }}>{sym.replace('USDT', '')}</span>
+                          <span className={`side-badge ${pos.side.toLowerCase()}`}>{pos.side}</span>
+                        </div>
+                        <div style={{ textAlign: 'right', fontFamily: 'monospace' }}>
+                          <div>Entrada: <b>${pos.entry_price.toLocaleString()}</b></div>
+                          <div>Precio: <b>${currPrice.toLocaleString()}</b></div>
+                          <div className={pnl >= 0 ? 'pnl positive' : 'pnl negative'} style={{ fontWeight: 700 }}>
+                            {pnl >= 0 ? '+' : ''}${pnl.toFixed(2)} ({pnlPercent >= 0 ? '+' : ''}{pnlPercent.toFixed(2)}%)
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Render Grillas Activas */}
+                  {Object.entries(activeGrids).map(([sym, grid]) => {
+                    const placedCount = grid.levels ? grid.levels.filter(l => l.status === 'PLACED_MOCK').length : 0;
+                    const filledCount = grid.levels ? grid.levels.filter(l => l.status === 'FILLED').length : 0;
+                    const totalInv = grid.total_investment || 1000.0;
+                    const gridPnlPercent = totalInv > 0 ? (grid.pnl / totalInv) * 100 : 0.0;
+                    
+                    return (
+                      <div key={sym} className="active-trade-card grid">
+                        <div className="card-left">
+                          <span className="strat-label strategy-grid">MALLA GRID</span>
+                          <span style={{ fontWeight: 700 }}>{sym.replace('USDT', '')}</span>
+                          <span style={{ fontSize: '0.65rem', color: '#64748b' }}>
+                            {placedCount} act · {filledCount} ejec
+                          </span>
+                        </div>
+                        <div style={{ textAlign: 'right', fontFamily: 'monospace' }}>
+                          <div>Rango: <b>[{grid.lower_limit} - {grid.upper_limit}]</b></div>
+                          <div className={grid.pnl >= 0 ? 'pnl positive' : 'pnl negative'} style={{ fontWeight: 700 }}>
+                            {grid.pnl >= 0 ? '+' : ''}${grid.pnl.toFixed(2)} ({gridPnlPercent >= 0 ? '+' : ''}{gridPnlPercent.toFixed(2)}%)
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Columna 2: Historial de Operaciones Cerradas */}
+          <div className="monitor-table-section">
+            <div className="visualizer-title">Historial de Operaciones Cerradas</div>
+            <div className="monitor-table-container">
+              {closedTrades.length === 0 ? (
+                <div className="grid-empty-msg">Historial de operaciones vacío. Esperando ejecuciones...</div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="grid-table">
+                    <thead>
+                      <tr>
+                        <th>Hora</th>
+                        <th>Símbolo</th>
+                        <th>Dirección</th>
+                        <th>Estrategia</th>
+                        <th>Entrada</th>
+                        <th>Salida</th>
+                        <th>Motivo</th>
+                        <th>PnL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...closedTrades].reverse().map((t, idx) => {
+                        const timeStr = new Date(t.timestamp * 1000).toLocaleTimeString('es-CO');
+                        const isGrid = t.strategy === 'GRID';
+                        const pnlPct = t.pnl_percent !== undefined ? t.pnl_percent : 0.0;
+                        
+                        return (
+                          <tr key={idx}>
+                            <td style={{ color: '#64748b', fontSize: '0.7rem' }}>{timeStr}</td>
+                            <td style={{ fontWeight: 700 }}>{t.symbol.replace('USDT', '')}</td>
+                            <td>
+                              <span className={`side-badge ${t.side?.toLowerCase() || 'long'}`}>
+                                {t.side || 'LONG'}
+                              </span>
+                            </td>
+                            <td>
+                              <span className={`strat-label ${isGrid ? 'strategy-grid' : 'strategy-agent'}`}>
+                                {isGrid ? 'GRID' : 'IA AGENTE'}
+                              </span>
+                            </td>
+                            <td style={{ fontFamily: 'monospace' }}>${t.entry_price.toLocaleString()}</td>
+                            <td style={{ fontFamily: 'monospace' }}>${t.exit_price.toLocaleString()}</td>
+                            <td style={{ color: '#64748b' }}>{formatReason(t.exit_reason)}</td>
+                            <td className={t.pnl >= 0 ? 'pnl positive' : 'pnl negative'} style={{ fontWeight: 700, fontFamily: 'monospace' }}>
+                              {t.pnl >= 0 ? '+' : ''}${t.pnl.toFixed(2)}<br/>
+                              <span style={{ fontSize: '0.65rem' }}>{pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(2)}%</span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>
