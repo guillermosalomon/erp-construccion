@@ -247,7 +247,7 @@ function HeroSection() {
                 <div className="bio-hero-content">
                     <h1 className="bio-hero-title">Diplomado en Bio-Construcción</h1>
                     <p className="bio-hero-subtitle">
-                        Programa práctico-teórico de 4 meses: Maloca y Glampings con guadua, bahareque, tapia pisada, adobe y techos verdes.
+                        Teórico-práctico: Maloca y Glampings con guadua, bahareque, tapia pisada, adobe y techos verdes.
                     </p>
                     <div className="bio-hero-badge-container" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem' }}>
                         <span className="bio-badge-pill">📅 4 Meses</span>
@@ -273,7 +273,7 @@ function ProjectSpecsSection() {
                         <div className="bio-q-item">
                             <span className="bio-q-icon">👥</span>
                             <h4>Público Objetivo</h4>
-                            <p>Dirigido a Estudiantes/Profesionales (Arq./Ing.) y Constructores locales, creando un espacio de co-creación y capacitación real.</p>
+                            <p>Dirigido a Estudiantes/Profesionales (Arquitectos/Ingenieros) y Constructores locales, creando un espacio de co-creación y capacitación real.</p>
                         </div>
                         <div className="bio-q-item">
                             <span className="bio-q-icon">📍</span>
@@ -317,7 +317,7 @@ function ScheduleSection() {
             <div className="bio-container">
                 <div className="bio-section-header">
                     <h2 className="bio-section-title">Cronograma del Programa</h2>
-                    <p className="bio-section-desc">16 semanas organizadas en 5 fases progresivas — haz clic en cada semana para ver detalles.</p>
+                    <p className="bio-section-desc">4 meses dividido en 16 semanas organizadas en 5 fases progresivas — haz clic en cada semana para ver detalles.</p>
                 </div>
 
                 <div className="bio-filters">
@@ -404,7 +404,7 @@ function ScheduleSection() {
 }
 
 const GALLERY_ITEMS = [
-    { title: "Guadua Angustifolia Kunth", img: "/images/guadua_construccion.png" },
+    { title: "Guadua Angustifolia", img: "/images/guadua_construccion.png" },
     { title: "Tapia Pisada y Adobe", img: "/images/tapia_pisada_muro.png" },
     { title: "Techos y Fachadas Verdes", img: "/images/techo_verde_glamping.png" }
 ];
