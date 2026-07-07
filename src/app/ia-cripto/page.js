@@ -2,9 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import './ia-cripto.css';
 
 export default function IACriptoPage() {
   const [status, setStatus] = useState('DESCONECTADO');
+  const [activeTab, setActiveTab] = useState('BTCUSDT');
+  const [clock, setClock] = useState('--:--:--');
   const [data, setData] = useState({
     prices: { BTCUSDT: 0, ETHUSDT: 0, SOLUSDT: 0 },
     obi: {},
@@ -20,7 +23,7 @@ export default function IACriptoPage() {
     projections: {},
     news: [],
     news_sentiment: { score: 0.0, label: 'NEUTRAL' },
-    circuit_breaker: { active: false },
+    circuit_breaker: { active: false, reason: '' },
     bollinger: {},
     institutional_levels: {},
     erp_summary: { net_pnl: 0.0, total_trades: 0, win_rate: 0.0 },
@@ -29,6 +32,18 @@ export default function IACriptoPage() {
   const [consoleLines, setConsoleLines] = useState([
     { time: '--:--:--', type: 'info', message: 'Esperando señal de telemetría local...' }
   ]);
+
+  // Cambiar el título de la pestaña del navegador para que no diga ERP Construcción
+  useEffect(() => {
+    document.title = "IA Cripto Multiescala — Panel en Tiempo Real";
+    
+    // Reloj local
+    const timer = setInterval(() => {
+      setClock(new Date().toLocaleTimeString('es-CO'));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!supabase) {
@@ -39,14 +54,12 @@ export default function IACriptoPage() {
 
     setStatus('CONECTANDO A SUPABASE...');
 
-    // Suscribirse al canal Realtime Broadcast 'ia-telemetry'
     const channel = supabase.channel('ia-telemetry')
       .on('broadcast', { event: 'telemetry-update' }, (payload) => {
         setStatus('CONECTADO');
         if (payload && payload.payload) {
           const msg = payload.payload;
           
-          // 1. Si es telemetría consolidada, actualizar estados de gráficos y tickers
           if (msg.type === 'telemetry' && msg.data) {
             setData(prev => ({
               ...prev,
@@ -100,8 +113,6 @@ export default function IACriptoPage() {
               });
             }
           }
-          
-          // 2. Si es respuesta interactiva de la IA (inferencia, riesgo, señal)
           else if (msg.type === 'ai_response' && msg.data) {
             processAIResponseInWeb(msg.data);
           }
@@ -120,23 +131,23 @@ export default function IACriptoPage() {
     };
   }, []);
 
-  // Escuchar si hay actualizaciones en el payload que deban empujar logs a la consola
+  // Agregar noticias nuevas en tiempo real a la consola
   useEffect(() => {
     if (data.news && data.news.length > 0) {
       const latestNews = data.news[0];
       const timeStr = new Date().toLocaleTimeString('es-CO');
       setConsoleLines(prev => {
         if (prev.some(l => l.message.includes(latestNews.title))) return prev;
-        const newLines = [{
+        return [{
           time: timeStr,
           type: 'whale',
           message: '[NOTICIA] ' + latestNews.title + ' (Sentimiento: ' + (latestNews.sentiment || 'NEUTRAL') + ')'
-        }, ...prev];
-        return newLines.slice(0, 100);
+        }, ...prev].slice(0, 100);
       });
     }
   }, [data.news]);
 
+  // Agregar bloques detectados en tiempo real a la consola
   useEffect(() => {
     const timeStr = new Date().toLocaleTimeString('es-CO');
     const symbols = Object.keys(data.institutional_levels || {});
@@ -210,7 +221,7 @@ export default function IACriptoPage() {
     return 'energy-neutral';
   };
 
-  // ── CÁLCULOS DEL MONITOR DE OPERACIONES Y PNL ──
+  // Calculations for Monitor panel
   const closedTrades = data.closed_trades || [];
   const activePositions = data.active_positions || {};
   const activeGrids = data.active_grids || {};
@@ -233,7 +244,6 @@ export default function IACriptoPage() {
     totalClosed++;
   });
 
-  // PnL Flotante/Latente
   let floatingSpotPnl = 0;
   let floatingFuturesPnl = 0;
 
@@ -259,9 +269,8 @@ export default function IACriptoPage() {
   const finalSpotPnl = spotPnl + floatingSpotPnl;
   const winRate = totalClosed > 0 ? (winCount / totalClosed) * 100 : 0.0;
 
-  // Alineación / Coincidencias
   let alignmentLabel = 'NEUTRAL';
-  let alignmentColor = '#eab308'; // Amarillo 🟡
+  let alignmentColor = '#eab308';
   
   const activeSyms = Object.keys(activePositions);
   if (activeSyms.length > 0) {
@@ -270,10 +279,10 @@ export default function IACriptoPage() {
     const allShort = sides.every(s => s === 'SHORT');
     if (allLong) {
       alignmentLabel = 'ALCISTA';
-      alignmentColor = '#10b981'; // Verde 🟢
+      alignmentColor = '#10b981';
     } else if (allShort) {
       alignmentLabel = 'BAJISTA';
-      alignmentColor = '#ef4444'; // Rojo 🔴
+      alignmentColor = '#ef4444';
     }
   }
 
@@ -289,455 +298,303 @@ export default function IACriptoPage() {
     return map[reason] || reason || '--';
   };
 
+  // Render original local orderbook format
+  const activeOrderbook = data.orderbook[activeTab] || { bids: [], asks: [] };
+
   return (
-    <div className="ia-cripto-container">
-      {/* Estilos encapsulados con Responsividad Garantizada */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        .ia-cripto-container {
-          background: #060b13;
-          color: #e2e8f0;
-          font-family: 'Inter', -apple-system, sans-serif;
-          min-height: 100vh;
-          padding: 20px;
-          box-sizing: border-box;
-        }
-
-        /* ── Header ── */
-        .ia-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-bottom: 1px solid #1a2436;
-          padding-bottom: 15px;
-          margin-bottom: 20px;
-          flex-wrap: wrap;
-          gap: 15px;
-        }
-        .ia-title-area h1 {
-          margin: 0;
-          font-size: 1.5rem;
-          font-weight: 700;
-          letter-spacing: 0.5px;
-          color: #00d4ff;
-          text-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
-        }
-        .ia-title-area p {
-          margin: 5px 0 0 0;
-          font-size: 0.8rem;
-          color: #64748b;
-        }
-        .ia-status-badge {
-          font-size: 0.75rem;
-          font-weight: 600;
-          padding: 6px 12px;
-          border-radius: 4px;
-          background: rgba(0, 212, 255, 0.1);
-          color: #00d4ff;
-          border: 1px solid rgba(0, 212, 255, 0.2);
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        .status-dot {
-          width: 8px;
-          height: 8px;
-          background: #00d4ff;
-          border-radius: 50%;
-          display: inline-block;
-          box-shadow: 0 0 8px #00d4ff;
-        }
-        .status-dot.active {
-          animation: status-pulse 1.5s infinite;
-        }
-        @keyframes status-pulse {
-          0% { opacity: 0.3; }
-          50% { opacity: 1; }
-          100% { opacity: 0.3; }
-        }
-
-        /* ── Tickers ── */
-        .tickers-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 15px;
-          margin-bottom: 20px;
-        }
-        .ticker-card {
-          background: rgba(13, 20, 33, 0.7);
-          border: 1px solid #1a2436;
-          border-radius: 6px;
-          padding: 15px;
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          overflow: hidden;
-        }
-        .ticker-card::after {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-        }
-        .ticker-sym {
-          font-size: 0.75rem;
-          font-weight: 600;
-          color: #64748b;
-          margin-bottom: 5px;
-        }
-        .ticker-price {
-          font-size: 1.4rem;
-          font-weight: 700;
-          color: #f8fafc;
-          font-family: monospace;
-        }
-
-        /* ── Main Layout Grid ── */
-        .main-dashboard-grid {
-          display: grid;
-          grid-template-columns: 2fr 1fr;
-          gap: 20px;
-          margin-bottom: 20px;
-        }
-
-        @media (max-width: 1024px) {
-          .main-dashboard-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        /* ── Panels ── */
-        .dashboard-panel {
-          background: rgba(13, 20, 33, 0.5);
-          border: 1px solid #1a2436;
-          border-radius: 8px;
-          padding: 18px;
-          margin-bottom: 20px;
-          box-sizing: border-box;
-        }
-        .panel-title {
-          font-size: 0.85rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: #38bdf8;
-          border-bottom: 1px solid #1a2436;
-          padding-bottom: 8px;
-          margin-bottom: 15px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .panel-badge {
-          font-size: 0.65rem;
-          background: rgba(56, 189, 248, 0.1);
-          color: #38bdf8;
-          padding: 2px 6px;
-          border-radius: 3px;
-        }
-
-        /* ── OBI & Order Book ── */
-        .obi-row {
-          margin-bottom: 12px;
-        }
-        .obi-header {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.75rem;
-          margin-bottom: 4px;
-        }
-        .obi-bar-bg {
-          height: 10px;
-          background: #1e293b;
-          border-radius: 5px;
-          overflow: hidden;
-          position: relative;
-        }
-        .obi-bar-fill {
-          height: 100%;
-          background: linear-gradient(90deg, #3b82f6, #00d4ff);
-          border-radius: 5px;
-          transition: width 0.3s ease;
-        }
-
-        /* ── Bollinger Squeeze ── */
-        .bollinger-list {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        .bollinger-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 8px;
-          background: rgba(255, 255, 255, 0.02);
-          border-radius: 4px;
-          font-size: 0.8rem;
-        }
-        .bollinger-energy-badge {
-          font-size: 0.65rem;
-          font-weight: 600;
-          padding: 2px 6px;
-          border-radius: 3px;
-        }
-        .energy-charging { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
-        .energy-releasing { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-        .energy-neutral { background: rgba(255, 255, 255, 0.05); color: #94a3b8; }
-
-        /* ── Console ── */
-        .console-box {
-          background: #020617;
-          border: 1px solid #1e293b;
-          border-radius: 6px;
-          height: 250px;
-          overflow-y: auto;
-          padding: 10px;
-          font-family: monospace;
-          font-size: 0.75rem;
-        }
-        .console-line {
-          margin-bottom: 6px;
-          line-height: 1.3;
-          display: flex;
-          gap: 8px;
-        }
-        .console-timestamp {
-          color: #475569;
-        }
-        .console-msg-info { color: #94a3b8; }
-        .console-msg-signal { color: #10b981; }
-        .console-msg-error { color: #f43f5e; }
-        .console-msg-whale { color: #eab308; }
-
-        /* ── Monitor Panel CSS ── */
-        .monitor-stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 12px;
-          margin-bottom: 20px;
-        }
-        .stat-card {
-          background: rgba(13, 20, 33, 0.7);
-          border: 1px solid #1e293b;
-          border-radius: 6px;
-          padding: 12px;
-          text-align: left;
-        }
-        .stat-label {
-          font-size: 0.65rem;
-          color: #64748b;
-          text-transform: uppercase;
-          font-weight: 700;
-          letter-spacing: 0.5px;
-        }
-        .stat-value {
-          font-size: 1.15rem;
-          font-weight: 800;
-          font-family: monospace;
-          margin-top: 6px;
-        }
-        .stat-value.positive { color: #10b981; }
-        .stat-value.negative { color: #ef4444; }
-        .stat-value.neutral { color: #eab308; }
-
-        .monitor-tables-layout {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 20px;
-        }
-        @media (max-width: 900px) {
-          .monitor-tables-layout {
-            grid-template-columns: 1fr;
-          }
-        }
-        .visualizer-title {
-          font-size: 0.8rem;
-          font-weight: 700;
-          color: #64748b;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-bottom: 12px;
-          border-left: 3px solid #38bdf8;
-          padding-left: 8px;
-        }
-        .monitor-table-container {
-          background: rgba(2, 6, 23, 0.4);
-          border: 1px solid #1e293b;
-          border-radius: 6px;
-          padding: 10px;
-          min-height: 120px;
-          max-height: 350px;
-          overflow-y: auto;
-        }
-        
-        /* active trade card styled */
-        .active-trade-card {
-          background: rgba(13, 20, 33, 0.9);
-          border: 1px solid #22d3ee;
-          border-radius: 6px;
-          padding: 10px;
-          margin-bottom: 8px;
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.75rem;
-        }
-        .active-trade-card.grid {
-          border-color: #f1c40f;
-        }
-        .card-left {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-        .side-badge {
-          font-weight: 700;
-          padding: 2px 6px;
-          border-radius: 3px;
-          font-size: 0.65rem;
-          text-transform: uppercase;
-          text-align: center;
-          display: inline-block;
-        }
-        .side-badge.long { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-        .side-badge.short { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-        .strat-label {
-          font-size: 0.65rem;
-          font-weight: 600;
-          padding: 2px 6px;
-          border-radius: 3px;
-        }
-        .strat-label.strategy-grid { background: rgba(241, 196, 15, 0.15); color: #f1c40f; }
-        .strat-label.strategy-agent { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
-
-        /* table responsive style */
-        .grid-table {
-          width: 100%;
-          border-collapse: collapse;
-          font-size: 0.75rem;
-          text-align: left;
-        }
-        .grid-table th {
-          color: #64748b;
-          border-bottom: 1px solid #1e293b;
-          padding: 8px;
-          font-weight: 600;
-        }
-        .grid-table td {
-          padding: 8px;
-          border-bottom: 1px solid rgba(30, 41, 59, 0.4);
-          vertical-align: middle;
-        }
-        .pnl.positive { color: #10b981; }
-        .pnl.negative { color: #ef4444; }
-
-        /* Empty message */
-        .grid-empty-msg {
-          font-size: 0.75rem;
-          color: #475569;
-          text-align: center;
-          padding: 30px;
-        }
-
-        /* ── News ── */
-        .news-item {
-          padding: 10px 0;
-          border-bottom: 1px solid #1a2436;
-        }
-        .news-item:last-child {
-          border-bottom: none;
-        }
-        .news-title {
-          font-size: 0.8rem;
-          font-weight: 600;
-          color: #f8fafc;
-        }
-        .news-meta {
-          font-size: 0.65rem;
-          color: #64748b;
-          margin-top: 4px;
-          display: flex;
-          justify-content: space-between;
-        }
-
-      `}} />
-
-      {/* ── HEADER ── */}
-      <div className="ia-header">
-        <div className="ia-title-area">
-          <h1>IA CRIPTO MULTIESCALA</h1>
-          <p>Espejo en tiempo real del pipeline cuantitativo local</p>
-        </div>
-        <div className="ia-status-badge">
-          <span className="status-dot active"></span>
-          <span>{status}</span>
-        </div>
-      </div>
-
-      {/* ── TICKERS ── */}
-      <div className="tickers-grid">
-        <div className="ticker-card">
-          <span className="ticker-sym">BTCUSDT</span>
-          <span className="ticker-price">
-            ${(data.prices.BTCUSDT || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-        </div>
-        <div className="ticker-card">
-          <span className="ticker-sym">ETHUSDT</span>
-          <span className="ticker-price">
-            ${(data.prices.ETHUSDT || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-        </div>
-        <div className="ticker-card">
-          <span className="ticker-sym">SOLUSDT</span>
-          <span className="ticker-price">
-            ${(data.prices.SOLUSDT || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-        </div>
-      </div>
-
-      {/* ── MAIN GRID ── */}
-      <div className="main-dashboard-grid">
-        {/* Left Column: Metrics & Indicators */}
-        <div className="col-left">
-          
-          {/* Order Book Imbalance */}
-          <div className="dashboard-panel">
-            <div className="panel-title">
-              <span>Order Book Imbalance (OBI)</span>
-              <span className="panel-badge">10s</span>
-            </div>
-            {Object.keys(data.prices).map(sym => {
-              const val = data.obi[sym] ? data.obi[sym].z_score || 0.0 : 0.0;
-              const percent = Math.min(Math.max((val + 3.0) / 6.0 * 100, 0), 100);
-              return (
-                <div key={sym} className="obi-row">
-                  <div className="obi-header">
-                    <span>{sym.replace('USDT', '')}</span>
-                    <span style={{ fontFamily: 'monospace' }}>Z-Score: {val.toFixed(2)}</span>
-                  </div>
-                  <div className="obi-bar-bg">
-                    <div className="obi-bar-fill" style={{ width: `${percent}%` }}></div>
-                  </div>
-                </div>
-              );
-            })}
+    <div id="app">
+      
+      {/* ═══ HEADER ═══ */}
+      <header className="header">
+        <div className="header-brand">
+          <div className="header-logo">🧠</div>
+          <div>
+            <div className="header-title">IA CRIPTO MULTIESCALA</div>
+            <div className="header-subtitle">Análisis Cuantitativo en Tiempo Real</div>
           </div>
+        </div>
+        <div className="header-status">
+          <div className="status-indicator">
+            <button id="powerBtn" className="power-btn">
+              <span className="power-icon">⚡</span> <span id="powerText">ENCENDIDO</span>
+            </button>
+          </div>
+          <div className="status-indicator">
+            <span className="status-dot" id="statusDot"></span>
+            <span id="statusText">{status}</span>
+          </div>
+          <div className="status-indicator">
+            <span id="clockDisplay">{clock}</span>
+          </div>
+        </div>
+      </header>
 
-          {/* Bollinger Squeeze */}
-          <div className="dashboard-panel">
-            <div className="panel-title">
-              <span>Bollinger Bands Squeeze</span>
-              <span className="panel-badge">1h / 4h</span>
+      {/* ═══ CIRCUIT BREAKER ═══ */}
+      {data.circuit_breaker && data.circuit_breaker.active && (
+        <div id="circuitBreakerBanner" className="circuit-breaker-banner" style={{ display: 'flex' }}>
+          <div className="cb-icon">🛑</div>
+          <div className="cb-text">
+            <strong>CIRCUIT BREAKER ACTIVO</strong>
+            <span id="cbReason">— {data.circuit_breaker.reason || 'Cisne Negro detectado'}</span>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ MAIN GRID ═══ */}
+      <main className="main-grid">
+
+        {/* ── Price Ticker ── */}
+        <section className="price-ticker" id="priceTicker">
+          {Object.keys(data.prices).map(sym => (
+            <div key={sym} className="ticker-card">
+              <span className="ticker-symbol">{sym}</span>
+              <span className="ticker-price">
+                ${data.prices[sym].toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
             </div>
-            <div className="bollinger-list">
+          ))}
+        </section>
+
+        {/* ── OBI Panel ── */}
+        <section className="panel" id="obiPanel">
+          <div className="panel-header">
+            <span className="panel-title"><span className="icon">📊</span> ORDER BOOK IMBALANCE</span>
+            <span className="panel-badge badge-live">LIVE</span>
+          </div>
+          <div className="panel-body">
+            <div className="obi-grid" id="obiGrid">
+              {Object.keys(data.prices).map(sym => {
+                const val = data.obi[sym] ? data.obi[sym].z_score || 0.0 : 0.0;
+                const percent = Math.min(Math.max((val + 3.0) / 6.0 * 100, 0), 100);
+                return (
+                  <div key={sym} className="obi-row" style={{ display: 'flex', flexDirection: 'column', marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '4px' }}>
+                      <span style={{ fontWeight: '600' }}>{sym}</span>
+                      <span style={{ fontFamily: 'monospace' }}>Z-Score: {val.toFixed(2)}</span>
+                    </div>
+                    <div className="obi-bar-bg" style={{ height: '8px', background: '#1f2937', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div className="obi-bar-fill" style={{ height: '100%', width: `${percent}%`, background: 'linear-gradient(90deg, #3b82f6, #00d4ff)', borderRadius: '4px' }}></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Orderbook Panel ── */}
+        <section className="panel" id="orderbookPanel">
+          <div className="panel-header">
+            <span className="panel-title"><span class="icon">📒</span> LIBRO DE ÓRDENES</span>
+            <div className="orderbook-symbol-tabs" id="obTabs" style={{ display: 'flex', gap: '6px' }}>
+              {Object.keys(data.prices).map(sym => (
+                <button
+                  key={sym}
+                  className={`ob-tab ${activeTab === sym ? 'active' : ''}`}
+                  onClick={() => setActiveTab(sym)}
+                  style={{
+                    fontFamily: 'monospace',
+                    fontSize: '0.7rem',
+                    padding: '3px 8px',
+                    border: '1px solid var(--glass-border)',
+                    background: activeTab === sym ? 'var(--cyan-soft)' : 'transparent',
+                    color: activeTab === sym ? 'var(--neon-cyan)' : 'var(--text-secondary)',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {sym.replace('USDT', '')}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="panel-body">
+            <div className="orderbook-container" id="orderbookContainer" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+              {/* Asks (Sell) Table */}
+              <div>
+                <div style={{ fontSize: '0.7rem', color: '#ff3366', fontWeight: '700', marginBottom: '6px', textAlign: 'center' }}>VENDEDORES (ASKS)</div>
+                {activeOrderbook.asks && activeOrderbook.asks.length > 0 ? (
+                  <table style={{ width: '100%', fontSize: '0.7rem', fontFamily: 'monospace' }}>
+                    <thead>
+                      <tr style={{ color: 'var(--text-muted)' }}>
+                        <th style={{ textAlign: 'left' }}>Precio</th>
+                        <th style={{ textAlign: 'right' }}>Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeOrderbook.asks.slice(0, 5).reverse().map((level, i) => (
+                        <tr key={i} style={{ color: 'var(--neon-red)' }}>
+                          <td>${level[0].toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                          <td style={{ textAlign: 'right' }}>{level[1].toFixed(4)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="grid-empty-msg" style={{ padding: '15px' }}>Sin datos...</div>
+                )}
+              </div>
+              
+              {/* Bids (Buy) Table */}
+              <div>
+                <div style={{ fontSize: '0.7rem', color: '#00ff88', fontWeight: '700', marginBottom: '6px', textAlign: 'center' }}>COMPRADORES (BIDS)</div>
+                {activeOrderbook.bids && activeOrderbook.bids.length > 0 ? (
+                  <table style={{ width: '100%', fontSize: '0.7rem', fontFamily: 'monospace' }}>
+                    <thead>
+                      <tr style={{ color: 'var(--text-muted)' }}>
+                        <th style={{ textAlign: 'left' }}>Precio</th>
+                        <th style={{ textAlign: 'right' }}>Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeOrderbook.bids.slice(0, 5).map((level, i) => (
+                        <tr key={i} style={{ color: 'var(--neon-green)' }}>
+                          <td>${level[0].toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                          <td style={{ textAlign: 'right' }}>{level[1].toFixed(4)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="grid-empty-msg" style={{ padding: '15px' }}>Sin datos...</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Whale Tracker Panel ── */}
+        <section className="panel" id="whalePanel">
+          <div className="panel-header">
+            <span className="panel-title"><span className="icon">🐋</span> WHALE TRACKER</span>
+            <span className="panel-badge badge-live">LIVE</span>
+          </div>
+          <div className="panel-body">
+            <div className="whale-list" id="whaleList" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+              {data.whale_recent && data.whale_recent.length > 0 ? (
+                data.whale_recent.slice(0, 8).map((w, i) => {
+                  const isBuy = w.direction === 'BUY' || w.side === 'BUY';
+                  return (
+                    <div key={i} style={{
+                      padding: '8px',
+                      background: 'rgba(255,255,255,0.02)',
+                      borderLeft: `3px solid ${isBuy ? 'var(--neon-green)' : 'var(--neon-red)'}`,
+                      marginBottom: '6px',
+                      borderRadius: '4px',
+                      fontSize: '0.75rem',
+                      display: 'flex',
+                      justify-content: space-between
+                    }}>
+                      <span><b>{w.symbol}</b> {isBuy ? 'COMPRA' : 'VENTA'}</span>
+                      <span style={{ fontFamily: 'monospace', fontWeight: '700' }}>
+                        ${w.vol_usd ? w.vol_usd.toLocaleString() : w.amount.toLocaleString()} USD
+                      </span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="whale-empty">Esperando eventos whale...</div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Sidebar Column (Right) ── */}
+        <div className="sidebar" style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '12px' }}>
+          
+          {/* Proyección y S/R Técnico */}
+          <section className="panel tech-projection" id="projectionPanel">
+            <div className="panel-header">
+              <span className="panel-title"><span className="icon">🔮</span> PROYECCIÓN Y S/R TÉCNICO</span>
+            </div>
+            <div className="panel-body">
+              <div id="projectionContainer">
+                {Object.keys(data.prices).map(sym => {
+                  const proj = data.projections[sym] || {};
+                  return (
+                    <div key={sym} style={{
+                      padding: '8px',
+                      background: 'rgba(255,255,255,0.01)',
+                      borderBottom: '1px solid rgba(255,255,255,0.05)',
+                      fontSize: '0.75rem'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '700', marginBottom: '4px' }}>
+                        <span>{sym}</span>
+                        <span style={{ color: 'var(--neon-cyan)' }}>{proj.regime || 'NEUTRAL'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.7rem' }}>
+                        <span>Soporte: ${proj.support ? proj.support.toLocaleString() : '--'}</span>
+                        <span>Resistencia: ${proj.resistance ? proj.resistance.toLocaleString() : '--'}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* AI Console */}
+          <section className="panel ai-console">
+            <div className="panel-header">
+              <span className="panel-title"><span className="icon">🤖</span> CONSOLA INTERACTIVA</span>
+            </div>
+            <div className="panel-body">
+              <div className="console-output" id="consoleOutput" style={{ height: '220px', overflowY: 'auto' }}>
+                {consoleLines.map((line, idx) => (
+                  <div key={idx} className="console-line">
+                    <span className="console-timestamp">[{line.time}]</span>
+                    <span className={`console-msg-${line.type}`}>{line.message}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* News & Sentiment */}
+          <section className="panel news-panel">
+            <div className="panel-header">
+              <span className="panel-title"><span className="icon">📰</span> NOTICIAS & SENTIMIENTO</span>
+              <span className="panel-badge" id="sentimentBadge">{data.news_sentiment.label}</span>
+            </div>
+            <div className="panel-body">
+              <div className="sentiment-gauge-container">
+                <div className="sentiment-score" id="sentimentScore">
+                  {data.news_sentiment.score ? data.news_sentiment.score.toFixed(1) : '0.0'}
+                </div>
+              </div>
+              <div className="news-list" id="newsList" style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                {data.news && data.news.length > 0 ? (
+                  data.news.map((item, idx) => (
+                    <div key={idx} className="news-item">
+                      <div className="news-title">{item.title}</div>
+                      <div className="news-meta">
+                        <span>Hace {Math.round(item.age_seconds / 60) || 0}m</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="news-empty">Esperando noticias...</div>
+                )}
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        {/* ── Bollinger Squeeze ── */}
+        <section className="panel" id="bollingerPanel" style={{ gridRow: '4', gridColumn: '1' }}>
+          <div className="panel-header">
+            <span className="panel-title"><span className="icon">B</span> BOLLINGER SQUEEZE</span>
+          </div>
+          <div className="panel-body">
+            <div id="bollingerGrid" className="bollinger-grid" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {Object.keys(data.prices).map(sym => {
                 const b = data.bollinger[sym] || {};
                 return (
-                  <div key={sym} className="bollinger-row">
-                    <span style={{ fontWeight: 600 }}>{sym.replace('USDT', '')}</span>
-                    <span>BW 1h: {b.bandwidth_1h ? b.bandwidth_1h.toFixed(4) : '--'}</span>
-                    <span>BW 4h: {b.bandwidth_4h ? b.bandwidth_4h.toFixed(4) : '--'}</span>
+                  <div key={sym} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px', fontSize: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '4px' }}>
+                    <span style={{ fontWeight: '700' }}>{sym}</span>
+                    <span>1h: {b.bandwidth_1h ? b.bandwidth_1h.toFixed(4) : '--'}</span>
+                    <span>4h: {b.bandwidth_4h ? b.bandwidth_4h.toFixed(4) : '--'}</span>
                     <span className={`bollinger-energy-badge ${getEnergyClass(b.energy_state)}`}>
                       {b.energy_state || 'NEUTRAL'}
                     </span>
@@ -746,226 +603,231 @@ export default function IACriptoPage() {
               })}
             </div>
           </div>
+        </section>
 
-        </div>
-
-        {/* Right Column: Console & News */}
-        <div className="col-right">
-
-          {/* Consola Interactiva */}
-          <div className="dashboard-panel" style={{ height: 'calc(100% - 20px)', display: 'flex', flexDirection: 'column' }}>
-            <div className="panel-title">
-              <span>Consola de Operación Local (AI & Risk logs)</span>
-            </div>
-            <div className="console-box" style={{ flexGrow: 1, height: 'auto', minHeight: '230px' }}>
-              {consoleLines.map((line, idx) => (
-                <div key={idx} className="console-line">
-                  <span className="console-timestamp">[{line.time}]</span>
-                  <span className={`console-msg-${line.type}`}>{line.message}</span>
-                </div>
-              ))}
-            </div>
+        {/* ── Lead Lag Panel ── */}
+        <section className="panel lead-lag-panel" style={{ gridRow: '4', gridColumn: '2' }}>
+          <div className="panel-header">
+            <span className="panel-title"><span className="icon">🔗</span> CORRELACIÓN LEAD-LAG</span>
           </div>
-
-          {/* Noticias y Sentimiento */}
-          <div className="dashboard-panel">
-            <div className="panel-title">
-              <span>Noticias y Sentimiento</span>
-              <span className={`panel-badge ${getSentimentClass(data.news_sentiment.label)}`}>
-                {data.news_sentiment.label} ({data.news_sentiment.score ? data.news_sentiment.score.toFixed(1) : '0.0'})
-              </span>
-            </div>
-            <div className="news-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
-              {data.news && data.news.length > 0 ? (
-                data.news.map((item, idx) => (
-                  <div key={idx} className="news-item">
-                    <div className="news-title">{item.title}</div>
-                    <div className="news-meta">
-                      <span>Sentimiento: {item.sentiment || 'NEUTRAL'}</span>
-                      <span>Hace {Math.round(item.age_seconds / 60) || 0}m</span>
-                    </div>
+          <div className="panel-body" style={{ fontSize: '0.75rem' }}>
+            <div id="leadLagGrid">
+              {data.lead_lag && Object.keys(data.lead_lag).length > 0 ? (
+                Object.entries(data.lead_lag).map(([pair, info]) => (
+                  <div key={pair} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <span><b>{pair}</b></span>
+                    <span>Desfase: {info.lag_seconds}s</span>
+                    <span style={{ color: 'var(--neon-green)' }}>Corr: {info.correlation ? info.correlation.toFixed(2) : '0.0'}</span>
                   </div>
                 ))
               ) : (
-                <div style={{ fontSize: '0.8rem', color: '#64748b', textAlign: 'center', padding: '15px' }}>
-                  Esperando agregador de noticias local...
-                </div>
+                <div className="ll-empty">Calculando lag de precios...</div>
               )}
             </div>
           </div>
+        </section>
 
-        </div>
-      </div>
+        {/* ── ERP / DCA Panel ── */}
+        <section className="panel" id="erpPanel" style={{ gridRow: '4', gridColumn: '3' }}>
+          <div className="panel-header">
+            <span className="panel-title"><span className="icon">$</span> ERP & DCA</span>
+            <span className="panel-badge" id="erpBadge">SQLite</span>
+          </div>
+          <div className="panel-body">
+            <div className="erp-summary" id="erpSummary">
+              <div className="erp-row">
+                <span className="erp-label">PnL Neto</span>
+                <span className="erp-value" id="erpPnl" style={{ color: totalPnLWithFloating >= 0 ? 'var(--neon-green)' : 'var(--neon-red)' }}>
+                  ${totalPnLWithFloating.toFixed(2)}
+                </span>
+              </div>
+              <div className="erp-row">
+                <span className="erp-label">Trades</span>
+                <span className="erp-value" id="erpTrades">{totalClosed}</span>
+              </div>
+              <div className="erp-row">
+                <span className="erp-label">Win Rate</span>
+                <span className="erp-value" id="erpWinRate">{winRate.toFixed(1)}%</span>
+              </div>
+              <div className="erp-row">
+                <span className="erp-label">DCA Presupuesto</span>
+                <span className="erp-value" id="dcaBudget">${data.dca_status.monthly_budget}</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* ── 📊 MONITOR DE OPERACIONES Y PNL (ANCHO COMPLETO) ── */}
-      <div className="dashboard-panel" style={{ width: '100%' }}>
-        <div className="panel-title">
-          <span>📊 MONITOR DE OPERACIONES Y PNL</span>
-          <span className="panel-badge" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderColor: '#10b981' }}>SIMULADO</span>
-        </div>
-        
-        {/* Tarjetas de Estadísticas Rápidas */}
-        <div className="monitor-stats-grid">
-          <div className="stat-card">
-            <div className="stat-label">PNL TOTAL</div>
-            <div className={`stat-value ${totalPnLWithFloating >= 0 ? 'positive' : 'negative'}`}>
-              ${totalPnLWithFloating.toFixed(2)} USD
-            </div>
+        {/* ── 📊 MONITOR DE OPERACIONES Y PNL (ANCHO COMPLETO) ── */}
+        <section className="panel" id="monitorPanel" style={{ gridColumn: '1 / -1', marginTop: '10px' }}>
+          <div className="panel-header">
+            <span className="panel-title"><span className="icon">📊</span> MONITOR DE OPERACIONES Y PNL</span>
+            <span className="panel-badge badge-live">SIMULADO</span>
           </div>
-          <div className="stat-card">
-            <div className="stat-label">WIN RATE</div>
-            <div className="stat-value" style={{ color: '#00d4ff' }}>
-              {winRate.toFixed(1)}%
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">PNL AGENTE (IA)</div>
-            <div className={`stat-value ${finalFuturesPnl >= 0 ? 'positive' : 'negative'}`}>
-              ${finalFuturesPnl.toFixed(2)} USD
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">PNL GRID</div>
-            <div className={`stat-value ${finalSpotPnl >= 0 ? 'positive' : 'negative'}`}>
-              ${finalSpotPnl.toFixed(2)} USD
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">ALINEACIÓN</div>
-            <div className="stat-value neutral" style={{ color: alignmentColor }}>
-              {alignmentLabel}
-            </div>
-          </div>
-        </div>
-
-        {/* Tablas Divididas */}
-        <div className="monitor-tables-layout">
           
-          {/* Columna 1: Operaciones y Grillas Activas */}
-          <div className="monitor-table-section">
-            <div className="visualizer-title">Operaciones y Grillas Activas</div>
-            <div className="monitor-table-container">
-              {Object.keys(activePositions).length === 0 && Object.keys(activeGrids).length === 0 ? (
-                <div className="grid-empty-msg">No hay posiciones ni grillas activas en este momento.</div>
-              ) : (
-                <>
-                  {/* Render Posiciones Activas */}
-                  {Object.entries(activePositions).map(([sym, pos]) => {
-                    const currPrice = data.prices[sym] || pos.entry_price;
-                    const pnl = (currPrice - pos.entry_price) * pos.size * (pos.side === 'LONG' ? 1 : -1);
-                    const pnlPercent = ((currPrice - pos.entry_price) / pos.entry_price * 100) * (pos.side === 'LONG' ? 1 : -1);
-                    const isGrid = pos.strategy === 'GRID';
-                    
-                    return (
-                      <div key={sym} className={`active-trade-card ${isGrid ? 'grid' : 'agent'}`}>
-                        <div className="card-left">
-                          <span className="strat-label strategy-agent">
-                            {pos.side === 'SHORT' ? 'IA FUTUROS' : 'IA SPOT'}
-                          </span>
-                          <span style={{ fontWeight: 700 }}>{sym.replace('USDT', '')}</span>
-                          <span className={`side-badge ${pos.side.toLowerCase()}`}>{pos.side}</span>
-                        </div>
-                        <div style={{ textAlign: 'right', fontFamily: 'monospace' }}>
-                          <div>Entrada: <b>${pos.entry_price.toLocaleString()}</b></div>
-                          <div>Precio: <b>${currPrice.toLocaleString()}</b></div>
-                          <div className={pnl >= 0 ? 'pnl positive' : 'pnl negative'} style={{ fontWeight: 700 }}>
-                            {pnl >= 0 ? '+' : ''}${pnl.toFixed(2)} ({pnlPercent >= 0 ? '+' : ''}{pnlPercent.toFixed(2)}%)
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* Render Grillas Activas */}
-                  {Object.entries(activeGrids).map(([sym, grid]) => {
-                    const placedCount = grid.levels ? grid.levels.filter(l => l.status === 'PLACED_MOCK').length : 0;
-                    const filledCount = grid.levels ? grid.levels.filter(l => l.status === 'FILLED').length : 0;
-                    const totalInv = grid.total_investment || 1000.0;
-                    const gridPnlPercent = totalInv > 0 ? (grid.pnl / totalInv) * 100 : 0.0;
-                    
-                    return (
-                      <div key={sym} className="active-trade-card grid">
-                        <div className="card-left">
-                          <span className="strat-label strategy-grid">MALLA GRID</span>
-                          <span style={{ fontWeight: 700 }}>{sym.replace('USDT', '')}</span>
-                          <span style={{ fontSize: '0.65rem', color: '#64748b' }}>
-                            {placedCount} act · {filledCount} ejec
-                          </span>
-                        </div>
-                        <div style={{ textAlign: 'right', fontFamily: 'monospace' }}>
-                          <div>Rango: <b>[{grid.lower_limit} - {grid.upper_limit}]</b></div>
-                          <div className={grid.pnl >= 0 ? 'pnl positive' : 'pnl negative'} style={{ fontWeight: 700 }}>
-                            {grid.pnl >= 0 ? '+' : ''}${grid.pnl.toFixed(2)} ({gridPnlPercent >= 0 ? '+' : ''}{gridPnlPercent.toFixed(2)}%)
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </>
-              )}
+          <div className="panel-body monitor-panel-body">
+            {/* Tarjetas de Estadísticas Rápidas */}
+            <div className="monitor-stats-grid">
+              <div className="stat-card">
+                <div className="stat-label">PNL TOTAL</div>
+                <div className={`stat-value ${totalPnLWithFloating >= 0 ? 'glow-green positive' : 'glow-red negative'}`} id="statTotalPnl">
+                  ${totalPnLWithFloating.toFixed(2)} USD
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-label">WIN RATE</div>
+                <div className="stat-value glow-cyan" id="statWinRate">
+                  {winRate.toFixed(1)}%
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-label">PNL AGENTE (IA)</div>
+                <div className={`stat-value ${finalFuturesPnl >= 0 ? 'glow-green positive' : 'glow-red negative'}`} id="statAgentPnl">
+                  ${finalFuturesPnl.toFixed(2)} USD
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-label">PNL GRID</div>
+                <div className={`stat-value ${finalSpotPnl >= 0 ? 'glow-green positive' : 'glow-red negative'}`} id="statGridPnl">
+                  ${finalSpotPnl.toFixed(2)} USD
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-label">ALINEACIÓN / COINCIDENCIAS</div>
+                <div className="stat-value" id="statCoincidences" style={{ color: alignmentColor }}>
+                  {alignmentLabel} 🟡
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Columna 2: Historial de Operaciones Cerradas */}
-          <div className="monitor-table-section">
-            <div className="visualizer-title">Historial de Operaciones Cerradas</div>
-            <div className="monitor-table-container">
-              {closedTrades.length === 0 ? (
-                <div className="grid-empty-msg">Historial de operaciones vacío. Esperando ejecuciones...</div>
-              ) : (
-                <div style={{ overflowX: 'auto' }}>
-                  <table className="grid-table">
-                    <thead>
-                      <tr>
-                        <th>Hora</th>
-                        <th>Símbolo</th>
-                        <th>Dirección</th>
-                        <th>Estrategia</th>
-                        <th>Entrada</th>
-                        <th>Salida</th>
-                        <th>Motivo</th>
-                        <th>PnL</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[...closedTrades].reverse().map((t, idx) => {
-                        const timeStr = new Date(t.timestamp * 1000).toLocaleTimeString('es-CO');
-                        const isGrid = t.strategy === 'GRID';
-                        const pnlPct = t.pnl_percent !== undefined ? t.pnl_percent : 0.0;
+            {/* Tablas Divididas */}
+            <div className="monitor-tables-layout">
+              
+              {/* Columna 1: Operaciones y Grillas Activas */}
+              <div className="monitor-table-section">
+                <div className="visualizer-title">Operaciones y Grillas Activas</div>
+                <div className="monitor-table-container" id="activeTradesContainer">
+                  {Object.keys(activePositions).length === 0 && Object.keys(activeGrids).length === 0 ? (
+                    <div className="grid-empty-msg">No hay posiciones ni grillas activas en este momento.</div>
+                  ) : (
+                    <>
+                      {/* Render Posiciones Activas */}
+                      {Object.entries(activePositions).map(([sym, pos]) => {
+                        const currPrice = data.prices[sym] || pos.entry_price;
+                        const pnl = (currPrice - pos.entry_price) * pos.size * (pos.side === 'LONG' ? 1 : -1);
+                        const pnlPercent = ((currPrice - pos.entry_price) / pos.entry_price * 100) * (pos.side === 'LONG' ? 1 : -1);
                         
                         return (
-                          <tr key={idx}>
-                            <td style={{ color: '#64748b', fontSize: '0.7rem' }}>{timeStr}</td>
-                            <td style={{ fontWeight: 700 }}>{t.symbol.replace('USDT', '')}</td>
-                            <td>
-                              <span className={`side-badge ${t.side?.toLowerCase() || 'long'}`}>
-                                {t.side || 'LONG'}
+                          <div key={sym} className="active-trade-card agent">
+                            <div className="card-left">
+                              <span className="strat-label strategy-agent">
+                                {pos.side === 'SHORT' ? 'IA FUTUROS' : 'IA SPOT'}
                               </span>
-                            </td>
-                            <td>
-                              <span className={`strat-label ${isGrid ? 'strategy-grid' : 'strategy-agent'}`}>
-                                {isGrid ? 'GRID' : 'IA AGENTE'}
-                              </span>
-                            </td>
-                            <td style={{ fontFamily: 'monospace' }}>${t.entry_price.toLocaleString()}</td>
-                            <td style={{ fontFamily: 'monospace' }}>${t.exit_price.toLocaleString()}</td>
-                            <td style={{ color: '#64748b' }}>{formatReason(t.exit_reason)}</td>
-                            <td className={t.pnl >= 0 ? 'pnl positive' : 'pnl negative'} style={{ fontWeight: 700, fontFamily: 'monospace' }}>
-                              {t.pnl >= 0 ? '+' : ''}${t.pnl.toFixed(2)}<br/>
-                              <span style={{ fontSize: '0.65rem' }}>{pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(2)}%</span>
-                            </td>
-                          </tr>
+                              <span className="symbol-badge">{sym.replace('USDT', '')}</span>
+                              <span className={`side-badge ${pos.side.toLowerCase()}`}>{pos.side}</span>
+                            </div>
+                            <div className="card-right" style={{ textAlign: 'right', fontFamily: 'monospace' }}>
+                              <div>Entrada: <span className="val">${pos.entry_price.toLocaleString()}</span></div>
+                              <div>Precio: <span className="val">${currPrice.toLocaleString()}</span></div>
+                              <div className={`pnl-val ${pnl >= 0 ? 'positive' : 'negative'}`} style={{ fontWeight: 700 }}>
+                                PnL: {pnl >= 0 ? '+' : ''}${pnl.toFixed(2)} USD ({pnlPercent >= 0 ? '+' : ''}{pnlPercent.toFixed(2)}%)
+                              </div>
+                            </div>
+                          </div>
                         );
                       })}
-                    </tbody>
-                  </table>
+
+                      {/* Render Grillas Activas */}
+                      {Object.entries(activeGrids).map(([sym, grid]) => {
+                        const placedCount = grid.levels ? grid.levels.filter(l => l.status === 'PLACED_MOCK').length : 0;
+                        const filledCount = grid.levels ? grid.levels.filter(l => l.status === 'FILLED').length : 0;
+                        const totalInv = grid.total_investment || 1000.0;
+                        const gridPnlPercent = totalInv > 0 ? (grid.pnl / totalInv) * 100 : 0.0;
+                        
+                        return (
+                          <div key={sym} className="active-trade-card grid">
+                            <div className="card-left">
+                              <span className="strat-label strategy-grid">MALLA GRID</span>
+                              <span className="symbol-badge">{sym.replace('USDT', '')}</span>
+                              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
+                                {placedCount} act · {filledCount} ejec
+                              </span>
+                            </div>
+                            <div className="card-right" style={{ textAlign: 'right', fontFamily: 'monospace' }}>
+                              <div>Rango: <span className="val">[{grid.lower_limit} - {grid.upper_limit}]</span></div>
+                              <div className={`pnl-val ${grid.pnl >= 0 ? 'positive' : 'negative'}`} style={{ fontWeight: 700 }}>
+                                PnL: {grid.pnl >= 0 ? '+' : ''}${grid.pnl.toFixed(2)} USD ({gridPnlPercent >= 0 ? '+' : ''}{gridPnlPercent.toFixed(2)}%)
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
                 </div>
-              )}
+              </div>
+
+              {/* Columna 2: Historial de Operaciones Cerradas */}
+              <div className="monitor-table-section">
+                <div className="visualizer-title">Historial de Operaciones Cerradas</div>
+                <div className="monitor-table-container" id="closedTradesContainer">
+                  {closedTrades.length === 0 ? (
+                    <div className="grid-empty-msg">Historial de operaciones vacío. Esperando ejecuciones...</div>
+                  ) : (
+                    <table className="grid-table">
+                      <thead>
+                        <tr>
+                          <th>Hora</th>
+                          <th>Símbolo</th>
+                          <th>Dirección</th>
+                          <th>Estrategia</th>
+                          <th>Entrada</th>
+                          <th>Salida</th>
+                          <th>Motivo</th>
+                          <th>PnL</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...closedTrades].reverse().map((t, idx) => {
+                          const timeStr = new Date(t.timestamp * 1000).toLocaleTimeString('es-CO');
+                          const isGrid = t.strategy === 'GRID';
+                          const pnlPct = t.pnl_percent !== undefined ? t.pnl_percent : 0.0;
+                          
+                          return (
+                            <tr key={idx}>
+                              <td style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>{timeStr}</td>
+                              <td style={{ fontWeight: 700, color: 'var(--text-bright)' }}>{t.symbol.replace('USDT', '')}</td>
+                              <td>
+                                <span className={`side-badge ${t.side?.toLowerCase() || 'long'}`}>
+                                  {t.side || 'LONG'}
+                                </span>
+                              </td>
+                              <td>
+                                <span className={`strat-label ${isGrid ? 'strategy-grid' : 'strategy-agent'}`}>
+                                  {isGrid ? 'GRID' : 'IA AGENTE'}
+                                </span>
+                              </td>
+                              <td style={{ fontFamily: 'monospace' }}>${t.entry_price.toLocaleString()}</td>
+                              <td style={{ fontFamily: 'monospace' }}>${t.exit_price.toLocaleString()}</td>
+                              <td style={{ color: 'var(--text-muted)' }}>{formatReason(t.exit_reason)}</td>
+                              <td className={t.pnl >= 0 ? 'pnl positive' : 'pnl negative'} style={{ fontWeight: 700, fontFamily: 'monospace' }}>
+                                {t.pnl >= 0 ? '+' : ''}${t.pnl.toFixed(2)}<br/>
+                                <span style={{ fontSize: '0.65rem' }}>{pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(2)}%</span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </div>
+
             </div>
           </div>
+        </section>
 
-        </div>
-      </div>
+      </main>
+
     </div>
   );
 }
