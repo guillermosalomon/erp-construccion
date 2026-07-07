@@ -4,6 +4,19 @@ const nextConfig = {
   // Turbopack config (Next.js 16 default bundler)
   turbopack: {},
   
+  async rewrites() {
+    return [
+      {
+        source: '/ia-cripto',
+        destination: 'https://ia-cripto-web.vercel.app',
+      },
+      {
+        source: '/ia-cripto/:path*',
+        destination: 'https://ia-cripto-web.vercel.app/:path*',
+      },
+    ];
+  },
+  
   // Webpack fallback for compatibility
   webpack: (config, { isServer }) => {
     config.experiments = {
