@@ -30,14 +30,13 @@ export default async function sitemap() {
 
   const landingUrls = [
     '/landing/construccion',
+    '/landing/bioconstruccion',
     '/landing/calculo-estructural-bogota',
     '/landing/diseno-arquitectonico-medellin',
     '/landing/construccion-residencial-cali',
     '/landing/diseno-estructural-pasto-narino',
-    '/landing/construccion-caribe',
     '/landing/bio-construccion-guadua-eje-cafetero',
     '/landing/diseno-arquitectonico-costa-rica',
-    '/landing/glamping-guadua-costa-rica',
     '/landing/diseno-estructural-panama',
     '/landing/diseno-arquitectonico-mexico',
   ].map((route) => ({

@@ -1,310 +1,401 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+/**
+ * Landing Internacional: Costa Rica — Luxury Architecture, Interior Design, Landscape & BIM Management
+ * Route: /landing/diseno-arquitectonico-costa-rica
+ * Basada en el sistema de diseño premium de /landing/construccion
+ */
 
-export default function DisenoArquitectonicoCostaRicaLanding() {
-  const [formData, setFormData] = useState({
-    nombre: '',
-    email: '',
-    telefono: '',
-    tipo_proyecto: 'Luxury Villa / Beach Home',
-    ubicacion: 'Costa Rica (Guanacaste / Nosara / Tamarindo / San José)',
-    mensaje: '',
-  });
+import { useState, useEffect, useRef } from 'react';
 
-  const [status, setStatus] = useState({ loading: false, success: false, error: null });
+function captureTrackingParams() {
+    if (typeof window === 'undefined') return {};
+    const params = new URLSearchParams(window.location.search);
+    return {
+        gclid: params.get('gclid') || '',
+        msclkid: params.get('msclkid') || '',
+        utm_source: params.get('utm_source') || '',
+        utm_medium: params.get('utm_medium') || '',
+        utm_campaign: params.get('utm_campaign') || '',
+    };
+}
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus({ loading: true, success: false, error: null });
+function Navbar() {
+    const [scrolled, setScrolled] = useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
-    try {
-      const res = await fetch('/api/marketing/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          fuente: 'Landing Diseño Arquitectónico Costa Rica',
-          ciudad_interes: 'Costa Rica',
-        }),
-      });
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 50);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
-      if (res.ok) {
-        setStatus({ loading: false, success: true, error: null });
-        setFormData({ nombre: '', email: '', telefono: '', tipo_proyecto: 'Luxury Villa / Beach Home', ubicacion: 'Costa Rica (Guanacaste / Nosara / Tamarindo / San José)', mensaje: '' });
-      } else {
-        throw new Error('Error registering lead');
-      }
-    } catch (err) {
-      setStatus({ loading: false, success: false, error: err.message });
+    return (
+        <nav className={`lp-navbar ${scrolled ? 'lp-navbar--scrolled' : ''}`}>
+            <div className="lp-nav-container">
+                <a href="/" className="lp-nav-logo">
+                    <img src="/icon.png" alt="Kalarti Logo" style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'contain' }} />
+                    <span className="lp-logo-text">KALARTI</span>
+                    <span className="lp-logo-tagline">Costa Rica Architecture & BIM</span>
+                </a>
+                <div className={`lp-nav-links ${mobileOpen ? 'lp-nav-links--open' : ''}`}>
+                    <a href="#servicios" onClick={() => setMobileOpen(false)}>Servicios</a>
+                    <a href="#pilares" onClick={() => setMobileOpen(false)}>Interiores & Paisajismo</a>
+                    <a href="#bim" onClick={() => setMobileOpen(false)}>BIM Management</a>
+                    <a href="#contacto" className="lp-nav-cta" onClick={() => setMobileOpen(false)}>Consultar Proyecto</a>
+                </div>
+                <button className="lp-mobile-menu" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menú">
+                    <span /><span /><span />
+                </button>
+            </div>
+        </nav>
+    );
+}
+
+function HeroSection() {
+    return (
+        <section className="lp-hero">
+            <div className="lp-hero-shapes">
+                <div className="lp-shape lp-shape-1" />
+                <div className="lp-shape lp-shape-2" />
+                <div className="lp-shape lp-shape-3" />
+            </div>
+            <div className="lp-hero-container">
+                <div className="lp-hero-content">
+                    <div className="lp-hero-badge">
+                        <span className="lp-badge-dot" />
+                        Costa Rica — Guanacaste, Nosara, Papagayo & Santa Teresa
+                    </div>
+                    <h1 className="lp-hero-title">
+                        Diseño Arquitectónico, <span className="lp-gradient-text">Interiores, Paisajismo</span> & BIM en Costa Rica
+                    </h1>
+                    <p className="lp-hero-subtitle">
+                        Creamos villas de lujo y eco-resorts que fusionan arquitectura biofílica, interiorismo de autor, paisajismo tropical integrado y gestión <strong>BIM Management en Revit</strong>. Control milimétrico de costos y coordinación interdisciplinar remota para inversionistas y desarrolladores en Costa Rica.
+                    </p>
+                    <div className="lp-hero-actions">
+                        <a href="#contacto" className="lp-btn lp-btn-primary lp-btn-lg">
+                            🌿 Iniciar Consulta de Proyecto
+                        </a>
+                        <a href="https://wa.me/573152717932?text=Hello%2C%20I%20am%20interested%20in%20architectural%20design%2C%20interiors%20or%20BIM%20services%20for%20Costa%20Rica"
+                           className="lp-btn lp-btn-whatsapp lp-btn-lg" target="_blank" rel="noopener">
+                            📱 WhatsApp Consultor Internacional
+                        </a>
+                    </div>
+                    <div className="lp-hero-trust">
+                        <div className="lp-trust-item">✅ Coordinación BIM 5D Revit</div>
+                        <div className="lp-trust-item">✅ Interiorismo & Mobiliario a Medida</div>
+                        <div className="lp-trust-item">✅ Paisajismo Biofílico Tropical</div>
+                    </div>
+                </div>
+                <div className="lp-hero-visual">
+                    <div className="lp-hero-card"><div className="lp-card-icon">🌴</div><div className="lp-card-label">Filosofía</div><div className="lp-card-value">Biofílica</div></div>
+                    <div className="lp-hero-card lp-card-2"><div className="lp-card-icon">🪑</div><div className="lp-card-label">Interiorismo</div><div className="lp-card-value">A Medida</div></div>
+                    <div className="lp-hero-card lp-card-3"><div className="lp-card-icon">🖥️</div><div className="lp-card-label">Tecnología</div><div className="lp-card-value">BIM 5D</div></div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+const SERVICES = [
+    {
+        icon: '🏡',
+        title: 'Diseño Arquitectónico de Lujo & Eco-Villas',
+        desc: 'Concepción integral de villas costeras, residencias en ladera y resorts boutique. Diseños orientados a capturar brisas marinas, sombras protectoras y vistas panorámicas hacia el océano y la selva.',
+        features: [
+            'Arquitectura bioclimática pasiva adaptada al trópico húmedo y seco',
+            'Grandes luces, aleros envolventes y ventilación cruzada',
+            'Estructuras híbridas en madera, bambú/guadua, acero y concreto',
+            'Renders fotorrealistas Twinmotion y paseos inmersivos 3D'
+        ]
+    },
+    {
+        icon: '🪑',
+        title: 'Diseño de Interiores & Acabados de Autor',
+        desc: 'Interiorismo sensorial que conecta la atmósfera natural exterior con el lujo interior. Especificación milimétrica de materiales, paletas cálidas y mobiliario a medida.',
+        features: [
+            'Despiece paramétrico en Revit para carpintería fija y cocinas gourmet',
+            'Iluminación arquitectónica escenográfica y control domótico',
+            'Materiales nobles: maderas certificadas, piedra volcánica y linos',
+            'Libros de acabados y fichas de compras internacionales'
+        ]
+    },
+    {
+        icon: '🌿',
+        title: 'Paisajismo Integrado & Arquitectura Biofílica',
+        desc: 'Diseño paisajístico que convierte el lote en una extensión viva de la casa. Piscinas infinity, terrazas escalonadas, espejos de agua y senderos ecológicos.',
+        features: [
+            'Selección de especies nativas de bajo requerimiento hídrico',
+            'Espejos de agua para enfriamiento evaporativo pasivo',
+            'Integración de taludes naturales y rocas del sitio',
+            'Transición fluida «Indoor-Outdoor» sin barreras visuales'
+        ]
+    },
+    {
+        icon: '🖥️',
+        title: 'BIM Management & Coordinación Interdisciplinaria',
+        desc: 'Liderado por el Arq. Guillermo Salomón (Esp. BIM Management). Modelado centralizado de arquitectura, estructura e ingeniería MEP para eliminar retrasos en obra.',
+        features: [
+            'Detección anticipada de colisiones (Clash Detection)',
+            'Planos de coordinación para contratistas en Costa Rica',
+            'Presupuesto 5D preciso y control de cubicaciones',
+            'Supervisión digital remota para propietarios en el extranjero'
+        ]
     }
-  };
+];
 
-  return (
-    <div className="landing-cr-page">
-      <style dangerouslySetInnerHTML={{ __html: `
-        :root {
-          --navy-900: #0f172a;
-          --navy-800: #1e293b;
-          --gold-500: #f59e0b;
-          --gold-400: #fbbf24;
-          --text-light: #f8fafc;
-          --text-muted: #94a3b8;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-          font-family: 'Inter', -apple-system, sans-serif;
-          background-color: var(--navy-900);
-          color: var(--text-light);
-        }
-
-        .lp-header {
-          padding: 20px 40px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          background: rgba(15, 23, 42, 0.95);
-          backdrop-filter: blur(10px);
-          position: fixed;
-          top: 0; left: 0; right: 0;
-          z-index: 100;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .lp-logo {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          color: white;
-          font-weight: 800;
-          font-size: 20px;
-          text-decoration: none;
-        }
-
-        .hero-landing {
-          padding: 140px 40px 80px 40px;
-          max-width: 1200px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: 1fr 440px;
-          gap: 60px;
-          align-items: center;
-        }
-
-        .hero-badge {
-          display: inline-block;
-          padding: 6px 16px;
-          background: rgba(245, 158, 11, 0.1);
-          color: var(--gold-400);
-          border-radius: 20px;
-          font-size: 14px;
-          font-weight: 600;
-          border: 1px solid rgba(245, 158, 11, 0.2);
-          margin-bottom: 20px;
-        }
-
-        .hero-h1 {
-          font-size: 44px;
-          font-weight: 800;
-          line-height: 1.15;
-          margin-bottom: 20px;
-        }
-
-        .hero-h1 span {
-          color: var(--gold-400);
-        }
-
-        .hero-desc {
-          font-size: 18px;
-          color: var(--text-muted);
-          line-height: 1.6;
-          margin-bottom: 30px;
-        }
-
-        .lead-form-card {
-          background: rgba(30, 41, 59, 0.9);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 20px;
-          padding: 32px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-
-        .form-group {
-          margin-bottom: 18px;
-        }
-
-        .form-group label {
-          display: block;
-          font-size: 13px;
-          color: var(--text-muted);
-          margin-bottom: 6px;
-          font-weight: 600;
-        }
-
-        .form-input, .form-select, .form-textarea {
-          width: 100%;
-          padding: 12px 16px;
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 8px;
-          color: white;
-          font-size: 14px;
-          outline: none;
-        }
-
-        .btn-submit-lead {
-          width: 100%;
-          background: var(--gold-500);
-          color: var(--navy-900);
-          padding: 14px;
-          border: none;
-          border-radius: 8px;
-          font-weight: 800;
-          font-size: 16px;
-          cursor: pointer;
-        }
-
-        .wa-float-btn {
-          position: fixed;
-          bottom: 24px; right: 24px;
-          background: #25d366;
-          color: white;
-          padding: 14px 24px;
-          border-radius: 30px;
-          font-weight: 700;
-          text-decoration: none;
-          box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
-          z-index: 999;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        @media (max-width: 900px) {
-          .hero-landing { grid-template-columns: 1fr; padding-top: 100px; }
-          .hero-h1 { font-size: 32px; }
-        }
-      `}} />
-
-      {/* HEADER */}
-      <header className="lp-header">
-        <Link href="/" className="lp-logo">
-          <img src="/icon.png" alt="Kalarti Logo" style={{ width: 36, height: 36, borderRadius: 8 }} />
-          KALARTI
-        </Link>
-        <a href="#cotizar" style={{ color: 'var(--gold-400)', textDecoration: 'none', fontWeight: 600 }}>
-          Request Quote ➔
-        </a>
-      </header>
-
-      {/* HERO */}
-      <section className="hero-landing">
-        <div>
-          <span className="hero-badge">🇨🇷 Costa Rica — Guanacaste, Nosara & San José</span>
-          <h1 className="hero-h1">
-            Architectural & Eco-Luxury Design for <span>High-End Investments</span> in Costa Rica
-          </h1>
-          <p className="hero-desc">
-            Bespoke tropical modernism, bamboo eco-villas, and structural compliance with the Seismic Code of Costa Rica (CSCR). Designed for foreign investors and luxury developments in Guanacaste, Nosara, Tamarindo, and Papagayo.
-          </p>
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <div style={{ background: 'rgba(255,255,255,0.04)', padding: '12px 20px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--gold-400)' }}>CSCR</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Seismic Code Compliant</div>
+function ServicesSection() {
+    return (
+        <section className="lp-services" id="servicios">
+            <div className="lp-container">
+                <div className="lp-section-header">
+                    <span className="lp-section-tag">Nuestros 4 Pilares en Costa Rica</span>
+                    <h2 className="lp-section-title">Arquitectura Exclusiva con Estándar Internacional</h2>
+                    <p className="lp-section-desc">Resolvemos cada dimensión de tu proyecto, desde la implantación paisajística hasta el último detalle de carpintería y coordinación técnica.</p>
+                </div>
+                <div className="lp-services-grid">
+                    {SERVICES.map((s, i) => (
+                        <div key={i} className="lp-service-card">
+                            <div className="lp-service-icon">{s.icon}</div>
+                            <h3>{s.title}</h3>
+                            <p>{s.desc}</p>
+                            <ul className="lp-service-features">
+                                {s.features.map((f, j) => <li key={j}>{f}</li>)}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.04)', padding: '12px 20px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--gold-400)' }}>BIM 5D</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>3D Renderings & Costing</div>
+        </section>
+    );
+}
+
+function PillarsSection() {
+    return (
+        <section className="lp-process" id="pilares" style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+            <div className="lp-container">
+                <div className="lp-section-header">
+                    <span className="lp-section-tag">Sinergia de Diseño</span>
+                    <h2 className="lp-section-title">¿Por Qué Integrar Arquitectura, Interiores y Paisajismo?</h2>
+                    <p className="lp-section-desc">En el mercado de lujo de Costa Rica, un proyecto exitoso requiere coherencia total entre la forma del edificio, sus espacios habitables y la naturaleza circundante:</p>
+                </div>
+                <div className="lp-process-grid">
+                    <div className="lp-process-step">
+                        <div className="lp-step-number">01</div>
+                        <h3>Arquitectura Sensible</h3>
+                        <p>Volúmenes que respetan la topografía, minimizan el movimiento de tierras y maximizan la ventilación natural.</p>
+                    </div>
+                    <div className="lp-process-step">
+                        <div className="lp-step-number">02</div>
+                        <h3>Interiorismo Funcional</h3>
+                        <p>Mobiliario integrado, cocinas abiertas a terrazas y texturas orgánicas diseñadas al milímetro en software 3D.</p>
+                    </div>
+                    <div className="lp-process-step">
+                        <div className="lp-step-number">03</div>
+                        <h3>Paisajismo Vivo</h3>
+                        <p>Jardines tropicales que protegen de la radiación directa, aportan privacidad y reducen la temperatura ambiente.</p>
+                    </div>
+                    <div className="lp-process-step">
+                        <div className="lp-step-number">04</div>
+                        <h3>BIM Management</h3>
+                        <p>Garantía de que lo diseñado se construirá sin errores en sitio, con cubicaciones exactas y cero sobrecostos.</p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
+        </section>
+    );
+}
 
-        {/* LEAD CAPTURE FORM */}
-        <div className="lead-form-card" id="cotizar">
-          <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px' }}>Request Architectural Proposal</h3>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-            Get in touch with Sr. Architect Guillermo Salomón for your residential or commercial project in Costa Rica.
-          </p>
-
-          {status.success ? (
-            <div style={{ background: 'rgba(37, 211, 102, 0.15)', border: '1px solid #25d366', padding: '20px', borderRadius: '12px' }}>
-              <h4 style={{ color: '#25d366', marginBottom: '8px' }}>Proposal Requested!</h4>
-              <p style={{ fontSize: '14px', color: 'white' }}>
-                We will contact you via WhatsApp or Email within 24 hours.
-              </p>
+function BIMSection() {
+    return (
+        <section className="lp-process" id="bim">
+            <div className="lp-container">
+                <div className="lp-section-header">
+                    <span className="lp-section-tag">Eficiencia & Control</span>
+                    <h2 className="lp-section-title">BIM Management: Construye sin Sorpresas a Distancia</h2>
+                    <p className="lp-section-desc">Si vives en Estados Unidos, Europa o Canadá e inviertes en Costa Rica, la metodología BIM es tu mayor garantía de transparencia:</p>
+                </div>
+                <div className="lp-services-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
+                    <div className="lp-service-card">
+                        <div className="lp-service-icon">🔍</div>
+                        <h3>Gemelo Digital 3D</h3>
+                        <p>Visualiza cada tubería, viga y mueble antes de autorizar pagos o contratar cuadrillas de obra.</p>
+                    </div>
+                    <div className="lp-service-card">
+                        <div className="lp-service-icon">💰</div>
+                        <h3>Presupuesto 5D Confiable</h3>
+                        <p>Cantidades automáticas vinculadas al modelo que eliminan los habituales cobros extras por imprevistos.</p>
+                    </div>
+                    <div className="lp-service-card">
+                        <div className="lp-service-icon">⚙️</div>
+                        <h3>Coordinación MEP</h3>
+                        <p>Integración de redes de aire acondicionado, pluviales y bombeo de piscinas sin perforar vigas.</p>
+                    </div>
+                    <div className="lp-service-card">
+                        <div className="lp-service-icon">🌐</div>
+                        <h3>Gestión Remota</h3>
+                        <p>Revisiones semanales en línea mediante modelos interactivos accesibles desde tu tablet o navegador.</p>
+                    </div>
+                </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  className="form-input"
-                  placeholder="e.g. Michael Smith"
-                  value={formData.nombre}
-                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                />
-              </div>
+        </section>
+    );
+}
 
-              <div className="form-group">
-                <label>Phone / WhatsApp *</label>
-                <input
-                  type="tel"
-                  required
-                  className="form-input"
-                  placeholder="+1 (555) 000-0000"
-                  value={formData.telefono}
-                  onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                />
-              </div>
+function ContactSection() {
+    const [formData, setFormData] = useState({ nombre: '', telefono: '', email: '', servicio: 'villa_lujo_cr', ubicacion: 'Guanacaste / Nosara', mensaje: '' });
+    const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-              <div className="form-group">
-                <label>Project Type</label>
-                <select
-                  className="form-select"
-                  value={formData.tipo_proyecto}
-                  onChange={(e) => setFormData({ ...formData, tipo_proyecto: e.target.value })}
-                >
-                  <option value="Luxury Villa / Beach Home">Luxury Villa / Beach Home</option>
-                  <option value="Eco-Resort / Glamping Project">Eco-Resort / Bamboo Glamping</option>
-                  <option value="Boutique Hotel / Commercial">Boutique Hotel / Commercial</option>
-                  <option value="Master Plan Development">Master Plan Development</option>
-                </select>
-              </div>
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        const tracking = captureTrackingParams();
+        const payload = {
+            ...formData,
+            ...tracking,
+            landing_page: window.location.pathname,
+            fuente: 'Landing Internacional Costa Rica (Arquitectura, Interiores & BIM)'
+        };
 
-              <div className="form-group">
-                <label>Project Details / Location</label>
-                <textarea
-                  className="form-textarea"
-                  rows="3"
-                  placeholder="Location (e.g., Nosara, Tamarindo) & estimated size in m² or sq ft..."
-                  value={formData.mensaje}
-                  onChange={(e) => setFormData({ ...formData, mensaje: e.target.value })}
-                />
-              </div>
+        try {
+            await fetch('/api/marketing/lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const msg = encodeURIComponent(`Hello / Hola, soy ${formData.nombre}. I am interested in: ${formData.servicio} in ${formData.ubicacion}. Tel: ${formData.telefono}. ${formData.mensaje || ''}`);
+            window.open(`https://wa.me/573152717932?text=${msg}`, '_blank');
+            setSubmitted(true);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-              <button type="submit" className="btn-submit-lead" disabled={status.loading}>
-                {status.loading ? 'Sending...' : 'Request Proposal ➔'}
-              </button>
-            </form>
-          )}
-        </div>
-      </section>
+    const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-      {/* WHATSAPP FLOAT BUTTON */}
-      <a 
-        href="https://wa.me/573152717932?text=Hello,%20I%20would%20like%20to%20request%20an%20architectural%20design%20quote%20for%20a%20project%20in%20Costa%20Rica" 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        className="wa-float-btn"
-      >
-        <span>💬</span>
-        <span>WhatsApp Direct</span>
-      </a>
-    </div>
-  );
+    return (
+        <section className="lp-contact" id="contacto">
+            <div className="lp-container">
+                <div className="lp-contact-grid">
+                    <div className="lp-contact-info">
+                        <span className="lp-section-tag">Costa Rica Projects</span>
+                        <h2 className="lp-section-title" style={{ textAlign: 'left' }}>Hablemos de Tu Proyecto</h2>
+                        <p>Cuéntanos tu visión, la ubicación de tu lote y tus expectativas. Nuestro director de arquitectura y BIM se pondrá en contacto contigo para agendar una videollamada exploratoria.</p>
+                        <div className="lp-contact-details">
+                            <div className="lp-contact-item"><span>📍</span><div><strong>Zonas de Cobertura</strong><p>Guanacaste, Nosara, Papagayo, Santa Teresa, Tamarindo y Valle Central</p></div></div>
+                            <div className="lp-contact-item"><span>📱</span><div><strong>WhatsApp Internacional</strong><p>+57 315 271 7932</p></div></div>
+                            <div className="lp-contact-item"><span>✉️</span><div><strong>Email</strong><p>consultoria@kalarti.com</p></div></div>
+                        </div>
+                    </div>
+                    <div className="lp-form-wrapper">
+                        {!submitted ? (
+                            <form className="lp-lead-form" onSubmit={handleSubmit}>
+                                <h3>Solicitar Asesoría de Diseño</h3>
+                                <div className="lp-form-row">
+                                    <div className="lp-form-group">
+                                        <label htmlFor="nombre">Nombre Completo / Full Name *</label>
+                                        <input type="text" id="nombre" name="nombre" required placeholder="Your name" value={formData.nombre} onChange={handleChange} />
+                                    </div>
+                                    <div className="lp-form-group">
+                                        <label htmlFor="telefono">WhatsApp / Phone *</label>
+                                        <input type="tel" id="telefono" name="telefono" required placeholder="+1 (000) 000-0000 / +506..." value={formData.telefono} onChange={handleChange} />
+                                    </div>
+                                </div>
+                                <div className="lp-form-group">
+                                    <label htmlFor="email">Email *</label>
+                                    <input type="email" id="email" name="email" required placeholder="your@email.com" value={formData.email} onChange={handleChange} />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label htmlFor="servicio">Servicio de Interés / Main Service *</label>
+                                    <select id="servicio" name="servicio" required value={formData.servicio} onChange={handleChange}>
+                                        <option value="villa_lujo_cr">Diseño Arquitectónico de Villa de Lujo / Beach House</option>
+                                        <option value="interiorismo_paisajismo">Diseño de Interiores & Paisajismo Integral</option>
+                                        <option value="eco_resort_glamping">Boutique Eco-Resort / Glamping de Lujo</option>
+                                        <option value="bim_management_revit">Implementación BIM Management & Coordinación 5D</option>
+                                        <option value="paquete_completo">Paquete Integral (Arquitectura + Interiores + Paisajismo + BIM)</option>
+                                    </select>
+                                </div>
+                                <div className="lp-form-group">
+                                    <label htmlFor="ubicacion">Ubicación del Lote / Location</label>
+                                    <input type="text" id="ubicacion" name="ubicacion" placeholder="Nosara, Las Catalinas, Santa Teresa, Papagayo..." value={formData.ubicacion} onChange={handleChange} />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label htmlFor="mensaje">Breve Descripción / Project Details</label>
+                                    <textarea id="mensaje" name="mensaje" rows="3" placeholder="Área aproximada, topografía, cronograma estimado..." value={formData.mensaje} onChange={handleChange} />
+                                </div>
+                                <button type="submit" className="lp-btn lp-btn-primary lp-btn-lg lp-btn-full" disabled={loading}>
+                                    {loading ? 'Enviando...' : 'Solicitar Asesoría de Diseño ➔'}
+                                </button>
+                                <p className="lp-form-disclaimer">Confidencialidad garantizada. Respondemos en menos de 24 horas.</p>
+                            </form>
+                        ) : (
+                            <div className="lp-form-success">
+                                <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
+                                <h3>¡Gracias por tu mensaje!</h3>
+                                <p>Un arquitecto especialista en proyectos para Costa Rica se comunicará contigo vía WhatsApp.</p>
+                                <a href="https://wa.me/573152717932" className="lp-btn lp-btn-whatsapp" target="_blank" rel="noopener">
+                                    Iniciar Conversación por WhatsApp
+                                </a>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function Footer() {
+    return (
+        <footer className="lp-footer">
+            <div className="lp-container">
+                <div className="lp-footer-content">
+                    <div className="lp-footer-brand">
+                        <div className="lp-nav-logo">
+                            <img src="/icon.png" alt="Kalarti Logo" style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'contain' }} />
+                            <span className="lp-logo-text" style={{ color: '#fff' }}>KALARTI</span>
+                        </div>
+                        <p>Constructores y Consultores S.A.S. — División Internacional</p>
+                        <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Costa Rica • Luxury Architecture, Interiors, Landscape & BIM Management</p>
+                    </div>
+                    <div className="lp-footer-links">
+                        <h4>Servicios</h4>
+                        <a href="#servicios">Diseño Arquitectónico</a>
+                        <a href="#servicios">Diseño de Interiores</a>
+                        <a href="#servicios">Paisajismo Integrado</a>
+                        <a href="#bim">BIM Management 5D</a>
+                    </div>
+                    <div className="lp-footer-links">
+                        <h4>Contacto</h4>
+                        <a href="https://wa.me/573152717932">+57 315 271 7932</a>
+                        <a href="mailto:consultoria@kalarti.com">consultoria@kalarti.com</a>
+                        <a href="https://kalarti.com" target="_blank" rel="noopener">www.kalarti.com</a>
+                    </div>
+                </div>
+                <div className="lp-footer-bottom">
+                    <p>© 2026 KALARTI Constructores y Consultores S.A.S. Proyectos Costa Rica.</p>
+                </div>
+            </div>
+        </footer>
+    );
+}
+
+export default function LandingCostaRica() {
+    return (
+        <>
+            <link rel="stylesheet" href="/landing-construccion.css" />
+            <Navbar />
+            <HeroSection />
+            <ServicesSection />
+            <PillarsSection />
+            <BIMSection />
+            <ContactSection />
+            <Footer />
+            <a href="https://wa.me/573152717932?text=Hello%2C%20I%20am%20interested%20in%20architecture%20and%20BIM%20services%20for%20Costa%20Rica"
+               className="lp-whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </a>
+        </>
+    );
 }
