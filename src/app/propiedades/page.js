@@ -162,11 +162,11 @@ export default function PropiedadesMarketplace() {
             target="_blank" 
             rel="noopener noreferrer"
             style={{ 
-              background: '#22c55e', color: 'white', padding: '8px 14px', borderRadius: '8px', 
-              textDecoration: 'none', fontWeight: '700', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' 
+              background: '#22c55e', color: 'white', padding: '7px 13px', borderRadius: '8px', 
+              textDecoration: 'none', fontWeight: '700', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' 
             }}
           >
-            WhatsApp Ana
+            WhatsApp
           </a>
         </div>
       </nav>
