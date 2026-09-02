@@ -1,0 +1,106 @@
+{
+  "articles": [
+    {
+      "slug": "vivienda-campestre-lujo-ladera-buga-house",
+      "title": "Diseño de Viviendas Campestres de Lujo en Ladera: Caso Buga House",
+      "author": "Guillermo J. Salomón Solarte",
+      "authorTitle": "Arquitecto — Esp. BIM Management KALARTI",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "arquitectonico",
+      "tags": ["vivienda campestre", "Buga House", "diseño en ladera", "BIM Revit", "arquitectura de lujo"],
+      "excerpt": "Caso de estudio de Buga House (230 m² en Buga, Valle del Cauca): diseño arquitectónico campestre de lujo en ladera, coordinación BIM en Revit MEP y renders fotorrealistas.",
+      "date": "2026-08-24",
+      "readTime": "11 min",
+      "image": "/blog/images/buga-house.webp",
+      "hub": true,
+      "relatedSlugs": [
+        "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera",
+        "pieles-edificios-remodelacion-fachadas-paisajismo"
+      ],
+      "faq": [
+        {
+          "question": "¿Qué retos implica construir una vivienda campestre en terreno inclinado o ladera?",
+          "answer": "Requiere un estudio geotécnico riguroso, cimentaciones escalonadas o pilotadas, muros de contención y un diseño arquitectónico coordinado en BIM que aproveche los desniveles."
+        }
+      ]
+    },
+    {
+      "slug": "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera",
+      "title": "Casas Alpinas en Guadua: Fachada Convencional de Ladrillo e Interior Vestido en Guadua",
+      "author": "Guillermo J. Salomón Solarte",
+      "authorTitle": "Arquitecto — Esp. BIM Management & Bio-Construcción",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "bio-construccion",
+      "tags": ["casa alpina guadua", "arquitectura híbrida", "ladrillo a la vista", "esterilla guadua", "Casa Cabrera"],
+      "excerpt": "Caso de estudio de la Casa Cabrera (150 m² en Cabrera, Nariño): un diseño alpino doble que combina fachada urbana en ladrillo vista con estructura e interiorismos en Guadua Angustifolia.",
+      "date": "2026-08-23",
+      "readTime": "10 min",
+      "image": "/blog/images/casa-cabrera.webp",
+      "hub": true,
+      "relatedSlugs": [
+        "vivienda-campestre-lujo-ladera-buga-house",
+        "bio-construccion-guadua-colombia-guia-completa"
+      ],
+      "faq": [
+        {
+          "question": "¿Qué ventajas tiene combinar ladrillo exterior con guadua interior?",
+          "answer": "El ladrillo exterior protege la estructura del clima y la lluvia sin necesidad de mantenimientos constantes, mientras que la guadua e interior en esterilla aportan calidez, aislamiento térmico y comportamiento sismo-resistente."
+        }
+      ]
+    },
+    {
+      "slug": "pieles-edificios-remodelacion-fachadas-paisajismo",
+      "title": "Pieles de Edificios y Remodelación de Fachadas: Transformación e Integración Paisajística",
+      "author": "Guillermo J. Salomón Solarte",
+      "authorTitle": "Arquitecto — Esp. BIM Management & Diseño de Envolventes",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "arquitectonico",
+      "tags": ["pieles de edificios", "remodelación de fachadas", "paisajismo", "envolventes bioclimáticas", "proyecto SOMI"],
+      "excerpt": "Descubre cómo reinterpretar fachadas existentes utilizando segundas pieles protectoras, contraste de materiales y vegetación integrada (Casos SOMI y Urbano Hostal).",
+      "date": "2026-08-21",
+      "readTime": "10 min",
+      "image": "/blog/images/somi-fachada.webp",
+      "hub": true,
+      "relatedSlugs": [
+        "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera",
+        "diseno-interiores-tendencias-eclecticismo-armonico"
+      ]
+    },
+    {
+      "slug": "nsr-10-titulo-e-diseno-sismo-resistente-guadua",
+      "title": "NSR-10 Título E: Diseño Sismo-Resistente en Guadua y Bahareque Encementado",
+      "author": "Ing. Sandra del Pilar Paz Jojoa & Arq. Guillermo Salomón",
+      "authorTitle": "Esp. Estructural & Esp. BIM Management",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "estructural",
+      "tags": ["NSR-10 Título E", "sismo-resistente", "guadua angustifolia", "bahareque encementado", "memorias de cálculo"],
+      "excerpt": "Guía normativa para el diseño estructural sismo-resistente de edificaciones en Guadua Angustifolia Kunth bajo el estándar colombiano NSR-10 por la Ing. Sandra Paz (Esp. Estructural).",
+      "date": "2026-08-20",
+      "readTime": "11 min",
+      "image": "/blog/images/cabrera-house-2.webp",
+      "hub": true,
+      "relatedSlugs": [
+        "bio-construccion-guadua-colombia-guia-completa",
+        "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera"
+      ]
+    },
+    {
+      "slug": "bio-construccion-guadua-colombia-guia-completa",
+      "title": "Bio-Construcción en Guadua y Materiales Naturales: Guía Completa de Ingeniería y Diseño Sostenible",
+      "author": "Guillermo J. Salomón Solarte",
+      "authorTitle": "Arquitecto — Esp. Bio-Construcción en Guadua & SENA",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "bio-construccion",
+      "tags": ["guadua", "bio-construccion", "arquitectura sostenible", "bambú", "sismo-resistente"],
+      "excerpt": "Descubre las propiedades de la Guadua Angustifolia Kunth como acero vegetal, técnicas de inmunización, uniones estructurales y proyectos como Pajaca en África.",
+      "date": "2026-08-15",
+      "readTime": "12 min",
+      "image": "/blog/images/cabrera-house-2.webp",
+      "hub": true,
+      "relatedSlugs": [
+        "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera",
+        "nsr-10-titulo-e-diseno-sismo-resistente-guadua"
+      ]
+    }
+  ]
+}

@@ -308,6 +308,8 @@ export default function KalartiHub() {
         </Link>
         <div className="nav-links">
           <a href="#ecosistema">Ecosistema</a>
+          <Link href="/blog">Blog Técnico</Link>
+          <Link href="/blog/categoria/bio-construccion">Bio-Construcción 🌿</Link>
           <Link href="/landing/construccion">Servicios</Link>
           <Link href="/propiedades">Inmuebles</Link>
           <Link href="/marketplace">Marketplace B2B</Link>
@@ -331,8 +333,8 @@ export default function KalartiHub() {
               <Link href="/erp" className="btn-primary">
                 Ingresar al ERP / Marketplace ➔
               </Link>
-              <Link href="/landing/construccion" className="btn-secondary">
-                Ver Servicios de Construcción
+              <Link href="/blog" className="btn-secondary">
+                Explorar Blog Técnico & Bio-Construcción
               </Link>
             </div>
           </div>
@@ -366,6 +368,18 @@ export default function KalartiHub() {
           </div>
           
           <div className="grid-cards">
+            {/* Blog Técnico & Bio-Construcción */}
+            <div className="card">
+              <div className="card-icon">📖</div>
+              <h3 className="card-title">Blog Técnico & Bio-Construcción</h3>
+              <p className="card-desc">
+                Guías de cálculo sismo-resistente NSR-10, estructuras en Guadua Angustifolia, diseño de interiores y tendencias BIM por Arq. Guillermo Salomón.
+              </p>
+              <Link href="/blog" className="card-link">
+                Leer Blog ➔
+              </Link>
+            </div>
+
             {/* Servicios */}
             <div className="card">
               <div className="card-icon">🏗️</div>

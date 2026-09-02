@@ -5,60 +5,35 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth';
 import { useStore } from '@/store/StoreContext';
 
-// Mock data en caso de que la tabla aún no esté creada en Supabase
-const mockInmuebles = [
-  {
-    id: '11111111-1111-4111-a111-111111111111',
-    titulo: 'Casa Moderna de Lujo',
-    descripcion: 'Hermosa casa moderna con piscina y acabados de lujo. Excelente iluminación y ubicación.',
-    precio: 850000000,
-    moneda: 'COP',
-    tipo: 'Casa',
-    estado: 'DISPONIBLE',
-    operacion: 'VENTA',
-    area_terreno: 300,
-    area_construida: 250,
-    habitaciones: 4,
-    banos: 5,
-    parqueaderos: 2,
-    direccion: 'Condominio La Campiña, Lote 12',
-    ciudad: 'Cali',
-    departamento: 'Valle del Cauca',
-    portada_url: '/render_casa_moderna_1779125189945.png',
-    amenidades: ['Piscina', 'Terraza', 'Jardín', 'Seguridad 24/7'],
-    propietario_nombre: 'Carlos Giraldo',
-    propietario_telefono: '+57 300 123 4567',
-    comision_pct: 3.0,
-    leads_count: 5,
-    user_email: 'agente1@kalarti.com',
-    created_at: new Date().toISOString()
-  },
-  {
-    id: '22222222-2222-4222-a222-222222222222',
-    titulo: 'Apartamento Penthouse Centro',
-    descripcion: 'Penthouse con vista 360 a la ciudad, espacios amplios y diseño minimalista.',
-    precio: 620000000,
-    moneda: 'COP',
-    tipo: 'Apartamento',
-    estado: 'DISPONIBLE',
-    operacion: 'VENTA',
-    area_construida: 120,
-    habitaciones: 3,
-    banos: 3,
-    parqueaderos: 1,
-    direccion: 'Av. El Río, Edificio Vista, Apt 1001',
-    ciudad: 'Medellín',
-    departamento: 'Antioquia',
-    portada_url: '/render_apartamento_interior_1779125208355.png',
-    amenidades: ['Balcón', 'Gimnasio', 'Coworking'],
-    propietario_nombre: 'Inversiones Vista S.A.S',
-    propietario_telefono: '+57 311 987 6543',
-    comision_pct: 2.5,
-    leads_count: 12,
-    user_email: 'agente2@kalarti.com',
-    created_at: new Date().toISOString()
-  }
-];
+import { inmuebles as officialInmuebles } from '@/data/inmuebles';
+
+// Formateo de inmuebles para la vista administrativa del ERP
+const mockInmuebles = officialInmuebles.map((i, index) => ({
+  id: i.id || `real-inmueble-${index + 1}`,
+  titulo: i.titulo,
+  descripcion: i.descripcion_corta,
+  precio: i.precio,
+  moneda: i.moneda || 'COP',
+  tipo: i.tipo,
+  estado: i.estado || 'DISPONIBLE',
+  operacion: i.operacion || 'VENTA',
+  area_terreno: i.area_terreno || 0,
+  area_construida: i.area_construida || 0,
+  habitaciones: i.habitaciones || 0,
+  banos: i.banos || 0,
+  parqueaderos: i.parqueaderos || 0,
+  direccion: i.direccion,
+  ciudad: i.ciudad,
+  departamento: i.departamento,
+  portada_url: i.portada_url,
+  amenidades: i.amenidades || [],
+  propietario_nombre: 'Comercial Kalarti',
+  propietario_telefono: '+57 317 772 5056',
+  comision_pct: 3.0,
+  leads_count: 0,
+  user_email: 'ventas@kalarti.com',
+  created_at: new Date().toISOString()
+}));
 
 const generateId = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -97,16 +72,18 @@ export default function InmueblesView() {
         
       if (error) throw error;
       
-      const formatted = data?.map(d => ({
-        ...d,
-        user_email: 'Agente / Administrador',
-        leads_count: 0
-      })) || [];
+      const formatted = data && data.length > 0
+        ? data.map(d => ({
+            ...d,
+            user_email: 'Agente / Administrador',
+            leads_count: 0
+          }))
+        : mockInmuebles;
       
       dispatch({ type: 'SET_INMUEBLES', payload: formatted });
     } catch (err) {
-      console.error('Error fetching inmuebles:', err);
-      dispatch({ type: 'SET_INMUEBLES', payload: [] });
+      console.warn('Using official real properties in ERP:', err.message);
+      dispatch({ type: 'SET_INMUEBLES', payload: mockInmuebles });
     } finally {
       setLoading(false);
     }

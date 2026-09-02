@@ -483,7 +483,7 @@ export default function IACriptoPage() {
                       borderRadius: '4px',
                       fontSize: '0.75rem',
                       display: 'flex',
-                      justify-content: space-between
+                      justifyContent: 'space-between'
                     }}>
                       <span><b>{w.symbol}</b> {isBuy ? 'COMPRA' : 'VENTA'}</span>
                       <span style={{ fontFamily: 'monospace', fontWeight: '700' }}>
