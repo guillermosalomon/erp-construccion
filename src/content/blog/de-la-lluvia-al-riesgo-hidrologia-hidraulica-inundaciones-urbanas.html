@@ -1,0 +1,83 @@
+<article class="clean-article-content">
+  <p class="lead" style="font-size: 19px; font-weight: 500; color: #1e293b; line-height: 1.75; margin-bottom: 28px;">
+    Caminamos por las calles de nuestras ciudades sin pensar demasiado en el agua hasta que cae una tormenta extraordinaria. En ese instante, el asfalto, los sumideros y los colectores se ven enfrentados a una de las fuerzas físicas más dinámicas de la naturaleza. Comprender cómo la lluvia se transforma en escorrentía superficial y cómo la hidráulica computacional descifra el caos de las crecidas es la clave para diseñar ciudades resilientes que salven vidas y patrimonio.
+  </p>
+
+  <h2>1. El "Truco" del Bloque Alterno: Cómo las Tormentas de Diseño Agotan la Infiltración</h2>
+  <p>
+    Cuando los ingenieros dimensionan un puente, un colector pluvial o un canal de drenaje, no asumen lluvias teóricas de intensidad constante o uniforme. Proyectar una infraestructura con un modelo plano subestimaría drásticamente las crecidas reales, poniendo en grave peligro a la población. Para evaluar el escenario hidrológico más crítico, se utiliza el <strong>Método del Bloque Alterno</strong>.
+  </p>
+  <p>
+    Este método organiza la tormenta de diseño situando el bloque de mayor intensidad exactamente en el centro de su duración (comúnmente al 50% del intervalo total). Alrededor de este pico central, los bloques de lluvia menores se reordenan de forma descendente y alterna a la izquierda y a la derecha. El objetivo físico es implacable: agotar anticipadamente la capacidad de infiltración del terreno con la lluvia preliminar, de modo que cuando caiga el aguacero más severo, casi el 100% del agua se transforme en caudal punta instantáneo.
+  </p>
+
+  <figure>
+    <img src="/blog/images/hidrologia-bloque-alterno.jpg" alt="Método del Bloque Alterno y Saturación Previa del Suelo" />
+    <figcaption>
+      Esquema del Bloque Alterno: al colocar el bloque de lluvia más intenso en la mitad de la tormenta, la capacidad de infiltración del suelo se agota previamente, maximizando el caudal punta de la crecida.
+    </figcaption>
+  </figure>
+
+  <h2>2. La Física del Agua en Movimiento: ¿Por qué un Río Lento "Siente" los Obstáculos Aguas Abajo?</h2>
+  <p>
+    En hidráulica de canales abiertos, el comportamiento del agua está gobernado por el <strong>Número de Froude (Fr)</strong>, un parámetro adimensional que relaciona las fuerzas de inercia con las fuerzas gravitacionales:
+  </p>
+  <ul>
+    <li><strong>Régimen Subcrítico o Lento (Fr &lt; 1):</strong> La velocidad media del agua es menor que la celeridad de las ondas gravitacionales superficiales (<code>v &lt; √(g · y)</code>). Esto significa que las ondas de perturbación viajan contra corriente hacia aguas arriba. Si hay un puente mal diseñado, una estrechez o una presa aguas abajo, el río lo "siente" antes y eleva sus niveles aguas arriba provocando desbordamientos.</li>
+    <li><strong>Régimen Supercrítico o Rápido (Fr &gt; 1):</strong> La velocidad del flujo supera la velocidad de propagación de las ondas. Las perturbaciones no pueden viajar hacia atrás; el flujo es torrencial e inestable hasta que disipa energía en un resalto hidráulico.</li>
+  </ul>
+
+  <figure>
+    <img src="/blog/images/hidrologia-froude-regimen.jpg" alt="Número de Froude y Física del Régimen Subcrítico vs Supercrítico" />
+    <figcaption>
+      Diferenciación hidrodinámica según el Número de Froude: en régimen subcrítico (Fr &lt; 1), las ondas de perturbación viajan contra corriente, condicionando los niveles aguas arriba.
+    </figcaption>
+  </figure>
+
+  <h2>3. El Dilema Circular de la Profundidad: La Ecuación de Manning y el Cálculo Iterativo</h2>
+  <p>
+    Calcular el calado o profundidad de agua (y) en un río o colector pluvial parece sencillo, pero encierra un reto matemático circular: para conocer la velocidad del agua con la <strong>fórmula de Manning</strong> necesitamos el Radio Hidráulico (R = Área / Perímetro mojado), pero para conocer el Radio Hidráulico necesitamos conocer de antemano el calado (y).
+  </p>
+  <p>
+    Por ello, el cálculo no es directo sino iterativo: se asume un calado preliminar, se evalúa la sección hidráulica resultante, se verifica la convergencia energética y se ajusta sucesivamente hasta que el error sea infinitesimal. Hoy en día, los motores de cálculo resuelven estas iteraciones en milisegundos en millones de celdas digitales.
+  </p>
+
+  <h2>4. Del 1D al 2D: Cómo las Mallas Digitales Complejas Capturan el Caos Urbano</h2>
+  <p>
+    En las calles de una ciudad, el agua no fluye en una sola dimensión. Cuando un canal se desborda, el flujo se bifurca en esquinas, se estanca contra fachadas, acelera por pendientes viales y colapsa pasos deprimidos.
+  </p>
+  <p>
+    Las herramientas de modelación bidimensional como <strong>Iber</strong> y <strong>HEC-RAS 2D</strong> resuelven las ecuaciones completas de Saint-Venant en 2D sobre mallas no estructuradas de volúmenes finitos. Los edificios se recortan como polígonos impermeables y las aceras se modelan con líneas de rotura (breaklines), revelando con exactitud la velocidad del agua y el tirante hidráulico calle por calle.
+  </p>
+
+  <figure>
+    <img src="/blog/images/hidrologia-malla-2d-urbana.jpg" alt="Mallas Digitales 2D en Entornos Urbanos Iber y HEC-RAS 2D" />
+    <figcaption>
+      Simulación hidrodinámica 2D urbana: discretización mediante mallas de volúmenes finitos y líneas de rotura para capturar la propagación de la inundación a escala de calle.
+    </figcaption>
+  </figure>
+
+  <h2>5. La Mejor Defensa Contra una Inundación No Es un Muro: Es la Ordenación del Territorio</h2>
+  <p>
+    Durante el siglo XX, la ingeniería tradicional intentó "domar" los ríos construyendo muros de contención y dragando cauces. Sin embargo, la experiencia mundial ha demostrado que los diques generan una falsa sensación de seguridad: cuando una crecida extraordinaria supera o rompe el dique, las consecuencias sobre las viviendas construidas detrás son catastróficas.
+  </p>
+  <p>
+    La moderna gestión del riesgo promovida por el Marco de Sendai y la CEPAL se enfoca en la <strong>fórmula del riesgo</strong>:
+  </p>
+  <div class="clean-callout">
+    <h4>Fórmula Integral del Riesgo de Desastre</h4>
+    <p style="font-size: 17px; font-weight: 700; color: #0f172a; margin: 6px 0;">
+      Riesgo = f (Amenaza, Exposición, Vulnerabilidad)
+    </p>
+    <p>
+      No podemos evitar que caiga una tormenta extrema (Amenaza), pero sí podemos reducir a cero la Exposición respetando la llanura de inundación del río, delimitando zonas de flujo preferente e implementando Sistemas de Drenaje Urbano Sostenible (SUDS) que retengan el agua en origen.
+    </p>
+  </div>
+
+  <figure>
+    <img src="/blog/images/hidrologia-muros-vs-territorio.jpg" alt="Muros de Contención vs Ordenación Territorial y Enfoque Sendai" />
+    <figcaption>
+      Gestión del riesgo de inundación: la fragilidad de depender exclusivamente de diques frente al beneficio de la ordenación territorial y el respeto a la llanura de inundación.
+    </figcaption>
+  </figure>
+</article>

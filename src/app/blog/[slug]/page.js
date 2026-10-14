@@ -83,17 +83,13 @@ export default async function ArticlePage({ params }) {
     })),
   } : null;
 
-  // Find related articles
-  const relatedArticles = metadata.articles.filter((a) => 
-    a.slug !== article.slug && (article.relatedSlugs || []).includes(a.slug)
-  );
-
   return (
     <div className="clean-article-view">
       <style dangerouslySetInnerHTML={{ __html: `
         .clean-article-container {
-          max-width: 860px;
+          max-width: 880px;
           margin: 0 auto;
+          padding: 0 16px;
         }
 
         .clean-breadcrumbs {
@@ -118,10 +114,10 @@ export default async function ArticlePage({ params }) {
 
         .clean-category-badge {
           display: inline-block;
-          background: var(--bg-subtle);
-          color: var(--primary-blue);
-          border: 1px solid var(--border-color);
-          padding: 4px 12px;
+          background: #eff6ff;
+          color: #2563eb;
+          border: 1px solid #dbeafe;
+          padding: 4px 14px;
           border-radius: 16px;
           font-size: 12px;
           font-weight: 700;
@@ -133,7 +129,7 @@ export default async function ArticlePage({ params }) {
         .clean-article-h1 {
           font-size: 38px;
           font-weight: 800;
-          line-height: 1.2;
+          line-height: 1.25;
           letter-spacing: -0.8px;
           color: var(--primary-navy);
           margin-bottom: 20px;
@@ -149,33 +145,119 @@ export default async function ArticlePage({ params }) {
         }
 
         .clean-author-avatar-lg {
-          width: 48px;
-          height: 48px;
+          width: 50px;
+          height: 50px;
           border-radius: 50%;
-          background: var(--primary-gold);
-          color: var(--primary-navy);
+          background: #f1f5f9;
+          border: 2px solid #d4a843;
+          color: #1e3a8a;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 800;
-          font-size: 18px;
+          font-size: 19px;
         }
 
         .clean-hero-img-wrap {
           border-radius: 16px;
           overflow: hidden;
-          margin-bottom: 40px;
+          margin-bottom: 36px;
           background: var(--bg-subtle);
-          max-height: 480px;
+          max-height: 500px;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
 
         .clean-hero-img-wrap img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          display: block;
         }
 
-        /* Article Typography */
+        /* PODCAST & AUDIO PLAYER */
+        .clean-podcast-card {
+          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+          border-radius: 16px;
+          padding: 24px 28px;
+          margin-bottom: 36px;
+          color: #ffffff;
+          box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+        }
+
+        .clean-podcast-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: rgba(212, 168, 67, 0.2);
+          color: #d4a843;
+          border: 1px solid rgba(212, 168, 67, 0.4);
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 700;
+          margin-bottom: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .clean-podcast-title {
+          font-size: 19px;
+          font-weight: 700;
+          color: #ffffff;
+          margin-bottom: 6px;
+        }
+
+        .clean-podcast-desc {
+          font-size: 14px;
+          color: #cbd5e1;
+          margin-bottom: 18px;
+        }
+
+        .clean-audio-element {
+          width: 100%;
+          border-radius: 8px;
+          outline: none;
+        }
+
+        /* VIDEO PLAYER */
+        .clean-video-card {
+          background: #0f172a;
+          border-radius: 16px;
+          overflow: hidden;
+          margin-bottom: 36px;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+
+        .clean-video-header {
+          padding: 16px 24px;
+          background: #1e293b;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .clean-video-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          color: #d4a843;
+          font-size: 13px;
+          font-weight: 700;
+        }
+
+        .clean-video-wrap {
+          position: relative;
+          width: 100%;
+          background: #000;
+        }
+
+        .clean-video-element {
+          width: 100%;
+          display: block;
+          max-height: 520px;
+        }
+
+        /* ARTICLE TYPOGRAPHY */
         .clean-article-body {
           font-size: 17px;
           line-height: 1.8;
@@ -186,7 +268,7 @@ export default async function ArticlePage({ params }) {
           font-size: 26px;
           font-weight: 800;
           color: var(--primary-navy);
-          margin: 40px 0 16px 0;
+          margin: 44px 0 18px 0;
           letter-spacing: -0.4px;
         }
 
@@ -194,7 +276,7 @@ export default async function ArticlePage({ params }) {
           font-size: 20px;
           font-weight: 700;
           color: var(--primary-navy);
-          margin: 28px 0 12px 0;
+          margin: 30px 0 14px 0;
         }
 
         .clean-article-body p {
@@ -209,11 +291,37 @@ export default async function ArticlePage({ params }) {
           margin-bottom: 10px;
         }
 
+        /* FIGURES & CAPTIONS */
+        .clean-article-body figure {
+          margin: 36px 0;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .clean-article-body figure img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        .clean-article-body figcaption {
+          padding: 12px 18px;
+          font-size: 13.5px;
+          color: #64748b;
+          font-style: italic;
+          border-top: 1px solid #e2e8f0;
+          background: #ffffff;
+          line-height: 1.5;
+        }
+
         .clean-callout {
-          background: var(--bg-light);
+          background: #f8fafc;
           border-left: 4px solid var(--primary-gold);
           border-radius: 0 12px 12px 0;
-          padding: 24px;
+          padding: 22px 26px;
           margin: 36px 0;
         }
 
@@ -228,6 +336,32 @@ export default async function ArticlePage({ params }) {
           font-size: 15px;
           color: var(--text-muted);
           margin: 0;
+        }
+
+        /* TABLES */
+        .clean-article-body table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 32px 0;
+          font-size: 14.5px;
+        }
+
+        .clean-article-body th {
+          background: #0f172a;
+          color: #ffffff;
+          padding: 12px 16px;
+          text-align: left;
+          font-weight: 700;
+        }
+
+        .clean-article-body td {
+          padding: 12px 16px;
+          border-bottom: 1px solid #e2e8f0;
+          color: #334155;
+        }
+
+        .clean-article-body tr:nth-child(even) {
+          background: #f8fafc;
         }
 
         /* CTA BOX */
@@ -250,7 +384,7 @@ export default async function ArticlePage({ params }) {
         .clean-cta-card p {
           color: #cbd5e1;
           font-size: 15px;
-          max-width: 540px;
+          max-width: 560px;
           margin: 0 auto 24px auto;
         }
 
@@ -316,6 +450,7 @@ export default async function ArticlePage({ params }) {
         @media (max-width: 640px) {
           .clean-article-h1 { font-size: 28px; }
           .clean-cta-card { padding: 24px; }
+          .clean-podcast-card { padding: 18px 20px; }
         }
       `}} />
 
@@ -342,7 +477,7 @@ export default async function ArticlePage({ params }) {
           <span className="clean-category-badge">{article.category}</span>
           <h1 className="clean-article-h1">{article.title}</h1>
           <div className="clean-author-strip">
-            <div className="clean-author-avatar-lg">{article.author?.charAt(0) || 'G'}</div>
+            <div className="clean-author-avatar-lg">{article.author?.charAt(0) || 'A'}</div>
             <div>
               <div style={{ color: 'var(--primary-navy)', fontWeight: 700, fontSize: '15px' }}>{article.author}</div>
               <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
@@ -352,8 +487,40 @@ export default async function ArticlePage({ params }) {
           </div>
         </header>
 
-        {/* HERO IMAGE */}
-        {article.image && (
+        {/* PODCAST / AUDIO PLAYER (IF AVAILABLE) */}
+        {article.audio && (
+          <div className="clean-podcast-card">
+            <div className="clean-podcast-badge">🎧 Entrevista Técnica / Podcast</div>
+            <h3 className="clean-podcast-title">{article.audioTitle || 'Escucha el análisis técnico con la especialista'}</h3>
+            <p className="clean-podcast-desc">
+              Episodio exclusivo con la {article.author} ({article.authorTitle}). Reproduce el audio mientras lees el análisis a continuación:
+            </p>
+            <audio controls className="clean-audio-element" preload="metadata">
+              <source src={article.audio} type="audio/mp4" />
+              <source src={article.audio} type="audio/x-m4a" />
+              Tu navegador no soporta el reproductor de audio.
+            </audio>
+          </div>
+        )}
+
+        {/* VIDEO PLAYER (IF AVAILABLE) */}
+        {article.video && (
+          <div className="clean-video-card">
+            <div className="clean-video-header">
+              <span className="clean-video-badge">🎬 Masterclass en Video</span>
+              <span style={{ fontSize: '12px', color: '#94a3b8' }}>Ing. Ana Cristina Garcés</span>
+            </div>
+            <div className="clean-video-wrap">
+              <video controls preload="metadata" poster={article.image} className="clean-video-element">
+                <source src={article.video} type="video/mp4" />
+                Tu navegador no soporta reproducción de video.
+              </video>
+            </div>
+          </div>
+        )}
+
+        {/* HERO IMAGE (IF NO VIDEO OR AS COMPLEMENT) */}
+        {article.image && !article.video && (
           <div className="clean-hero-img-wrap">
             <img src={article.image} alt={article.title} />
           </div>
@@ -370,24 +537,24 @@ export default async function ArticlePage({ params }) {
               </p>
               <h2>1. Planteamiento Técnico y Contexto</h2>
               <p>
-                El desarrollo de proyectos con altos estándares de ingeniería y diseño arquitectónico exige un control riguroso de cada fase, integrando metodología BIM y análisis bioclimático adaptado al entorno.
+                El desarrollo de proyectos con altos estándares de ingeniería y diseño exige un control riguroso de cada fase, integrando metodología BIM y análisis hidrológico avanzado.
               </p>
             </div>
           )}
 
           {/* CTA CARD */}
           <div className="clean-cta-card">
-            <h3>¿Planificando un proyecto similar?</h3>
+            <h3>¿Requieres consultoría hidrológica o diseño de redes?</h3>
             <p>
-              Habla directamente con el equipo de KALARTI para cotizar coordinación BIM, diseño arquitectónico o bio-construcción en guadua.
+              Habla directamente con la Ing. Ana Cristina Garcés y el equipo de KALARTI para cotizar estudios de inundabilidad, modelación hidrológica, redes HDS o contra incendio.
             </p>
             <a 
-              href={`https://wa.me/573152717932?text=Hola,%20le%C3%AD%20el%20art%C3%ADculo%20"${encodeURIComponent(article.title)}"%20y%20deseo%20asesor%C3%ADa%20para%20un%20proyecto.`}
+              href={`https://wa.me/573152717932?text=Hola,%20le%C3%AD%20el%20art%C3%ADculo%20"${encodeURIComponent(article.title)}"%20y%20deseo%20asesor%C3%ADa%20t%C3%A9cnica%20con%20la%20Ing.%20Ana%20Garc%C3%A9s.`}
               target="_blank"
               rel="noopener noreferrer"
               className="clean-btn-wa-lg"
             >
-              💬 Cotizar por WhatsApp Directo
+              💬 Consultar con la Especialista por WhatsApp
             </a>
           </div>
 

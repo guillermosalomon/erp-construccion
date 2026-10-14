@@ -1,6 +1,126 @@
 {
   "articles": [
     {
+      "slug": "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
+      "title": "Gemelos Digitales y Modelado BIM en Cuencas: 6 Revelaciones de la Ingeniería Hidráulica",
+      "author": "Ing. Ana Cristina Garcés Eraso",
+      "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "hidrosanitario",
+      "tags": ["BIM en cuencas", "gemelos digitales", "infraestructura hidráulica", "balance hídrico", "HEC-RAS 2D", "Iber"],
+      "excerpt": "Descubre cómo los gemelos digitales y la modelación BIM de cuencas revolucionan la infraestructura hidráulica, la prevención de inundaciones y el diseño hidrológico territorial.",
+      "date": "2026-10-14",
+      "readTime": "12 min",
+      "image": "/blog/images/bim-cuenca-cabecera.jpg",
+      "audio": "/blog/media/audio/gemelos-digitales-inundaciones.m4a",
+      "audioTitle": "Gemelos Digitales para Prevenir Inundaciones Urbanas (Entrevista Técnica)",
+      "hub": true,
+      "relatedSlugs": [
+        "de-la-lluvia-al-riesgo-hidrologia-hidraulica-inundaciones-urbanas",
+        "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones",
+        "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide"
+      ],
+      "faq": [
+        {
+          "question": "¿Por qué es crucial calcular las abstracciones iniciales en el balance hídrico?",
+          "answer": "Porque no toda la lluvia se convierte en caudal. Descontar la intercepción vegetal, el almacenamiento en microdepresiones y la infiltración es indispensable para no sobredimensionar obras hidráulicas ni subestimar crecidas."
+        },
+        {
+          "question": "¿Cuándo se debe usar modelación hidráulica 2D en lugar de 1D?",
+          "answer": "La modelación 2D es obligatoria en llanuras de inundación anchas, viarios urbanos, confluencias fluviales y zonas donde el agua se propaga con dispersión lateral y recirculaciones no lineales."
+        }
+      ]
+    },
+    {
+      "slug": "de-la-lluvia-al-riesgo-hidrologia-hidraulica-inundaciones-urbanas",
+      "title": "De la Lluvia al Riesgo: 5 Revelaciones Fascinantes de la Ciencia Hidráulica para Entender las Inundaciones Urbanas",
+      "author": "Ing. Ana Cristina Garcés Eraso",
+      "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "hidrosanitario",
+      "tags": ["hidrología urbana", "bloque alterno", "número de Froude", "HEC-RAS 2D", "mallas de volúmenes finitos", "gestión del riesgo"],
+      "excerpt": "Del método del bloque alterno y el número de Froude hasta la simulación 2D urbana: lecciones clave de la ciencia hidráulica para predecir crecidas y diseñar ciudades resilientes.",
+      "date": "2026-10-14",
+      "readTime": "11 min",
+      "image": "/blog/images/hidrologia-bloque-alterno.jpg",
+      "video": "/blog/media/video/de-lluvia-a-riesgo.mp4",
+      "hub": true,
+      "relatedSlugs": [
+        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
+        "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones"
+      ],
+      "faq": [
+        {
+          "question": "¿Qué es el método del bloque alterno en hidrología?",
+          "answer": "Es un método de organización de tormentas de diseño que sitúa el bloque de precipitación más intenso en el 50% de la duración, rodeado de bloques decrecientes para saturar previamente el suelo y evaluar el caudal punta más severo."
+        },
+        {
+          "question": "¿Por qué un dique o muro no siempre es la mejor defensa contra inundaciones?",
+          "answer": "Porque genera una falsa sensación de seguridad e incrementa la exposición de viviendas. Si una crecida supera el dique, el colapso es repentino y destructivo. La mejor estrategia es respetar la llanura de inundación y ordenar el territorio."
+        }
+      ]
+    },
+    {
+      "slug": "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones",
+      "title": "El Peligro Oculto en el POT: Por Qué Planear con el Clima del Pasado es un Error Costoso",
+      "author": "Ing. Ana Cristina Garcés Eraso",
+      "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "hidrosanitario",
+      "tags": ["POT Pasto", "ordenamiento territorial", "mapas de riesgo", "estudios de amenaza", "LiDAR", "SUDS"],
+      "excerpt": "Análisis técnico sobre la obsolescencia de los mapas de riesgo en los POT y los requerimientos del Consejo de Estado en Pasto (Nariño): por qué la modelación 2D y las ciudades esponja son la solución.",
+      "date": "2026-10-14",
+      "readTime": "10 min",
+      "image": "/blog/images/pot-pasto-perimetro-hidraulico.jpg",
+      "audio": "/blog/media/audio/por-que-mienten-mapas-riesgo.m4a",
+      "audioTitle": "Por Qué Mienten los Mapas de Riesgo Urbanos (Entrevista Técnica)",
+      "hub": true,
+      "relatedSlugs": [
+        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
+        "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide"
+      ],
+      "faq": [
+        {
+          "question": "¿Qué implicaciones jurídicas tiene planear con mapas de riesgo obsoletos?",
+          "answer": "Expone a las administraciones municipales a demandas de reparación directa y acciones de nulidad por otorgar licencias en zonas que sufren inundaciones o avenidas torrenciales."
+        },
+        {
+          "question": "¿Cómo ayudan los Sistemas de Drenaje Urbano Sostenible (SUDS) en Pasto?",
+          "answer": "Permiten retener e infiltrar el agua pluvial en el origen mediante pavimentos permeables, jardines de lluvia y cubiertas vegetales, reduciendo la saturación de los colectores y quebradas."
+        }
+      ]
+    },
+    {
+      "slug": "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide",
+      "title": "Guía Integral de Sistemas de Información Geográfica (SIG): Del Modelado Territorial a la Simulación Hidráulica y las IDE",
+      "author": "Ing. Ana Cristina Garcés Eraso",
+      "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "hidrosanitario",
+      "tags": ["Sistemas de Información Geográfica", "SIG", "GIS", "topología espacial", "vectorial vs raster", "simulación hidráulica", "IDE"],
+      "excerpt": "Guía completa de geomática e ingeniería territorial: abstracción de entidades a objetos espaciales, reglas topológicas, interoperabilidad con HEC-RAS e Infraestructuras de Datos Espaciales.",
+      "date": "2026-10-14",
+      "readTime": "15 min",
+      "image": "/blog/images/sig-modelado-territorial.jpg",
+      "audio": "/blog/media/audio/como-los-sig-gobiernan-territorio.m4a",
+      "audioTitle": "Cómo los Sistemas de Información Geográfica Gobiernan el Territorio (Entrevista Técnica)",
+      "hub": true,
+      "relatedSlugs": [
+        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
+        "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones"
+      ],
+      "faq": [
+        {
+          "question": "¿Cuál es la diferencia entre el modelo vectorial y el ráster en un SIG?",
+          "answer": "El modelo vectorial representa entidades discretas con coordenadas explícitas (puntos, líneas y polígonos), mientras que el ráster utiliza una matriz regular de celdas o píxeles continua, ideal para modelos de elevación y precipitaciones."
+        },
+        {
+          "question": "¿Por qué es crítica la topología en redes de acueducto y alcantarillado?",
+          "answer": "Porque garantiza la conectividad hidráulica estricta entre tuberías y nodos sin desconexiones, sobreposiciones ni inversiones de gradiente de flujo."
+        }
+      ]
+    },
+    {
       "slug": "vivienda-campestre-lujo-ladera-buga-house",
       "title": "Diseño de Viviendas Campestres de Lujo en Ladera: Caso Buga House",
       "author": "Guillermo J. Salomón Solarte",
@@ -62,8 +182,7 @@
       "image": "/blog/images/somi-fachada.webp",
       "hub": true,
       "relatedSlugs": [
-        "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera",
-        "diseno-interiores-tendencias-eclecticismo-armonico"
+        "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera"
       ]
     },
     {

@@ -43,4 +43,11 @@ next-env.d.ts
 # large binaries
 *.msi
 
-.vercel
+# blog drafts and scratch scripts
+public/blog/*Ana Garces*/
+public/blog/*.py
+public/blog/*.ps1
+public/blog/*.txt
+public/blog/*.pdf
+public/blog/*.md
+src/content/blog/*.py

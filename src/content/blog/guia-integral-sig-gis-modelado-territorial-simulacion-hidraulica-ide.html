@@ -1,0 +1,79 @@
+<article class="clean-article-content">
+  <p class="lead" style="font-size: 19px; font-weight: 500; color: #1e293b; line-height: 1.75; margin-bottom: 28px;">
+    En la ingeniería civil, la geomática y la gestión moderna del territorio, la abstracción del entorno físico para su procesamiento computacional exige distinguir con rigor la realidad geográfica de sus estructuras de datos digitales. Esta guía técnica profundiza en los fundamentos conceptuales de los Sistemas de Información Geográfica (SIG), la diferenciación entre modelos vectoriales y ráster, la topología espacial y la interoperabilidad con modelos hidráulicos e Infraestructuras de Datos Espaciales (IDE).
+  </p>
+
+  <h2>1. De la Realidad Geográfica a la Representación Digital: Entidad vs. Objeto</h2>
+  <p>
+    Dentro de la teoría de los SIG, la <strong>Entidad</strong> se define como el fenómeno, elemento o individuo geográfico que existe física o conceptualmente en el mundo real. Las entidades constituyen unidades completas e indivisibles en elementos de su misma naturaleza (un río, una presa, una parcela catastral o una llanura de inundación).
+  </p>
+  <p>
+    Por su parte, el <strong>Objeto</strong> es la estructura de datos digital (compuesta por geometrías y tablas atributivas alfanuméricas) almacenada en el software para representar dicha entidad. Esta abstracción depende de la escala de trabajo: a escala 1:50.000 una estación de bombeo se abstrae como un punto; a escala 1:2.000 se modela como un polígono con su geometría y áreas exactas.
+  </p>
+
+  <figure>
+    <img src="/blog/images/sig-modelado-territorial.jpg" alt="Modelado Territorial en Sistemas de Información Geográfica SIG" />
+    <figcaption>
+      Abstracción territorial en Sistemas de Información Geográfica: de la entidad física real a las estructuras de datos vectoriales y ráster.
+    </figcaption>
+  </figure>
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Término</th>
+          <th>Ámbito</th>
+          <th>Definición Técnica</th>
+          <th>Ejemplo Aplicado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Entidad</strong></td>
+          <td>Mundo Real</td>
+          <td>Elemento o fenómeno existente en el territorio, indivisible en unidades de su misma naturaleza.</td>
+          <td>Río Pasto, Humedal Torca, Red matriz de acueducto.</td>
+        </tr>
+        <tr>
+          <td><strong>Objeto</strong></td>
+          <td>Base de Datos / SIG</td>
+          <td>Estructura de datos geométrica y atributiva utilizada para almacenar y gestionar la entidad.</td>
+          <td>Polígono shapefile/geopackage con tabla de atributos adjunta.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>2. Modelos de Datos Espaciales: Vectorial vs. Ráster</h2>
+  <p>
+    La elección del modelo espacial responde a la naturaleza matemática de la variable a representar:
+  </p>
+  <ul>
+    <li><strong>Modelo Vectorial (Entidades Discretas):</strong> Utiliza coordenadas explícitas (X, Y, Z) para definir puntos, líneas y polígonos con límites nítidos. Es el modelo idóneo para catastros, redes de tuberías, ejes de vías y parcelaciones urbanas.</li>
+    <li><strong>Modelo Ráster (Variables Continuas):</strong> Estructura matricial regular de celdas o píxeles donde cada celda almacena un valor numérico continuo. Es el modelo óptimo para Modelos Digitales de Elevación (DEM/DTM), precipitaciones interpoladas, imágenes satelitales y mapas de rugosidad de Manning.</li>
+  </ul>
+
+  <h2>3. La Importancia Crítica de la Topología en Ingeniería</h2>
+  <p>
+    Un SIG no es un simple programa de dibujo asistido (CAD). En CAD, dos líneas que se cruzan son solo trazos visuales. En un SIG, la <strong>topología</strong> define las relaciones matemáticas y espaciales entre objetos independientemente de su posición métrica:
+  </p>
+  <div class="clean-callout">
+    <h4>Reglas Topológicas Esenciales en Redes Hidráulicas</h4>
+    <p>
+      • <strong>Conectividad:</strong> Los arcos de tubería deben coincidir exactamente en nodos (válvulas o uniones) sin discontinuidades ni desconexiones flotantes.<br>
+      • <strong>Adyacencia y Poligonización:</strong> Los polígonos de cuencas o predios no deben superponerse (no overlaps) ni dejar huecos espaciales (no gaps).<br>
+      • <strong>Direccionalidad del Flujo:</strong> Los vectores de ríos y alcantarillados deben digitalizarse en el sentido del gradiente hidráulico (aguas arriba hacia aguas abajo).
+    </p>
+  </div>
+
+  <h2>4. El Puente entre el SIG y la Modelación Hidráulica</h2>
+  <p>
+    El mayor valor de los SIG en la ingeniería civil contemporánea radica en su capacidad para alimentar de forma directa y bidireccional los motores de cálculo hidrológico e hidráulico:
+  </p>
+  <ul>
+    <li><strong>Geoprocesamiento Automatizado:</strong> Delimitación automática de cuencas hidrográficas a partir de modelos digitales de elevación (relleno de sumideros, direcciones de flujo D8 y acumulación).</li>
+    <li><strong>Parámetros Morfométricos:</strong> Extracción de pendientes medias, longitud del cauce principal y tiempo de concentración sin errores manuales.</li>
+    <li><strong>Interoperabilidad con HEC-RAS e Iber:</strong> Exportación de mallas computacionales, coeficientes de rugosidad espacializados y visualización interactiva de manchas de inundación en visores web y gemelos digitales.</li>
+  </ul>
+</article>
