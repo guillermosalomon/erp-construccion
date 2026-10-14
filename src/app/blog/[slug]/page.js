@@ -504,6 +504,7 @@ export default async function ArticlePage({ params }) {
                 else if (n.includes('sandra') || n.includes('paz jojoa')) photo = '/team/sandra-paz.jpg';
                 else if (n.includes('salomon') || n.includes('guillermo')) photo = '/team/guillermo-salomon.jpg';
                 else if (n.includes('jaime') || n.includes('jaime andr')) photo = '/team/jaime-paz.jpg';
+                else if (n.includes('juan camilo') || n.includes('enriquez')) photo = '/team/juan-camilo.jpg';
                 
                 return photo ? (
                   <img src={photo} alt={article.author} />
