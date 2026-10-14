@@ -4,6 +4,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import metadata from '@/content/blog/metadata.json';
 
+export async function generateStaticParams() {
+  return (metadata.articles || []).map((article) => ({
+    slug: article.slug,
+  }));
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = metadata.articles.find((a) => a.slug === slug);
@@ -498,6 +504,7 @@ export default async function ArticlePage({ params }) {
           <div className="clean-author-strip">
             <div className="clean-author-avatar-lg">
               {(() => {
+                let photo = null;
                 const n = (article.author || '').toLowerCase();
                 if (n.includes('david') && n.includes('garc')) photo = '/team/david-garces.jpg';
                 else if (n.includes('ana') || n.includes('garc')) photo = '/team/ana-garces.jpg';
