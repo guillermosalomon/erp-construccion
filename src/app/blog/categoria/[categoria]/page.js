@@ -128,8 +128,14 @@ export default function CategoryPage() {
         }
 
         .clean-cat-avatar {
-          width: 32px;
-          height: 32px;
+          width: 36px;
+          height: 36px;
+          min-width: 36px;
+          min-height: 36px;
+          max-width: 36px;
+          max-height: 36px;
+          flex-shrink: 0;
+          aspect-ratio: 1 / 1;
           border-radius: 50%;
           background: var(--bg-subtle);
           border: 1px solid var(--border-color);
@@ -138,7 +144,19 @@ export default function CategoryPage() {
           align-items: center;
           justify-content: center;
           font-weight: 700;
-          font-size: 12px;
+          font-size: 13px;
+          overflow: hidden;
+        }
+
+        .clean-cat-avatar img {
+          width: 100%;
+          height: 100%;
+          min-width: 100%;
+          min-height: 100%;
+          object-fit: cover;
+          display: block;
+          border-radius: 50%;
+          aspect-ratio: 1 / 1;
         }
 
         @media (max-width: 900px) {
@@ -173,7 +191,17 @@ export default function CategoryPage() {
               <h3 className="clean-cat-card-title">{article.title}</h3>
               <p className="clean-cat-card-excerpt">{article.excerpt}</p>
               <div className="clean-cat-author-strip">
-                <div className="clean-cat-avatar">{article.author?.charAt(0) || 'K'}</div>
+                <div className="clean-cat-avatar">
+                  {(() => {
+                    const n = (article.author || '').toLowerCase();
+                    let photo = null;
+                    if (n.includes('ana') || n.includes('garc')) photo = '/team/ana-garces.jpg';
+                    else if (n.includes('sandra') || n.includes('paz jojoa')) photo = '/team/sandra-paz.jpg';
+                    else if (n.includes('salomon') || n.includes('guillermo')) photo = '/team/guillermo-salomon.jpg';
+                    else if (n.includes('jaime') || n.includes('jaime andr')) photo = '/team/jaime-paz.jpg';
+                    return photo ? <img src={photo} alt={article.author} /> : <span>{article.author?.charAt(0) || 'K'}</span>;
+                  })()}
+                </div>
                 <div>
                   <strong style={{ color: 'var(--primary-navy)', display: 'block' }}>{article.author}</strong>
                   <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{article.date}</span>

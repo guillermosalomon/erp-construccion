@@ -274,10 +274,10 @@ function StatsSection() {
 }
 
 const TEAM = [
-    { initials: 'SPJ', name: 'Ing. Sandra del Pilar Paz Jojoa', role: 'Gerente de Construcción', spec: 'Esp. Estructural (Cálculo Sísmico NSR-10)' },
-    { initials: 'GS', name: 'Arq. Guillermo J. Salomón Solarte', role: 'Coordinador BIM', spec: 'Esp. BIM Management & Bio-Construcción' },
-    { initials: 'JAP', name: 'Ing. Jaime Andrés Paz Jojoa', role: 'CEO KALARTI', spec: 'Esp. Vías, Interventoría & Contratación' },
-    { initials: 'ACG', name: 'Ing. Ana Cristina Garcés', role: 'Directora de Proyectos', spec: 'Ing. Civil — Redes Hidrosanitarias & RCI' },
+    { photo: '/team/sandra-paz.jpg', initials: 'SPJ', name: 'Ing. Sandra del Pilar Paz Jojoa', role: 'Gerente de Construcción & Cálculo Estructural', spec: 'Ing. Civil — Esp. Estructural NSR-10, Sismo-resistencia y Curadurías' },
+    { photo: '/team/guillermo-salomon.jpg', initials: 'GS', name: 'Arq. Guillermo J. Salomón Solarte', role: 'Coordinador BIM & Director de Diseño', spec: 'Arquitecto — Esp. BIM Management & Bio-Construcción' },
+    { photo: '/team/jaime-paz.jpg', initials: 'JAP', name: 'Ing. Jaime Andrés Paz Jojoa', role: 'CEO KALARTI — Ingeniero Civil', spec: 'Esp. Vías, Interventoría & Contratación Estatal' },
+    { photo: '/team/ana-garces.jpg', initials: 'ACG', name: 'Ing. Ana Cristina Garcés Eraso', role: 'Directora de Proyectos & Redes Hidráulicas', spec: 'Ing. Civil — Esp. Redes HDS, RCI & Modelación Hidrológica' },
 ];
 
 function TeamSection() {
@@ -292,7 +292,13 @@ function TeamSection() {
                 <div className="lp-team-grid">
                     {TEAM.map((t, i) => (
                         <div key={i} className="lp-team-card">
-                            <div className="lp-team-avatar">{t.initials}</div>
+                            <div className="lp-team-avatar">
+                                {t.photo ? (
+                                    <img src={t.photo} alt={t.name} />
+                                ) : (
+                                    <span>{t.initials}</span>
+                                )}
+                            </div>
                             <h4>{t.name}</h4>
                             <p className="lp-team-role">{t.role}</p>
                             <p className="lp-team-spec">{t.spec}</p>

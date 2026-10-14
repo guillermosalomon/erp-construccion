@@ -208,8 +208,14 @@ export default function BlogIndex() {
         }
 
         .featured-author-avatar {
-          width: 36px;
-          height: 36px;
+          width: 38px;
+          height: 38px;
+          min-width: 38px;
+          min-height: 38px;
+          max-width: 38px;
+          max-height: 38px;
+          flex-shrink: 0;
+          aspect-ratio: 1 / 1;
           border-radius: 50%;
           background: var(--primary-gold);
           color: var(--primary-navy);
@@ -218,6 +224,18 @@ export default function BlogIndex() {
           justify-content: center;
           font-weight: 800;
           font-size: 14px;
+          overflow: hidden;
+        }
+
+        .featured-author-avatar img {
+          width: 100%;
+          height: 100%;
+          min-width: 100%;
+          min-height: 100%;
+          object-fit: cover;
+          display: block;
+          border-radius: 50%;
+          aspect-ratio: 1 / 1;
         }
 
         /* RECENT POSTS SECTION */
@@ -318,8 +336,14 @@ export default function BlogIndex() {
         }
 
         .clean-author-avatar {
-          width: 32px;
-          height: 32px;
+          width: 36px;
+          height: 36px;
+          min-width: 36px;
+          min-height: 36px;
+          max-width: 36px;
+          max-height: 36px;
+          flex-shrink: 0;
+          aspect-ratio: 1 / 1;
           border-radius: 50%;
           background: var(--bg-subtle);
           border: 1px solid var(--border-color);
@@ -328,7 +352,19 @@ export default function BlogIndex() {
           align-items: center;
           justify-content: center;
           font-weight: 700;
-          font-size: 12px;
+          font-size: 13px;
+          overflow: hidden;
+        }
+
+        .clean-author-avatar img {
+          width: 100%;
+          height: 100%;
+          min-width: 100%;
+          min-height: 100%;
+          object-fit: cover;
+          display: block;
+          border-radius: 50%;
+          aspect-ratio: 1 / 1;
         }
 
         .clean-author-info {
@@ -403,7 +439,17 @@ export default function BlogIndex() {
               <h2 className="featured-title">{featuredArticle.title}</h2>
               <p className="featured-excerpt">{featuredArticle.excerpt}</p>
               <div className="featured-author-row">
-                <div className="featured-author-avatar">{featuredArticle.author?.charAt(0) || 'G'}</div>
+                <div className="featured-author-avatar">
+                  {(() => {
+                    const n = (featuredArticle.author || '').toLowerCase();
+                    let photo = null;
+                    if (n.includes('ana') || n.includes('garc')) photo = '/team/ana-garces.jpg';
+                    else if (n.includes('sandra') || n.includes('paz jojoa')) photo = '/team/sandra-paz.jpg';
+                    else if (n.includes('salomon') || n.includes('guillermo')) photo = '/team/guillermo-salomon.jpg';
+                    else if (n.includes('jaime') || n.includes('jaime andr')) photo = '/team/jaime-paz.jpg';
+                    return photo ? <img src={photo} alt={featuredArticle.author} /> : <span>{featuredArticle.author?.charAt(0) || 'G'}</span>;
+                  })()}
+                </div>
                 <div>
                   <strong>{featuredArticle.author}</strong>
                   <span style={{ margin: '0 8px', opacity: 0.6 }}>•</span>
@@ -449,7 +495,17 @@ export default function BlogIndex() {
               <h4 className="clean-card-title">{article.title}</h4>
               <p className="clean-card-excerpt">{article.excerpt}</p>
               <div className="clean-card-author-row">
-                <div className="clean-author-avatar">{article.author?.charAt(0) || 'K'}</div>
+                <div className="clean-author-avatar">
+                  {(() => {
+                    const n = (article.author || '').toLowerCase();
+                    let photo = null;
+                    if (n.includes('ana') || n.includes('garc')) photo = '/team/ana-garces.jpg';
+                    else if (n.includes('sandra') || n.includes('paz jojoa')) photo = '/team/sandra-paz.jpg';
+                    else if (n.includes('salomon') || n.includes('guillermo')) photo = '/team/guillermo-salomon.jpg';
+                    else if (n.includes('jaime') || n.includes('jaime andr')) photo = '/team/jaime-paz.jpg';
+                    return photo ? <img src={photo} alt={article.author} /> : <span>{article.author?.charAt(0) || 'K'}</span>;
+                  })()}
+                </div>
                 <div className="clean-author-info">
                   <span className="clean-author-name">{article.author}</span>
                   <span className="clean-post-date">{article.date} • {article.readTime} lect.</span>

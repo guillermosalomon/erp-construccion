@@ -44,6 +44,7 @@ next-env.d.ts
 *.msi
 
 # blog drafts and scratch scripts
+public/Fotos Team/
 public/blog/*Ana Garces*/
 public/blog/*.py
 public/blog/*.ps1

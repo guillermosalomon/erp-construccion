@@ -127,10 +127,12 @@ function HeroSection() {
 }
 
 const SERVICES = [
-    { icon: '🏠', title: 'Construcción de Viviendas', desc: 'Casas, apartamentos y edificaciones residenciales con diseño personalizado y acabados premium.', features: ['Diseño arquitectónico a medida', 'Estructura antisísmica', 'Acabados de alta calidad'] },
-    { icon: '📐', title: 'Diseño Estructural BIM', desc: 'Modelación 3D con metodología BIM para visualizar tu proyecto antes de construir.', features: ['Modelación 3D completa', 'Presupuesto integrado 5D', 'Detección de conflictos'] },
-    { icon: '🏗️', title: 'Obras Civiles', desc: 'Construcción de vías, puentes, alcantarillados y obras de infraestructura pública.', features: ['Pavimentos y vías', 'Redes hidrosanitarias', 'Estructura metálica'] },
-    { icon: '📋', title: 'Consultoría e Interventoría', desc: 'Supervisión, auditoría y gestión de proyectos para entidades públicas y privadas.', features: ['Interventoría de obras', 'Estudios ambientales', 'Contratación estatal'] },
+    { icon: '🏠', title: 'Construcción de Viviendas & Comercial', desc: 'Casas campestres, condominios y edificaciones con diseño personalizado, acabados premium y ejecución llave en mano.', features: ['Diseño arquitectónico a medida', 'Estructura sismorresistente', 'Acabados de alta calidad'] },
+    { icon: '🏛️', title: 'Cálculo Estructural NSR-10 & Vulnerabilidad', desc: 'Diseño estructural sismo-resistente, peritaje post-sismo, patología y memorias de cálculo para Curadurías Urbanas liderado por la Ing. Sandra Paz.', features: ['Cálculo sísmico bajo NSR-10', 'Diagnóstico de vulnerabilidad', 'Aprobación en Curadurías'] },
+    { icon: '📐', title: 'Coordinación BIM 5D & Diseño', desc: 'Modelación paramétrica 3D, detección de interferencias (clash detection) y presupuestos integrados 5D liderado por Arq. Guillermo Salomón.', features: ['Modelación 3D en Revit', 'Presupuesto integrado 5D', 'Detección temprana de conflictos'] },
+    { icon: '💧', title: 'Redes Hidrosanitarias & Hidráulica', desc: 'Diseño de redes de acueducto, alcantarillado, redes contra incendio RCI (NFPA) y modelación de drenaje liderado por Ing. Ana Cristina Garcés.', features: ['Redes HDS y pluviales', 'Sistemas Contra Incendio RCI', 'Modelación hidrológica'] },
+    { icon: '🏗️', title: 'Obras Civiles & Contratación Estatal', desc: 'Construcción de infraestructura vial, pavimentos, puentes, redes matrices e interventoría técnica liderado por Ing. Jaime Andrés Paz.', features: ['Pavimentos e infraestructura vial', 'Interventoría de obras civiles', 'Contratación estatal y privada'] },
+    { icon: '🌿', title: 'Bio-Construcción en Guadua', desc: 'Estructuras sismorresistentes en Guadua Angustifolia (NSR-10 Título E), eco-hoteles y arquitectura bioclimática de bajo impacto.', features: ['Guadua inmunizada y certificada', 'Aislamiento térmico natural', 'Estructuras sustentables'] },
 ];
 
 function ServicesSection() {
@@ -140,7 +142,7 @@ function ServicesSection() {
                 <div className="lp-section-header">
                     <span className="lp-section-tag">Nuestros Servicios</span>
                     <h2 className="lp-section-title">Soluciones Integrales de Construcción</h2>
-                    <p className="lp-section-desc">Desde la consultoría inicial hasta la entrega de llaves, cubrimos todo el ciclo de tu proyecto.</p>
+                    <p className="lp-section-desc">Desde el cálculo estructural y diseño BIM hasta la entrega de llaves y obras civiles.</p>
                 </div>
                 <div className="lp-services-grid">
                     {SERVICES.map((s, i) => (
@@ -205,7 +207,7 @@ function StatsSection() {
 
 const STEPS = [
     { num: '01', title: 'Consulta Inicial', desc: 'Evaluamos tus necesidades, terreno y presupuesto sin compromiso.' },
-    { num: '02', title: 'Diseño BIM', desc: 'Creamos el modelo 3D de tu proyecto para que lo visualices antes de construir.' },
+    { num: '02', title: 'Diseño BIM & Estructural', desc: 'Modelamos el proyecto en 3D y calculamos la estructura sismorresistente.' },
     { num: '03', title: 'Construcción', desc: 'Ejecutamos la obra con seguimiento en tiempo real y reportes semanales.' },
     { num: '04', title: 'Entrega', desc: 'Entrega llave en mano con garantía y documentación completa.' },
 ];
@@ -233,10 +235,10 @@ function ProcessSection() {
 }
 
 const TEAM = [
-    { initials: 'JAP', name: 'Jaime Andrés Paz', role: 'CEO — Ingeniero Civil', spec: 'Esp. Vías, Interventoría, Contratación Estatal' },
-    { initials: 'JCE', name: 'Juan Camilo Enríquez', role: 'Gerente Comercial', spec: 'M.Sc. Ingeniería Civil, Construcción' },
-    { initials: 'GS', name: 'Guillermo Salomón', role: 'Coordinador BIM', spec: 'Arquitecto, Esp. BIM Management' },
-    { initials: 'ACG', name: 'Ana Cristina Garces', role: 'Directora de Proyectos', spec: 'Ing. Civil — Redes Hidro Sanitarias' },
+    { photo: '/team/jaime-paz.jpg', initials: 'JAP', name: 'Ing. Jaime Andrés Paz Jojoa', role: 'CEO KALARTI — Ingeniero Civil', spec: 'Esp. Vías, Interventoría & Contratación Estatal' },
+    { photo: '/team/sandra-paz.jpg', initials: 'SPJ', name: 'Ing. Sandra del Pilar Paz Jojoa', role: 'Gerente de Construcción & Cálculo Estructural', spec: 'Ing. Civil — Esp. Estructural NSR-10, Sismo-resistencia y Curadurías' },
+    { photo: '/team/guillermo-salomon.jpg', initials: 'GS', name: 'Arq. Guillermo J. Salomón Solarte', role: 'Coordinador BIM & Director de Diseño', spec: 'Arquitecto — Esp. BIM Management & Bio-Construcción' },
+    { photo: '/team/ana-garces.jpg', initials: 'ACG', name: 'Ing. Ana Cristina Garcés Eraso', role: 'Directora de Proyectos & Redes Hidráulicas', spec: 'Ing. Civil — Esp. Redes HDS, RCI & Modelación Hidrológica' },
 ];
 
 function TeamSection() {
@@ -244,13 +246,20 @@ function TeamSection() {
         <section className="lp-team" id="equipo">
             <div className="lp-container">
                 <div className="lp-section-header">
-                    <span className="lp-section-tag">Nuestro Equipo</span>
-                    <h2 className="lp-section-title">Profesionales Certificados</h2>
+                    <span className="lp-section-tag">Nuestro Equipo Directivo</span>
+                    <h2 className="lp-section-title">Especialistas al Frente de Tu Proyecto</h2>
+                    <p className="lp-section-desc">Profesionales certificados con amplia trayectoria en cálculo estructural, dirección de obra, coordinación BIM y redes hidráulicas.</p>
                 </div>
                 <div className="lp-team-grid">
                     {TEAM.map((t, i) => (
                         <div key={i} className="lp-team-card">
-                            <div className="lp-team-avatar">{t.initials}</div>
+                            <div className="lp-team-avatar">
+                                {t.photo ? (
+                                    <img src={t.photo} alt={t.name} />
+                                ) : (
+                                    <span>{t.initials}</span>
+                                )}
+                            </div>
                             <h4>{t.name}</h4>
                             <p className="lp-team-role">{t.role}</p>
                             <p className="lp-team-spec">{t.spec}</p>
