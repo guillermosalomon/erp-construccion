@@ -240,6 +240,7 @@ const TEAM = [
     { photo: '/team/juan-camilo.jpg', initials: 'JCE', name: 'Juan Camilo Enríquez', role: 'Gerente Comercial', spec: 'M.Sc. Ingeniería Civil — Construcción y Gestión de Proyectos' },
     { photo: '/team/guillermo-salomon.jpg', initials: 'GS', name: 'Arq. Guillermo J. Salomón Solarte', role: 'Coordinador BIM & Director de Diseño', spec: 'Arquitecto — Esp. BIM Management & Bio-Construcción' },
     { photo: '/team/ana-garces.jpg', initials: 'ACG', name: 'Ing. Ana Cristina Garcés Eraso', role: 'Directora de Proyectos & Redes Hidráulicas', spec: 'Ing. Civil — Esp. Redes HDS, RCI & Modelación Hidrológica' },
+    { photo: '/team/david-garces.jpg', initials: 'DGE', name: 'David Garcés Eraso', role: 'Coordinador Ambiental', spec: 'Gestión Ambiental, Sostenibilidad & Estudios de Impacto' },
 ];
 
 function TeamSection() {

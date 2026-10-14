@@ -443,7 +443,8 @@ export default function BlogIndex() {
                   {(() => {
                     const n = (featuredArticle.author || '').toLowerCase();
                     let photo = null;
-                    if (n.includes('ana') || n.includes('garc')) photo = '/team/ana-garces.jpg';
+                    if (n.includes('david') && n.includes('garc')) photo = '/team/david-garces.jpg';
+                    else if (n.includes('ana') || n.includes('garc')) photo = '/team/ana-garces.jpg';
                     else if (n.includes('sandra') || n.includes('paz jojoa')) photo = '/team/sandra-paz.jpg';
                     else if (n.includes('salomon') || n.includes('guillermo')) photo = '/team/guillermo-salomon.jpg';
                     else if (n.includes('jaime') || n.includes('jaime andr')) photo = '/team/jaime-paz.jpg';
@@ -500,7 +501,8 @@ export default function BlogIndex() {
                   {(() => {
                     const n = (article.author || '').toLowerCase();
                     let photo = null;
-                    if (n.includes('ana') || n.includes('garc')) photo = '/team/ana-garces.jpg';
+                    if (n.includes('david') && n.includes('garc')) photo = '/team/david-garces.jpg';
+                    else if (n.includes('ana') || n.includes('garc')) photo = '/team/ana-garces.jpg';
                     else if (n.includes('sandra') || n.includes('paz jojoa')) photo = '/team/sandra-paz.jpg';
                     else if (n.includes('salomon') || n.includes('guillermo')) photo = '/team/guillermo-salomon.jpg';
                     else if (n.includes('jaime') || n.includes('jaime andr')) photo = '/team/jaime-paz.jpg';
