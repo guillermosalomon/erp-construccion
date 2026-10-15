@@ -51,7 +51,7 @@
           "answer": "Permiten retener e infiltrar el agua pluvial en el origen mediante pavimentos permeables, jardines de lluvia y cubiertas vegetales, reduciendo la saturación de los colectores y quebradas."
         }
       ],
-      "ogImage": "/blog/images/og/pot-pasto-og.jpg"
+      "ogImage": "/blog/images/og/pot-pasto-card.jpg"
     },
     {
       "slug": "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
@@ -94,7 +94,7 @@
           "answer": "La modelación 2D es obligatoria en llanuras de inundación anchas, viarios urbanos, confluencias fluviales y zonas donde el agua se propaga con dispersión lateral y recirculaciones no lineales."
         }
       ],
-      "ogImage": "/blog/images/og/bim-cuenca-og.jpg"
+      "ogImage": "/blog/images/og/bim-cuenca-card.jpg"
     },
     {
       "slug": "de-la-lluvia-al-riesgo-hidrologia-hidraulica-inundaciones-urbanas",
@@ -134,7 +134,7 @@
           "answer": "Porque genera una falsa sensación de seguridad e incrementa la exposición de viviendas. Si una crecida supera el dique, el colapso es repentino y destructivo. La mejor estrategia es respetar la llanura de inundación y ordenar el territorio."
         }
       ],
-      "ogImage": "/blog/images/og/hidrologia-og.jpg"
+      "ogImage": "/blog/images/og/hidrologia-card.jpg"
     },
     {
       "slug": "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide",
@@ -176,7 +176,7 @@
           "answer": "Porque garantiza la conectividad hidráulica estricta entre tuberías y nodos sin desconexiones, sobreposiciones ni inversiones de gradiente de flujo."
         }
       ],
-      "ogImage": "/blog/images/og/sig-og.jpg"
+      "ogImage": "/blog/images/og/sig-card.jpg"
     },
     {
       "slug": "vivienda-campestre-lujo-ladera-buga-house",
@@ -210,7 +210,7 @@
           "answer": "Requiere un estudio geotécnico riguroso, cimentaciones escalonadas o pilotadas, muros de contención y un diseño arquitectónico coordinado en BIM que aproveche los desniveles."
         }
       ],
-      "ogImage": "/blog/images/og/buga-house-og.jpg"
+      "ogImage": "/blog/images/og/buga-house-card.jpg"
     },
     {
       "slug": "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera",
@@ -244,7 +244,7 @@
           "answer": "El ladrillo exterior protege la estructura del clima y la lluvia sin necesidad de mantenimientos constantes, mientras que la guadua e interior en esterilla aportan calidez, aislamiento térmico y comportamiento sismo-resistente."
         }
       ],
-      "ogImage": "/blog/images/og/casa-cabrera-og.jpg"
+      "ogImage": "/blog/images/og/casa-cabrera-card.jpg"
     },
     {
       "slug": "pieles-edificios-remodelacion-fachadas-paisajismo",
@@ -272,7 +272,7 @@
         "vivienda-campestre-lujo-ladera-buga-house",
         "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera"
       ],
-      "ogImage": "/blog/images/og/somi-fachada-og.jpg"
+      "ogImage": "/blog/images/og/somi-card.jpg"
     },
     {
       "slug": "nsr-10-titulo-e-diseno-sismo-resistente-guadua",
@@ -301,7 +301,7 @@
         "bio-construccion-guadua-colombia-guia-completa",
         "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera"
       ],
-      "ogImage": "/blog/images/og/cabrera-house-og.jpg"
+      "ogImage": "/blog/images/og/cabrera-house-card.jpg"
     },
     {
       "slug": "bio-construccion-guadua-colombia-guia-completa",
@@ -329,7 +329,7 @@
         "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera",
         "nsr-10-titulo-e-diseno-sismo-resistente-guadua"
       ],
-      "ogImage": "/blog/images/og/cabrera-house-og.jpg"
+      "ogImage": "/blog/images/og/cabrera-house-card.jpg"
     }
   ]
 }

@@ -17,10 +17,10 @@ export const metadata = {
     locale: 'es_CO',
     images: [
       {
-        url: 'https://www.kalarti.com/blog/images/og/blog-og.jpg',
-        secureUrl: 'https://www.kalarti.com/blog/images/og/blog-og.jpg',
-        width: 1200,
-        height: 630,
+        url: 'https://www.kalarti.com/blog/images/og/pot-pasto-card.jpg',
+        secureUrl: 'https://www.kalarti.com/blog/images/og/pot-pasto-card.jpg',
+        width: 960,
+        height: 504,
         alt: 'Territorio, Ingeniería Digital & Bio-Arquitectura — Blog KALARTI',
         type: 'image/jpeg',
       },
@@ -32,7 +32,7 @@ export const metadata = {
     creator: '@kalarti',
     title: 'Territorio, Ingeniería Digital & Bio-Arquitectura | Blog KALARTI',
     description: 'Investigación aplicada, modelación hidrológica 2D, coordinación BIM y bio-construcción sostenible.',
-    images: ['https://www.kalarti.com/blog/images/og/blog-og.jpg'],
+    images: ['https://www.kalarti.com/blog/images/og/pot-pasto-card.jpg'],
   },
 };
 
