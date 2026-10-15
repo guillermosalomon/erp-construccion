@@ -1,12 +1,53 @@
 {
   "articles": [
     {
+      "slug": "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones",
+      "title": "El Peligro Oculto en el POT: Por Qué Planear con el Clima del Pasado es un Error Costoso",
+      "author": "Ing. Ana Cristina Garcés Eraso",
+      "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "Planificación Territorial & Modelación Hidráulica",
+      "categoryIds": ["hidraulica-sig", "normativa-riesgo"],
+      "tags": ["POT Pasto", "ordenamiento territorial", "mapas de riesgo", "estudios de amenaza", "LiDAR", "SUDS", "modelación 2D", "Iber"],
+      "excerpt": "La desactualización climática e hidrológica en los instrumentos de ordenamiento territorial expone a las ciudades a contingencias millonarias e inundaciones críticas. A través de la modelación hidrodinámica 2D, el análisis de cuencas y la integración territorial, demostramos por qué el diseño urbano moderno debe desestimar la falsa seguridad de la canalización tradicional y anticiparse al clima del futuro.",
+      "date": "2026-10-14",
+      "readTime": "10 min",
+      "image": "/blog/images/pot-pasto-portada.jpg",
+      "audio": "/blog/media/audio/por-que-mienten-mapas-riesgo.m4a",
+      "audioTitle": "Por Qué Mienten los Mapas de Riesgo Urbanos (Entrevista Técnica)",
+      "featured": true,
+      "featuredTag": "Planificación Territorial & Modelación Hidráulica",
+      "hub": true,
+      "cta": {
+        "title": "¿Su municipio o proyecto requiere actualizar mapas de amenaza por inundación, incorporar modelación 2D o coordinar infraestructura en BIM?",
+        "desc": "Trabaje de la mano con el equipo técnico de KALARTI SAS: integramos hidrología avanzada, simulación hidrodinámica 2D (Iber / HEC-RAS 2D), blindaje normativo y coordinación interdisciplinaria BIM.",
+        "buttonText": "💬 Hable con el equipo técnico de KALARTI",
+        "message": "Hola, leí el artículo sobre el POT y Riesgo de Inundaciones y deseo asesoría técnica con el equipo de KALARTI."
+      },
+      "relatedSlugs": [
+        "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide",
+        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
+        "de-la-lluvia-al-riesgo-hidrologia-hidraulica-inundaciones-urbanas"
+      ],
+      "faq": [
+        {
+          "question": "¿Qué implicaciones jurídicas tiene planear con mapas de riesgo obsoletos?",
+          "answer": "Expone a las administraciones municipales a demandas de reparación directa y acciones de nulidad por otorgar licencias en zonas que sufren inundaciones o avenidas torrenciales."
+        },
+        {
+          "question": "¿Cómo ayudan los Sistemas de Drenaje Urbano Sostenible (SUDS) en Pasto?",
+          "answer": "Permiten retener e infiltrar el agua pluvial en el origen mediante pavimentos permeables, jardines de lluvia y cubiertas vegetales, reduciendo la saturación de los colectores y quebradas."
+        }
+      ]
+    },
+    {
       "slug": "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
       "title": "Gemelos Digitales y Modelado BIM en Cuencas: 6 Revelaciones de la Ingeniería Hidráulica",
       "author": "Ing. Ana Cristina Garcés Eraso",
       "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
       "authorLinkedin": "https://kalarti.com",
-      "category": "hidrosanitario",
+      "category": "Hidráulica, SIG & Territorio",
+      "categoryIds": ["hidraulica-sig", "bim-mep"],
       "tags": ["BIM en cuencas", "gemelos digitales", "infraestructura hidráulica", "balance hídrico", "HEC-RAS 2D", "Iber"],
       "excerpt": "Descubre cómo los gemelos digitales y la modelación BIM de cuencas revolucionan la infraestructura hidráulica, la prevención de inundaciones y el diseño hidrológico territorial.",
       "date": "2026-10-14",
@@ -16,8 +57,8 @@
       "audioTitle": "Gemelos Digitales para Prevenir Inundaciones Urbanas (Entrevista Técnica)",
       "hub": true,
       "relatedSlugs": [
-        "de-la-lluvia-al-riesgo-hidrologia-hidraulica-inundaciones-urbanas",
         "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones",
+        "de-la-lluvia-al-riesgo-hidrologia-hidraulica-inundaciones-urbanas",
         "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide"
       ],
       "faq": [
@@ -37,7 +78,8 @@
       "author": "Ing. Ana Cristina Garcés Eraso",
       "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
       "authorLinkedin": "https://kalarti.com",
-      "category": "hidrosanitario",
+      "category": "Hidráulica, SIG & Territorio",
+      "categoryIds": ["hidraulica-sig"],
       "tags": ["hidrología urbana", "bloque alterno", "número de Froude", "HEC-RAS 2D", "mallas de volúmenes finitos", "gestión del riesgo"],
       "excerpt": "Del método del bloque alterno y el número de Froude hasta la simulación 2D urbana: lecciones clave de la ciencia hidráulica para predecir crecidas y diseñar ciudades resilientes.",
       "date": "2026-10-14",
@@ -46,8 +88,8 @@
       "video": "/blog/media/video/de-lluvia-a-riesgo.mp4",
       "hub": true,
       "relatedSlugs": [
-        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
-        "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones"
+        "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones",
+        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica"
       ],
       "faq": [
         {
@@ -61,42 +103,13 @@
       ]
     },
     {
-      "slug": "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones",
-      "title": "El Peligro Oculto en el POT: Por Qué Planear con el Clima del Pasado es un Error Costoso",
-      "author": "Ing. Ana Cristina Garcés Eraso",
-      "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
-      "authorLinkedin": "https://kalarti.com",
-      "category": "hidrosanitario",
-      "tags": ["POT Pasto", "ordenamiento territorial", "mapas de riesgo", "estudios de amenaza", "LiDAR", "SUDS"],
-      "excerpt": "Análisis técnico sobre la obsolescencia de los mapas de riesgo en los POT y los requerimientos del Consejo de Estado en Pasto (Nariño): por qué la modelación 2D y las ciudades esponja son la solución.",
-      "date": "2026-10-14",
-      "readTime": "10 min",
-      "image": "/blog/images/pot-pasto-portada.jpg",
-      "audio": "/blog/media/audio/por-que-mienten-mapas-riesgo.m4a",
-      "audioTitle": "Por Qué Mienten los Mapas de Riesgo Urbanos (Entrevista Técnica)",
-      "hub": true,
-      "relatedSlugs": [
-        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
-        "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide"
-      ],
-      "faq": [
-        {
-          "question": "¿Qué implicaciones jurídicas tiene planear con mapas de riesgo obsoletos?",
-          "answer": "Expone a las administraciones municipales a demandas de reparación directa y acciones de nulidad por otorgar licencias en zonas que sufren inundaciones o avenidas torrenciales."
-        },
-        {
-          "question": "¿Cómo ayudan los Sistemas de Drenaje Urbano Sostenible (SUDS) en Pasto?",
-          "answer": "Permiten retener e infiltrar el agua pluvial en el origen mediante pavimentos permeables, jardines de lluvia y cubiertas vegetales, reduciendo la saturación de los colectores y quebradas."
-        }
-      ]
-    },
-    {
       "slug": "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide",
       "title": "Guía Integral de Sistemas de Información Geográfica (SIG): Del Modelado Territorial a la Simulación Hidráulica y las IDE",
       "author": "Ing. Ana Cristina Garcés Eraso",
       "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
       "authorLinkedin": "https://kalarti.com",
-      "category": "hidrosanitario",
+      "category": "Hidráulica, SIG & Territorio",
+      "categoryIds": ["hidraulica-sig"],
       "tags": ["Sistemas de Información Geográfica", "SIG", "GIS", "topología espacial", "vectorial vs raster", "simulación hidráulica", "IDE"],
       "excerpt": "Guía completa de geomática e ingeniería territorial: abstracción de entidades a objetos espaciales, reglas topológicas, interoperabilidad con HEC-RAS e Infraestructuras de Datos Espaciales.",
       "date": "2026-10-14",
@@ -106,8 +119,8 @@
       "audioTitle": "Cómo los Sistemas de Información Geográfica Gobiernan el Territorio (Entrevista Técnica)",
       "hub": true,
       "relatedSlugs": [
-        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
-        "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones"
+        "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones",
+        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica"
       ],
       "faq": [
         {
@@ -126,7 +139,8 @@
       "author": "Guillermo J. Salomón Solarte",
       "authorTitle": "Arquitecto — Esp. BIM Management KALARTI",
       "authorLinkedin": "https://kalarti.com",
-      "category": "arquitectonico",
+      "category": "BIM Interdisciplinario & Coordinación MEP",
+      "categoryIds": ["bim-mep"],
       "tags": ["vivienda campestre", "Buga House", "diseño en ladera", "BIM Revit", "arquitectura de lujo"],
       "excerpt": "Caso de estudio de Buga House (230 m² en Buga, Valle del Cauca): diseño arquitectónico campestre de lujo en ladera, coordinación BIM en Revit MEP y renders fotorrealistas.",
       "date": "2026-08-24",
@@ -150,7 +164,8 @@
       "author": "Guillermo J. Salomón Solarte",
       "authorTitle": "Arquitecto — Esp. BIM Management & Bio-Construcción",
       "authorLinkedin": "https://kalarti.com",
-      "category": "bio-construccion",
+      "category": "Bio-Construcción & Arquitectura Sostenible",
+      "categoryIds": ["bioconstruccion"],
       "tags": ["casa alpina guadua", "arquitectura híbrida", "ladrillo a la vista", "esterilla guadua", "Casa Cabrera"],
       "excerpt": "Caso de estudio de la Casa Cabrera (150 m² en Cabrera, Nariño): un diseño alpino doble que combina fachada urbana en ladrillo vista con estructura e interiorismos en Guadua Angustifolia.",
       "date": "2026-08-23",
@@ -158,8 +173,8 @@
       "image": "/blog/images/casa-cabrera.webp",
       "hub": true,
       "relatedSlugs": [
-        "vivienda-campestre-lujo-ladera-buga-house",
-        "bio-construccion-guadua-colombia-guia-completa"
+        "bio-construccion-guadua-colombia-guia-completa",
+        "vivienda-campestre-lujo-ladera-buga-house"
       ],
       "faq": [
         {
@@ -174,7 +189,8 @@
       "author": "Guillermo J. Salomón Solarte",
       "authorTitle": "Arquitecto — Esp. BIM Management & Diseño de Envolventes",
       "authorLinkedin": "https://kalarti.com",
-      "category": "arquitectonico",
+      "category": "BIM Interdisciplinario & Coordinación MEP",
+      "categoryIds": ["bim-mep"],
       "tags": ["pieles de edificios", "remodelación de fachadas", "paisajismo", "envolventes bioclimáticas", "proyecto SOMI"],
       "excerpt": "Descubre cómo reinterpretar fachadas existentes utilizando segundas pieles protectoras, contraste de materiales y vegetación integrada (Casos SOMI y Urbano Hostal).",
       "date": "2026-08-21",
@@ -182,6 +198,7 @@
       "image": "/blog/images/somi-fachada.webp",
       "hub": true,
       "relatedSlugs": [
+        "vivienda-campestre-lujo-ladera-buga-house",
         "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera"
       ]
     },
@@ -191,7 +208,8 @@
       "author": "Ing. Sandra del Pilar Paz Jojoa & Arq. Guillermo Salomón",
       "authorTitle": "Esp. Estructural & Esp. BIM Management",
       "authorLinkedin": "https://kalarti.com",
-      "category": "estructural",
+      "category": "Normativa & Gestión del Riesgo",
+      "categoryIds": ["normativa-riesgo", "bioconstruccion"],
       "tags": ["NSR-10 Título E", "sismo-resistente", "guadua angustifolia", "bahareque encementado", "memorias de cálculo"],
       "excerpt": "Guía normativa para el diseño estructural sismo-resistente de edificaciones en Guadua Angustifolia Kunth bajo el estándar colombiano NSR-10 por la Ing. Sandra Paz (Esp. Estructural).",
       "date": "2026-08-20",
@@ -209,7 +227,8 @@
       "author": "Guillermo J. Salomón Solarte",
       "authorTitle": "Arquitecto — Esp. Bio-Construcción en Guadua & SENA",
       "authorLinkedin": "https://kalarti.com",
-      "category": "bio-construccion",
+      "category": "Bio-Construcción & Arquitectura Sostenible",
+      "categoryIds": ["bioconstruccion"],
       "tags": ["guadua", "bio-construccion", "arquitectura sostenible", "bambú", "sismo-resistente"],
       "excerpt": "Descubre las propiedades de la Guadua Angustifolia Kunth como acero vegetal, técnicas de inmunización, uniones estructurales y proyectos como Pajaca en África.",
       "date": "2026-08-15",

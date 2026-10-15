@@ -18,6 +18,10 @@ export async function generateMetadata({ params }) {
     return { title: 'Artículo no encontrado | KALARTI Blog' };
   }
 
+  const imageUrl = article.image 
+    ? (article.image.startsWith('http') ? article.image : `https://kalarti.com${article.image}`)
+    : 'https://kalarti.com/icon.png';
+
   return {
     title: `${article.title} | KALARTI Blog`,
     description: article.excerpt,
@@ -26,9 +30,23 @@ export async function generateMetadata({ params }) {
       title: article.title,
       description: article.excerpt,
       type: 'article',
+      url: `https://kalarti.com/blog/${slug}`,
       publishedTime: article.date,
       authors: [article.author],
-      images: [article.image || '/icon.png'],
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 675,
+          alt: article.title,
+        }
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.excerpt,
+      images: [imageUrl],
     },
   };
 }
@@ -40,6 +58,10 @@ export default async function ArticlePage({ params }) {
   if (!article) {
     notFound();
   }
+
+  const relatedArticles = (article.relatedSlugs || [])
+    .map((s) => metadata.articles.find((a) => a.slug === s))
+    .filter(Boolean);
 
   // Attempt to load corresponding HTML file from src/content/blog/
   let htmlContent = '';
@@ -586,17 +608,17 @@ export default async function ArticlePage({ params }) {
 
           {/* CTA CARD */}
           <div className="clean-cta-card">
-            <h3>¿Requieres consultoría hidrológica o diseño de redes?</h3>
+            <h3>{article.cta?.title || '¿Requieres consultoría hidrológica o diseño de redes?'}</h3>
             <p>
-              Habla directamente con la Ing. Ana Cristina Garcés y el equipo de KALARTI para cotizar estudios de inundabilidad, modelación hidrológica, redes HDS o contra incendio.
+              {article.cta?.desc || 'Habla directamente con la Ing. Ana Cristina Garcés y el equipo de KALARTI para cotizar estudios de inundabilidad, modelación hidrológica, redes HDS o contra incendio.'}
             </p>
             <a 
-              href={`https://wa.me/573152717932?text=Hola,%20le%C3%AD%20el%20art%C3%ADculo%20"${encodeURIComponent(article.title)}"%20y%20deseo%20asesor%C3%ADa%20t%C3%A9cnica%20con%20la%20Ing.%20Ana%20Garc%C3%A9s.`}
+              href={`https://wa.me/573152717932?text=${encodeURIComponent(article.cta?.message || `Hola, leí el artículo "${article.title}" y deseo asesoría técnica con el equipo de KALARTI.`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="clean-btn-wa-lg"
             >
-              💬 Consultar con la Especialista por WhatsApp
+              {article.cta?.buttonText || '💬 Consultar con la Especialista por WhatsApp'}
             </a>
           </div>
 
@@ -610,6 +632,36 @@ export default async function ArticlePage({ params }) {
                   <div className="clean-faq-a">{item.answer}</div>
                 </div>
               ))}
+            </section>
+          )}
+
+          {/* RELATED ARTICLES */}
+          {relatedArticles.length > 0 && (
+            <section className="clean-related-section" style={{ marginTop: '56px', paddingTop: '40px', borderTop: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1.2px', color: '#b48528', marginBottom: '8px' }}>
+                Investigación &amp; Criterios Técnicos
+              </div>
+              <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a', marginBottom: '24px', letterSpacing: '-0.3px' }}>
+                Lecturas Complementarias
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '22px' }}>
+                {relatedArticles.map((rel) => (
+                  <Link key={rel.slug} href={`/blog/${rel.slug}`} style={{ textDecoration: 'none', color: 'inherit', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '16px', display: 'flex', flexDirection: 'column', transition: 'all 0.2s ease' }}>
+                    <div style={{ height: '150px', borderRadius: '10px', overflow: 'hidden', marginBottom: '14px', background: '#e2e8f0' }}>
+                      <img src={rel.image || '/icon.png'} alt={rel.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+                      {rel.category}
+                    </span>
+                    <h4 style={{ fontSize: '15.5px', fontWeight: 750, color: '#0f172a', lineHeight: 1.35, marginBottom: '10px' }}>
+                      {rel.title}
+                    </h4>
+                    <span style={{ fontSize: '12.5px', color: '#64748b', marginTop: 'auto', fontWeight: 600 }}>
+                      {rel.readTime} de lectura →
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </section>
           )}
         </div>
