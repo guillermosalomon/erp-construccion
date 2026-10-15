@@ -18,32 +18,41 @@ export async function generateMetadata({ params }) {
     return { title: 'Artículo no encontrado | KALARTI Blog' };
   }
 
-  const imageUrl = article.image 
-    ? (article.image.startsWith('http') ? article.image : `https://kalarti.com${article.image}`)
-    : 'https://kalarti.com/icon.png';
+  const rawImage = article.ogImage || article.image || '/blog/images/og/blog-og.jpg';
+  const imageUrl = rawImage.startsWith('http') ? rawImage : `https://www.kalarti.com${rawImage}`;
+  const canonicalUrl = `https://www.kalarti.com/blog/${slug}`;
 
   return {
     title: `${article.title} | KALARTI Blog`,
     description: article.excerpt,
     keywords: article.tags ? article.tags.join(', ') : '',
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: article.title,
       description: article.excerpt,
       type: 'article',
-      url: `https://kalarti.com/blog/${slug}`,
+      url: canonicalUrl,
       publishedTime: article.date,
       authors: [article.author],
+      siteName: 'KALARTI Constructores y Consultores',
+      locale: 'es_CO',
       images: [
         {
           url: imageUrl,
+          secureUrl: imageUrl,
           width: 1200,
-          height: 675,
+          height: 630,
           alt: article.title,
+          type: 'image/jpeg',
         }
       ],
     },
     twitter: {
       card: 'summary_large_image',
+      site: '@kalarti',
+      creator: '@kalarti',
       title: article.title,
       description: article.excerpt,
       images: [imageUrl],

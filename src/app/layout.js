@@ -12,11 +12,36 @@ const inter = Inter({
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-V4M6ZBVX0S";
 
 export const metadata = {
+  metadataBase: new URL("https://www.kalarti.com"),
   title: {
     default: "KALARTI — Constructores y Consultores | Diseño, BIM & Construcción",
     template: "%s | KALARTI",
   },
-  description: "Firma de ingeniería y arquitectura especializada en diseño de viviendas campestres de lujo, cálculo estructural NSR-10, bio-construcción en guadua y coordinación BIM 5D.",
+  description: "Firma de ingeniería y arquitectura especializada en diseño de viviendas campestres de lujo, cálculo estructural NSR-10, bio-construcción en guadua, modelación hidrológica de cuencas y coordinación BIM 5D.",
+  openGraph: {
+    title: "KALARTI — Constructores y Consultores | Diseño, BIM & Construcción",
+    description: "Firma de ingeniería y arquitectura especializada en diseño de viviendas campestres de lujo, cálculo estructural NSR-10, bio-construcción en guadua, modelación hidrológica de cuencas y coordinación BIM 5D.",
+    url: "https://www.kalarti.com",
+    siteName: "KALARTI Constructores y Consultores",
+    locale: "es_CO",
+    type: "website",
+    images: [
+      {
+        url: "/blog/images/og/blog-og.jpg",
+        secureUrl: "https://www.kalarti.com/blog/images/og/blog-og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "KALARTI — Consultoría Técnica, Modelación de Cuencas, BIM & Bio-Construcción",
+        type: "image/jpeg",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KALARTI — Constructores y Consultores | Diseño, BIM & Construcción",
+    description: "Firma de ingeniería y arquitectura especializada en modelación de cuencas, coordinación BIM y bio-construcción.",
+    images: ["https://www.kalarti.com/blog/images/og/blog-og.jpg"],
+  },
   icons: {
     icon: "/icon.png",
   },

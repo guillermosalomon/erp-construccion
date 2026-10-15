@@ -7,8 +7,20 @@
       "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
       "authorLinkedin": "https://kalarti.com",
       "category": "Planificación Territorial & Modelación Hidráulica",
-      "categoryIds": ["hidraulica-sig", "normativa-riesgo"],
-      "tags": ["POT Pasto", "ordenamiento territorial", "mapas de riesgo", "estudios de amenaza", "LiDAR", "SUDS", "modelación 2D", "Iber"],
+      "categoryIds": [
+        "hidraulica-sig",
+        "normativa-riesgo"
+      ],
+      "tags": [
+        "POT Pasto",
+        "ordenamiento territorial",
+        "mapas de riesgo",
+        "estudios de amenaza",
+        "LiDAR",
+        "SUDS",
+        "modelación 2D",
+        "Iber"
+      ],
       "excerpt": "La desactualización climática e hidrológica en los instrumentos de ordenamiento territorial expone a las ciudades a contingencias millonarias e inundaciones críticas. A través de la modelación hidrodinámica 2D, el análisis de cuencas y la integración territorial, demostramos por qué el diseño urbano moderno debe desestimar la falsa seguridad de la canalización tradicional y anticiparse al clima del futuro.",
       "date": "2026-10-14",
       "readTime": "10 min",
@@ -38,7 +50,8 @@
           "question": "¿Cómo ayudan los Sistemas de Drenaje Urbano Sostenible (SUDS) en Pasto?",
           "answer": "Permiten retener e infiltrar el agua pluvial en el origen mediante pavimentos permeables, jardines de lluvia y cubiertas vegetales, reduciendo la saturación de los colectores y quebradas."
         }
-      ]
+      ],
+      "ogImage": "/blog/images/og/pot-pasto-og.jpg"
     },
     {
       "slug": "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
@@ -47,8 +60,18 @@
       "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
       "authorLinkedin": "https://kalarti.com",
       "category": "Hidráulica, SIG & Territorio",
-      "categoryIds": ["hidraulica-sig", "bim-mep"],
-      "tags": ["BIM en cuencas", "gemelos digitales", "infraestructura hidráulica", "balance hídrico", "HEC-RAS 2D", "Iber"],
+      "categoryIds": [
+        "hidraulica-sig",
+        "bim-mep"
+      ],
+      "tags": [
+        "BIM en cuencas",
+        "gemelos digitales",
+        "infraestructura hidráulica",
+        "balance hídrico",
+        "HEC-RAS 2D",
+        "Iber"
+      ],
       "excerpt": "Descubre cómo los gemelos digitales y la modelación BIM de cuencas revolucionan la infraestructura hidráulica, la prevención de inundaciones y el diseño hidrológico territorial.",
       "date": "2026-10-14",
       "readTime": "12 min",
@@ -70,7 +93,8 @@
           "question": "¿Cuándo se debe usar modelación hidráulica 2D en lugar de 1D?",
           "answer": "La modelación 2D es obligatoria en llanuras de inundación anchas, viarios urbanos, confluencias fluviales y zonas donde el agua se propaga con dispersión lateral y recirculaciones no lineales."
         }
-      ]
+      ],
+      "ogImage": "/blog/images/og/bim-cuenca-og.jpg"
     },
     {
       "slug": "de-la-lluvia-al-riesgo-hidrologia-hidraulica-inundaciones-urbanas",
@@ -79,8 +103,17 @@
       "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
       "authorLinkedin": "https://kalarti.com",
       "category": "Hidráulica, SIG & Territorio",
-      "categoryIds": ["hidraulica-sig"],
-      "tags": ["hidrología urbana", "bloque alterno", "número de Froude", "HEC-RAS 2D", "mallas de volúmenes finitos", "gestión del riesgo"],
+      "categoryIds": [
+        "hidraulica-sig"
+      ],
+      "tags": [
+        "hidrología urbana",
+        "bloque alterno",
+        "número de Froude",
+        "HEC-RAS 2D",
+        "mallas de volúmenes finitos",
+        "gestión del riesgo"
+      ],
       "excerpt": "Del método del bloque alterno y el número de Froude hasta la simulación 2D urbana: lecciones clave de la ciencia hidráulica para predecir crecidas y diseñar ciudades resilientes.",
       "date": "2026-10-14",
       "readTime": "11 min",
@@ -100,7 +133,8 @@
           "question": "¿Por qué un dique o muro no siempre es la mejor defensa contra inundaciones?",
           "answer": "Porque genera una falsa sensación de seguridad e incrementa la exposición de viviendas. Si una crecida supera el dique, el colapso es repentino y destructivo. La mejor estrategia es respetar la llanura de inundación y ordenar el territorio."
         }
-      ]
+      ],
+      "ogImage": "/blog/images/og/hidrologia-og.jpg"
     },
     {
       "slug": "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide",
@@ -109,8 +143,18 @@
       "authorTitle": "Directora de Proyectos KALARTI — Ing. Civil | Esp. Redes HDS, RCI & Modelación Hidráulica",
       "authorLinkedin": "https://kalarti.com",
       "category": "Hidráulica, SIG & Territorio",
-      "categoryIds": ["hidraulica-sig"],
-      "tags": ["Sistemas de Información Geográfica", "SIG", "GIS", "topología espacial", "vectorial vs raster", "simulación hidráulica", "IDE"],
+      "categoryIds": [
+        "hidraulica-sig"
+      ],
+      "tags": [
+        "Sistemas de Información Geográfica",
+        "SIG",
+        "GIS",
+        "topología espacial",
+        "vectorial vs raster",
+        "simulación hidráulica",
+        "IDE"
+      ],
       "excerpt": "Guía completa de geomática e ingeniería territorial: abstracción de entidades a objetos espaciales, reglas topológicas, interoperabilidad con HEC-RAS e Infraestructuras de Datos Espaciales.",
       "date": "2026-10-14",
       "readTime": "15 min",
@@ -131,7 +175,8 @@
           "question": "¿Por qué es crítica la topología en redes de acueducto y alcantarillado?",
           "answer": "Porque garantiza la conectividad hidráulica estricta entre tuberías y nodos sin desconexiones, sobreposiciones ni inversiones de gradiente de flujo."
         }
-      ]
+      ],
+      "ogImage": "/blog/images/og/sig-og.jpg"
     },
     {
       "slug": "vivienda-campestre-lujo-ladera-buga-house",
@@ -140,8 +185,16 @@
       "authorTitle": "Arquitecto — Esp. BIM Management KALARTI",
       "authorLinkedin": "https://kalarti.com",
       "category": "BIM Interdisciplinario & Coordinación MEP",
-      "categoryIds": ["bim-mep"],
-      "tags": ["vivienda campestre", "Buga House", "diseño en ladera", "BIM Revit", "arquitectura de lujo"],
+      "categoryIds": [
+        "bim-mep"
+      ],
+      "tags": [
+        "vivienda campestre",
+        "Buga House",
+        "diseño en ladera",
+        "BIM Revit",
+        "arquitectura de lujo"
+      ],
       "excerpt": "Caso de estudio de Buga House (230 m² en Buga, Valle del Cauca): diseño arquitectónico campestre de lujo en ladera, coordinación BIM en Revit MEP y renders fotorrealistas.",
       "date": "2026-08-24",
       "readTime": "11 min",
@@ -156,7 +209,8 @@
           "question": "¿Qué retos implica construir una vivienda campestre en terreno inclinado o ladera?",
           "answer": "Requiere un estudio geotécnico riguroso, cimentaciones escalonadas o pilotadas, muros de contención y un diseño arquitectónico coordinado en BIM que aproveche los desniveles."
         }
-      ]
+      ],
+      "ogImage": "/blog/images/og/buga-house-og.jpg"
     },
     {
       "slug": "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera",
@@ -165,8 +219,16 @@
       "authorTitle": "Arquitecto — Esp. BIM Management & Bio-Construcción",
       "authorLinkedin": "https://kalarti.com",
       "category": "Bio-Construcción & Arquitectura Sostenible",
-      "categoryIds": ["bioconstruccion"],
-      "tags": ["casa alpina guadua", "arquitectura híbrida", "ladrillo a la vista", "esterilla guadua", "Casa Cabrera"],
+      "categoryIds": [
+        "bioconstruccion"
+      ],
+      "tags": [
+        "casa alpina guadua",
+        "arquitectura híbrida",
+        "ladrillo a la vista",
+        "esterilla guadua",
+        "Casa Cabrera"
+      ],
       "excerpt": "Caso de estudio de la Casa Cabrera (150 m² en Cabrera, Nariño): un diseño alpino doble que combina fachada urbana en ladrillo vista con estructura e interiorismos en Guadua Angustifolia.",
       "date": "2026-08-23",
       "readTime": "10 min",
@@ -181,7 +243,8 @@
           "question": "¿Qué ventajas tiene combinar ladrillo exterior con guadua interior?",
           "answer": "El ladrillo exterior protege la estructura del clima y la lluvia sin necesidad de mantenimientos constantes, mientras que la guadua e interior en esterilla aportan calidez, aislamiento térmico y comportamiento sismo-resistente."
         }
-      ]
+      ],
+      "ogImage": "/blog/images/og/casa-cabrera-og.jpg"
     },
     {
       "slug": "pieles-edificios-remodelacion-fachadas-paisajismo",
@@ -190,8 +253,16 @@
       "authorTitle": "Arquitecto — Esp. BIM Management & Diseño de Envolventes",
       "authorLinkedin": "https://kalarti.com",
       "category": "BIM Interdisciplinario & Coordinación MEP",
-      "categoryIds": ["bim-mep"],
-      "tags": ["pieles de edificios", "remodelación de fachadas", "paisajismo", "envolventes bioclimáticas", "proyecto SOMI"],
+      "categoryIds": [
+        "bim-mep"
+      ],
+      "tags": [
+        "pieles de edificios",
+        "remodelación de fachadas",
+        "paisajismo",
+        "envolventes bioclimáticas",
+        "proyecto SOMI"
+      ],
       "excerpt": "Descubre cómo reinterpretar fachadas existentes utilizando segundas pieles protectoras, contraste de materiales y vegetación integrada (Casos SOMI y Urbano Hostal).",
       "date": "2026-08-21",
       "readTime": "10 min",
@@ -200,7 +271,8 @@
       "relatedSlugs": [
         "vivienda-campestre-lujo-ladera-buga-house",
         "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera"
-      ]
+      ],
+      "ogImage": "/blog/images/og/somi-fachada-og.jpg"
     },
     {
       "slug": "nsr-10-titulo-e-diseno-sismo-resistente-guadua",
@@ -209,8 +281,17 @@
       "authorTitle": "Esp. Estructural & Esp. BIM Management",
       "authorLinkedin": "https://kalarti.com",
       "category": "Normativa & Gestión del Riesgo",
-      "categoryIds": ["normativa-riesgo", "bioconstruccion"],
-      "tags": ["NSR-10 Título E", "sismo-resistente", "guadua angustifolia", "bahareque encementado", "memorias de cálculo"],
+      "categoryIds": [
+        "normativa-riesgo",
+        "bioconstruccion"
+      ],
+      "tags": [
+        "NSR-10 Título E",
+        "sismo-resistente",
+        "guadua angustifolia",
+        "bahareque encementado",
+        "memorias de cálculo"
+      ],
       "excerpt": "Guía normativa para el diseño estructural sismo-resistente de edificaciones en Guadua Angustifolia Kunth bajo el estándar colombiano NSR-10 por la Ing. Sandra Paz (Esp. Estructural).",
       "date": "2026-08-20",
       "readTime": "11 min",
@@ -219,7 +300,8 @@
       "relatedSlugs": [
         "bio-construccion-guadua-colombia-guia-completa",
         "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera"
-      ]
+      ],
+      "ogImage": "/blog/images/og/cabrera-house-og.jpg"
     },
     {
       "slug": "bio-construccion-guadua-colombia-guia-completa",
@@ -228,8 +310,16 @@
       "authorTitle": "Arquitecto — Esp. Bio-Construcción en Guadua & SENA",
       "authorLinkedin": "https://kalarti.com",
       "category": "Bio-Construcción & Arquitectura Sostenible",
-      "categoryIds": ["bioconstruccion"],
-      "tags": ["guadua", "bio-construccion", "arquitectura sostenible", "bambú", "sismo-resistente"],
+      "categoryIds": [
+        "bioconstruccion"
+      ],
+      "tags": [
+        "guadua",
+        "bio-construccion",
+        "arquitectura sostenible",
+        "bambú",
+        "sismo-resistente"
+      ],
       "excerpt": "Descubre las propiedades de la Guadua Angustifolia Kunth como acero vegetal, técnicas de inmunización, uniones estructurales y proyectos como Pajaca en África.",
       "date": "2026-08-15",
       "readTime": "12 min",
@@ -238,7 +328,8 @@
       "relatedSlugs": [
         "casas-alpinas-guadua-fachada-ladrillo-casa-cabrera",
         "nsr-10-titulo-e-diseno-sismo-resistente-guadua"
-      ]
+      ],
+      "ogImage": "/blog/images/og/cabrera-house-og.jpg"
     }
   ]
 }

@@ -1,13 +1,38 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Blog Técnico y Casos de Estudio | KALARTI Arquitectura & Ingeniería',
-  description: 'Artículos técnicos, coordinación BIM 5D en Revit, bio-construcción en guadua, cálculo estructural NSR-10, redes hidrosanitarias y arquitectura residencial.',
-  keywords: 'blog arquitectura, BIM Revit, bio-construcción, guadua angustifolia, cálculo estructural, NSR-10, diseño de interiores, KALARTI',
+  metadataBase: new URL('https://www.kalarti.com'),
+  title: 'Territorio, Ingeniería Digital & Bio-Arquitectura | Blog KALARTI',
+  description: 'Perspectiva KALARTI: Artículos técnicos, modelación hidrológica de cuencas en 2D, coordinación BIM en Revit MEP y bio-construcción sostenible.',
+  keywords: 'blog arquitectura, BIM Revit, bio-construcción, modelación de cuencas, POT Pasto, HEC-RAS 2D, Iber, cálculo estructural, KALARTI',
+  alternates: {
+    canonical: 'https://www.kalarti.com/blog',
+  },
   openGraph: {
-    title: 'Blog KALARTI — Arquitectura, Ingeniería & Bio-Construcción',
-    description: 'Publicaciones técnicas y casos de estudio reales por los especialistas de KALARTI.',
+    title: 'Territorio, Ingeniería Digital & Bio-Arquitectura | Blog KALARTI',
+    description: 'Investigación aplicada, modelación hidrológica 2D, coordinación BIM (Arquitectura, Estructura, MEP) y bio-construcción sostenible.',
     type: 'website',
+    url: 'https://www.kalarti.com/blog',
+    siteName: 'KALARTI Constructores y Consultores',
+    locale: 'es_CO',
+    images: [
+      {
+        url: 'https://www.kalarti.com/blog/images/og/blog-og.jpg',
+        secureUrl: 'https://www.kalarti.com/blog/images/og/blog-og.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Territorio, Ingeniería Digital & Bio-Arquitectura — Blog KALARTI',
+        type: 'image/jpeg',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@kalarti',
+    creator: '@kalarti',
+    title: 'Territorio, Ingeniería Digital & Bio-Arquitectura | Blog KALARTI',
+    description: 'Investigación aplicada, modelación hidrológica 2D, coordinación BIM y bio-construcción sostenible.',
+    images: ['https://www.kalarti.com/blog/images/og/blog-og.jpg'],
   },
 };
 
