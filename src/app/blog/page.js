@@ -577,7 +577,7 @@ export default function BlogIndex() {
       {/* HEADER TITLE */}
       <section className="blog-header-section">
         <div className="blog-subtitle">Perspectiva KALARTI</div>
-        <h1 className="blog-main-title">Perspectiva KALARTI: Territorio, Ingeniería Digital &amp; Bio-Arquitectura</h1>
+        <h1 className="blog-main-title">Territorio, Ingeniería Digital &amp; Bio-Arquitectura</h1>
         <p className="blog-main-desc">
           Artículos técnicos, investigación aplicada y criterios de diseño sobre modelación hidrológica de cuencas, coordinación interdisciplinaria BIM (Arquitectura, Estructura, MEP) y bio-construcción sostenible.
         </p>
