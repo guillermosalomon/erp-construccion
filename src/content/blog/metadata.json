@@ -54,6 +54,60 @@
       "ogImage": "/blog/images/og/pot-pasto-card.jpg"
     },
     {
+      "slug": "el-espejismo-del-cemento-crisis-ambiental-sanitaria-tumaco",
+      "title": "El Espejismo del Cemento: Tumaco y el Reflejo de Nuestra Propia Indiferencia",
+      "author": "Guillermo J. Salomón Solarte",
+      "authorTitle": "Arquitecto — Esp. BIM Management & Bio-Construcción KALARTI",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "Territorio, Gestión Ambiental & Saneamiento",
+      "categoryIds": [
+        "normativa-riesgo",
+        "hidraulica-sig"
+      ],
+      "tags": [
+        "Tumaco",
+        "crisis ambiental",
+        "saneamiento básico",
+        "PGIRS",
+        "malecones",
+        "costa pacífica",
+        "espejismo del cemento",
+        "cultura ciudadana"
+      ],
+      "excerpt": "Caminar por las playas de Tumaco revela una desoladora paradoja: mientras la ciudad recibe anuncios de malecones y cemento, las orillas se asfixian bajo toneladas de plástico por falta de alcantarillado real. 4 revelaciones sobre prioridades urbanas y corresponsabilidad.",
+      "date": "2026-10-16",
+      "readTime": "11 min",
+      "image": "/blog/images/tumaco-portada.jpg",
+      "ogImage": "/blog/images/og/tumaco-card.jpg",
+      "audio": "/blog/media/audio/la-crisis-de-basura-en-tumaco.m4a",
+      "audioTitle": "La Crisis de Basura en Tumaco: Cemento Cosmético vs Saneamiento Real (Podcast)",
+      "video": "/blog/media/video/video-tumaco-villa-del-sol.mp4",
+      "videoBadge": "Evidencia en Terreno · Sector Villa del Sol (Tumaco)",
+      "videoAuthor": "Arq. Guillermo Salomón",
+      "hub": true,
+      "cta": {
+        "title": "¿Su municipio o proyecto requiere asesoría en ordenamiento territorial, PGIRS o saneamiento básico?",
+        "desc": "El equipo de KALARTI integra arquitectura contextual, modelación hidrológica y planeamiento territorial para estructurar soluciones reales que trasciendan las obras cosméticas.",
+        "buttonText": "💬 Consultar con el Arq. Guillermo Salomón por WhatsApp",
+        "message": "Hola, leí el artículo sobre la crisis ambiental en Tumaco y deseo asesoría en proyectos de saneamiento y ordenamiento territorial con KALARTI."
+      },
+      "relatedSlugs": [
+        "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones",
+        "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
+        "guia-integral-sig-gis-modelado-territorial-simulacion-hidraulica-ide"
+      ],
+      "faq": [
+        {
+          "question": "¿Qué es el espejismo del cemento en el desarrollo urbano de Tumaco?",
+          "answer": "Es la tendencia histórica de priorizar obras superficiales y vistosas (malecones, parques, pavimentación) para proyectar una falsa sensación de modernidad, mientras se ignoran las redes subterráneas de acueducto, alcantarillado y saneamiento básico que realmente resuelven la emergencia sanitaria."
+        },
+        {
+          "question": "¿Cómo influye la Resolución 754 de 2014 en la solución de residuos sólidos?",
+          "answer": "Establece la formulación y ejecución obligatoria del PGIRS en horizontes de corto (4 años), mediano (8 años) y largo plazo (12 años), permitiendo articular campañas de choque con inversiones estructurales auditables."
+        }
+      ]
+    },
+    {
       "slug": "gemelos-digitales-bim-cuencas-ingenieria-hidraulica",
       "title": "Gemelos Digitales y Modelado BIM en Cuencas: 6 Revelaciones de la Ingeniería Hidráulica",
       "author": "Ing. Ana Cristina Garcés Eraso",

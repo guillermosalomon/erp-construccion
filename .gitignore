@@ -46,6 +46,7 @@ next-env.d.ts
 # blog drafts and scratch scripts
 public/Fotos Team/
 public/blog/*Ana Garces*/
+public/blog/*Guillermo*/
 public/blog/*.py
 public/blog/*.ps1
 public/blog/*.txt

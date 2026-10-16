@@ -564,9 +564,9 @@ export default async function ArticlePage({ params }) {
         {article.audio && (
           <div className="clean-podcast-card">
             <div className="clean-podcast-badge">🎧 Entrevista Técnica / Podcast</div>
-            <h3 className="clean-podcast-title">{article.audioTitle || 'Escucha el análisis técnico con la especialista'}</h3>
+            <h3 className="clean-podcast-title">{article.audioTitle || 'Escucha el análisis técnico con el especialista'}</h3>
             <p className="clean-podcast-desc">
-              Episodio exclusivo con la {article.author} ({article.authorTitle}). Reproduce el audio mientras lees el análisis a continuación:
+              Episodio exclusivo con {article.author} ({article.authorTitle}). Reproduce el audio mientras lees el análisis a continuación:
             </p>
             <audio controls className="clean-audio-element" preload="metadata">
               <source src={article.audio} type="audio/mp4" />
@@ -576,12 +576,19 @@ export default async function ArticlePage({ params }) {
           </div>
         )}
 
+        {/* HERO IMAGE */}
+        {article.image && (
+          <div className="clean-hero-img-wrap">
+            <img src={article.image} alt={article.title} />
+          </div>
+        )}
+
         {/* VIDEO PLAYER (IF AVAILABLE) */}
         {article.video && (
           <div className="clean-video-card">
             <div className="clean-video-header">
-              <span className="clean-video-badge">🎬 Masterclass en Video</span>
-              <span style={{ fontSize: '12px', color: '#94a3b8' }}>Ing. Ana Cristina Garcés</span>
+              <span className="clean-video-badge">🎬 {article.videoBadge || 'Masterclass en Video'}</span>
+              <span style={{ fontSize: '12px', color: '#94a3b8' }}>{article.videoAuthor || article.author}</span>
             </div>
             <div className="clean-video-wrap">
               <video controls preload="metadata" poster={article.image} className="clean-video-element">
@@ -589,13 +596,6 @@ export default async function ArticlePage({ params }) {
                 Tu navegador no soporta reproducción de video.
               </video>
             </div>
-          </div>
-        )}
-
-        {/* HERO IMAGE (IF NO VIDEO OR AS COMPLEMENT) */}
-        {article.image && !article.video && (
-          <div className="clean-hero-img-wrap">
-            <img src={article.image} alt={article.title} />
           </div>
         )}
 
