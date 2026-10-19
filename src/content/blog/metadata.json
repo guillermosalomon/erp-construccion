@@ -54,6 +54,58 @@
       "ogImage": "/blog/images/og/pot-pasto-card.jpg"
     },
     {
+      "slug": "etica-morfologia-urbana-sostenible-pot-densificacion-equidad-territorial-narino",
+      "title": "Ética y Morfología Urbana Sostenible: Estrategias POT para la Densificación y la Equidad Territorial en Nariño",
+      "author": "Guillermo J. Salomón Solarte",
+      "authorTitle": "Arquitecto — Esp. BIM Management & Bio-Construcción KALARTI",
+      "authorLinkedin": "https://kalarti.com",
+      "category": "Planificación Territorial, POT & Diseño Urbano",
+      "categoryIds": [
+        "normativa-riesgo",
+        "hidraulica-sig",
+        "bioconstruccion"
+      ],
+      "tags": [
+        "POT Pasto",
+        "morfología urbana",
+        "Avenida Chile Pasto",
+        "densificación en altura",
+        "equidad territorial",
+        "Nariño",
+        "renovación urbana",
+        "saneamiento básico"
+      ],
+      "excerpt": "El diseño del espacio habitado en Nariño exige articular la densificación en altura de los núcleos urbanos consolidados —como la visión propuesta por KALARTI para la Avenida Chile en Pasto— con la inversión ética en agua potable, saneamiento y conectividad rural.",
+      "date": "2026-10-19",
+      "readTime": "12 min",
+      "image": "/blog/images/av-chile-propuesta-kalarti.jpg",
+      "ogImage": "/blog/images/og/av-chile-propuesta-card.jpg",
+      "audio": "/blog/media/audio/urbanismo-etico-ciudad-compacta-narino.m4a",
+      "audioTitle": "Urbanismo Ético para la Ciudad Compacta y la Equidad Territorial en Nariño (Podcast)",
+      "hub": true,
+      "cta": {
+        "title": "¿Busca desarrollar un proyecto de renovación urbana en altura o estructurar instrumentos POT en Nariño?",
+        "desc": "En KALARTI articulamos diseño arquitectónico bioclimático, normativa urbanística POT, coordinación BIM 5D y modelación territorial para proyectos de alto impacto urbano y regional.",
+        "buttonText": "💬 Hablar con el Arq. Guillermo Salomón por WhatsApp",
+        "message": "Hola, leí el artículo sobre Ética y Morfología Urbana Sostenible (Visión Av. Chile Pasto) y deseo asesoría con KALARTI."
+      },
+      "relatedSlugs": [
+        "peligro-oculto-pot-pasto-planear-clima-pasado-riesgo-inundaciones",
+        "el-espejismo-del-cemento-crisis-ambiental-sanitaria-tumaco",
+        "pieles-edificios-remodelacion-fachadas-paisajismo"
+      ],
+      "faq": [
+        {
+          "question": "¿Por qué la densificación en altura ayuda a proteger los ecosistemas y financiar zonas rurales?",
+          "answer": "Al concentrar edificaciones de uso mixto en sectores con redes existentes (como los corredores CCA y áreas AAM), se frena la expansión sobre laderas y reservas ambientales, optimizando el gasto público y liberando plusvalías para financiar acueducto, alcantarillado y vías en municipios vulnerables."
+        },
+        {
+          "question": "¿Cuál es la diferencia entre el déficit cuantitativo y cualitativo de vivienda en la Subregión Centro de Nariño?",
+          "answer": "El déficit cuantitativo es del 9,23% (carencia de unidades nuevas), mientras que el déficit cualitativo alcanza el 51,15% (viviendas con deficiencias en materiales, hacinamiento o falta de acceso a alcantarillado y gas por red)."
+        }
+      ]
+    },
+    {
       "slug": "el-espejismo-del-cemento-crisis-ambiental-sanitaria-tumaco",
       "title": "El Espejismo del Cemento: Tumaco y el Reflejo de Nuestra Propia Indiferencia",
       "author": "Guillermo J. Salomón Solarte",
