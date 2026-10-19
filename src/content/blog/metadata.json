@@ -75,7 +75,7 @@
         "renovación urbana",
         "saneamiento básico"
       ],
-      "excerpt": "El diseño del espacio habitado en Nariño exige articular la densificación en altura de los núcleos urbanos consolidados —como la visión propuesta por KALARTI para la Avenida Chile en Pasto— con la inversión ética en agua potable, saneamiento y conectividad rural.",
+      "excerpt": "El contraste técnico entre la línea base del POT 2015 y el escenario actual (DANE, Asocapitales y Empopasto 2024–2026) confirma que Pasto ya cuenta con la madurez en servicios públicos (alcantarillado al 86,6%, acueducto >94,4% y déficit cuantitativo de solo 3,94%) para priorizar la renovación urbana y densificación en altura sobre la expansión periférica.",
       "date": "2026-10-19",
       "readTime": "12 min",
       "image": "/blog/images/av-chile-propuesta-kalarti.jpg",
@@ -96,12 +96,12 @@
       ],
       "faq": [
         {
-          "question": "¿Por qué la densificación en altura ayuda a proteger los ecosistemas y financiar zonas rurales?",
-          "answer": "Al concentrar edificaciones de uso mixto en sectores con redes existentes (como los corredores CCA y áreas AAM), se frena la expansión sobre laderas y reservas ambientales, optimizando el gasto público y liberando plusvalías para financiar acueducto, alcantarillado y vías en municipios vulnerables."
+          "question": "¿Cómo han evolucionado los indicadores urbanos de Pasto entre el POT 2015 y el escenario 2024–2026?",
+          "answer": "El déficit cuantitativo de vivienda cayó del 9,23% al ~3,94%, mientras que la cobertura de alcantarillado dio un salto del 53,2% al ~86,6%, el acueducto supera el 94,4% y el gas domiciliario por red se masificó. Esto demuestra que Pasto tiene hoy la capacidad instalada para densificar en altura en sus corredores CCA y áreas AAM."
         },
         {
-          "question": "¿Cuál es la diferencia entre el déficit cuantitativo y cualitativo de vivienda en la Subregión Centro de Nariño?",
-          "answer": "El déficit cuantitativo es del 9,23% (carencia de unidades nuevas), mientras que el déficit cualitativo alcanza el 51,15% (viviendas con deficiencias en materiales, hacinamiento o falta de acceso a alcantarillado y gas por red)."
+          "question": "¿Por qué la prioridad urbanística actual en Pasto es la renovación del centro expandido y no la expansión periférica?",
+          "answer": "Porque con un déficit cuantitativo inferior al 4% y un déficit cualitativo de entre 17,28% y 31,34%, el reto real no es ocupar nuevas laderas rurales, sino ejecutar intervenciones arquitectónicas de precisión en el suelo urbano ya dotado de redes públicas para mejorar la calidad constructiva y habitabilidad."
         }
       ]
     },
