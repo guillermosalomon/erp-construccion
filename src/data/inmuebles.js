@@ -19,7 +19,6 @@ export const inmuebles = [
     "area_terreno": 756,
     "area_construida": 200,
     "piso": 10,
-    "licencia_turistica": true,
     "portada_url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/portada.jpg",
     "og_image_url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/og-card.jpg",
     "plano_url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/plano-lote-756m2.jpg",
@@ -68,7 +67,7 @@ export const inmuebles = [
         "alt": "Costado sobre la Carrera 8A del predio en venta en Pasto"
       }
     ],
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=Calle+16+8A-4+Potrerillo+Pasto+Narino",
+    "maps_url": "https://maps.app.goo.gl/voToNsBX8Z5swX789",
     "seo": {
       "title": "Venta de Lote de 756 m² con Proyecto Mixto (10 Pisos) en Pasto — Av. Chile / Potrerillo | Kalarti",
       "description": "Lote comercial esquinero de 756 m² en venta en Pasto (Calle 16 con Cra 8A, a 65m de la Av. Chile y cerca al Terminal). Norma para 10 pisos (Comercio, Oficinas, Aparta-Hotel y Vivienda). $3.200.000/m².",
