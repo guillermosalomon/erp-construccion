@@ -1,6 +1,93 @@
 // Catálogo oficial de inmuebles publicados de Kalarti
 export const inmuebles = [
   {
+    "id": "inm-lote-potrerillo-pasto",
+    "slug": "lote-esquinero-proyecto-mixto-potrerillo-pasto",
+    "titulo": "Venta de Lote de 756 m² con Proyecto Mixto para Construir — Sector El Potrerillo / Av. Chile, Pasto",
+    "subtitulo": "Cerca al Terminal de Transportes de Pasto y la Plaza Principal de Mercado — Alta Plusvalía por Intervención de la Av. Chile",
+    "precio": 2419200000,
+    "precio_texto": "$2.419.200.000 COP ($3.200.000 COP / m²)",
+    "moneda": "COP",
+    "tipo": "Lote",
+    "subtipo": "Lote Urbano Esquinero + Proyecto Mixto 10 Pisos",
+    "estado": "DISPONIBLE",
+    "operacion": "VENTA",
+    "ciudad": "Pasto",
+    "departamento": "Nariño",
+    "sector": "El Potrerillo / A 65 m de la Av. Chile (Cerca al Terminal de Transportes)",
+    "direccion": "Calle 16 No. 8A - 4 (Esquina Calle 16 con Carrera 8A), Sector El Potrerillo, Pasto, Nariño",
+    "area_terreno": 756,
+    "area_construida": 200,
+    "piso": 10,
+    "licencia_turistica": true,
+    "portada_url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/portada.jpg",
+    "og_image_url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/og-card.jpg",
+    "plano_url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/plano-lote-756m2.jpg",
+    "descripcion_corta": "Predio urbano esquinero de 756 m² con proyecto arquitectónico mixto de hasta 10 niveles (Comercio, Oficinas, Aparta-Hotel Airbnb y Vivienda). Ubicado sobre la Calle 16 con Carrera 8A, a 65 m de la Av. Chile y cerca al Terminal de Transportes. Precio: $3.200.000 COP / m².",
+    "descripcion_completa": "Oportunidad estratégica de inversión y desarrollo inmobiliario en San Juan de Pasto: Venta de lote urbano esquinero de 756 m² con propuesta de proyecto arquitectónico de uso mixto de hasta 10 pisos, ubicado cerca al Terminal de Transportes de Pasto y a la Plaza Principal de Mercado.\n\nEl Entorno y su Potencial de Valorización:\nEste predio se beneficia directamente de las obras de transformación vial impulsadas en el sector, destacando su proximidad de tan solo 65 metros a la Avenida Chile —corredor estratégico actualmente en rehabilitación en concreto rígido por la Alcaldía de Pasto— y su colindancia esquinera con la Calle 16 y la Carrera 8A, vías fundamentales para canalizar el tráfico interno y dinamizar la actividad comercial a gran escala del sector de El Potrerillo.\n\nAtributos Técnicos y Normativos del Inmueble:\n• Área total del lote: 756 m² (topografía 100% plana con todos los servicios públicos completos: acueducto, alcantarillado, energía y alumbrado público).\n• Frentes comerciales destacados: Frente principal de 20.70 m sobre la Calle 16 y costado de 26.78 m sobre la Carrera 8A (predio esquinero de doble vitrina comercial, actualmente con 5 locales comerciales en primer nivel).\n• Normativa y Usos (Concepto de Norma Urbanística POT Pasto — Acuerdo 004 de 2015): Clasificado en Tratamiento de Renovación Urbana en modalidad de Reactivación (Código Morfológico de Alturas CMA4P, Edificabilidad Tipo 1, 2 o 3). Autorizado para una altura máxima de hasta 10 pisos (y hasta 12 pisos en zonas receptoras de derechos de construcción) con Índice de Ocupación de hasta 0.75, permitiendo la integración de comercio de alto impacto en zócalo, oficinas, vivienda multifamiliar y aparta-suites para renta turística.\n\nDistribución del Proyecto Arquitectónico Propuesto (10 Niveles):\n• Nivel 1 y 2 (Zócalo Comercial): Locales comerciales integrados de doble altura con alta vitrina hacia las dos vías principales (Calle 16 y Carrera 8A).\n• Nivel 3 y 4 (Módulos Corporativos): Espacios flexibles diseñados para oficinas corporativas, entidades financieras y consultorios.\n• Nivel 5 al 8 (Aparta-Hotel / Renta Corta): Unidades tipo Aparta-Suite bajo modelo Airbnb / Booking para viajeros del Terminal de Transportes y comerciantes, con áreas comunes y terrazas verdes perimetrales.\n• Nivel 9 y 10 (Vivienda Residencial): Apartamentos residenciales con balcones ajardinados, pérgolas y vistas panorámicas hacia las montañas de Pasto.\n\nValor de Venta:\n• Costo por metro cuadrado: $3.200.000 COP / m².\n• Valor total del predio (756 m²): $2.419.200.000 COP.",
+    "amenidades": [
+      "Lote urbano esquinero de 756 m² con topografía 100% plana",
+      "Doble frente comercial: Calle 16 (20.70 m) y Carrera 8A (26.78 m)",
+      "A solo 65 metros de la Av. Chile (rehabilitación en concreto rígido)",
+      "Cerca al Terminal de Transportes de Pasto y Plaza de Mercado",
+      "Norma Urbanística POT: Renovación Urbana hasta 10 pisos (CMA4P)",
+      "Proyecto arquitectónico mixto: Comercio + Oficinas + Aparta-Hotel + Vivienda",
+      "Servicios públicos completos y alto flujo peatonal y vehicular",
+      "5 locales comerciales construidos actualmente en primer nivel"
+    ],
+    "caracteristicas_internas": [
+      "Nivel 1 y 2: Locales comerciales con doble vitrina esquinera",
+      "Nivel 3 y 4: Módulos corporativos para oficinas y consultorios",
+      "Nivel 5 al 8: Aparta-hotel (modelo Airbnb) con terrazas verdes",
+      "Nivel 9 y 10: Vivienda residencial con terraza panorámica",
+      "Concepto de Norma Urbanística vigente y avalúo comercial disponible"
+    ],
+    "galeria": [
+      {
+        "url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/portada.jpg",
+        "alt": "Propuesta arquitectónica Proyecto Mixto de 10 pisos en Lote Esquinero El Potrerillo Pasto"
+      },
+      {
+        "url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/plano-lote-756m2.jpg",
+        "alt": "Plano acotado del lote en venta de 756 m² sobre Calle 16 y Carrera 8A Pasto"
+      },
+      {
+        "url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/foto-1-esquina-calle16-cra8a.jpg",
+        "alt": "Vista actual esquina Calle 16 con Carrera 8A en Pasto"
+      },
+      {
+        "url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/foto-2-fachada-locales.jpg",
+        "alt": "Fachada comercial actual sobre la Calle 16 en El Potrerillo Pasto"
+      },
+      {
+        "url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/foto-3-local-esquinero.jpg",
+        "alt": "Local comercial esquinero actual del predio Calle 16 No. 8A-4"
+      },
+      {
+        "url": "/inmuebles-web/lote-esquinero-proyecto-mixto-potrerillo-pasto/foto-4-costado-carrera-8a.jpg",
+        "alt": "Costado sobre la Carrera 8A del predio en venta en Pasto"
+      }
+    ],
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=Calle+16+8A-4+Potrerillo+Pasto+Narino",
+    "seo": {
+      "title": "Venta de Lote de 756 m² con Proyecto Mixto (10 Pisos) en Pasto — Av. Chile / Potrerillo | Kalarti",
+      "description": "Lote comercial esquinero de 756 m² en venta en Pasto (Calle 16 con Cra 8A, a 65m de la Av. Chile y cerca al Terminal). Norma para 10 pisos (Comercio, Oficinas, Aparta-Hotel y Vivienda). $3.200.000/m².",
+      "keywords": [
+        "lote en venta pasto",
+        "lote comercial potrerillo pasto",
+        "inversion inmobiliaria avenida chile pasto",
+        "lote cerca terminal de transportes pasto",
+        "proyecto uso mixto pasto narino"
+      ],
+      "schema_type": "LandPlot"
+    },
+    "asesor": {
+      "nombre": "Ana - Asesora Inmobiliaria Kalarti",
+      "telefono": "573177725056",
+      "whatsapp_msg": "Hola Ana, me interesa recibir la ficha técnica y agendar reunión sobre el Lote Esquinero de 756 m² con Proyecto Mixto en El Potrerillo / Av. Chile, Pasto (Ref: LOT-POTRERILLO-756)."
+    }
+  },
+  {
     "id": "inm-santa-marina-sm",
     "slug": "apartamento-turistico-santa-marina-santa-marta",
     "titulo": "Apartamento Turístico Tipo F en Santa Marina, Santa Marta",

@@ -19,9 +19,9 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const siteUrl = 'https://kalarti.com';
+  const siteUrl = 'https://www.kalarti.com';
   const canonicalUrl = `${siteUrl}/propiedades/${slug}`;
-  const imageUrl = `${siteUrl}${inmueble.portada_url}`;
+  const imageUrl = `${siteUrl}${inmueble.og_image_url || inmueble.portada_url}`;
 
   return {
     title: inmueble.seo?.title || `${inmueble.titulo} | Kalarti`,
@@ -38,9 +38,11 @@ export async function generateMetadata({ params }) {
       images: [
         {
           url: imageUrl,
+          secureUrl: imageUrl,
           width: 1200,
           height: 630,
           alt: inmueble.titulo,
+          type: 'image/jpeg',
         },
       ],
       locale: 'es_CO',
