@@ -55,7 +55,12 @@ export default function PropiedadesMarketplace() {
       filterTipo === 'Todos' ? true :
       filterTipo === 'Apartamentos' ? i.tipo.toLowerCase().includes('apartamento') :
       filterTipo === 'Casas' ? (i.tipo.toLowerCase().includes('casa') || (i.subtipo && i.subtipo.toLowerCase().includes('cabaña'))) :
-      filterTipo === 'Lotes' ? i.tipo.toLowerCase().includes('lote') : true;
+      filterTipo === 'Lotes' ? i.tipo.toLowerCase().includes('lote') :
+      filterTipo === 'Locales Comerciales' ? (
+        i.tipo.toLowerCase().includes('local') ||
+        (i.subtipo && i.subtipo.toLowerCase().includes('local')) ||
+        (i.etiqueta_especial && i.etiqueta_especial.toLowerCase().includes('local'))
+      ) : true;
 
     const term = searchTerm.toLowerCase().trim();
     const matchesSearch = !term || (
@@ -195,6 +200,7 @@ export default function PropiedadesMarketplace() {
               <option value="Apartamentos">Apartamentos</option>
               <option value="Casas">Casas / Cabañas</option>
               <option value="Lotes">Lotes / Terrenos</option>
+              <option value="Locales Comerciales">Locales Comerciales</option>
             </select>
 
             <input 
@@ -229,7 +235,7 @@ export default function PropiedadesMarketplace() {
 
           {/* Botones de filtro rápido */}
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-            {['Todos', 'Apartamentos', 'Casas', 'Lotes'].map((cat) => (
+            {['Todos', 'Apartamentos', 'Casas', 'Lotes', 'Locales Comerciales'].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setFilterTipo(cat)}
@@ -298,6 +304,11 @@ export default function PropiedadesMarketplace() {
                         <span style={{ background: '#0284c7', color: 'white', padding: '4px 8px', borderRadius: '6px', fontWeight: 'bold', fontSize: '11px', textTransform: 'uppercase' }}>
                           {inmueble.operacion}
                         </span>
+                        {inmueble.etiqueta_especial && (
+                          <span style={{ background: '#f59e0b', color: '#0f172a', padding: '4px 8px', borderRadius: '6px', fontWeight: 'bold', fontSize: '11px' }}>
+                            {inmueble.etiqueta_especial}
+                          </span>
+                        )}
                         {inmueble.licencia_turistica && (
                           <span style={{ background: '#10b981', color: 'white', padding: '4px 8px', borderRadius: '6px', fontWeight: 'bold', fontSize: '11px' }}>
                             Licencia Turística

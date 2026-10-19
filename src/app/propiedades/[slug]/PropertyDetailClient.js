@@ -519,6 +519,11 @@ export default function PropertyDetailClient({ inmueble, relatedInmuebles }) {
                 <span style={{ background: '#e2e8f0', color: '#334155', padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold' }}>
                   {inmueble.tipo}
                 </span>
+                {inmueble.etiqueta_especial && (
+                  <span style={{ background: '#f59e0b', color: '#0f172a', padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold' }}>
+                    {inmueble.etiqueta_especial}
+                  </span>
+                )}
                 {inmueble.licencia_turistica && (
                   <span style={{ background: '#10b981', color: 'white', padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold' }}>
                     Licencia Turística
