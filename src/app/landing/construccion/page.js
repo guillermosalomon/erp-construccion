@@ -130,6 +130,7 @@ const SERVICES = [
     { icon: '🏠', title: 'Construcción de Viviendas & Comercial', desc: 'Casas campestres, condominios y edificaciones con diseño personalizado, acabados premium y ejecución llave en mano.', features: ['Diseño arquitectónico a medida', 'Estructura sismorresistente', 'Acabados de alta calidad'] },
     { icon: '🏛️', title: 'Cálculo Estructural NSR-10 & Vulnerabilidad', desc: 'Diseño estructural sismo-resistente, peritaje post-sismo, patología y memorias de cálculo para Curadurías Urbanas liderado por la Ing. Sandra Paz.', features: ['Cálculo sísmico bajo NSR-10', 'Diagnóstico de vulnerabilidad', 'Aprobación en Curadurías'] },
     { icon: '📐', title: 'Coordinación BIM 5D & Diseño', desc: 'Modelación paramétrica 3D, detección de interferencias (clash detection) y presupuestos integrados 5D liderado por Arq. Guillermo Salomón.', features: ['Modelación 3D en Revit', 'Presupuesto integrado 5D', 'Detección temprana de conflictos'] },
+    { icon: '🛣️', title: 'Diseño Geométrico de Vías & Pavimentos', desc: 'Trazado y modelación geométrica de vías urbanas, secundarias y terciarias bajo normativa INVIAS, movimiento de tierras y estructuras de pavimento liderado por Ing. Jaime Andrés Paz.', features: ['Diseño en planta, perfil y secciones (Civil 3D)', 'Normativa Manual de Diseño Geométrico INVIAS', 'Cubicaciones de explanación y diseño de pavimentos'] },
     { icon: '💧', title: 'Redes Hidrosanitarias & Hidráulica', desc: 'Diseño de redes de acueducto, alcantarillado, redes contra incendio RCI (NFPA) y modelación de drenaje liderado por Ing. Ana Cristina Garcés.', features: ['Redes HDS y pluviales', 'Sistemas Contra Incendio RCI', 'Modelación hidrológica'] },
     { icon: '🏗️', title: 'Obras Civiles & Contratación Estatal', desc: 'Construcción de infraestructura vial, pavimentos, puentes, redes matrices e interventoría técnica liderado por Ing. Jaime Andrés Paz.', features: ['Pavimentos e infraestructura vial', 'Interventoría de obras civiles', 'Contratación estatal y privada'] },
     { icon: '🌿', title: 'Bio-Construcción en Guadua', desc: 'Estructuras sismorresistentes en Guadua Angustifolia (NSR-10 Título E), eco-hoteles y arquitectura bioclimática de bajo impacto.', features: ['Guadua inmunizada y certificada', 'Aislamiento térmico natural', 'Estructuras sustentables'] },
@@ -343,9 +344,11 @@ function ContactSection() {
                                     <select id="servicio" name="servicio" required value={formData.servicio} onChange={handleChange}>
                                         <option value="">Selecciona un servicio</option>
                                         <option value="construccion_vivienda">Construcción de Vivienda</option>
+                                        <option value="diseno_geometrico_vias">Diseño Geométrico de Vías y Pavimentos</option>
                                         <option value="remodelacion">Remodelación</option>
-                                        <option value="diseno_arquitectonico">Diseño Arquitectónico</option>
-                                        <option value="diseno_estructural">Diseño Estructural</option>
+                                        <option value="diseno_arquitectonico">Diseño Arquitectónico & BIM</option>
+                                        <option value="diseno_estructural">Diseño Estructural NSR-10</option>
+                                        <option value="redes_hidrosanitarias">Redes Hidrosanitarias y Modelación Hidráulica</option>
                                         <option value="consultoria">Consultoría / Interventoría</option>
                                         <option value="obras_civiles">Obras Civiles</option>
                                         <option value="ambiental">Estudios Ambientales</option>
@@ -395,7 +398,8 @@ function Footer() {
                     <div className="lp-footer-links">
                         <h4>Servicios</h4>
                         <a href="#servicios">Construcción de Viviendas</a>
-                        <a href="#servicios">Diseño BIM</a>
+                        <a href="#servicios">Diseño Geométrico de Vías</a>
+                        <a href="#servicios">Diseño BIM 5D</a>
                         <a href="#servicios">Obras Civiles</a>
                         <a href="#servicios">Consultoría</a>
                     </div>
