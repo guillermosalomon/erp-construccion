@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Providers } from "./providers";
+import CookieConsent from "@/components/CookieConsent";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -51,7 +52,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es" className={inter.variable}>
       <head>
-        {/* Google tag (gtag.js) */}
+        {/* Google tag (gtag.js) with Consent Mode v2 */}
         <Script
           strategy="afterInteractive"
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
@@ -63,9 +64,29 @@ export default function RootLayout({ children }) {
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                'analytics_storage': 'granted',
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'wait_for_update': 500
+              });
+              try {
+                var savedConsent = localStorage.getItem('kalarti_cookie_consent');
+                if (savedConsent) {
+                  var parsed = JSON.parse(savedConsent);
+                  gtag('consent', 'update', {
+                    'analytics_storage': parsed.analytics ? 'granted' : 'denied',
+                    'ad_storage': parsed.marketing ? 'granted' : 'denied',
+                    'ad_user_data': parsed.marketing ? 'granted' : 'denied',
+                    'ad_personalization': parsed.marketing ? 'granted' : 'denied'
+                  });
+                }
+              } catch (e) {}
               gtag('js', new Date());
               gtag('config', '${GA_ID}', {
                 page_path: window.location.pathname,
+                anonymize_ip: true
               });
             `,
           }}
@@ -74,6 +95,7 @@ export default function RootLayout({ children }) {
       <body>
         <Providers>
           {children}
+          <CookieConsent />
         </Providers>
       </body>
     </html>

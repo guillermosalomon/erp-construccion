@@ -280,12 +280,22 @@ export default function BlogLayout({ children }) {
             <h4>Contacto Directo</h4>
             <p style={{ fontSize: '14px', marginBottom: '8px' }}>💬 WhatsApp: +57 315 271 7932</p>
             <p style={{ fontSize: '14px', marginBottom: '8px' }}>📍 Cra 28a No 17 15 Ed. Antonella Of. 401</p>
-            <p style={{ fontSize: '14px' }}>🌐 www.kalarti.com</p>
+            <p style={{ fontSize: '14px', marginBottom: '8px' }}>🌐 www.kalarti.com</p>
+            <p style={{ fontSize: '13px', marginTop: '12px' }}>
+              <Link href="/privacidad" style={{ color: 'var(--primary-navy)', fontWeight: 600, textDecoration: 'underline' }}>
+                Política de Privacidad, Habeas Data y Cookies
+              </Link>
+            </p>
           </div>
         </div>
         <div className="clean-footer-bottom">
           <p>© 2026 KALARTI Constructores & Consultores S.A.S. Todos los derechos reservados.</p>
-          <p>Publicaciones técnicas elaboradas por el equipo de arquitectura e ingeniería.</p>
+          <p>
+            Publicaciones técnicas elaboradas por el equipo de arquitectura e ingeniería •{' '}
+            <Link href="/privacidad" style={{ color: 'var(--text-muted)', textDecoration: 'underline' }}>
+              Privacidad y Cookies (Ley 1581)
+            </Link>
+          </p>
         </div>
       </footer>
     </div>
