@@ -28,12 +28,12 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.kalarti.com/kalarti-og-logo.jpg",
-        secureUrl: "https://www.kalarti.com/kalarti-og-logo.jpg",
+        url: "https://www.kalarti.com/kalarti-og-logo.png",
+        secureUrl: "https://www.kalarti.com/kalarti-og-logo.png",
         width: 1200,
         height: 630,
         alt: "KALARTI — Constructores y Consultores S.A.S.",
-        type: "image/jpeg",
+        type: "image/png",
       },
     ],
   },
@@ -41,7 +41,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "KALARTI — Constructores y Consultores | Diseño, BIM & Construcción",
     description: "Firma de ingeniería y arquitectura especializada en modelación de cuencas, coordinación BIM y bio-construcción.",
-    images: ["https://www.kalarti.com/kalarti-og-logo.jpg"],
+    images: ["https://www.kalarti.com/kalarti-og-logo.png"],
   },
   icons: {
     icon: "/icon.png",

@@ -17,12 +17,12 @@ export const metadata = {
         locale: 'es_CO',
         images: [
             {
-                url: 'https://www.kalarti.com/kalarti-og-logo.jpg',
-                secureUrl: 'https://www.kalarti.com/kalarti-og-logo.jpg',
+                url: 'https://www.kalarti.com/kalarti-og-logo.png',
+                secureUrl: 'https://www.kalarti.com/kalarti-og-logo.png',
                 width: 1200,
                 height: 630,
                 alt: 'KALARTI — Constructores y Consultores S.A.S.',
-                type: 'image/jpeg',
+                type: 'image/png',
             },
         ],
     },
@@ -30,7 +30,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'KALARTI Constructores — Construcción Profesional en Nariño',
         description: 'Ingenieros certificados con metodología BIM. Cotización gratuita para tu proyecto de construcción.',
-        images: ['https://www.kalarti.com/kalarti-og-logo.jpg'],
+        images: ['https://www.kalarti.com/kalarti-og-logo.png'],
     },
 };
 
