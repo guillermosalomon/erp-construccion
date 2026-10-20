@@ -1,11 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const STORAGE_KEY = 'kalarti_cookie_consent';
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-V4M6ZBVX0S';
+
+const FALLBACK_TITLES = {
+  '/': 'KALARTI — Constructores y Consultores | Diseño, BIM & Construcción',
+  '/blog': 'Territorio, Ingeniería Digital & Bio-Arquitectura | Blog KALARTI',
+  '/propiedades': 'Inmuebles y Proyectos en Venta en Pasto, Chachagüí y Santa Marta | KALARTI Inmobiliaria',
+  '/privacidad': 'Política de Privacidad, Habeas Data y Cookies | KALARTI S.A.S.',
+  '/landing/construccion': 'Construcción de Viviendas en Pasto y Nariño | KALARTI Constructores',
+};
 
 export default function CookieConsent() {
+  const pathname = usePathname();
+  const isInitialMount = useRef(true);
   const [visible, setVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [preferences, setPreferences] = useState({
@@ -55,6 +67,28 @@ export default function CookieConsent() {
     return () => window.removeEventListener('kalarti:open-cookie-settings', handleOpenSettings);
   }, []);
 
+  // Synchronize SPA route changes with GA4 after Next.js updates <title> to prevent (not set)
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        const cleanTitle =
+          (document.title && document.title.trim()) ||
+          FALLBACK_TITLES[pathname] ||
+          'KALARTI — Constructores y Consultores';
+        window.gtag('config', GA_ID, {
+          page_path: pathname,
+          page_title: cleanTitle,
+        });
+      }
+    }, 180);
+
+    return () => clearTimeout(timer);
+  }, [pathname]);
+
   // Global conversion tracking for WhatsApp clicks and media interactions in GA4
   useEffect(() => {
     const handleGlobalClick = (e) => {
@@ -63,10 +97,14 @@ export default function CookieConsent() {
 
       if (anchor.href.includes('wa.me') || anchor.href.includes('whatsapp.com')) {
         if (typeof window.gtag === 'function') {
+          const cleanTitle =
+            (document.title && document.title.trim()) ||
+            FALLBACK_TITLES[window.location.pathname] ||
+            'KALARTI — Constructores y Consultores';
           window.gtag('event', 'contact_whatsapp', {
             event_category: 'conversion',
             page_path: window.location.pathname,
-            page_title: document.title,
+            page_title: cleanTitle,
             button_text: (anchor.innerText || 'WhatsApp CTA').trim().slice(0, 80),
           });
         }

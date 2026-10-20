@@ -86,6 +86,7 @@ export default function RootLayout({ children }) {
               gtag('js', new Date());
               gtag('config', '${GA_ID}', {
                 page_path: window.location.pathname,
+                page_title: document.title || 'KALARTI — Constructores y Consultores',
                 anonymize_ip: true
               });
             `,
