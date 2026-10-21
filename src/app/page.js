@@ -373,7 +373,7 @@ export default function KalartiHub() {
               <div className="card-icon">📖</div>
               <h3 className="card-title">Blog Técnico & Bio-Construcción</h3>
               <p className="card-desc">
-                Guías de cálculo sismo-resistente NSR-10, estructuras en Guadua Angustifolia, diseño de interiores y tendencias BIM por Arq. Guillermo Salomón.
+                Guías de cálculo sismo-resistente NSR-10, estructuras en Guadua Angustifolia, diseño de interiores, tendencias BIM y más....
               </p>
               <Link href="/blog" className="card-link">
                 Leer Blog ➔
