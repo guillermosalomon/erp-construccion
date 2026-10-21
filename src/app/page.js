@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 export default function KalartiHub() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -157,6 +158,7 @@ export default function KalartiHub() {
 
         .hero-actions {
           display: flex;
+          flex-wrap: wrap;
           gap: 20px;
         }
 
@@ -293,11 +295,58 @@ export default function KalartiHub() {
         .stat-num { font-size: 48px; font-weight: 900; line-height: 1; margin-bottom: 8px; }
         .stat-label { font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
+        .nav-burger {
+          display: none;
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.2);
+          color: white;
+          width: 44px; height: 44px;
+          border-radius: 10px;
+          font-size: 22px;
+          cursor: pointer;
+        }
+
+        .btn-cotizador {
+          background: linear-gradient(135deg, #10b981, #059669);
+          color: white;
+          padding: 16px 32px;
+          border-radius: 8px;
+          text-decoration: none;
+          font-weight: 700;
+          font-size: 16px;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          transition: transform 0.2s;
+        }
+        .btn-cotizador:hover { transform: translateY(-2px); }
+
+        .card-highlight { border: 1px solid rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.06); }
+        .card-highlight::before { background: #10b981; }
+
         @media (max-width: 768px) {
+          .hub-nav { padding: 14px 20px; background: rgba(15, 23, 42, 0.95); }
+          .hero-section { padding: 0 20px; }
           .hero-title { font-size: 40px; }
           .hero-actions { flex-direction: column; }
-          .nav-links { display: none; }
+          .hero-actions a { justify-content: center; text-align: center; }
+          .nav-burger { display: flex; align-items: center; justify-content: center; }
+          .nav-links {
+            display: none;
+            position: absolute;
+            top: 100%; left: 0; right: 0;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0;
+            background: rgba(15, 23, 42, 0.98);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 8px 20px 20px;
+          }
+          .nav-links.open { display: flex; }
+          .nav-links a { padding: 14px 4px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 16px; }
+          .nav-links .btn-erp { margin-top: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); }
           .stats-strip { gap: 40px; }
+          .ecosystem-section { padding: 70px 20px; }
         }
       `}} />
 
@@ -306,15 +355,22 @@ export default function KalartiHub() {
           <img src="/icon.png" alt="Kalarti Logo" style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'contain' }} />
           KALARTI
         </Link>
-        <div className="nav-links">
+        <div className={`nav-links ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)}>
           <a href="#ecosistema">Ecosistema</a>
           <Link href="/blog">Blog Técnico</Link>
-          <Link href="/blog/categoria/bio-construccion">Bio-Construcción 🌿</Link>
           <Link href="/landing/construccion">Servicios</Link>
           <Link href="/propiedades">Inmuebles</Link>
           <Link href="/marketplace">Marketplace B2B</Link>
           <Link href="/erp" className="btn-erp">Acceso ERP / Login</Link>
         </div>
+        <button
+          className="nav-burger"
+          aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(o => !o)}
+        >
+          {menuOpen ? '✕' : '☰'}
+        </button>
       </nav>
 
       <main>
@@ -330,6 +386,9 @@ export default function KalartiHub() {
               Kalarti no es solo un software. Es el ecosistema donde clientes, constructores, ferreterías y proveedores se unen para presupuestar, construir y comercializar de manera eficiente.
             </p>
             <div className="hero-actions">
+              <Link href="/cotizador" className="btn-cotizador">
+                🧮 Cotiza tu obra gratis ➔
+              </Link>
               <Link href="/erp" className="btn-primary">
                 Ingresar al ERP / Marketplace ➔
               </Link>
@@ -368,6 +427,18 @@ export default function KalartiHub() {
           </div>
           
           <div className="grid-cards">
+            {/* Cotizador público */}
+            <div className="card card-highlight">
+              <div className="card-icon">🧮</div>
+              <h3 className="card-title">Cotizador de Obra Gratis</h3>
+              <p className="card-desc">
+                Arma el presupuesto de tu proyecto desde el celular con más de 400 APUs verificados, y mira el cronograma de obra con cuadrillas Kalarti asignadas automáticamente.
+              </p>
+              <Link href="/cotizador" className="card-link">
+                Crear mi presupuesto ➔
+              </Link>
+            </div>
+
             {/* Blog Técnico & Bio-Construcción */}
             <div className="card">
               <div className="card-icon">📖</div>

@@ -32,6 +32,7 @@ import {
   cargoDetalleService,
 } from '@/lib/services';
 import { calcularPrecioMercado } from '@/lib/price-engine';
+import { isCorporateEmail } from '@/lib/access';
 
 const StoreContext = createContext(null);
 
@@ -2003,7 +2004,18 @@ export function StoreProvider({ children }) {
           // --- Auto-Crear Perfil si el usuario logueado no tiene registro en 'personal' ---
           try {
             const { data: { user: authUser } } = await db().auth.getUser();
-            if (authUser?.email) {
+
+            // --- Aislamiento de clientes (cotizador / suscriptores): solo ven sus propios proyectos ---
+            if (authUser?.email && !isCorporateEmail(authUser.email)) {
+              const ownIds = new Set((data.proyectos || []).filter(p => p.user_id === authUser.id).map(p => p.id));
+              data.proyectos = (data.proyectos || []).filter(p => ownIds.has(p.id));
+              if (data.presupuestoItems) data.presupuestoItems = data.presupuestoItems.filter(i => ownIds.has(i.proyecto_id));
+              if (data.avances) data.avances = data.avances.filter(a => ownIds.has(a.proyecto_id));
+              if (data.pagos) data.pagos = data.pagos.filter(p => !p.proyecto_id || ownIds.has(p.proyecto_id));
+            }
+
+            const isClienteCotizador = (authUser?.user_metadata?.role || '').toUpperCase() === 'CLIENTE';
+            if (authUser?.email && !isClienteCotizador) {
               const existsInPersonal = data.personal?.some(p => p.email?.toLowerCase() === authUser.email.toLowerCase());
               if (!existsInPersonal) {
                 const meta = authUser.user_metadata || {};
