@@ -1673,6 +1673,14 @@ export function StoreProvider({ children }) {
           if (precioIns === 0) {
             precioIns = calcularPrecioMercado(det.insumo_id, state.mkOfertas, '')?.precio_mercado || 0;
           }
+          // Conversión de unidades de empaque (ej. Cemento bulto a Kg, Galón a Lt)
+          const uIns = (insumo?.unidad || '').toLowerCase().trim();
+          const uDet = (det.unidad_detalle || '').toLowerCase().trim();
+          if (uIns === 'bto' && uDet === 'kg') {
+            precioIns = precioIns / 50;
+          } else if (uIns === 'gal' && uDet === 'lt') {
+            precioIns = precioIns / 3.785;
+          }
           total += factor * precioIns;
         } else if (det.cargo_id) {
           const { precio: precioConsolidado } = calcularDatosCargo(det.cargo_id);
@@ -1680,25 +1688,19 @@ export function StoreProvider({ children }) {
           const cargo = state.cargos.find(c => c.id === det.cargo_id);
           
           // Lógica de conversión y cálculo por rendimiento
-          if (det.unidad_detalle && cargo) {
-            const uCargo = cargo.unidad?.toLowerCase();
-            const uDet = det.unidad_detalle?.toLowerCase();
+          const uCargo = cargo?.unidad?.toLowerCase();
+          const uDet = (det.unidad_detalle || 'hr').toLowerCase();
 
-            // Obtener precio base por hora para cualquier cargo (independientemente de su unidad original)
-            let p_hr = precio;
-            if (uCargo === 'mes') p_hr = precio / 192;
-            else if (uCargo === 'día' || uCargo === 'dia') p_hr = precio / 8;
+          // Obtener precio base por hora para cualquier cargo (independientemente de su unidad original)
+          let p_hr = precio;
+          if (uCargo === 'mes') p_hr = precio / 192;
+          else if (uCargo === 'día' || uCargo === 'dia') p_hr = precio / 8;
 
-            // Precio según la unidad del detalle (Hora o Día)
-            if (uDet === 'hora' || uDet === 'hr') precio = p_hr;
-            else if (uDet === 'día' || uDet === 'dia') precio = p_hr * 8;
-            
-            // Consolidado: Usamos cantidad directa para todo por petición del usuario
-            total += factor * precio * hmFactor;
-          } else {
-            // Caso por defecto (respaldo)
-            total += factor * precio * hmFactor;
-          }
+          // Precio según la unidad del detalle (Hora por defecto, o Día)
+          if (uDet === 'día' || uDet === 'dia') precio = p_hr * 8;
+          else precio = p_hr; // 'hora', 'hr' o por defecto
+          
+          total += factor * precio * hmFactor;
         } else if (det.apu_hijo_id) {
           total += factor * calcularCostoAPU(det.apu_hijo_id, new Set(visited));
         }
