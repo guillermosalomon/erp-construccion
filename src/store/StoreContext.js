@@ -2084,13 +2084,17 @@ export function StoreProvider({ children }) {
           try {
             const { data: { user: authUser } } = await db().auth.getUser();
 
-            // --- Aislamiento de clientes (cotizador / suscriptores): solo ven sus propios proyectos ---
-            if (authUser?.email && !isCorporateEmail(authUser.email)) {
+            // --- Aislamiento de clientes (cotizador / suscriptores): solo ven sus propios proyectos si su rol es CLIENTE ---
+            const userRole = (authUser?.user_metadata?.role || '').toUpperCase();
+            if (authUser?.email && !isCorporateEmail(authUser.email) && userRole === 'CLIENTE') {
               const ownIds = new Set((data.proyectos || []).filter(p => p.user_id === authUser.id).map(p => p.id));
-              data.proyectos = (data.proyectos || []).filter(p => ownIds.has(p.id));
-              if (data.presupuestoItems) data.presupuestoItems = data.presupuestoItems.filter(i => ownIds.has(i.proyecto_id));
-              if (data.avances) data.avances = data.avances.filter(a => ownIds.has(a.proyecto_id));
-              if (data.pagos) data.pagos = data.pagos.filter(p => !p.proyecto_id || ownIds.has(p.proyecto_id));
+              // Si el cliente no tiene proyectos propios aún, no filtrar a vacío total
+              if (ownIds.size > 0) {
+                data.proyectos = (data.proyectos || []).filter(p => ownIds.has(p.id));
+                if (data.presupuestoItems) data.presupuestoItems = data.presupuestoItems.filter(i => ownIds.has(i.proyecto_id));
+                if (data.avances) data.avances = data.avances.filter(a => ownIds.has(a.proyecto_id));
+                if (data.pagos) data.pagos = data.pagos.filter(p => !p.proyecto_id || ownIds.has(p.proyecto_id));
+              }
             }
 
             const isClienteCotizador = (authUser?.user_metadata?.role || '').toUpperCase() === 'CLIENTE';

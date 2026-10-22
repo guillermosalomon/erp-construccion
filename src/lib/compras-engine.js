@@ -3,7 +3,7 @@
  * Ruteo automático al proveedor más económico con fallback por stock y programación por cronograma.
  */
 
-import materialesReferente from '@/lib/cotizador/materiales_referente.json';
+import materialesReferente from './cotizador/materiales_referente.json';
 
 /**
  * Normaliza cadenas para comparación flexible
