@@ -4,6 +4,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { useStore } from '@/store/StoreContext';
 import { useAuth } from '@/lib/auth';
 import { POSActionBar, VentaModal, TraspasoModal, DevolucionModal, IngresoModal, HistorialOperaciones } from './POSOperaciones';
+import AgendaPOSView from './AgendaPOSView';
+import ProveedoresPOSView from './ProveedoresPOSView';
 
 const TIPOS = [
   { value: 'MATERIAL', label: 'Material', color: '#2563eb' },
@@ -46,10 +48,8 @@ export default function PuntoVentaView() {
   const [pvForm, setPvForm] = useState({ nombre: '', direccion: '', ciudad: '', telefono: '', horario: '' });
   const [ofertaForm, setOfertaForm] = useState({ insumo_id: '', precio_venta: '', precio_compra: '', stock_disponible: '', nombre_comercial: '', publicado_marketplace: false, tipo_ingreso: 'COMPRA', proveedor: '', tipo_origen: 'Otra Sucursal', origen_id: '' });
   const [showProveedorForm, setShowProveedorForm] = useState(false);
-  const [nuevoProveedor, setNuevoProveedor] = useState({ nombre: '', telefono: '', nit: '' });
-  const [proveedores, setProveedores] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('erp_proveedores') || '[]'); } catch { return []; }
-  });
+  const [nuevoProveedor, setNuevoProveedor] = useState({ nombre: '', telefono: '', nit: '', ciudad: 'Pasto (Nariño)' });
+  const proveedores = state.proveedores || [];
   const [searchInsumo, setSearchInsumo] = useState('');
   const [showVenta, setShowVenta] = useState(false);
   const [showTraspaso, setShowTraspaso] = useState(false);
@@ -194,11 +194,17 @@ export default function PuntoVentaView() {
 
   const handleCrearProveedor = () => {
     if (!nuevoProveedor.nombre) return;
-    const updated = [...proveedores, { ...nuevoProveedor, id: crypto.randomUUID() }];
-    setProveedores(updated);
-    localStorage.setItem('erp_proveedores', JSON.stringify(updated));
+    const newProv = {
+      ...nuevoProveedor,
+      id: crypto.randomUUID(),
+      ciudad: nuevoProveedor.ciudad || 'Pasto (Nariño)',
+      activo: true,
+      calificacion: 5.0,
+      user_id: user?.id,
+    };
+    dispatch({ type: 'ADD_PROVEEDOR', payload: newProv });
     setOfertaForm({ ...ofertaForm, proveedor: nuevoProveedor.nombre });
-    setNuevoProveedor({ nombre: '', telefono: '', nit: '' });
+    setNuevoProveedor({ nombre: '', telefono: '', nit: '', ciudad: 'Pasto (Nariño)' });
     setShowProveedorForm(false);
   };
 
@@ -474,7 +480,12 @@ export default function PuntoVentaView() {
                         onIngreso={() => setShowIngreso(true)}
                       />
                       <div style={{ display: 'flex', gap: 2, background: '#f1f5f9', borderRadius: 6, padding: 2 }}>
-                        {[['productos','📦 Productos'],['historial','📋 Historial']].map(([k,label]) => (
+                        {[
+                          ['productos', '📦 Productos'],
+                          ['proveedores', '🏢 Proveedores'],
+                          ['agenda_pos', '📅 Agenda POS'],
+                          ['historial', '📋 Historial'],
+                        ].map(([k,label]) => (
                           <button key={k} onClick={() => setPvTab(k)} style={{
                             padding: '4px 10px', borderRadius: 4, border: 'none', cursor: 'pointer',
                             fontSize: 10, fontWeight: 600, transition: 'all 0.2s',
@@ -614,6 +625,14 @@ export default function PuntoVentaView() {
                           </tbody>
                         </table>
                       )
+                    ) : pvTab === 'proveedores' ? (
+                      <ProveedoresPOSView />
+                    ) : pvTab === 'agenda_pos' ? (
+                      <AgendaPOSView
+                        tiendaId={selectedTienda?.id}
+                        puntoVentaId={selectedPV?.id}
+                        puntoVentaNombre={selectedPV?.nombre}
+                      />
                     ) : (
                       <HistorialOperaciones pedidos={state.mkPedidos} puntoVentaId={selectedPV.id} />
                     )}

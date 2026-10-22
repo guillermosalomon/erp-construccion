@@ -66,12 +66,13 @@ export async function GET() {
     const insMap = new Map((allInsumos || []).map(i => [i.id, i]));
     const cargoMap = new Map((allCargos || []).map(c => [c.id, c]));
 
-    // Función de cálculo idéntica al ERP StoreContext
-    function calcApuCost(apuId, visited = new Set()) {
-      if (visited.has(apuId)) return 0;
+    // Función de cálculo y desglose idéntica al ERP StoreContext
+    function calcApuCostAndBreakdown(apuId, visited = new Set()) {
+      if (visited.has(apuId)) return { total: 0, componentes: [] };
       visited.add(apuId);
       const dets = allDets.filter(dt => dt.apu_id === apuId);
       let total = 0;
+      const componentes = [];
 
       for (const dt of dets) {
         const cant = Number(dt.cantidad) || 0;
@@ -87,7 +88,16 @@ export async function GET() {
           if (uIns === 'bto' && uDet === 'kg') precio = precio / 50;
           else if (uIns === 'gal' && uDet === 'lt') precio = precio / 3.785;
 
-          total += factor * precio;
+          const parcial = factor * precio;
+          total += parcial;
+          componentes.push({
+            tipo: i?.tipo || 'MATERIAL',
+            nombre: i?.nombre || 'Insumo',
+            unidad: dt.unidad_detalle || i?.unidad || 'Un',
+            cantidad: factor,
+            precio_unitario: Math.round(precio),
+            parcial: Math.round(parcial),
+          });
         } else if (dt.cargo_id) {
           const c = cargoMap.get(dt.cargo_id);
           const precioMes = Number(c?.precio_unitario) || 2000000;
@@ -95,12 +105,32 @@ export async function GET() {
           const unDet = (dt.unidad_detalle || 'Hr').toLowerCase();
           let precio = p_hr;
           if (unDet === 'dia' || unDet === 'día') precio = p_hr * 8;
-          total += factor * precio;
+          const parcial = factor * precio;
+          total += parcial;
+          componentes.push({
+            tipo: 'MANO DE OBRA',
+            nombre: c?.nombre || 'Personal / Mano de Obra',
+            unidad: dt.unidad_detalle || 'Hr',
+            cantidad: factor,
+            precio_unitario: Math.round(precio),
+            parcial: Math.round(parcial),
+          });
         } else if (dt.apu_hijo_id) {
-          total += factor * calcApuCost(dt.apu_hijo_id, new Set(visited));
+          const sub = calcApuCostAndBreakdown(dt.apu_hijo_id, new Set(visited));
+          const parcial = factor * sub.total;
+          total += parcial;
+          componentes.push({
+            tipo: 'EQUIPO / BASICO',
+            nombre: 'Sub-APU Básico',
+            unidad: 'GL',
+            cantidad: factor,
+            precio_unitario: Math.round(sub.total),
+            parcial: Math.round(parcial),
+            subComponentes: sub.componentes,
+          });
         }
       }
-      return total;
+      return { total, componentes };
     }
 
     // Filtrar 'BASICOS' puros
@@ -109,7 +139,8 @@ export async function GET() {
     const catalogo = apusCurados.map(a => {
       const cat = a.categoria_apu || 'GENERAL';
       const cq = cuadrillaParaCategoria(cat, cuadrillas);
-      const costoERP = Math.round(calcApuCost(a.id));
+      const resBreakdown = calcApuCostAndBreakdown(a.id);
+      const costoERP = Math.round(resBreakdown.total);
       // Si el APU tiene desglose en el ERP usa el costo real exacto; si no, recurre al valor de referencia
       const precioUnit = costoERP > 0 ? costoERP : estimarPrecioReferencia(cat, a.unidad, a.nombre);
       const rend = rendimientoSugerido(a.unidad, cq.codigo, a.rendimiento);
@@ -126,6 +157,7 @@ export async function GET() {
         cuadrilla_color: cq.color,
         precio_unitario: precioUnit,
         rendimiento: rend,
+        componentes: resBreakdown.componentes,
       };
     });
 

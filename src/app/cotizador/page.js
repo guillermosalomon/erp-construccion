@@ -9,6 +9,7 @@ import {
   formatMoney,
   DRAFT_KEY,
   AIU,
+  UBICACIONES_COTIZADOR,
 } from '@/lib/cotizador/config';
 import { calcularPresupuesto, agruparPorCapitulo, calcularCronograma } from '@/lib/cotizador/engine';
 import ItemPickerModal from '@/components/cotizador/ItemPickerModal';
@@ -29,6 +30,7 @@ export default function CotizadorPage() {
 
   // Proyecto actual
   const [proyectoNombre, setProyectoNombre] = useState('Mi Proyecto de Construcción');
+  const [ubicacion, setUbicacion] = useState('Pasto (Nariño) - Sede Principal');
   const [fechaInicio, setFechaInicio] = useState(() => new Date().toISOString().split('T')[0]);
   const [numCuadrillas, setNumCuadrillas] = useState(1);
   const [items, setItems] = useState([]); // [{ apu_id, cantidad }]
@@ -151,13 +153,15 @@ export default function CotizadorPage() {
     setItems(prev => prev.filter(it => it.apu_id !== apuId));
   };
 
-  const handleExportExcelDirect = async () => {
+  const handleExportExcelDirect = async (tipo = 'completo') => {
     try {
       const res = await fetch('/api/cotizador/export', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          tipo,
           proyectoNombre,
+          ubicacion,
           items,
           catalogoMap: Object.fromEntries(catalogoMap),
           fechaInicio,
@@ -172,7 +176,8 @@ export default function CotizadorPage() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Kalarti_Presupuesto_${proyectoNombre.replace(/[^a-zA-Z0-9]/g, '_')}.xlsx`;
+      const filePrefix = tipo === 'gratuito' ? 'Kalarti_Presupuesto_Resumen' : 'Kalarti_Presupuesto_Completo';
+      a.download = `${filePrefix}_${proyectoNombre.replace(/[^a-zA-Z0-9]/g, '_')}.xlsx`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -262,6 +267,29 @@ export default function CotizadorPage() {
                 paddingBottom: 4,
               }}
             />
+          </div>
+
+          <div>
+            <label style={{ fontSize: 11, color: '#94a3b8', display: 'block', marginBottom: 4 }}>📍 Ubicación del Proyecto</label>
+            <select
+              value={ubicacion}
+              onChange={e => setUbicacion(e.target.value)}
+              style={{
+                background: 'rgba(15, 23, 42, 0.8)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                color: 'white',
+                borderRadius: 8,
+                padding: '6px 10px',
+                fontSize: 13,
+                outline: 'none',
+              }}
+            >
+              {UBICACIONES_COTIZADOR.map(u => (
+                <option key={u.id} value={u.nombre} style={{ background: '#0f172a', color: 'white' }}>
+                  {u.nombre}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -509,6 +537,7 @@ export default function CotizadorPage() {
         onClose={() => setIsSaveOpen(false)}
         proyectoData={{
           nombre: proyectoNombre,
+          ubicacion: ubicacion,
           total: totals.total,
           items,
           duracionDias: cronograma.duracionDias,
@@ -524,6 +553,7 @@ export default function CotizadorPage() {
         onClose={() => setIsPayOpen(false)}
         currency={currency}
         proyectoNombre={proyectoNombre}
+        ubicacion={ubicacion}
         onExportExcel={handleExportExcelDirect}
       />
     </div>

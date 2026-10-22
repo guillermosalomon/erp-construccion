@@ -30,7 +30,11 @@ import {
   mkPedidosService,
   categoriasService,
   cargoDetalleService,
+  proveedoresService,
+  ordenesCompraService,
+  posAgendaService,
 } from '@/lib/services';
+import proveedoresReferente from '@/lib/cotizador/proveedores_referente.json';
 import { calcularPrecioMercado } from '@/lib/price-engine';
 import { isCorporateEmail } from '@/lib/access';
 
@@ -113,6 +117,10 @@ const initialState = {
   mkTraspasoItems: [],
   chatCotizaciones: [],
   inmuebles: [],
+  // Proveedores, Compras y Agenda POS (Fase 18)
+  proveedores: [],
+  ordenesCompra: [],
+  posAgenda: [],
   // History (Undo/Redo)
   history: [],
   historyIndex: -1,
@@ -205,6 +213,22 @@ function baseStoreReducer(state, action) {
         const raw = typeof window !== 'undefined' && localStorage.getItem('erp_bim_models');
         if (raw) savedBimModels = JSON.parse(raw);
       } catch (e) { /* ignore */ }
+
+      // Proveedores compartidos con fallback del catálogo referente
+      if (!deduplicated.proveedores || deduplicated.proveedores.length === 0) {
+        deduplicated.proveedores = proveedoresReferente.map((p, idx) => ({
+          id: `prov-ref-${idx}`,
+          nombre: p.nombre,
+          enlace_web: p.link || null,
+          ciudad: p.ciudad || 'Pasto (Nariño)',
+          activo: true,
+          calificacion: 5.0,
+          categorias: ['Materiales de Construcción', 'Ferretería'],
+          telefono: 'Contacto directo',
+        }));
+      }
+      if (!deduplicated.ordenesCompra) deduplicated.ordenesCompra = [];
+      if (!deduplicated.posAgenda) deduplicated.posAgenda = [];
 
       return {
         ...state,
@@ -589,6 +613,30 @@ function baseStoreReducer(state, action) {
       return { ...state, inmuebles: state.inmuebles.map(i => i.id === action.payload.id ? { ...i, ...action.payload } : i) };
     case 'DELETE_INMUEBLE':
       return { ...state, inmuebles: state.inmuebles.filter(i => i.id !== action.payload) };
+
+    // ── Proveedores Compartidos (Fase 18) ──
+    case 'ADD_PROVEEDOR':
+      return { ...state, proveedores: [{ ...action.payload, id: action.payload.id || generateId(), created_at: now() }, ...state.proveedores] };
+    case 'UPDATE_PROVEEDOR':
+      return { ...state, proveedores: state.proveedores.map(p => p.id === action.payload.id ? { ...p, ...action.payload, updated_at: now() } : p) };
+    case 'DELETE_PROVEEDOR':
+      return { ...state, proveedores: state.proveedores.filter(p => p.id !== action.payload) };
+
+    // ── Órdenes de Compra Programadas (Fase 18) ──
+    case 'ADD_ORDEN_COMPRA':
+      return { ...state, ordenesCompra: [{ ...action.payload, id: action.payload.id || generateId(), created_at: now() }, ...state.ordenesCompra] };
+    case 'UPDATE_ORDEN_COMPRA':
+      return { ...state, ordenesCompra: state.ordenesCompra.map(o => o.id === action.payload.id ? { ...o, ...action.payload, updated_at: now() } : o) };
+    case 'DELETE_ORDEN_COMPRA':
+      return { ...state, ordenesCompra: state.ordenesCompra.filter(o => o.id !== action.payload) };
+
+    // ── Agenda Punto de Venta (Fase 18) ──
+    case 'ADD_POS_AGENDA':
+      return { ...state, posAgenda: [{ ...action.payload, id: action.payload.id || generateId(), created_at: now() }, ...state.posAgenda] };
+    case 'UPDATE_POS_AGENDA':
+      return { ...state, posAgenda: state.posAgenda.map(a => a.id === action.payload.id ? { ...a, ...action.payload, updated_at: now() } : a) };
+    case 'DELETE_POS_AGENDA':
+      return { ...state, posAgenda: state.posAgenda.filter(a => a.id !== action.payload) };
 
     // ── Pagos Cliente ──
     case 'ADD_PAGO':
@@ -1483,6 +1531,35 @@ async function syncToSupabase(action, state) {
           break;
         case 'DELETE_MK_PEDIDO':
           try { await mkPedidosService.remove(action.payload); } catch(e) { console.warn('⚠️ mk_pedidos sync:', e.message); }
+          break;
+
+        // ── Proveedores, Compras y Agenda POS Sync (Fase 18) ──
+        case 'ADD_PROVEEDOR':
+          try { await proveedoresService.create(action.payload); } catch(e) { console.warn('⚠️ erp_proveedores sync:', e.message); }
+          break;
+        case 'UPDATE_PROVEEDOR':
+          try { await proveedoresService.update(action.payload.id, action.payload); } catch(e) { console.warn('⚠️ erp_proveedores sync:', e.message); }
+          break;
+        case 'DELETE_PROVEEDOR':
+          try { await proveedoresService.remove(action.payload); } catch(e) { console.warn('⚠️ erp_proveedores sync:', e.message); }
+          break;
+        case 'ADD_ORDEN_COMPRA':
+          try { await ordenesCompraService.create(action.payload); } catch(e) { console.warn('⚠️ erp_ordenes_compra sync:', e.message); }
+          break;
+        case 'UPDATE_ORDEN_COMPRA':
+          try { await ordenesCompraService.update(action.payload.id, action.payload); } catch(e) { console.warn('⚠️ erp_ordenes_compra sync:', e.message); }
+          break;
+        case 'DELETE_ORDEN_COMPRA':
+          try { await ordenesCompraService.remove(action.payload); } catch(e) { console.warn('⚠️ erp_ordenes_compra sync:', e.message); }
+          break;
+        case 'ADD_POS_AGENDA':
+          try { await posAgendaService.create(action.payload); } catch(e) { console.warn('⚠️ pos_agenda sync:', e.message); }
+          break;
+        case 'UPDATE_POS_AGENDA':
+          try { await posAgendaService.update(action.payload.id, action.payload); } catch(e) { console.warn('⚠️ pos_agenda sync:', e.message); }
+          break;
+        case 'DELETE_POS_AGENDA':
+          try { await posAgendaService.remove(action.payload); } catch(e) { console.warn('⚠️ pos_agenda sync:', e.message); }
           break;
       }
     } catch (err) {

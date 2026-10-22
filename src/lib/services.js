@@ -987,12 +987,15 @@ export async function loadAllData() {
     safeLoad(checklistService.getAll(), 'checklist'),
     safeLoad(itemDocumentsService.getAll(), 'documents'),
     safeLoad(asistenciaService.getAll(), 'asistencia'),
-    // Marketplace
+    // Marketplace & Proveedores
     safeLoad(mkTiendasService.getAll(), 'mk_tiendas'),
     safeLoad(mkPuntosVentaService.getAll(), 'mk_puntos_venta'),
     safeLoad(mkOfertasService.getAll(), 'mk_ofertas'),
     safeLoad(mkPedidosService.getAll(), 'mk_pedidos'),
     safeLoad(chatCotizacionesService.getAll(), 'chat_cotizaciones'),
+    safeLoad(proveedoresService.getAll(), 'erp_proveedores'),
+    safeLoad(ordenesCompraService.getAll(), 'erp_ordenes_compra'),
+    safeLoad(posAgendaService.getAll(), 'pos_agenda'),
   ]);
 
   return {
@@ -1000,7 +1003,8 @@ export async function loadAllData() {
     bimLinks, avances, notas, bodegas, inventario,
     pagos, usuarios, personal, cargos, config, cargoDetalles,
     personalProyecto, itemChecklistItems, itemDocuments, controlAsistencia,
-    mkTiendas, mkPuntosVenta, mkOfertas, mkPedidos, chatCotizaciones
+    mkTiendas, mkPuntosVenta, mkOfertas, mkPedidos, chatCotizaciones,
+    proveedores, ordenesCompra, posAgenda
   };
 }
 
@@ -1011,5 +1015,107 @@ export const chatCotizacionesService = {
     const { data, error } = await db().from('chat_cotizaciones').select('*').order('created_at', { ascending: false });
     if (error) throw error;
     return data;
+  }
+};
+
+/* ─── Proveedores Compartidos (Comercio & Proyectos) ─── */
+export const proveedoresService = {
+  async getAll() {
+    if (!db()) return null;
+    try {
+      const { data, error } = await db().from('erp_proveedores').select('*').order('nombre');
+      if (error) {
+        console.warn('erp_proveedores no disponible en DB, usando fallback local');
+        return null;
+      }
+      return data;
+    } catch {
+      return null;
+    }
+  },
+  async create(prov) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const { data, error } = await db().from('erp_proveedores').insert({ ...prov, user_id: uid }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('erp_proveedores').update({ ...changes, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async remove(id) {
+    if (!db()) return null;
+    const { error } = await db().from('erp_proveedores').delete().eq('id', id);
+    if (error) throw error;
+    return true;
+  }
+};
+
+/* ─── Órdenes de Compra Programadas ─── */
+export const ordenesCompraService = {
+  async getAll() {
+    if (!db()) return null;
+    try {
+      const { data, error } = await db().from('erp_ordenes_compra').select('*').order('fecha_programada', { ascending: true });
+      if (error) return null;
+      return data;
+    } catch {
+      return null;
+    }
+  },
+  async create(orden) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const { data, error } = await db().from('erp_ordenes_compra').insert({ ...orden, user_id: uid }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('erp_ordenes_compra').update({ ...changes, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async remove(id) {
+    if (!db()) return null;
+    const { error } = await db().from('erp_ordenes_compra').delete().eq('id', id);
+    if (error) throw error;
+    return true;
+  }
+};
+
+/* ─── Agenda de Puntos de Venta (POS) ─── */
+export const posAgendaService = {
+  async getAll() {
+    if (!db()) return null;
+    try {
+      const { data, error } = await db().from('pos_agenda').select('*').order('fecha_programada', { ascending: true });
+      if (error) return null;
+      return data;
+    } catch {
+      return null;
+    }
+  },
+  async create(item) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const { data, error } = await db().from('pos_agenda').insert({ ...item, user_id: uid }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('pos_agenda').update({ ...changes, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async remove(id) {
+    if (!db()) return null;
+    const { error } = await db().from('pos_agenda').delete().eq('id', id);
+    if (error) throw error;
+    return true;
   }
 };

@@ -198,5 +198,17 @@ export function rendimientoSugerido(unidad, cuadrillaCodigo, rendimientoApu) {
   return REND_POR_CUADRILLA[cuadrillaCodigo]?.[u] || REND_POR_UNIDAD[u] || 5;
 }
 
+/* ─── Ubicaciones y Factores de Transporte / Fletes ─── */
+export const UBICACIONES_COTIZADOR = [
+  { id: 'pasto', nombre: 'Pasto (Nariño) - Sede Principal', distanciaKm: 0, factorFlete: 1.0, fleteUrbanoKg: 500 },
+  { id: 'ipiales', nombre: 'Ipiales (Nariño)', distanciaKm: 85, factorFlete: 1.06, fleteUrbanoKg: 650 },
+  { id: 'ricaurte', nombre: 'Ricaurte / Costa Nariñense', distanciaKm: 142, factorFlete: 1.12, fleteUrbanoKg: 850 },
+  { id: 'tuquerres', nombre: 'Túquerres (Nariño)', distanciaKm: 72, factorFlete: 1.05, fleteUrbanoKg: 600 },
+  { id: 'bogota', nombre: 'Bogotá D.C.', distanciaKm: 820, factorFlete: 1.08, fleteUrbanoKg: 700 },
+  { id: 'cali', nombre: 'Cali (Valle del Cauca)', distanciaKm: 390, factorFlete: 1.05, fleteUrbanoKg: 600 },
+  { id: 'medellin', nombre: 'Medellín (Antioquia)', distanciaKm: 780, factorFlete: 1.08, fleteUrbanoKg: 700 },
+  { id: 'otra', nombre: 'Otra Ciudad / Municipio', distanciaKm: 100, factorFlete: 1.05, fleteUrbanoKg: 650 },
+];
+
 /* ─── Borrador local ─── */
 export const DRAFT_KEY = 'kalarti_cotizador_draft_v1';

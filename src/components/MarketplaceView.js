@@ -10,7 +10,6 @@ const TIPOS = [
   { value: 'EQUIPO', label: 'Equipo', color: '#7c3aed' },
   { value: 'TRANSPORTE', label: 'Transporte', color: '#d97706' },
 ];
-const CATEGORIAS = ['Básicos','Aceros','Madera','Ferretería','Tuberías y Accesorios','Eléctricos','Herramientas','Agregados','Mampostería','Pinturas','Otros'];
 const fmt = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0}).format(v);
 
 export default function MarketplaceView() {
@@ -25,10 +24,32 @@ export default function MarketplaceView() {
   const [carrito, setCarrito] = useState([]);
   const [showProyeccion, setShowProyeccion] = useState(null);
 
-  // SOLO ofertas publicadas en marketplace desde un POS real
+  // Categorías sincronizadas dinámicamente desde el maestro de insumos
+  const categoriasDisponibles = useMemo(() => {
+    const cats = new Set();
+    (state.insumos || []).forEach(i => {
+      if (i.categoria) cats.add(i.categoria.trim().toUpperCase());
+    });
+    if (cats.size === 0) {
+      return ['OBRA CIVIL', 'OBRA LIVIANA', 'ACABADOS', 'HIDRAULICAS', 'SANITARIAS', 'ELECTRICOS', 'HERRAMIENTAS'];
+    }
+    return Array.from(cats).sort();
+  }, [state.insumos]);
+
+  const pvMap = useMemo(() => new Map((state.mkPuntosVenta || []).map(pv => [pv.id, pv])), [state.mkPuntosVenta]);
+  const tiendaMap = useMemo(() => new Map((state.mkTiendas || []).map(t => [t.id, t])), [state.mkTiendas]);
+
+  // SOLO ofertas publicadas en marketplace teniendo en cuenta la ubicación del comercio
   const ofertasPublicadas = useMemo(() =>
-    state.mkOfertas.filter(o => o.publicado_marketplace && o.activo !== false),
-  [state.mkOfertas]);
+    state.mkOfertas.filter(o => {
+      if (!o.publicado_marketplace || o.activo === false) return false;
+      if (!filterCiudad) return true;
+      const pv = pvMap.get(o.punto_venta_id);
+      const tienda = tiendaMap.get(o.tienda_id);
+      const ciudadPv = (pv?.ciudad || tienda?.ciudad || 'Pasto').toLowerCase();
+      return ciudadPv.includes(filterCiudad.toLowerCase());
+    }),
+  [state.mkOfertas, filterCiudad, pvMap, tiendaMap]);
 
   // Agrupar por insumo
   const insumosConOfertas = useMemo(() => {
@@ -126,7 +147,7 @@ export default function MarketplaceView() {
             <input className="form-input" placeholder="Buscar materiales..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft:36, width:220 }} />
           </div>
           <select className="form-select" value={filterTipo} onChange={e => setFilterTipo(e.target.value)} style={{width:130}}><option value="">Todos los tipos</option>{TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}</select>
-          <select className="form-select" value={filterCategoria} onChange={e => setFilterCategoria(e.target.value)} style={{width:160}}><option value="">Todas las categorías</option>{CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}</select>
+          <select className="form-select" value={filterCategoria} onChange={e => setFilterCategoria(e.target.value)} style={{width:160}}><option value="">Todas las categorías</option>{categoriasDisponibles.map(c => <option key={c} value={c}>{c}</option>)}</select>
           <input className="form-input" placeholder="📍 Ciudad..." value={filterCiudad} onChange={e => setFilterCiudad(e.target.value)} style={{width:130}} />
           <div className="toolbar-spacer" />
           <div style={{ display:'flex', gap:2, background:'#f1f5f9', borderRadius:8, padding:3 }}>
@@ -137,7 +158,7 @@ export default function MarketplaceView() {
         </div>
 
         <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:16 }}>
-          {CATEGORIAS.map(cat => (
+          {categoriasDisponibles.slice(0, 15).map(cat => (
             <button key={cat} onClick={() => setFilterCategoria(filterCategoria===cat?'':cat)} style={{ padding:'4px 10px',borderRadius:16,fontSize:10,fontWeight:600,border:filterCategoria===cat?'1.5px solid #2563eb':'1px solid #e2e8f0',background:filterCategoria===cat?'#eff6ff':'white',color:filterCategoria===cat?'#2563eb':'#64748b',cursor:'pointer' }}>{cat}</button>
           ))}
         </div>

@@ -15,7 +15,7 @@ export default function SaveProjectModal({
   const [nombre, setNombre] = useState(user?.user_metadata?.nombre || '');
   const [email, setEmail] = useState(user?.email || '');
   const [telefono, setTelefono] = useState('');
-  const [ciudad, setCiudad] = useState('');
+  const [ciudad, setCiudad] = useState(proyectoData?.ubicacion || 'Pasto (Nariño)');
   const [password, setPassword] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [loading, setLoading] = useState(false);
