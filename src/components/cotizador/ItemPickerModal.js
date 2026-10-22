@@ -11,12 +11,16 @@ export default function ItemPickerModal({ isOpen, onClose, catalogo, onAddItem }
 
   const categorias = ['ALL', ...new Set(catalogo.map(c => c.categoria))];
 
+  // Búsqueda sin tildes por nombre y descripción técnica (nunca por códigos)
+  const normTxt = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const terms = normTxt(search).split(/\s+/).filter(Boolean);
+
   const filtered = catalogo.filter(item => {
     const matchesCat = selectedCat === 'ALL' || item.categoria === selectedCat;
-    const matchesSearch = !search || 
-      item.nombre.toLowerCase().includes(search.toLowerCase()) || 
-      item.codigo.toLowerCase().includes(search.toLowerCase());
-    return matchesCat && matchesSearch;
+    if (!matchesCat) return false;
+    if (!terms.length) return true;
+    const hay = normTxt(`${item.nombre} ${item.descripcion || ''}`);
+    return terms.every(t => hay.includes(t));
   });
 
   return (
@@ -30,7 +34,7 @@ export default function ItemPickerModal({ isOpen, onClose, catalogo, onAddItem }
         {/* Buscador */}
         <input
           type="text"
-          placeholder="Buscar actividad (ej: muro, pañete, tubería, piso)..."
+          placeholder="Buscar por nombre o especificación (ej: muro, pañete, tubería)..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           style={{
@@ -94,13 +98,20 @@ export default function ItemPickerModal({ isOpen, onClose, catalogo, onAddItem }
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
                     <span style={{ fontSize: 10, background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>
-                      {item.codigo}
+                      {item.categoria}
                     </span>
-                    <span style={{ fontSize: 10, color: '#94a3b8' }}>{item.categoria}</span>
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {item.nombre}
                   </div>
+                  {item.descripcion && (
+                    <div
+                      title={item.descripcion}
+                      style={{ fontSize: 11, color: '#94a3b8', marginTop: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                    >
+                      {item.descripcion}
+                    </div>
+                  )}
                   <div style={{ fontSize: 11, color: '#cbd5e1', marginTop: 2 }}>
                     {formatMoney(item.precio_unitario, 'COP')} / {item.unidad}
                   </div>

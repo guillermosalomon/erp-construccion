@@ -3,6 +3,7 @@
  * Sin dependencias de React ni Supabase → reutilizable en cliente y servidor.
  */
 import { AIU, CUADRILLAS_DEFAULT, CUADRILLA_GENERAL } from './config';
+import { ordenCapitulo } from '../catalogo-taxonomia';
 
 /**
  * @param {Array} items   [{ apu_id, cantidad }]
@@ -22,7 +23,10 @@ export function calcularPresupuesto(items, catalogo) {
   return { costoDirecto, admin, imprev, utilidad, iva, total };
 }
 
-/** Agrupa ítems por capítulo (categoría del APU) con subtotales */
+/**
+ * Agrupa ítems por capítulo (categoría del APU) con subtotales.
+ * Capítulos en el orden oficial (CAPITULOS_APU) y numeración secuencial: capítulo `1`, ítems `1.1`, `1.2`…
+ */
 export function agruparPorCapitulo(items, catalogo) {
   const get = (id) => (catalogo instanceof Map ? catalogo.get(id) : catalogo[id]);
   const caps = new Map();
@@ -35,7 +39,16 @@ export function agruparPorCapitulo(items, catalogo) {
     g.items.push({ ...it, apu: c, valor });
     g.subtotal += valor;
   });
-  return Array.from(caps.values());
+  const grupos = Array.from(caps.values());
+  // Orden estable: capítulo oficial y, a igualdad, orden de aparición
+  grupos.forEach((g, i) => { g._pos = i; });
+  grupos.sort((a, b) => (ordenCapitulo(a.capitulo) - ordenCapitulo(b.capitulo)) || (a._pos - b._pos));
+  grupos.forEach((g, i) => {
+    delete g._pos;
+    g.numero = String(i + 1);
+    g.items.forEach((it, j) => { it.numero = `${i + 1}.${j + 1}`; });
+  });
+  return grupos;
 }
 
 /* ─── Calendario laboral (lunes a sábado, igual que el ERP) ─── */

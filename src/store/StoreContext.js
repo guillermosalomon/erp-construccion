@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useReducer, useCallback, useEffect, useState } from 'react';
+import { createContext, useContext, useReducer, useCallback, useEffect, useMemo, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import {
   loadAllData,
@@ -35,7 +35,12 @@ import {
   posAgendaService,
 } from '@/lib/services';
 import proveedoresReferente from '@/lib/cotizador/proveedores_referente.json';
-import { calcularPrecioMercado } from '@/lib/price-engine';
+import {
+  crearContexto,
+  datosCargo as engineDatosCargo,
+  costoAPU as engineCostoAPU,
+  costoMO as engineCostoMO,
+} from '@/lib/apu-engine';
 import { isCorporateEmail } from '@/lib/access';
 
 const StoreContext = createContext(null);
@@ -1579,73 +1584,21 @@ export function StoreProvider({ children }) {
   const [dataLoading, setDataLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(isSupabaseConfigured());
 
-  const calcularDatosCargo = useCallback((cargoId, visited = new Set()) => {
-    const cargo = state.cargos.find(c => c.id === cargoId);
-    if (visited.has(cargoId)) return { precio: 0, factor: 1, precioHora: 0, factorMultiplicador: 1 };
-    visited.add(cargoId);
+  // Contexto del motor único de costos (src/lib/apu-engine.js)
+  const apuCtx = useMemo(() => crearContexto({
+    insumos: state.insumos,
+    cargos: state.cargos,
+    cargoDetalles: state.cargoDetalles,
+    apuDetalles: state.apuDetalles,
+    config: state.config,
+    ofertas: state.mkOfertas,
+  }), [state.insumos, state.cargos, state.cargoDetalles, state.apuDetalles, state.config, state.mkOfertas]);
 
-    const smlv = parseFloat(state.config?.find(c => c.clave === 'SMLV')?.valor) || 2200000;
-    const h_mes = parseFloat(state.config?.find(c => c.clave === 'HORAS_MES')?.valor) || 192;
-    const h_dia = parseFloat(state.config?.find(c => c.clave === 'HORAS_DIA')?.valor) || 8;
-    const integrantes = state.cargoDetalles.filter(d => d.cargo_padre_id === cargoId);
-    
-    const factorMult = Number(cargo?.factor_multiplicador) || 1.0;
-
-    // Si no tiene integrantes y no existe el cargo, devolver defaults
-    if (integrantes.length === 0) {
-      if (!cargo) return { precio: 0, factor: 1, precioHora: 0, factorMultiplicador: 1 };
-      const baseFactor = Number(cargo.factor_smlv) || 1;
-      const totalFactor = baseFactor * factorMult;
-      return { 
-        precio: Math.round((smlv * totalFactor)), 
-        factor: totalFactor,
-        precioHora: (smlv * totalFactor) / h_mes,
-        factorMultiplicador: factorMult
-      };
-    }
-
-    // Es una cuadrilla: Sumar costos horarios de integrantes
-    let totalCostoHora = 0;
-    let sumaFactores = 0;
-    
-    integrantes.forEach(det => {
-      const subRes = calcularDatosCargo(det.cargo_hijo_id, new Set(visited));
-      const factorEfectivo = det.factor_smlv ? Number(det.factor_smlv) : subRes.factor;
-      
-      const costoHoraEfectivo = (smlv * factorEfectivo) / h_mes;
-      totalCostoHora += costoHoraEfectivo * (Number(det.cantidad) || 0);
-      sumaFactores += factorEfectivo;
-    });
-
-    // El factor de la cuadrilla es la suma de los factores de sus integrantes * multiplicador del padre
-    const totalFactor = sumaFactores * factorMult;
-    
-    // Aplicar recargos sobre la base sumada (usar valores del cargo si existe, o 0)
-    const recargoCop = Number(cargo?.recargo_cop) || 0;
-    const recargoPct = Number(cargo?.recargo_pct) || 0;
-    
-    // El costo base ya incluye los multiplicadores de los hijos. 
-    // Aplicamos el multiplicador del padre al costo total sumado.
-    let baseCostoHora = totalCostoHora * factorMult;
-    let finalPrecioHora = baseCostoHora + recargoCop / h_mes;
-    
-    if (recargoPct > 0) {
-      finalPrecioHora += baseCostoHora * (recargoPct / 100);
-    }
-
-    // Escalar precio según unidad del padre
-    let finalPrecio = finalPrecioHora;
-    const u = (cargo?.unidad || 'Mes').toLowerCase();
-    if (u === 'día' || u === 'dia') finalPrecio = finalPrecioHora * h_dia;
-    if (u === 'mes') finalPrecio = finalPrecioHora * h_mes;
-
-    return { 
-      precio: Math.round(finalPrecio), 
-      factor: totalFactor, 
-      precioHora: finalPrecioHora,
-      factorMultiplicador: factorMult
-    };
-  }, [state.cargos, state.cargoDetalles, state.config]);
+  // Firma compatible: (cargoId, visited) — el motor maneja ciclos internamente
+  const calcularDatosCargo = useCallback((cargoId) => {
+    const { precio, factor, precioHora, factorMultiplicador } = engineDatosCargo(apuCtx, cargoId);
+    return { precio, factor, precioHora, factorMultiplicador };
+  }, [apuCtx]);
 
   const getApuLaborRequirements = useCallback((apuId, multiplier = 1, requirements = {}) => {
     const detalles = state.apuDetalles.filter(d => d.apu_id === apuId);
@@ -1711,8 +1664,8 @@ export function StoreProvider({ children }) {
         // Conversión a horas según unidad del cargo
         let horas = cantidad;
         const u = cargo?.unidad?.toLowerCase() || '';
-        if (u === 'mes') horas = cantidad * 192;
-        else if (u === 'día' || u === 'dia') horas = cantidad * 8;
+        if (u === 'mes') horas = cantidad * apuCtx.horasMes;
+        else if (u === 'día' || u === 'dia') horas = cantidad * apuCtx.horasDia;
         
         metrics[cargoId].horasTotal += horas;
         
@@ -1727,100 +1680,24 @@ export function StoreProvider({ children }) {
     });
 
     return metrics;
-  }, [state.presupuestoItems, state.cargos, getApuLaborRequirements, calcularDatosCargo]);
+  }, [state.presupuestoItems, state.cargos, getApuLaborRequirements, calcularDatosCargo, apuCtx]);
 
+  // Costo unitario total del APU (motor único). Firma compatible: (apuId, visited)
   const calcularCostoAPU = useCallback(
-    (apuId, visited = new Set()) => {
-      if (visited.has(apuId)) return 0;
-      visited.add(apuId);
-
-      const detalles = state.apuDetalles.filter((d) => d.apu_id === apuId);
-      let total = 0;
-
-      for (const det of detalles) {
-        const cant = Number(det.cantidad) || 0;
-        const desp = Number(det.desperdicio_pct) || 0;
-        const hmPct = Number(det.herramienta_menor_pct) || 0;
-        const factor = cant * (1 + desp / 100);
-        const hmFactor = 1 + hmPct / 100; // Herramienta menor applies to labor
-
-        if (det.insumo_id) {
-          const insumo = state.insumos.find((i) => i.id === det.insumo_id);
-          let precioIns = Number(insumo?.precio_unitario) || 0;
-          if (precioIns === 0) {
-            precioIns = calcularPrecioMercado(det.insumo_id, state.mkOfertas, '')?.precio_mercado || 0;
-          }
-          // Conversión de unidades de empaque (ej. Cemento bulto a Kg, Galón a Lt)
-          const uIns = (insumo?.unidad || '').toLowerCase().trim();
-          const uDet = (det.unidad_detalle || '').toLowerCase().trim();
-          if (uIns === 'bto' && uDet === 'kg') {
-            precioIns = precioIns / 50;
-          } else if (uIns === 'gal' && uDet === 'lt') {
-            precioIns = precioIns / 3.785;
-          }
-          total += factor * precioIns;
-        } else if (det.cargo_id) {
-          const { precio: precioConsolidado } = calcularDatosCargo(det.cargo_id);
-          let precio = precioConsolidado;
-          const cargo = state.cargos.find(c => c.id === det.cargo_id);
-          
-          // Lógica de conversión y cálculo por rendimiento
-          const uCargo = cargo?.unidad?.toLowerCase();
-          const uDet = (det.unidad_detalle || 'hr').toLowerCase();
-
-          // Obtener precio base por hora para cualquier cargo (independientemente de su unidad original)
-          let p_hr = precio;
-          if (uCargo === 'mes') p_hr = precio / 192;
-          else if (uCargo === 'día' || uCargo === 'dia') p_hr = precio / 8;
-
-          // Precio según la unidad del detalle (Hora por defecto, o Día)
-          if (uDet === 'día' || uDet === 'dia') precio = p_hr * 8;
-          else precio = p_hr; // 'hora', 'hr' o por defecto
-          
-          total += factor * precio * hmFactor;
-        } else if (det.apu_hijo_id) {
-          total += factor * calcularCostoAPU(det.apu_hijo_id, new Set(visited));
-        }
-      }
-      return total;
-    },
-    [state.apuDetalles, state.insumos, state.cargos, state.mkOfertas]
+    (apuId) => engineCostoAPU(apuCtx, apuId).total,
+    [apuCtx]
   );
 
+  // Desglose completo: { total, equipo, material, mano_obra, transporte, lineas[] }
+  const calcularDesgloseAPU = useCallback(
+    (apuId) => engineCostoAPU(apuCtx, apuId),
+    [apuCtx]
+  );
+
+  // Solo mano de obra del APU (motor único). Firma compatible: (apuId, visited)
   const calcularCostoMO = useCallback(
-    (apuId, visited = new Set()) => {
-      if (visited.has(apuId)) return 0;
-      visited.add(apuId);
-
-      const detalles = state.apuDetalles.filter((d) => d.apu_id === apuId);
-      let total = 0;
-
-      for (const det of detalles) {
-        const factor = (Number(det.cantidad) || 0) * (1 + (Number(det.desperdicio_pct) || 0) / 100);
-
-        if (det.cargo_id) {
-          const { precio: precioConsolidado } = calcularDatosCargo(det.cargo_id);
-          let precio = precioConsolidado;
-          const cargo = state.cargos.find(c => c.id === det.cargo_id);
-          
-          if (det.unidad_detalle && cargo) {
-            const uCargo = cargo.unidad?.toLowerCase();
-            const uDet = det.unidad_detalle?.toLowerCase();
-            let p_hr = precio;
-            if (uCargo === 'mes') p_hr = precio / 192;
-            else if (uCargo === 'día' || uCargo === 'dia') p_hr = precio / 8;
-
-            if (uDet === 'hora' || uDet === 'hr') precio = p_hr;
-            else if (uDet === 'día' || uDet === 'dia') precio = p_hr * 8;
-          }
-          total += factor * precio;
-        } else if (det.apu_hijo_id) {
-          total += factor * calcularCostoMO(det.apu_hijo_id, new Set(visited));
-        }
-      }
-      return total;
-    },
-    [state.apuDetalles, state.cargos]
+    (apuId) => engineCostoMO(apuCtx, apuId),
+    [apuCtx]
   );
 
   const calcularPresupuesto = useCallback(
@@ -2272,7 +2149,7 @@ export function StoreProvider({ children }) {
       state,
       dispatch: dispatchWithSync,
       calcularCostoAPU,
-      calcularCostoMO,
+      calcularCostoMO, calcularDesgloseAPU,
       calcularPresupuesto,
       calcularExplosionInsumos,
       calculateExecutionValue,

@@ -54,3 +54,12 @@ public/blog/*.txt
 public/blog/*.pdf
 public/blog/*.md
 src/content/blog/*.py
+
+# Catálogo: backups y logs locales
+scripts/catalogo/data/backup-*.json
+scripts/catalogo/data/*.log
+scripts/catalogo/data/nombres_override_part*.json
+# Datos de catálogo (contienen cotizaciones internas de proveedores)
+scripts/catalogo/data/*
+!scripts/catalogo/data/nombres_override.json
+!scripts/catalogo/data/precios_override.json

@@ -1,8 +1,103 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useStore } from '@/store/StoreContext';
 import { useAuth } from '@/lib/auth';
+import { insumoCotizacionesService } from '@/lib/services';
+
+const fmtCOP = (v) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(v) || 0);
+
+/** Tabla interna: cotizaciones de proveedores vs. precio almacén Kalarti (nunca en páginas públicas) */
+function CotizacionesPorInsumo({ insumos, proveedores }) {
+  const [abierto, setAbierto] = useState(false);
+  const [rows, setRows] = useState(null); // null = sin cargar
+  const [q, setQ] = useState('');
+
+  useEffect(() => {
+    if (!abierto || rows !== null) return;
+    let vivo = true;
+    insumoCotizacionesService.getAll().then((data) => { if (vivo) setRows(data || []); });
+    return () => { vivo = false; };
+  }, [abierto, rows]);
+
+  const insMap = useMemo(() => new Map(insumos.map((i) => [i.id, i])), [insumos]);
+  const provMap = useMemo(() => new Map(proveedores.map((p) => [p.id, p])), [proveedores]);
+
+  const lista = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    return (rows || [])
+      .map((c) => {
+        const ins = insMap.get(c.insumo_id);
+        const compra = Number(c.precio_compra) || 0;
+        const kalarti = Number(ins?.precio_unitario) || 0;
+        return {
+          id: c.id || `${c.insumo_id}-${c.proveedor_id}-${c.fecha}`,
+          insumo: ins?.nombre || '—',
+          unidad: ins?.unidad || '',
+          proveedor: c.proveedor_nombre || provMap.get(c.proveedor_id)?.nombre || '—',
+          compra,
+          kalarti,
+          margen: compra > 0 && kalarti > 0 ? ((kalarti - compra) / compra) * 100 : null,
+          vigente: c.vigente !== false,
+        };
+      })
+      .filter((r) => !s || r.insumo.toLowerCase().includes(s) || r.proveedor.toLowerCase().includes(s))
+      .sort((a, b) => a.insumo.localeCompare(b.insumo, 'es') || a.compra - b.compra);
+  }, [rows, q, insMap, provMap]);
+
+  return (
+    <div style={{ marginTop: 20, border: '1px solid #e2e8f0', borderRadius: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', gap: 8, flexWrap: 'wrap' }}>
+        <div>
+          <strong style={{ fontSize: 13, color: '#1e293b' }}>Cotizaciones por insumo</strong>
+          <span style={{ fontSize: 10, marginLeft: 8, background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: 6, fontWeight: 700 }}>Uso interno</span>
+        </div>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {abierto && (
+            <input className="form-input" placeholder="Buscar insumo o proveedor..." value={q} onChange={(e) => setQ(e.target.value)} style={{ width: 220, fontSize: 12 }} />
+          )}
+          <button className="btn btn-secondary btn-sm" style={{ fontSize: 11 }} onClick={() => setAbierto((v) => !v)}>
+            {abierto ? 'Ocultar' : 'Ver cotizaciones'}
+          </button>
+        </div>
+      </div>
+      {abierto && (
+        <div style={{ maxHeight: 420, overflowY: 'auto', borderTop: '1px solid #f1f5f9' }}>
+          {rows === null ? (
+            <div style={{ padding: 16, fontSize: 12, color: '#64748b' }}>Cargando…</div>
+          ) : lista.length === 0 ? (
+            <div style={{ padding: 16, fontSize: 12, color: '#64748b' }}>Sin cotizaciones registradas.</div>
+          ) : (
+            <table className="data-table" style={{ fontSize: 12 }}>
+              <thead>
+                <tr>
+                  <th>Insumo</th>
+                  <th>Proveedor</th>
+                  <th style={{ textAlign: 'right' }}>Precio compra</th>
+                  <th style={{ textAlign: 'right' }}>Precio Kalarti</th>
+                  <th style={{ textAlign: 'right' }}>Margen</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lista.slice(0, 300).map((r) => (
+                  <tr key={r.id} style={{ opacity: r.vigente ? 1 : 0.5 }}>
+                    <td>{r.insumo}{r.unidad ? <span style={{ color: '#94a3b8' }}> · {r.unidad}</span> : null}</td>
+                    <td>{r.proveedor}</td>
+                    <td style={{ textAlign: 'right' }}>{fmtCOP(r.compra)}</td>
+                    <td style={{ textAlign: 'right' }}>{fmtCOP(r.kalarti)}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 700, color: r.margen == null ? '#94a3b8' : r.margen < 0 ? '#dc2626' : '#059669' }}>
+                      {r.margen == null ? '—' : `${r.margen.toFixed(1)} %`}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ProveedoresPOSView() {
   const { state, dispatch } = useStore();
@@ -211,6 +306,9 @@ export default function ProveedoresPOSView() {
             </div>
           ))}
         </div>
+
+        {/* Cotizaciones por insumo (uso interno) */}
+        <CotizacionesPorInsumo insumos={state.insumos || []} proveedores={state.proveedores || []} />
       </div>
 
       {/* Modal: Agregar / Editar Proveedor */}

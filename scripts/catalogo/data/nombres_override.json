@@ -1,0 +1,3314 @@
+{
+  "ACERO 1": {
+    "nombre": "Acero de refuerzo 1\"",
+    "descripcion": null
+  },
+  "ACERO 1/4": {
+    "nombre": "Acero de refuerzo 1/4\"",
+    "descripcion": null
+  },
+  "ACERO 10.5 MM": {
+    "nombre": "Acero de refuerzo 10,5 mm",
+    "descripcion": null
+  },
+  "ACERO 12 MM": {
+    "nombre": "Acero de refuerzo 12 mm",
+    "descripcion": null
+  },
+  "ACERO 3/4": {
+    "nombre": "Acero de refuerzo 3/4\"",
+    "descripcion": null
+  },
+  "ACERO 3/8": {
+    "nombre": "Acero de refuerzo 3/8\"",
+    "descripcion": null
+  },
+  "ACERO 5 MM.": {
+    "nombre": "Acero de refuerzo 5 mm",
+    "descripcion": null
+  },
+  "ACERO 7/8": {
+    "nombre": "Acero de refuerzo 7/8\"",
+    "descripcion": null
+  },
+  "ACERO 8 MM": {
+    "nombre": "Acero de refuerzo 8 mm",
+    "descripcion": null
+  },
+  "ACERO 9.5 MM": {
+    "nombre": "Acero de refuerzo 9,5 mm",
+    "descripcion": null
+  },
+  "ACERO DE REFUERZO FIGURADO FY 420 MPA 60.000 PSI EN DOBLE PARRILLA PARA LOSA Y MUROS DEL VASO DE PISCINA": {
+    "nombre": "Acero figurado 60.000 psi doble parrilla vaso piscina",
+    "descripcion": "Acero de refuerzo figurado fy=420 MPa (60.000 psi) en doble parrilla para losa y muros del vaso de piscina"
+  },
+  "ACERO DE REFUERZO FIGURADO FY 420 MPA 60.000 PSI PARA COLUMNAS 5 4 Y ESTRIBOS 3 SEGUN DESPIECE PLANO E 2": {
+    "nombre": "Acero figurado 60.000 psi para columnas",
+    "descripcion": "Acero de refuerzo figurado fy=420 MPa (60.000 psi) para columnas (#5, #4 y estribos #3 según despiece plano E-2)"
+  },
+  "ACERO PROME": {
+    "nombre": "Acero de refuerzo promedio",
+    "descripcion": null
+  },
+  "ANDAMIOS 20U": {
+    "nombre": "Andamio tubular (20 unidades)",
+    "descripcion": null
+  },
+  "BLOQUE 11X11": {
+    "nombre": "Bloque de concreto 11x11",
+    "descripcion": null
+  },
+  "BLOQUE 2 H": {
+    "nombre": "Bloque de 2 huecos",
+    "descripcion": null
+  },
+  "CCTO 1 2 2": {
+    "nombre": "Concreto 1:2:2",
+    "descripcion": null
+  },
+  "CCTO 1 2 2 ACE": {
+    "nombre": "Concreto 1:2:2 con acelerante",
+    "descripcion": null
+  },
+  "CCTO 1 2 3": {
+    "nombre": "Concreto 1:2:3",
+    "descripcion": null
+  },
+  "CCTO 1 2 3 ACE": {
+    "nombre": "Concreto 1:2:3 con acelerante",
+    "descripcion": null
+  },
+  "CCTO 1 2 4": {
+    "nombre": "Concreto 1:2:4",
+    "descripcion": null
+  },
+  "CCTO 1 3 6": {
+    "nombre": "Concreto 1:3:6",
+    "descripcion": null
+  },
+  "CCTO 1 4 8": {
+    "nombre": "Concreto 1:4:8",
+    "descripcion": null
+  },
+  "CCTO CICLOPEO": {
+    "nombre": "Concreto ciclópeo",
+    "descripcion": null
+  },
+  "CONCRETO 2000 PSI": {
+    "nombre": "Concreto 2000 psi",
+    "descripcion": null
+  },
+  "CONCRETO 2500 PSI": {
+    "nombre": "Concreto 2500 psi",
+    "descripcion": null
+  },
+  "CONCRETO 3000 PSI": {
+    "nombre": "Concreto 3000 psi",
+    "descripcion": null
+  },
+  "CONCRETO 3500 PSI": {
+    "nombre": "Concreto 3500 psi",
+    "descripcion": null
+  },
+  "CONCRETO 4000 PSI": {
+    "nombre": "Concreto 4000 psi",
+    "descripcion": null
+  },
+  "CONCRETO FC 21 MPA 3000 PSI PARA COLUMNAS DE 30X40 CM 24 COLUMNAS T1 T2 T5 T6 Y T7 SEGUN DESPIECE PLANO E 2": {
+    "nombre": "Concreto 3000 psi para columnas 30x40 cm",
+    "descripcion": "Concreto f'c=21 MPa (3000 psi) para columnas de 30x40 cm (24 columnas: T1, T2, T5, T6 y T7 según despiece plano E-2)"
+  },
+  "CONCRETO FC 21 MPA 3000 PSI PARA COLUMNAS DE 30X30 CM 3 COLUMNAS T3 Y T4 SEGUN DESPIECE PLANO E 2": {
+    "nombre": "Concreto 3000 psi para columnas 30x30 cm",
+    "descripcion": "Concreto f'c=21 MPa (3000 psi) para columnas de 30x30 cm (3 columnas: T3 y T4 según despiece plano E-2)"
+  },
+  "CONCRETO FC 21 MPA 3000 PSI PARA VIGAS AEREAS DE 25X40 CM EN NIVELES N 2.75 M Y N 3.65 M SEGUN PLANO E 2": {
+    "nombre": "Concreto 3000 psi para vigas aéreas 25x40 cm",
+    "descripcion": "Concreto f'c=21 MPa (3000 psi) para vigas aéreas de 25x40 cm en niveles N+2,75 m y N+3,65 m (según plano E-2)"
+  },
+  "CONCRETO FC 21 MPA 3000 PSI PARA VIGA AEREA V A DE 15X40 CM EN NIVEL N 3.65 M SEGUN PLANO E 2": {
+    "nombre": "Concreto 3000 psi para viga aérea V-A 15x40 cm",
+    "descripcion": "Concreto f'c=21 MPa (3000 psi) para viga aérea V-A de 15x40 cm en nivel N+3,65 m (según plano E-2)"
+  },
+  "CONCRETO FC 21 MPA 3000 PSI PARA VIGAS DE CIMENTACION DE 30X35 CM EN NIVEL N 1.05 M VC 1 VC 2 VC 2 VC 4 VC B A VC E": {
+    "nombre": "Concreto 3000 psi para vigas de cimentación 30x35 cm",
+    "descripcion": "Concreto f'c=21 MPa (3000 psi) para vigas de cimentación de 30x35 cm en nivel N-1,05 m (VC-1, VC-2, VC-2', VC-4, VC-B a VC-E)"
+  },
+  "CONCRETO FC 21 MPA 3000 PSI PARA ZAPATAS AISLADAS H 0.35 M EN NIVEL N 1.40 M 13 DE 1.00X1.00M Y 14 DE 0.80X0.80M": {
+    "nombre": "Concreto 3000 psi para zapatas aisladas h=0,35 m",
+    "descripcion": "Concreto f'c=21 MPa (3000 psi) para zapatas aisladas h=0,35 m en nivel N-1,40 m (13 de 1,00x1,00 m y 14 de 0,80x0,80 m)"
+  },
+  "CONCRETO HIDRAULICO ESTANCO FC 21 MPA 3000 PSI SIKA 1 TANQUE Y PISCINA": {
+    "nombre": "Concreto estanco 3000 psi con Sika-1 tanque y piscina",
+    "descripcion": "Concreto hidráulico estanco f'c=21 MPa (3000 psi) con Sika-1, para tanque y piscina"
+  },
+  "FORMALETA": {
+    "nombre": "Formaleta",
+    "descripcion": null
+  },
+  "LOSA PREFABR 7 CM": {
+    "nombre": "Losa prefabricada e=7 cm",
+    "descripcion": null
+  },
+  "MALLA ELECTROSOLDADA XX 188 GRAFIL 6.0 MM 15X15 CM EN AMBAS DIRECCIONES PARA PLACA DE CONTRAPISO SEGUN PLANO E 1": {
+    "nombre": "Malla electrosoldada XX-188 para placa de contrapiso",
+    "descripcion": "Malla electrosoldada XX-188 (grafil Ø 6,0 mm @ 15x15 cm en ambas direcciones) para placa de contrapiso (según plano E-1)"
+  },
+  "MORT 1 2 IMP": {
+    "nombre": "Mortero 1:2 impermeabilizado",
+    "descripcion": null
+  },
+  "MORT 1 4 IMP": {
+    "nombre": "Mortero 1:4 impermeabilizado",
+    "descripcion": null
+  },
+  "MORTERO 1 3": {
+    "nombre": "Mortero 1:3",
+    "descripcion": null
+  },
+  "MORTERO 1 3 IMPERMEABILIZADO CON SIKA 1": {
+    "nombre": "Mortero 1:3 impermeabilizado con Sika-1",
+    "descripcion": null
+  },
+  "MORTERO 1 4": {
+    "nombre": "Mortero 1:4",
+    "descripcion": null
+  },
+  "MORTERO 1 2": {
+    "nombre": "Mortero 1:2",
+    "descripcion": null
+  },
+  "MORTERO 1 5": {
+    "nombre": "Mortero 1:5",
+    "descripcion": null
+  },
+  "CAMPAMENTO PROVISIONAL DE OBRA BODEGA DE MATERIALES PUNTO ECOLOGICO E INSTALACIONES PROVISIONALES": {
+    "nombre": "Campamento provisional y bodega de obra",
+    "descripcion": "Campamento provisional de obra, bodega de materiales, punto ecológico e instalaciones provisionales"
+  },
+  "DEMOLICION DE MUROS EN MAMPOSTERIA INCLUYE DEMOLICION MANUAL DE MUROS EXISTENTES EN LADRILLO O BLOQUE DE MAMPOSTERIA RETIRO DE MORTERO Y ELEMENTOS ADHERIDOS CORTE Y PROTECCION DE ELEMENTOS EXISTENTES QUE DEBAN CONSERVARSE CARGUE RETIRO Y DISPOSICION DE LOS ESCOMBROS EN SITIO AUTORIZADO HERRAMIENTAS EQUIPOS MANO DE OBRA LIMPIEZA Y ENTREGA DEL AREA INTERVENIDA.": {
+    "nombre": "Demolición manual de muros en mampostería",
+    "descripcion": "Demolición manual de muros existentes en ladrillo o bloque; incluye retiro de mortero y elementos adheridos, corte y protección de elementos a conservar, cargue, retiro y disposición de escombros en sitio autorizado, herramientas, equipos, mano de obra, limpieza y entrega del área intervenida"
+  },
+  "DESCAPOTE A MAQUINA": {
+    "nombre": "Descapote a máquina",
+    "descripcion": null
+  },
+  "DESCAPOTE INCLUYE RETIRO DE CAPA VEGETAL MATERIA ORGANICA MALEZA RAICES Y MATERIAL SUPERFICIAL EXISTENTE HASTA UNA PROFUNDIDAD PROMEDIO DE 20 CM": {
+    "nombre": "Descapote e=20 cm",
+    "descripcion": "Descapote; incluye retiro de capa vegetal, materia orgánica, maleza, raíces y material superficial existente hasta una profundidad promedio de 20 cm"
+  },
+  "DESCAPOTE Y LIMPIEZA DEL LOTE RETIRO DE CAPA VEGETAL Y ORGANICA HASTA E 0.20 M": {
+    "nombre": "Descapote manual y limpieza del lote",
+    "descripcion": "Descapote y limpieza del lote (retiro de capa vegetal y orgánica hasta e=0,20 m)"
+  },
+  "DESMONTAJE Y RETIRO DE VENTANERIA INCLUYENDO MARCOS Y ACCESORIOS": {
+    "nombre": "Desmontaje y retiro de ventanería",
+    "descripcion": "Desmontaje y retiro de ventanería, incluyendo marcos y accesorios"
+  },
+  "DESMONTAJE RETIRO Y DISPOSICION FINAL DE PUERTAS EXISTENTES": {
+    "nombre": "Desmontaje y retiro de puertas existentes",
+    "descripcion": "Desmontaje, retiro y disposición final de puertas existentes"
+  },
+  "LOCALIZACION TRAZADO Y REPLANTEO ARQUITECTONICO Y ESTRUCTURAL CON EQUIPO TOPOGRAFICO": {
+    "nombre": "Localización y replanteo con equipo topográfico",
+    "descripcion": "Localización, trazado y replanteo arquitectónico y estructural con equipo topográfico"
+  },
+  "LOCALIZACION Y REPLANTEO": {
+    "nombre": "Localización y replanteo",
+    "descripcion": null
+  },
+  "RETIRO DE CUBIERTA EN TEJA DE BARRO INCLUYE DESMONTAJE MANUAL DE TEJAS DE BARRO EXISTENTES RETIRO DE ELEMENTOS DE FIJACION Y ACCESORIOS CLASIFICACION Y ACOPIO DE TEJAS REUTILIZABLES CARGUE Y RETIRO DE ELEMENTOS DETERIORADOS": {
+    "nombre": "Retiro de cubierta en teja de barro",
+    "descripcion": "Desmontaje manual de tejas de barro existentes; incluye retiro de elementos de fijación y accesorios, clasificación y acopio de tejas reutilizables, cargue y retiro de elementos deteriorados"
+  },
+  "CARGUE TRANSPORTE Y DISPOSICION FINAL DE MATERIAL SOBRANTE DE EXCAVACION ESPONJAMIENTO 25 INCLUIDO": {
+    "nombre": "Retiro y disposición de material sobrante",
+    "descripcion": "Cargue, transporte y disposición final de material sobrante de excavación (esponjamiento 25% incluido)"
+  },
+  "COMF COMPAC SUBRASANTE 90 PROCTOR M": {
+    "nombre": "Conformación y compactación de subrasante 90% PM",
+    "descripcion": "Conformación y compactación de subrasante al 90% del Proctor modificado"
+  },
+  "EXCAVACION MANUAL DE ZANJAS PARA VIGAS DE CIMENTACION COTA N 1.05 M Y REDES SUBTERRANEAS": {
+    "nombre": "Excavación manual de zanjas para vigas y redes",
+    "descripcion": "Excavación manual de zanjas para vigas de cimentación (cota N-1,05 m) y redes subterráneas"
+  },
+  "EXCAVACION MANUAL EN TERRENO SEMIDURO PARA ZAPATAS AISLADAS Y SUB CIMIENTO HASTA COTA N 1.70 M SEGUN PLANO E 1": {
+    "nombre": "Excavación manual en terreno semiduro para zapatas",
+    "descripcion": "Excavación manual en terreno semiduro para zapatas aisladas y subcimiento (hasta cota N-1,70 m según plano E-1)"
+  },
+  "EXCAVACION MANUAL Y/O MECANICA PARA CONFORMACION DE ZANJAS DESTINADAS A CIMENTACION DE ACUERDO CON DIMENSIONES NIVELES Y EJES ESTABLECIDOS EN PLANOS. INCLUYE MANO DE OBRA HERRAMIENTA PERFILADO Y NIVELACION DE FONDO RETIRO Y DISPOSICION FINAL DE LA EXCAVACION.": {
+    "nombre": "Excavación manual o mecánica de zanjas para cimentación",
+    "descripcion": "Excavación manual y/o mecánica para conformación de zanjas de cimentación, según dimensiones, niveles y ejes de planos. Incluye mano de obra, herramienta, perfilado y nivelación de fondo, retiro y disposición final del material excavado"
+  },
+  "EXCAVACION SOLADO BASE CAMA DE ARENA LAVADA E 15 CM Y RELLENO PERIMETRAL COMPACTADO CON TIERRA CERNIDA PARA TANQUE SEPTICO 3.000 L": {
+    "nombre": "Excavación, base y relleno para tanque séptico 3.000 L",
+    "descripcion": "Excavación, solado base, cama de arena lavada e=15 cm y relleno perimetral compactado con tierra cernida para tanque séptico de 3.000 L"
+  },
+  "EXPLANACION Y EXTENDIDO": {
+    "nombre": "Explanación y extendido de material",
+    "descripcion": null
+  },
+  "EXPLANACION Y RETIRO": {
+    "nombre": "Explanación y retiro de material",
+    "descripcion": null
+  },
+  "RELLENO VIAS": {
+    "nombre": "Relleno para vías",
+    "descripcion": null
+  },
+  "RELLENO Y COMPACTACION MECANICA CON MATERIAL SELECCIONADO / RECEBO EN CAPAS DE 15 CM 95 PROCTOR MODIFICADO": {
+    "nombre": "Relleno compactado con recebo 95% PM",
+    "descripcion": "Relleno y compactación mecánica con material seleccionado o recebo en capas de 15 cm (95% Proctor modificado)"
+  },
+  "RESANE ESTUCO Y PINTURA PARA FACHADA EXTERIOR INCLUYE LIMPIEZA Y PREPARACION DE LA SUPERFICIE APLICACION DE ESTUCO DE RELLENO PARA EXTERIOR Y ESTUCO FINO PARA EXTERIOR LIJADO Y PREPARACION DE LA SUPERFICIE. INCLUYE SUMINISTRO Y APLICACION DE PINTURA TIPO 1 CORAZA PARA EXTERIORES TRES 3 MANOS": {
+    "nombre": "Resane, estuco y pintura de fachada exterior",
+    "descripcion": "Incluye limpieza y preparación de la superficie, estuco de relleno y estuco fino para exterior, lijado, y suministro y aplicación de pintura tipo 1 Coraza para exteriores a tres (3) manos"
+  },
+  "SUBBASE": {
+    "nombre": "Subbase granular",
+    "descripcion": null
+  },
+  "CIMIEN CICLOP": {
+    "nombre": "Cimiento en concreto ciclópeo",
+    "descripcion": null
+  },
+  "PEDESTALES CONCRETO 3000 PSI": {
+    "nombre": "Pedestales en concreto 3000 psi",
+    "descripcion": null
+  },
+  "SOBREC BLOQ MACIZ E 30 CM": {
+    "nombre": "Sobrecimiento en bloque macizo e=30 cm",
+    "descripcion": null
+  },
+  "SOBRECIM LAD E 20 CM": {
+    "nombre": "Sobrecimiento en ladrillo e=20 cm",
+    "descripcion": null
+  },
+  "SOBRECIM LAD E 25 CM": {
+    "nombre": "Sobrecimiento en ladrillo e=25 cm",
+    "descripcion": null
+  },
+  "SOLADO 1 2 3": {
+    "nombre": "Solado en concreto 1:2:3",
+    "descripcion": null
+  },
+  "SOLADO DE LIMPIEZA EN CONCRETO FC 17.5 MPA 2500 PSI E 5 CM BAJO ZAPATAS Y VIGAS DE CIMENTACION SEGUN PLANO E 1": {
+    "nombre": "Solado de limpieza 2500 psi e=5 cm",
+    "descripcion": "Solado de limpieza en concreto f'c=17,5 MPa (2500 psi) e=5 cm bajo zapatas y vigas de cimentación (según plano E-1)"
+  },
+  "SUB CIMIENTO EN BALASTO LIMPIO DE RIO COMPACTADO E 30 CM BAJO ZAPATAS AISLADAS COTA N 1.70 A N 1.40 M SEGUN PLANO E 1": {
+    "nombre": "Subcimiento en balasto de río compactado e=30 cm",
+    "descripcion": "Subcimiento en balasto limpio de río compactado e=30 cm bajo zapatas aisladas (cota N-1,70 a N-1,40 m según plano E-1)"
+  },
+  "VIGAS DE CIMENTACION CONCRETO 3000 PSI": {
+    "nombre": "Vigas de cimentación en concreto 3000 psi",
+    "descripcion": null
+  },
+  "ZAPATAS CONCRETO 3000 PSI": {
+    "nombre": "Zapatas en concreto 3000 psi",
+    "descripcion": null
+  },
+  "ALTERNATIVA OPCION B PTAR EN CONCRETO LECHO FILTRANTE ANAEROBIO EN ROSETAS PLASTICAS PET / GRAVA GRADUADA FALSO FONDO PERFORADO Y 3 TAPAS SANITARIAS PARA FAFA IN SITU": {
+    "nombre": "Lecho filtrante FAFA in situ (alternativa B PTAR)",
+    "descripcion": "Alternativa opción B - PTAR en concreto: lecho filtrante anaerobio en rosetas plásticas PET / grava graduada, falso fondo perforado y 3 tapas sanitarias para FAFA in situ"
+  },
+  "ALTERNATIVA OPCION B PTAR EN CONCRETO ACERO DE REFUERZO CORRUGADO FY 420 MPA PARA TANQUE SEPTICO Y FILTRO ANAEROBIO FAFA EN CONCRETO IN SITU ACTIVAR CAMBIANDO NO. ELEM DE 0 A 1": {
+    "nombre": "Acero de refuerzo PTAR in situ (alternativa B)",
+    "descripcion": "Alternativa opción B - PTAR en concreto: acero de refuerzo corrugado fy=420 MPa para tanque séptico y filtro anaerobio FAFA en concreto in situ (activar cambiando No. elem. de 0 a 1)"
+  },
+  "ACERO DE REFUERZO FIGURADO FY 60.000 PSI INCLUYE ALAMBRE DE AMARRE TRASPORTE Y MANO DE OBRA DE ARMADO DE REFUERZO FIGURADO": {
+    "nombre": "Acero de refuerzo figurado 60.000 psi",
+    "descripcion": "Acero de refuerzo figurado fy=60.000 psi; incluye alambre de amarre, transporte y mano de obra de armado"
+  },
+  "CCTO LOSA MACIZA 12 CM": {
+    "nombre": "Concreto losa maciza e=12 cm",
+    "descripcion": null
+  },
+  "CCTO LOSA MACIZA 20 CM": {
+    "nombre": "Concreto losa maciza e=20 cm",
+    "descripcion": null
+  },
+  "CCTO VIGA CIM 40X40 CM": {
+    "nombre": "Concreto viga de cimentación 40x40 cm",
+    "descripcion": null
+  },
+  "COLUMNAS CONCRETO 3000 PSI": {
+    "nombre": "Columnas en concreto 3000 psi",
+    "descripcion": null
+  },
+  "COLUMNETAS DE CONFINAMIENTO DE 15X15 CM EN CONCRETO FC 21 MPA INCLUYE REFUERZO 4 3 Y ESTRIBOS 3 C/10 CM SEGUN PLANO E 3": {
+    "nombre": "Columneta de confinamiento 15x15 cm 3000 psi",
+    "descripcion": "Columnetas de confinamiento de 15x15 cm en concreto f'c=21 MPa; incluye refuerzo 4 #3 y estribos #3 c/10 cm (según plano E-3)"
+  },
+  "GRADAS 90 CM HUELLA 27 CM": {
+    "nombre": "Gradas en concreto a=90 cm, huella 27 cm",
+    "descripcion": null
+  },
+  "LOSA PRE IN PAL": {
+    "nombre": "Losa prefabricada in situ en paneles",
+    "descripcion": null
+  },
+  "MURO PANTALLA ASCENSOR E 15CM CONCRETO 3000 PSI": {
+    "nombre": "Muro pantalla ascensor e=15 cm concreto 3000 psi",
+    "descripcion": null
+  },
+  "PAV CONCRETO 18 CM V0 V2 CSUELO 4KG/CM2": {
+    "nombre": "Pavimento en concreto e=18 cm (V0-V2)",
+    "descripcion": "Pavimento en concreto e=18 cm para vías V0-V2, capacidad portante del suelo 4 kg/cm²"
+  },
+  "PAV CONCRETO 20 CM V3 V8 CSUELO 4KG/CM2": {
+    "nombre": "Pavimento en concreto e=20 cm (V3-V8)",
+    "descripcion": "Pavimento en concreto e=20 cm para vías V3-V8, capacidad portante del suelo 4 kg/cm²"
+  },
+  "PAVIM CCTO E 12 CM": {
+    "nombre": "Pavimento en concreto e=12 cm",
+    "descripcion": null
+  },
+  "PAVIM CCTO E 15 CM": {
+    "nombre": "Pavimento en concreto e=15 cm",
+    "descripcion": null
+  },
+  "PAVIM CCTO E 20 CM": {
+    "nombre": "Pavimento en concreto e=20 cm",
+    "descripcion": null
+  },
+  "PLACA DE CONTRAPISO MACIZA EN CONCRETO PREMEZCLADO DE 3.000 PSI ESPESOR 10 CM REFORZADA CON MALLA ELECTROSOLDADA 5 0 MM 15 CM EN AMBAS DIRECCIONES SOBRE SUBBASE GRANULAR COMPACTADA DE 10 CM DE ESPESOR": {
+    "nombre": "Placa de contrapiso 3000 psi e=10 cm con malla",
+    "descripcion": "Placa de contrapiso maciza en concreto premezclado de 3.000 psi, espesor 10 cm, reforzada con malla electrosoldada Ø5,0 mm @15 cm en ambas direcciones, sobre subbase granular compactada de 10 cm de espesor"
+  },
+  "PLACAS DE CONTRAPISO CORPALOSA 1 CALIBRE 22 CONCRETO F C 3000 PSI 211 KG/CM CON MALLA ELECTROSOLDADA GRAFIL 5 MM 15 CM. ESPESOR 10 CM. ACABADO EN PULIDO SIKAFLOOR 3 QUARTZTOP DILATACIONES CADA 2M X2M SIKA ROT 6MM Y SELLADO SIKAFLEX 221": {
+    "nombre": "Placa de contrapiso en Corpalosa e=10 cm pulida",
+    "descripcion": "Placa de contrapiso en Corpalosa 1½\" calibre 22 con concreto f'c=3000 psi (211 kg/cm²) y malla electrosoldada grafil Ø5 mm @15 cm, espesor 10 cm. Acabado pulido con Sikafloor-3 QuartzTop, dilataciones cada 2x2 m con Sika Rod 6 mm y sellado con Sikaflex-221"
+  },
+  "PLACAS DE CONTRAPISO MACIZA CONCRETO DE 3000 PSI ESPESOR 12 CM.": {
+    "nombre": "Placa de contrapiso maciza 3000 psi e=12 cm",
+    "descripcion": null
+  },
+  "RED DE DESCOLE FINAL DE EFLUENTE TRATADO DESDE CAJA CS3 80X80 CM HASTA ENTREGA A RIO / FUENTE HIDRICA ALEDANA EN TUBERIA PVC SANITARIA 4 P 3 CON CABEZOTE DE ENTREGA EN CONCRETO": {
+    "nombre": "Red de descole de efluente tratado PVC 4\"",
+    "descripcion": "Red de descole final de efluente tratado desde caja CS3 (80x80 cm) hasta entrega a río o fuente hídrica aledaña, en tubería PVC sanitaria Ø4\" (P=3%), con cabezote de entrega en concreto"
+  },
+  "TUBERIA PVC VENTILACION LIVIANA 2 PARA COLUMNAS Y RAMALES DE REVENTILACION SANITARIA INCLUYE CODOS TEES Y SOMBRERETES": {
+    "nombre": "Tubería PVC ventilación 2\"",
+    "descripcion": "Tubería PVC ventilación (liviana) Ø2\" para columnas y ramales de reventilación sanitaria; incluye codos, tees y sombreretes"
+  },
+  "VIGAS 30X 50 CONCRETO 3000 PSI": {
+    "nombre": "Vigas 30x50 cm en concreto 3000 psi",
+    "descripcion": null
+  },
+  "VIGUETA 15X20 CM": {
+    "nombre": "Vigueta en concreto 15x20 cm",
+    "descripcion": null
+  },
+  "VIGUETA CIMEN 15X20 CM": {
+    "nombre": "Vigueta de cimentación 15x20 cm",
+    "descripcion": null
+  },
+  "DESCANSOS DE 1 20 X LARGO VARIABLE CONFORMADO POR MARCO EN ANGULO DE ACERO 3 3 3/16 INCLUYE SUMINISTRO CORTE FABRICACION SOLDADURA FIJACION Y ANCLAJE A LA ESTRUCTURA METALICA PRINCIPAL NIVELACION Y MONTAJE. INCLUYE LIMPIEZA Y PREPARACION DE SUPERFICIE APLICACION DE PINTURA ANTICORROSIVA Y ACABADO FINAL EN ESMALTE ACABADO DE HUELLAS EN CONCRETO DE 21 MPA ALTURA 7 5 CM CON MALLA ELECTROSOLDADA DE 5 MM COMO REFUERZO. INCLUYE SUMINISTRO Y COLOCACION DEL CONCRETO FORMALETA CORTE Y COLOCACION DE MALLA NIVELACION VIBRADO ACABADO FINAL EN GRANITO PULIDO": {
+    "nombre": "Descanso metálico 1,20 m con huella en granito",
+    "descripcion": "Descanso de 1,20 m x largo variable en marco de ángulo de acero 3\"x3\"x3/16\", anclado a la estructura principal, con pintura anticorrosiva y esmalte. Huella en concreto 21 MPa h=7,5 cm reforzada con malla Ø5 mm, acabado en granito pulido. Incluye fabricación, soldadura, montaje, formaleta y vibrado"
+  },
+  "ESCALONES DE 1 20 X 0 32 CONFORMADA POR MARCO EN ANGULO DE ACERO 3 3 3/16 INCLUYE SUMINISTRO CORTE FABRICACION SOLDADURA FIJACION Y ANCLAJE A LA ESTRUCTURA METALICA PRINCIPAL NIVELACION Y MONTAJE. INCLUYE LIMPIEZA Y PREPARACION DE SUPERFICIE APLICACION DE PINTURA ANTICORROSIVA Y ACABADO FINAL EN ESMALTE ACABADO DE HUELLAS EN CONCRETO DE 21 MPA ALTURA 7 5 CM CON MALLA ELECTROSOLDADA DE 5 MM COMO REFUERZO. INCLUYE SUMINISTRO Y COLOCACION DEL CONCRETO FORMALETA CORTE Y COLOCACION DE MALLA NIVELACION VIBRADO ACABADO FINAL EN GRANITO PULIDO": {
+    "nombre": "Escalón metálico 1,20x0,32 m con huella en granito",
+    "descripcion": "Escalón de 1,20x0,32 m en marco de ángulo de acero 3\"x3\"x3/16\", anclado a la estructura principal, con pintura anticorrosiva y esmalte. Huella en concreto 21 MPa h=7,5 cm reforzada con malla Ø5 mm, acabado en granito pulido. Incluye fabricación, soldadura, montaje, formaleta y vibrado"
+  },
+  "ESTRUCTURA METALICA PRINCIPAL EN PERFIL TUBULAR ESTRUCTURAL PTE 150X150X3.0 MM ASTM A500 GR C INCLUYE PLACA BASE A36 DE 200X250X10 MM Y 4 PERNOS 3/8 SEGUN PLANO E 3": {
+    "nombre": "Estructura metálica en perfil tubular 150x150x3 mm",
+    "descripcion": "Estructura metálica principal en perfil tubular estructural PTE 150x150x3,0 mm (ASTM A500 Gr. C); incluye placa base A36 de 200x250x10 mm y 4 pernos Ø3/8\" (según plano E-3)"
+  },
+  "ESTRUCTURA METALICA PRINCIPAL PARA ESCALERAS FABRICADA EN TUBO RECTANGULAR DE ACERO 300 100 5 MM INCLUYE SUMINISTRO CORTE ARMADO SOLDADURA MONTAJE NIVELACION Y FIJACION DE LA ESTRUCTURA. INCLUYE LIMPIEZA Y PREPARACION DE SUPERFICIE APLICACION DE PINTURA ANTICORROSIVA Y ACABADO FINAL EN ESMALTE COLOR BLANCO": {
+    "nombre": "Estructura metálica de escalera en tubo 300x100x5 mm",
+    "descripcion": "Estructura metálica principal para escaleras en tubo rectangular de acero 300x100x5 mm; incluye suministro, corte, armado, soldadura, montaje, nivelación y fijación, limpieza, pintura anticorrosiva y acabado en esmalte blanco"
+  },
+  "IPE 160": {
+    "nombre": "Perfil IPE 160",
+    "descripcion": null
+  },
+  "IPE 360": {
+    "nombre": "Perfil IPE 360",
+    "descripcion": null
+  },
+  "PASAMANOS PARA ESCALERAS EN ACERO INOXIDABLE AISI 304 CONFORMADO POR TUBO REDONDO 2 CALIBRE/ESPESOR 1 5 MM CON PARANTES Y SOPORTES EN TUBO 1 ESPESOR 1 5 MM SEPARACION MAXIMA DE 1 20 M. INCLUYE FABRICACION CORTE SOLDADURA TIG PULIDO ACCESORIOS PLACAS DE FIJACION ANCLAJES A ESTRUCTURA METALICA PRINCIPAL MONTAJE NIVELACION Y ACABADO SATINADO/CEPILLADO COMPLETAMENTE INSTALADO.": {
+    "nombre": "Pasamanos en acero inoxidable AISI 304 Ø2\"",
+    "descripcion": "Pasamanos para escaleras en tubo redondo de acero inoxidable AISI 304 Ø2\" e=1,5 mm, con parantes y soportes en tubo Ø1½\" e=1,5 mm cada 1,20 m máx. Incluye fabricación, soldadura TIG, pulido, accesorios, placas y anclajes, montaje, nivelación y acabado satinado"
+  },
+  "REMATES REDOND TRACIA METALICA": {
+    "nombre": "Remates redondeados en estructura metálica",
+    "descripcion": null
+  },
+  "SISTEMA DE PUESTA A TIERRA SPT CERTIFICADO RETIE CON ELECTRODO COPPERWELD 5/8 X 2.40 M CABLE CU DESNUDO 6/ 8 AWG SOLDADURA EXOTERMICA 90 Y CAJA DE INSPECCION 30X30 CM": {
+    "nombre": "Sistema de puesta a tierra certificado RETIE",
+    "descripcion": "Sistema de puesta a tierra (SPT) certificado RETIE con electrodo Copperweld 5/8\" x 2,40 m, cable Cu desnudo #6/#8 AWG, soldadura exotérmica #90 y caja de inspección 30x30 cm"
+  },
+  "TUBERIA CPVC AGUA CALIENTE RDE 11 1/2 INCLUYE CODOS TEES UNIONES CPVC Y SOLDADURA CPVC SEGUN TABLA DE CANTIDADES PLANO HID PL1": {
+    "nombre": "Tubería CPVC agua caliente RDE 11 1/2\"",
+    "descripcion": "Tubería CPVC agua caliente RDE 11 Ø1/2\"; incluye codos, tees, uniones y soldadura CPVC (según tabla de cantidades plano HID PL1)"
+  },
+  "TUBERIA PVC AGUAS LLUVIAS CLASE LIVIANA 4 SUBTERRANEA INCLUYE CODOS 45 /90 YEES UNIONES Y SOLDADURA SEGUN TABLA PLANO SANPLUV P1": {
+    "nombre": "Tubería PVC aguas lluvias 4\" subterránea",
+    "descripcion": "Tubería PVC aguas lluvias (clase liviana) Ø4\" subterránea; incluye codos 45°/90°, yees, uniones y soldadura (según tabla plano SANPLUV P1)"
+  },
+  "TUBERIA PVC PRESION RDE 21 1/2 PARA DISTRIBUCION DE AGUA FRIA INCLUYE ACCESORIOS CODOS TEES UNIONES Y SOLDADURA SEGUN PLANO HID PL1": {
+    "nombre": "Tubería PVC presión RDE 21 1/2\" agua fría",
+    "descripcion": "Tubería PVC presión RDE 21 Ø1/2\" para distribución de agua fría; incluye codos, tees, uniones y soldadura (según plano HID PL1)"
+  },
+  "TUBERIA PVC PRESION RDE 21 3/4 PARA RED PRINCIPAL DE AGUA FRIA INCLUYE ACCESORIOS CODOS TEES REDUCCIONES Y SOLDADURA SEGUN PLANO HID PL1": {
+    "nombre": "Tubería PVC presión RDE 21 3/4\" agua fría",
+    "descripcion": "Tubería PVC presión RDE 21 Ø3/4\" para red principal de agua fría; incluye codos, tees, reducciones y soldadura (según plano HID PL1)"
+  },
+  "TUBERIA PVC SANITARIA 2 PARA RAMALES DE DESAGUE INCLUYE ACCESORIOS CODOS YEES TEES Y SOLDADURA PVC SEGUN TABLA PLANO SANPLUV P1": {
+    "nombre": "Tubería PVC sanitaria 2\"",
+    "descripcion": "Tubería PVC sanitaria Ø2\" para ramales de desagüe; incluye codos, yees, tees y soldadura PVC (según tabla plano SANPLUV P1)"
+  },
+  "TUBERIA PVC SANITARIA 4 PARA COLECTORES PRINCIPALES E INTERCONEXION DE CAJAS CS1 CS2 TSEP CS3 INCLUYE CODOS YEES TEES REDUCCIONES Y SOLDADURA SEGUN TABLA PLANO SANPLUV P1": {
+    "nombre": "Tubería PVC sanitaria 4\" para colectores",
+    "descripcion": "Tubería PVC sanitaria Ø4\" para colectores principales e interconexión de cajas CS1-CS2-TSEP-CS3; incluye codos, yees, tees, reducciones y soldadura (según tabla plano SANPLUV P1)"
+  },
+  "SUMINISTRO E INSTALACION DE VENTANERIA DE FACHADA EN ALUMINIO ANODIZADO NATURAL CONFORMADA POR PERFILES DE ALUMINIO VIDRIO CLARO DE 6MM SEGUN DIMENSIONES Y DISENO ARQUITECTONICO INCLUYENDO MARCOS HOJAS DIVISIONES HERRAJES EMPAQUES ELEMENTOS DE FIJACION ANCLAJES SELLAMIENTO PERIMETRAL Y DEMAS ACCESORIOS NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Ventanería de fachada en aluminio anodizado natural",
+    "descripcion": "Perfiles de aluminio anodizado natural con vidrio claro de 6 mm, según dimensiones y diseño arquitectónico; incluye marcos, hojas, divisiones, herrajes, empaques, fijaciones, anclajes, sellamiento perimetral y demás accesorios para su correcta instalación y funcionamiento"
+  },
+  "VIGAS EN C PERFIL METALICO PHR H 203 2 B 76 2 E 2 2MM": {
+    "nombre": "Viga en perfil PHR C 203x76x2,2 mm",
+    "descripcion": "Vigas en perfil metálico PHR tipo C, h=203,2 mm, b=76,2 mm, e=2,2 mm"
+  },
+  "VIGAS IPE 270": {
+    "nombre": "Vigas en perfil IPE 270",
+    "descripcion": null
+  },
+  "LAVADO ACIDO DESINCRUSTANTE Y APLICACION DE 2 MANOS DE HIDROFUGO SILICONADO TRANSPARENTE MATE EN LADRILLO TOLETE VISTO": {
+    "nombre": "Lavado ácido e hidrófugo en ladrillo tolete visto",
+    "descripcion": "Lavado ácido desincrustante y aplicación de 2 manos de hidrófugo siliconado transparente mate en ladrillo tolete visto"
+  },
+  "MAMPOSTERIA EN LADRILLO FAROL NO. 6 PARA CULATAS INCLINADAS BAJO CUBIERTA ANTEPECHOS Y MURETES DE APOYO": {
+    "nombre": "Muro en ladrillo farol No. 6 para culatas y antepechos",
+    "descripcion": "Mampostería en ladrillo farol No. 6 para culatas inclinadas bajo cubierta, antepechos y muretes de apoyo"
+  },
+  "MAMPOSTERIA EN LADRILLO FAROL RAYADO NO. 6 10X20X30 CM PARA MUROS INTERIORES DIVISORIOS Y PERIMETRALES": {
+    "nombre": "Muro en ladrillo farol rayado No. 6 10x20x30 cm",
+    "descripcion": "Mampostería en ladrillo farol rayado No. 6 (10x20x30 cm) para muros interiores divisorios y perimetrales"
+  },
+  "MAMPOSTERIA EN LADRILLO TOLETE MACIZO RECOCIDO A LA VISTA EN FACHADA INTERNA JUNTA REMETIDA 1.2 CM CON MORTERO 1 4": {
+    "nombre": "Muro en ladrillo tolete macizo a la vista",
+    "descripcion": "Mampostería en ladrillo tolete macizo recocido a la vista en fachada interna (junta remetida 1,2 cm con mortero 1:4)"
+  },
+  "MURO PAPELILLO CUADRILONGO": {
+    "nombre": "Muro en papelillo ladrillo cuadrilongo",
+    "descripcion": null
+  },
+  "MURO SOGA ADOBON": {
+    "nombre": "Muro en soga ladrillo adobón",
+    "descripcion": null
+  },
+  "MURO SOGA BLOQUE MACIZ": {
+    "nombre": "Muro en soga bloque macizo",
+    "descripcion": null
+  },
+  "MURO TIZON ADOBON": {
+    "nombre": "Muro en tizón ladrillo adobón",
+    "descripcion": null
+  },
+  "MURO TIZON CUADRILONGO": {
+    "nombre": "Muro en tizón ladrillo cuadrilongo",
+    "descripcion": null
+  },
+  "VIGA CINTA DE CONFINAMIENTO DE 15X15 CM EN CONCRETO FC 21 MPA SOBRE MUROS Y CULATAS INCLUYE REFUERZO 4 3 Y ESTRIBOS 3 C/10 CM SEGUN PLANO E 3": {
+    "nombre": "Viga cinta de confinamiento 15x15 cm 3000 psi",
+    "descripcion": "Viga cinta de confinamiento de 15x15 cm en concreto f'c=21 MPa sobre muros y culatas; incluye refuerzo 4 #3 y estribos #3 c/10 cm (según plano E-3)"
+  },
+  "ALTERNATIVA OPCION B PTAR EN CONCRETO CONCRETO REFORZADO IMPERMEABILIZADO FC 21 MPA E 0.15 M PARA TANQUE SEPTICO DE 2 CAMARAS Y FILTRO ANAEROBIO FAFA IN SITU ACTIVAR CAMBIANDO NO. ELEM DE 0 A 1": {
+    "nombre": "Concreto impermeabilizado PTAR in situ (alternativa B)",
+    "descripcion": "Alternativa opción B - PTAR en concreto: concreto reforzado impermeabilizado f'c=21 MPa e=0,15 m para tanque séptico de 2 cámaras y filtro anaerobio FAFA in situ (activar cambiando No. elem. de 0 a 1)"
+  },
+  "CAJAS DE INSPECCION SANITARIA DE 80X80 CM EN MAMPOSTERIA LADRILLO TOLETE MACIZO PANETE IMPERMEABILIZADO 1 3 CANUELA Y TAPA EN CONCRETO REFORZADO 3000 PSI CS1 CS2 CS3 Y AUXILIARES SEGUN PLANO SANPLUV P1 Y P2": {
+    "nombre": "Caja de inspección sanitaria 80x80 cm",
+    "descripcion": "Caja de inspección sanitaria de 80x80 cm en mampostería de ladrillo tolete macizo, pañete impermeabilizado 1:3, cañuela y tapa en concreto reforzado 3000 psi (CS1, CS2, CS3 y auxiliares según plano SANPLUV P1 y P2)"
+  },
+  "CARBURO SOBRE REPELLO": {
+    "nombre": "Carburo sobre repello",
+    "descripcion": null
+  },
+  "CONSTRUCCION DE TANQUE SUBTERRANEO DE ALMACENAMIENTO DE AGUA POTABLE DIM. INT. 2.00X2.00X1.45 M VOL. UTIL 4.80 M 3.120 L MUROS/FONDO E 0.25 M Y TAPA E 0.15 M EN CONCRETO FC 21 MPA IMPERMEABILIZADO CON SIKA 1 SIKATOP 107 ACERO TAPA 0.60X0.60 M SEGUN PLANO HID PL2": {
+    "nombre": "Tanque subterráneo de agua potable 4,80 m³",
+    "descripcion": "Tanque subterráneo de almacenamiento de agua potable, dim. int. 2,00x2,00x1,45 m, vol. útil 4,80 m³ (> 3.120 L); muros y fondo e=0,25 m y tapa e=0,15 m en concreto f'c=21 MPa impermeabilizado con Sika-1 y SikaTop 107, acero y tapa 0,60x0,60 m (según plano HID PL2)"
+  },
+  "DILATACIONES": {
+    "nombre": "Dilataciones en pañete",
+    "descripcion": null
+  },
+  "FILOS DILATACIONES Y REMATES DE PANETE EN VANOS DE PUERTAS VENTANAS Y ESQUINAS": {
+    "nombre": "Filos, dilataciones y remates de pañete",
+    "descripcion": "Filos, dilataciones y remates de pañete en vanos de puertas, ventanas y esquinas"
+  },
+  "PERLA PLATACH": {
+    "nombre": "Revestimiento perla platach",
+    "descripcion": null
+  },
+  "PERLA RUSTICA": {
+    "nombre": "Revestimiento perla rústica",
+    "descripcion": null
+  },
+  "REPELLO / PANETE LISO INTERIOR A PLOMO Y REGLA EN MUROS DE LADRILLO FAROL CON MORTERO 1 4 E 1.5 CM": {
+    "nombre": "Pañete liso interior 1:4 e=1,5 cm",
+    "descripcion": "Repello o pañete liso interior a plomo y regla en muros de ladrillo farol con mortero 1:4 e=1,5 cm"
+  },
+  "REV AFINA CAL EN MUROS": {
+    "nombre": "Revoque afinado con cal en muros",
+    "descripcion": null
+  },
+  "REV RUSTICO EN MUROS": {
+    "nombre": "Revoque rústico en muros",
+    "descripcion": null
+  },
+  "VIGA CANAL INTERNA OCULTA EN LAMINA GALVANIZADA CAL. 20 DESARROLLO 0.80 M CON IMPERMEABILIZACION ELASTICA REFORZADA": {
+    "nombre": "Viga canal oculta en lámina galvanizada cal. 20",
+    "descripcion": "Viga canal interna (oculta) en lámina galvanizada cal. 20, desarrollo 0,80 m, con impermeabilización elástica reforzada"
+  },
+  "AG LLUV PVC 3 ENTREPISOS": {
+    "nombre": "Tubería PVC aguas lluvias 3\" en entrepisos",
+    "descripcion": null
+  },
+  "AG LLUV PVC 4 ENTREPISOS": {
+    "nombre": "Tubería PVC aguas lluvias 4\" en entrepisos",
+    "descripcion": null
+  },
+  "ALFAJIA 20 CM": {
+    "nombre": "Alfajía a=20 cm",
+    "descripcion": null
+  },
+  "ANTICORROSIVA S/ LAMINA LINEAL": {
+    "nombre": "Pintura anticorrosiva sobre lámina lineal",
+    "descripcion": null
+  },
+  "ANTICORROSIVA S/ LAMINA LLENA": {
+    "nombre": "Pintura anticorrosiva sobre lámina llena",
+    "descripcion": null
+  },
+  "BALDOS GRANITO DUROTECH 30.5 X 30.5 CM": {
+    "nombre": "Baldosa granito Durotech 30,5x30,5 cm",
+    "descripcion": null
+  },
+  "BALDOS GRANITO MELATO 33 X 33 CM": {
+    "nombre": "Baldosa granito Melato 33x33 cm",
+    "descripcion": null
+  },
+  "BARNIZ PISOS MADERA": {
+    "nombre": "Barniz para pisos de madera",
+    "descripcion": null
+  },
+  "BARRERA DE VAPOR EN POLIETILENO NEGRO CALIBRE 6 BAJO LOSA DE CONTRAPISO INCLUYE TRASLAPOS DE 20 CM": {
+    "nombre": "Barrera de vapor en polietileno negro cal. 6",
+    "descripcion": "Barrera de vapor en polietileno negro calibre 6 bajo losa de contrapiso; incluye traslapos de 20 cm"
+  },
+  "DESAG PVC 2 ENTREPISOS": {
+    "nombre": "Desagüe PVC 2\" en entrepisos",
+    "descripcion": null
+  },
+  "DESAG PVC 3 ENTREPISOS": {
+    "nombre": "Desagüe PVC 3\" en entrepisos",
+    "descripcion": null
+  },
+  "DESAG PVC 4 ENTREPISOS": {
+    "nombre": "Desagüe PVC 4\" en entrepisos",
+    "descripcion": null
+  },
+  "ENCH CER 11X22 PISO": {
+    "nombre": "Enchape cerámico piso 11x22",
+    "descripcion": null
+  },
+  "ENCH CER 20 5 X 30 PARED": {
+    "nombre": "Enchape cerámico pared 20,5x30",
+    "descripcion": null
+  },
+  "ENCH CER 20.5 X 20 5 PISO": {
+    "nombre": "Enchape cerámico piso 20,5x20,5",
+    "descripcion": null
+  },
+  "ENCH CER 20.5 X 25 PARED": {
+    "nombre": "Enchape cerámico pared 20,5x25",
+    "descripcion": null
+  },
+  "ENCH CER 20X25 PARED": {
+    "nombre": "Enchape cerámico pared 20x25",
+    "descripcion": null
+  },
+  "ENCH CER 25X25 PISO": {
+    "nombre": "Enchape cerámico piso 25x25",
+    "descripcion": null
+  },
+  "ENCH CER 30 5X30 5 PISO": {
+    "nombre": "Enchape cerámico piso 30,5x30,5",
+    "descripcion": null
+  },
+  "ENCH CER 30X30 PISO": {
+    "nombre": "Enchape cerámico piso 30x30",
+    "descripcion": null
+  },
+  "ENCH CER 33X33 PISO": {
+    "nombre": "Enchape cerámico piso 33x33",
+    "descripcion": null
+  },
+  "ENCH CER 35X35 PISO": {
+    "nombre": "Enchape cerámico piso 35x35",
+    "descripcion": null
+  },
+  "ENCH CER 40X40 PISO": {
+    "nombre": "Enchape cerámico piso 40x40",
+    "descripcion": null
+  },
+  "ENCH CER 55X55 PISO": {
+    "nombre": "Enchape cerámico piso 55x55",
+    "descripcion": null
+  },
+  "ENCHAPE CERAMICO / PORCELANICO RECTIFICADO 30X60 CM EN MUROS DE BANOS Y ZONA DE ROPAS INCLUYE PEGACOR Y BOQUILLA LATEX": {
+    "nombre": "Enchape porcelánico rectificado muros 30x60 cm",
+    "descripcion": "Enchape cerámico o porcelánico rectificado 30x60 cm en muros de baños y zona de ropas; incluye Pegacor y boquilla látex"
+  },
+  "SUMINISTRO E INSTALACION DE ENCHAPE EN CERAMICA DE LINEA NACIONAL INCLUYE SUMINISTRO DE CERAMICA ADHESIVO PARA ENCHAPE BOQUILLADOR NIVELACION CORTES INSTALACION EMBOQUILLADO": {
+    "nombre": "Enchape en cerámica de línea nacional",
+    "descripcion": "Incluye suministro de cerámica, adhesivo para enchape, boquilla, nivelación, cortes, instalación y emboquillado"
+  },
+  "G/ESC CON CENEF GRAVILLA LAV M/CANA 10X10CM": {
+    "nombre": "Guardaescoba gravilla lavada con media caña 10x10 cm",
+    "descripcion": "Guardaescoba con cenefa en gravilla lavada y media caña de 10x10 cm"
+  },
+  "G/ESC CON CENEFA GRANITO LAVADO M/CANA 10X10CM": {
+    "nombre": "Guardaescoba granito lavado con media caña 10x10 cm",
+    "descripcion": "Guardaescoba con cenefa en granito lavado y media caña de 10x10 cm"
+  },
+  "G/ESC CON CENEFA GRANITO PULIDO M/CANA 10X10CM": {
+    "nombre": "Guardaescoba granito pulido con media caña 10x10 cm",
+    "descripcion": "Guardaescoba con cenefa en granito pulido y media caña de 10x10 cm"
+  },
+  "G/ESCOBAS 0 10 MT BOTTICCINO": {
+    "nombre": "Guardaescoba mármol botticcino h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT CAFE BALTICO.": {
+    "nombre": "Guardaescoba granito café báltico h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT GHIANDONE.": {
+    "nombre": "Guardaescoba granito ghiandone h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT GRIS GUAYANA.": {
+    "nombre": "Guardaescoba granito gris guayana h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT JASPE.": {
+    "nombre": "Guardaescoba granito jaspe h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT LABR OSCURO.": {
+    "nombre": "Guardaescoba granito labrador oscuro h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT LABR. CLARO.": {
+    "nombre": "Guardaescoba granito labrador claro h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT MARMOL GRIS": {
+    "nombre": "Guardaescoba mármol gris h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT MARMOL NEGRO": {
+    "nombre": "Guardaescoba mármol negro h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT ROSSAPORRINO.": {
+    "nombre": "Guardaescoba granito rosa porriño h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT TRAVERTINO.": {
+    "nombre": "Guardaescoba mármol travertino h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT VERDE ANDES.": {
+    "nombre": "Guardaescoba mármol verde andes h=10 cm",
+    "descripcion": null
+  },
+  "G/ESCOBAS 0 10 MT VERDE UBATUBA.": {
+    "nombre": "Guardaescoba granito verde ubatuba h=10 cm",
+    "descripcion": null
+  },
+  "GRANITO NO 1 LAVADO": {
+    "nombre": "Piso en granito No. 1 lavado",
+    "descripcion": null
+  },
+  "GRANITO NO 1 PULIDO": {
+    "nombre": "Piso en granito No. 1 pulido",
+    "descripcion": null
+  },
+  "GRANITO NO 2 LAVADO": {
+    "nombre": "Piso en granito No. 2 lavado",
+    "descripcion": null
+  },
+  "GRANITO NO 2 PULIDO": {
+    "nombre": "Piso en granito No. 2 pulido",
+    "descripcion": null
+  },
+  "GRANITO NO 3 LAVADO": {
+    "nombre": "Piso en granito No. 3 lavado",
+    "descripcion": null
+  },
+  "GRANITO NO 3 PULIDO": {
+    "nombre": "Piso en granito No. 3 pulido",
+    "descripcion": null
+  },
+  "GRAVILLA LAVADA NUMERO 1": {
+    "nombre": "Piso en gravilla lavada No. 1",
+    "descripcion": null
+  },
+  "GRAVILLA LAVADA NUMERO 2": {
+    "nombre": "Piso en gravilla lavada No. 2",
+    "descripcion": null
+  },
+  "GRAVILLA LAVADA NUMERO 3": {
+    "nombre": "Piso en gravilla lavada No. 3",
+    "descripcion": null
+  },
+  "GRAVILLA LAVADA NUMERO 4": {
+    "nombre": "Piso en gravilla lavada No. 4",
+    "descripcion": null
+  },
+  "GUARD CERAM H 10 CM PEGA TRADICIONAL": {
+    "nombre": "Guardaescoba cerámico h=10 cm pega tradicional",
+    "descripcion": null
+  },
+  "GUARDAESCOB BALDOSA": {
+    "nombre": "Guardaescoba en baldosa",
+    "descripcion": null
+  },
+  "GUARDAESCOB GRANITO LAVADO RECTA H 10 CM": {
+    "nombre": "Guardaescoba recto granito lavado h=10 cm",
+    "descripcion": null
+  },
+  "GUARDAESCOB GRANITO PULIDO RECTA H 10 CM": {
+    "nombre": "Guardaescoba recto granito pulido h=10 cm",
+    "descripcion": null
+  },
+  "GUARDAESCOB GRAVILLA LAV RECTA H 10 CM": {
+    "nombre": "Guardaescoba recto gravilla lavada h=10 cm",
+    "descripcion": null
+  },
+  "GUARDAESCOB MADERA": {
+    "nombre": "Guardaescoba en madera",
+    "descripcion": null
+  },
+  "GUARDAESCOBAS EN PORCELANATO RECTIFICADO H 8 CM": {
+    "nombre": "Guardaescoba porcelanato rectificado h=8 cm",
+    "descripcion": null
+  },
+  "IMPERMEABILIZACION DE PISOS Y MUROS DE DUCHAS EN BANOS CON MORTERO ACRILICO SEMIFLEXIBLE SIKATOP 107 SEAL": {
+    "nombre": "Impermeabilización de duchas con SikaTop 107 Seal",
+    "descripcion": "Impermeabilización de pisos y muros de duchas en baños con mortero acrílico semiflexible SikaTop 107 Seal"
+  },
+  "LINEAS TRAFICO A 0.10 MT": {
+    "nombre": "Líneas de tráfico a=0,10 m",
+    "descripcion": null
+  },
+  "MARMOL CAFE PINTO": {
+    "nombre": "Piso en mármol café pinto",
+    "descripcion": null
+  },
+  "MARMOL CREMA MARFIL": {
+    "nombre": "Piso en mármol crema marfil",
+    "descripcion": null
+  },
+  "MARMOL GRIS PERLA": {
+    "nombre": "Piso en mármol gris perla",
+    "descripcion": null
+  },
+  "MARMOL GRIS PUTUMAYO": {
+    "nombre": "Piso en mármol gris Putumayo",
+    "descripcion": null
+  },
+  "MARMOL GRIS RIO CLARO": {
+    "nombre": "Piso en mármol gris Río Claro",
+    "descripcion": null
+  },
+  "MARMOL MULATA CAMPINA": {
+    "nombre": "Piso en mármol mulata campiña",
+    "descripcion": null
+  },
+  "MARMOL NEGRO CARACOL": {
+    "nombre": "Piso en mármol negro caracol",
+    "descripcion": null
+  },
+  "MARMOL ROSA HUILA": {
+    "nombre": "Piso en mármol rosa Huila",
+    "descripcion": null
+  },
+  "MARMOL ROSA TACUEYO": {
+    "nombre": "Piso en mármol rosa Tacueyó",
+    "descripcion": null
+  },
+  "MARMOL TRAVERT VILLA DE LEIVA": {
+    "nombre": "Piso en mármol travertino Villa de Leyva",
+    "descripcion": null
+  },
+  "MARMOL TRAVERTINO PERUANO": {
+    "nombre": "Piso en mármol travertino peruano",
+    "descripcion": null
+  },
+  "MARMOL VERDE ANDES": {
+    "nombre": "Piso en mármol verde andes",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE MEDIA CANA MICROPERFORADA UNIPERFILES PARED PARED INCLUYE PERFILES ACCESORIOS DE UNION ELEMENTOS DE FIJACION ADHESIVOS Y DEMAS COMPONENTES NECESARIOS PARA SU CORRECTA INSTALACION ALINEACION Y ACABADO.": {
+    "nombre": "Media caña microperforada Uniperfiles pared-pared",
+    "descripcion": "Incluye perfiles, accesorios de unión, elementos de fijación, adhesivos y demás componentes para su correcta instalación, alineación y acabado"
+  },
+  "MUEBLE INTEGRAL DE COCINA MODULOS ALTOS BAJOS E ISLA EN MELAMINA RH 18 MM CON HERRAJES CIERRE LENTO Y MESON EN CUARZO/GRANITO NATURAL": {
+    "nombre": "Mueble integral de cocina en melamina RH 18 mm",
+    "descripcion": "Mueble integral de cocina (módulos altos, bajos e isla) en melamina RH 18 mm con herrajes de cierre lento y mesón en cuarzo o granito natural"
+  },
+  "PAV BALDOSA": {
+    "nombre": "Piso en baldosa",
+    "descripcion": null
+  },
+  "PAV CER 20X20 PEGA TRADICIONAL": {
+    "nombre": "Piso cerámico 20x20 pega tradicional",
+    "descripcion": null
+  },
+  "PAV CER 20X20 PEGACOR CONCOLOR": {
+    "nombre": "Piso cerámico 20x20 Pegacor y boquilla concolor",
+    "descripcion": null
+  },
+  "PAV CER 30X30 PEGA TRADICIONAL": {
+    "nombre": "Piso cerámico 30x30 pega tradicional",
+    "descripcion": null
+  },
+  "PAV CER 30X30 PEGACOR CONCOLOR": {
+    "nombre": "Piso cerámico 30x30 Pegacor y boquilla concolor",
+    "descripcion": null
+  },
+  "PAV CER 40X40 PEGA TRADICIONAL": {
+    "nombre": "Piso cerámico 40x40 pega tradicional",
+    "descripcion": null
+  },
+  "PAV CER 40X40 PEGACOR CONCOLOR": {
+    "nombre": "Piso cerámico 40x40 Pegacor y boquilla concolor",
+    "descripcion": null
+  },
+  "PELDANO GRADA GRANIT PULIDO": {
+    "nombre": "Peldaño de grada en granito pulido",
+    "descripcion": null
+  },
+  "PISO EN CONCRETO FC 21 MPA E 10 CM AFINADO Y ENDURECIDO CON CUARZO SIKAFLOOR 3 QUARTZTOP PARA PARQUEADERO CUBIERTO 44.09 M": {
+    "nombre": "Piso en concreto e=10 cm endurecido con cuarzo",
+    "descripcion": "Piso en concreto f'c=21 MPa e=10 cm afinado y endurecido con cuarzo Sikafloor-3 QuartzTop para parqueadero cubierto (44,09 m²)"
+  },
+  "PISO EN PORCELANATO ANTIDESLIZANTE PARA BANOS VESTIER Y ZONA DE ROPAS CON PENDIENTES HACIA SIFONES": {
+    "nombre": "Piso en porcelanato antideslizante para baños",
+    "descripcion": "Piso en porcelanato antideslizante para baños, vestier y zona de ropas, con pendientes hacia sifones"
+  },
+  "PISO EXTERIOR ANTIDESLIZANTE PARA TERRAZA SOCIAL PORTICO DE ACCESO Y ANDENES PERIMETRALES": {
+    "nombre": "Piso exterior antideslizante para terraza y andenes",
+    "descripcion": "Piso exterior antideslizante para terraza social, pórtico de acceso y andenes perimetrales"
+  },
+  "PISO HOSPITALARIO CONTINUO BASE CON AUTONIVELANTE PISO SOLDADO MEDIA CANA PVC PISO BEIGE AB 34603": {
+    "nombre": "Piso vinílico hospitalario beige AB-34603",
+    "descripcion": "Piso hospitalario continuo con base en autonivelante, piso soldado y media caña PVC, color beige AB-34603"
+  },
+  "PISO HOSPITALARIO CONTINUO BASE CON AUTONIVELANTE PISO SOLDADO MEDIA CANA PVC PISO GRIS ARTICO AB34606": {
+    "nombre": "Piso vinílico hospitalario gris ártico AB-34606",
+    "descripcion": "Piso hospitalario continuo con base en autonivelante, piso soldado y media caña PVC, color gris ártico AB-34606"
+  },
+  "PISO HOSPITALARIO CONTINUO BASE CON AUTONIVELANTE PISO SOLDADO MEDIA CANA PISO Y PARED MEDISTEP CONDUCTIVE 2MM AZUL SOC 3216": {
+    "nombre": "Piso hospitalario conductivo Medistep 2 mm azul",
+    "descripcion": "Piso hospitalario continuo con base en autonivelante, piso soldado y media caña piso-pared, Medistep Conductive 2 mm azul SOC 3216"
+  },
+  "PISO HOSPITALARIO CONTINUO BASE CON AUTONIVELANTE PISO SOLDADO MEDIA CANA PVC PISO TARALAY BORGO AZUL CLARO 59530": {
+    "nombre": "Piso vinílico hospitalario Taralay Borgo azul claro",
+    "descripcion": "Piso hospitalario continuo con base en autonivelante, piso soldado y media caña PVC, Taralay Borgo azul claro 59530"
+  },
+  "SUMINISTRO E INSTALACION DE PISO HOSPITALARIO PISO LG HAUSYS AZUL COBALTO O A ESCOGER. TRAFICO PESADO ESPESOR DE 2.00 MM INCLUYE NIVELACION": {
+    "nombre": "Piso hospitalario LG Hausys 2 mm azul cobalto",
+    "descripcion": "Piso hospitalario LG Hausys color azul cobalto o a escoger, tráfico pesado, espesor 2,00 mm; incluye nivelación"
+  },
+  "SUMINISTRO E INSTALACION DE PISO HOSPITALARIO PISO LG HAUSYS GRIS CALRO COBALTO O A ESCOGER. TRAFICO PESADO ESPESOR DE 2.00 MM INCLUYE NIVELACION": {
+    "nombre": "Piso hospitalario LG Hausys 2 mm gris claro",
+    "descripcion": "Piso hospitalario LG Hausys color gris claro o a escoger, tráfico pesado, espesor 2,00 mm; incluye nivelación"
+  },
+  "PISO INTERIOR EN PORCELANATO RECTIFICADO GRAN FORMATO ZONAS SOCIALES COMEDOR COCINA ESTUDIO Y 4 HABITACIONES": {
+    "nombre": "Piso en porcelanato rectificado gran formato",
+    "descripcion": "Piso interior en porcelanato rectificado gran formato (zonas sociales, comedor, cocina, estudio y 4 habitaciones)"
+  },
+  "PISO PRIMARIO E 7 CM": {
+    "nombre": "Piso primario en concreto e=7 cm",
+    "descripcion": null
+  },
+  "PLACA DE CONTRAPISO EN CONCRETO FC 21 MPA 3000 PSI E 10 CM NIVELADA Y AFINADA SEGUN DETALLE CONTRAPISO PLANO E 1": {
+    "nombre": "Placa de contrapiso 3000 psi e=10 cm afinada",
+    "descripcion": "Placa de contrapiso en concreto f'c=21 MPa (3000 psi) e=10 cm nivelada y afinada (según detalle contrapiso plano E-1)"
+  },
+  "PLACA GRANITO CAFE BALTICO": {
+    "nombre": "Placa en granito café báltico",
+    "descripcion": null
+  },
+  "PLACA GRANITO GHIANDONE": {
+    "nombre": "Placa en granito ghiandone",
+    "descripcion": null
+  },
+  "PLACA GRANITO GIALLO SN FCO.": {
+    "nombre": "Placa en granito giallo San Francisco",
+    "descripcion": null
+  },
+  "PLACA GRANITO GRIS GUAYANA": {
+    "nombre": "Placa en granito gris guayana",
+    "descripcion": null
+  },
+  "PLACA GRANITO JASPE": {
+    "nombre": "Placa en granito jaspe",
+    "descripcion": null
+  },
+  "PLACA GRANITO LABRADOR CLARO": {
+    "nombre": "Placa en granito labrador claro",
+    "descripcion": null
+  },
+  "PLACA GRANITO LABRADOR OSCURO": {
+    "nombre": "Placa en granito labrador oscuro",
+    "descripcion": null
+  },
+  "PLACA GRANITO NEGRO ABSOLUTO": {
+    "nombre": "Placa en granito negro absoluto",
+    "descripcion": null
+  },
+  "PLACA GRANITO ROJO GUAYANA": {
+    "nombre": "Placa en granito rojo guayana",
+    "descripcion": null
+  },
+  "PLACA GRANITO ROSSAPORRINO": {
+    "nombre": "Placa en granito rosa porriño",
+    "descripcion": null
+  },
+  "PLACA GRANITO SIERRA CHICA": {
+    "nombre": "Placa en granito sierra chica",
+    "descripcion": null
+  },
+  "PLACA GRANITO VERDE UBATUBA": {
+    "nombre": "Placa en granito verde ubatuba",
+    "descripcion": null
+  },
+  "PULIDO FINAL GRANITO O MARMOL ENCERADO": {
+    "nombre": "Pulido final y encerado de granito o mármol",
+    "descripcion": null
+  },
+  "PUNTOS SANITARIOS DE DESAGUE EN PVC SANITARIA 2 5 LAVAMANOS 4 DUCHAS 1 LAVAPLATOS 1 LAVADORA 5 SIFONES DE PISO SEGUN PLANO SANPLUV P1": {
+    "nombre": "Punto sanitario PVC 2\"",
+    "descripcion": "Puntos sanitarios de desagüe en PVC sanitaria Ø2\" (5 lavamanos, 4 duchas, 1 lavaplatos, 1 lavadora y 5 sifones de piso según plano SANPLUV P1)"
+  },
+  "REMATES REDOND PORCELANA": {
+    "nombre": "Remates redondeados en porcelana",
+    "descripcion": null
+  },
+  "REV CER 20X20 PEGA TRADICIONAL": {
+    "nombre": "Revestimiento cerámico 20x20 pega tradicional",
+    "descripcion": null
+  },
+  "REV CER 20X20 PEGACOR CONCOLOR": {
+    "nombre": "Revestimiento cerámico 20x20 Pegacor concolor",
+    "descripcion": null
+  },
+  "REV CER 30X30 PEGA TRADICIONAL": {
+    "nombre": "Revestimiento cerámico 30x30 pega tradicional",
+    "descripcion": null
+  },
+  "REV CER 30X30 PEGACOR CONCOLOR": {
+    "nombre": "Revestimiento cerámico 30x30 Pegacor concolor",
+    "descripcion": null
+  },
+  "REV CER 40X40 PEGA TRADICIONAL": {
+    "nombre": "Revestimiento cerámico 40x40 pega tradicional",
+    "descripcion": null
+  },
+  "REV CER 40X40 PEGACOR CONCOLOR": {
+    "nombre": "Revestimiento cerámico 40x40 Pegacor concolor",
+    "descripcion": null
+  },
+  "REV REFINADO EN PISOS": {
+    "nombre": "Afinado de piso en mortero",
+    "descripcion": null
+  },
+  "REV RUSTICO EN PISOS": {
+    "nombre": "Revoque rústico en pisos",
+    "descripcion": null
+  },
+  "SUB BASE GRANULAR EN RECEBO LIMPIO COMPACTADO AL 95 DEL PROCTOR MODIFICADO E 30 CM BAJO PLACA DE CONTRAPISO SEGUN PLANO E 1": {
+    "nombre": "Subbase granular en recebo compactado e=30 cm",
+    "descripcion": "Subbase granular en recebo limpio compactado al 95% del Proctor modificado, e=30 cm, bajo placa de contrapiso (según plano E-1)"
+  },
+  "TABLETA 10X10 PEGA TRADICIONAL": {
+    "nombre": "Tableta de gres 10x10 pega tradicional",
+    "descripcion": null
+  },
+  "TABLETA 20X10 PEGA TRADICIONAL": {
+    "nombre": "Tableta de gres 20x10 pega tradicional",
+    "descripcion": null
+  },
+  "TABLON 25X25 PEGA TRADICIONAL": {
+    "nombre": "Tablón de gres 25x25 pega tradicional",
+    "descripcion": null
+  },
+  "TABLON 33X33 PEGA TRADICIONAL": {
+    "nombre": "Tablón de gres 33x33 pega tradicional",
+    "descripcion": null
+  },
+  "TABLON ROJO ROMANA 15X15": {
+    "nombre": "Tablón rojo romana 15x15",
+    "descripcion": null
+  },
+  "TINTILLA S/ MADERA LINEAL": {
+    "nombre": "Tintilla sobre madera lineal",
+    "descripcion": null
+  },
+  "TINTILLA S/ MADERA LLENA": {
+    "nombre": "Tintilla sobre madera llena",
+    "descripcion": null
+  },
+  "WASH PRIMER S/ METAL": {
+    "nombre": "Wash primer sobre metal",
+    "descripcion": null
+  },
+  "WING PLASTICO": {
+    "nombre": "Wing plástico",
+    "descripcion": null
+  },
+  "AG LLUV PVC 2 EN TIERRA": {
+    "nombre": "Tubería PVC aguas lluvias 2\" enterrada",
+    "descripcion": null
+  },
+  "AG LLUV PVC 3 EN TIERRA": {
+    "nombre": "Tubería PVC aguas lluvias 3\" enterrada",
+    "descripcion": null
+  },
+  "BAJANTES DE AGUAS LLUVIAS EMPOTRADAS BALL 4 EN TUBERIA PVC BALL 1 A BALL 5 SEGUN PLANO SANPLUV P1 INCLUYE SOSCO REJILLA CUPULA 4 CODOS Y ABRAZADERAS": {
+    "nombre": "Bajante de aguas lluvias empotrada PVC 4\"",
+    "descripcion": "Bajantes de aguas lluvias empotradas BALL Ø4\" en tubería PVC (BALL 1 a BALL 5 según plano SANPLUV P1); incluye sosco, rejilla cúpula Ø4\", codos y abrazaderas"
+  },
+  "CABALLETES ARTICULADOS FLANCHES LATERALES CORTAGOTERAS Y REMATES DE TRANSICION CUBIERTA FACHADA EN LAMINA CAL. 22 PREPINTADA": {
+    "nombre": "Caballetes, flanches y remates en lámina cal. 22",
+    "descripcion": "Caballetes articulados, flanches laterales, cortagoteras y remates de transición cubierta-fachada en lámina cal. 22 prepintada"
+  },
+  "CANAL PVC": {
+    "nombre": "Canal en PVC",
+    "descripcion": null
+  },
+  "CCTO V CANAL 30X25 CM": {
+    "nombre": "Viga canal en concreto 30x25 cm",
+    "descripcion": null
+  },
+  "CCTO V CANAL 40X30 CM": {
+    "nombre": "Viga canal en concreto 40x30 cm",
+    "descripcion": null
+  },
+  "CLARABOYA 4": {
+    "nombre": "Teja claraboya No. 4",
+    "descripcion": null
+  },
+  "CLARABOYA 6": {
+    "nombre": "Teja claraboya No. 6",
+    "descripcion": null
+  },
+  "COD PVC SAN 2": {
+    "nombre": "Codo PVC sanitario 2\"",
+    "descripcion": null
+  },
+  "COD PVC SAN 3": {
+    "nombre": "Codo PVC sanitario 3\"",
+    "descripcion": null
+  },
+  "COD PVC SAN 4": {
+    "nombre": "Codo PVC sanitario 4\"",
+    "descripcion": null
+  },
+  "COD PVC SAN 6": {
+    "nombre": "Codo PVC sanitario 6\"",
+    "descripcion": null
+  },
+  "CODO CEM 4": {
+    "nombre": "Codo en cemento 4\"",
+    "descripcion": null
+  },
+  "CODO GRESS 4": {
+    "nombre": "Codo en gres 4\"",
+    "descripcion": null
+  },
+  "CORREAS METALICAS DE CUBIERTA EN PERFIL CAJON 100X50X2.0 MM ASTM A500 GR C INCLUYE PLATINA DE FIJACION A36 DE 200X150X6 MM Y 4 PERNOS 3/8 SOBRE VIGA CINTA SEGUN PLANO E 3": {
+    "nombre": "Correas de cubierta en perfil cajón 100x50x2 mm",
+    "descripcion": "Correas metálicas de cubierta en perfil cajón 100x50x2,0 mm (ASTM A500 Gr. C); incluye platina de fijación A36 de 200x150x6 mm y 4 pernos Ø3/8\" sobre viga cinta (según plano E-3)"
+  },
+  "CUBIERTA EN PANEL TIPO SANDWICH TERMOACUSTICO DOBLE LAMINA ACERO PREPINTADO NUCLEO PUR/PIR E 30 50 MM PESO 8 KG/M SEGUN PLANO E 3": {
+    "nombre": "Cubierta en panel sándwich termoacústico",
+    "descripcion": "Cubierta en panel tipo sándwich termoacústico: doble lámina de acero prepintado con núcleo PUR/PIR e=30-50 mm, peso ≤ 8 kg/m² (según plano E-3)"
+  },
+  "DESAG CEM 4 EN TIERRA": {
+    "nombre": "Desagüe en tubería de cemento 4\" enterrada",
+    "descripcion": null
+  },
+  "DESAG CEM 6 EN TIERRA": {
+    "nombre": "Desagüe en tubería de cemento 6\" enterrada",
+    "descripcion": null
+  },
+  "DESAG CEM 8 EN TIERRA": {
+    "nombre": "Desagüe en tubería de cemento 8\" enterrada",
+    "descripcion": null
+  },
+  "DESAG GRESS 4 EN TIERRA": {
+    "nombre": "Desagüe en tubería de gres 4\" enterrada",
+    "descripcion": null
+  },
+  "DESAG GRESS 6 EN TIERRA": {
+    "nombre": "Desagüe en tubería de gres 6\" enterrada",
+    "descripcion": null
+  },
+  "DESAG GRESS 8 EN TIERRA": {
+    "nombre": "Desagüe en tubería de gres 8\" enterrada",
+    "descripcion": null
+  },
+  "DESAG PVC 6 EN TIERRA": {
+    "nombre": "Desagüe PVC 6\" enterrado",
+    "descripcion": null
+  },
+  "DESAG PVC 8 EN TIERRA": {
+    "nombre": "Desagüe PVC 8\" enterrado",
+    "descripcion": null
+  },
+  "REJILL ALUMI 2": {
+    "nombre": "Rejilla de aluminio 2\"",
+    "descripcion": null
+  },
+  "REJILL ALUMI 3": {
+    "nombre": "Rejilla de aluminio 3\"",
+    "descripcion": null
+  },
+  "T VENTILA NO 4": {
+    "nombre": "Teja de ventilación No. 4",
+    "descripcion": null
+  },
+  "T VENTILA NO 6": {
+    "nombre": "Teja de ventilación No. 6",
+    "descripcion": null
+  },
+  "TEE PVC SAN 2": {
+    "nombre": "Tee PVC sanitaria 2\"",
+    "descripcion": null
+  },
+  "TEE PVC SAN 3": {
+    "nombre": "Tee PVC sanitaria 3\"",
+    "descripcion": null
+  },
+  "TEE PVC SAN 4": {
+    "nombre": "Tee PVC sanitaria 4\"",
+    "descripcion": null
+  },
+  "TEE PVC SAN 6": {
+    "nombre": "Tee PVC sanitaria 6\"",
+    "descripcion": null
+  },
+  "TEJA AC NO 10": {
+    "nombre": "Teja de asbesto cemento No. 10",
+    "descripcion": null
+  },
+  "TEJA AC NO 4": {
+    "nombre": "Teja de asbesto cemento No. 4",
+    "descripcion": null
+  },
+  "TEJA AC NO 5": {
+    "nombre": "Teja de asbesto cemento No. 5",
+    "descripcion": null
+  },
+  "TEJA AC NO 6": {
+    "nombre": "Teja de asbesto cemento No. 6",
+    "descripcion": null
+  },
+  "TEJA AC NO 8": {
+    "nombre": "Teja de asbesto cemento No. 8",
+    "descripcion": null
+  },
+  "VALV POZUE 2": {
+    "nombre": "Válvula de pozuelo 2\"",
+    "descripcion": null
+  },
+  "VALV POZUE 3": {
+    "nombre": "Válvula de pozuelo 3\"",
+    "descripcion": null
+  },
+  "ACOMETIDA HIDRAULICA EN PVC P 3/4 DESDE RED VEREDAL EXISTENTE INCLUYE COLLARIN CAJILLA MICROMEDIDOR REGISTROS Y CHEQUE": {
+    "nombre": "Acometida hidráulica PVC 3/4\" con micromedidor",
+    "descripcion": "Acometida hidráulica en PVC-P Ø3/4\" desde red veredal existente; incluye collarín, cajilla, micromedidor, registros y cheque"
+  },
+  "ALCANTARILL TUB CEM 10": {
+    "nombre": "Alcantarillado en tubería de cemento 10\"",
+    "descripcion": null
+  },
+  "ALCANTARILL TUB CEM 12": {
+    "nombre": "Alcantarillado en tubería de cemento 12\"",
+    "descripcion": null
+  },
+  "ANILLO CAMAR INSPECCION": {
+    "nombre": "Anillo para cámara de inspección",
+    "descripcion": null
+  },
+  "ARH 1/2": {
+    "nombre": "Adaptador rosca hembra 1/2\"",
+    "descripcion": null
+  },
+  "ARH 3/4": {
+    "nombre": "Adaptador rosca hembra 3/4\"",
+    "descripcion": null
+  },
+  "ARM 1/2": {
+    "nombre": "Adaptador rosca macho 1/2\"",
+    "descripcion": null
+  },
+  "ARM 3/4": {
+    "nombre": "Adaptador rosca macho 3/4\"",
+    "descripcion": null
+  },
+  "BASE CANUELA CAM. INSPECC": {
+    "nombre": "Base y cañuela para cámara de inspección",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE BOMBA CENTRIFUGA DE DOS BOMBAS DE 2HP HDINAMICA TOTAL 41MCA CAUDAL 80 LT/MIN INCLUYE UN TANQUE HIDRONEUMATICO 500 LITROS RANGO DE PRESION 40 60 PSI VALVULA DE COMPUERTA VALVULA CHECK Y DEMAS ACCESORIOS DE CONEXION PARA SU CORRECTO FUNCIONAMIENTO": {
+    "nombre": "Equipo de bombeo 2x2 HP con hidroneumático 500 L",
+    "descripcion": "Sistema de bombeo centrífugo con dos bombas de 2 HP, altura dinámica total 41 m.c.a., caudal 80 L/min; incluye tanque hidroneumático de 500 L, rango de presión 40-60 psi, válvula de compuerta, válvula cheque y demás accesorios de conexión"
+  },
+  "CAJ INSP 40X40 H 40 CM": {
+    "nombre": "Caja de inspección 40x40 cm, h=40 cm",
+    "descripcion": null
+  },
+  "CAJ INSP 60X60 H 60 CM": {
+    "nombre": "Caja de inspección 60x60 cm, h=60 cm",
+    "descripcion": null
+  },
+  "CAJA DE INSPECCION 100 100 MURO EN MANPOSTERIA LADRILLO MACIZO EN SOGA BASE Y TAPA EN CONCRETO SIMPLE 3000 PSI MEZCLADO EN OBRA.": {
+    "nombre": "Caja de inspección 100x100 cm en ladrillo macizo",
+    "descripcion": "Caja de inspección 100x100 cm con muro en mampostería de ladrillo macizo en soga, base y tapa en concreto simple 3000 psi mezclado en obra"
+  },
+  "CAJA DE INSPECCION 50X50 MURO EN MANPOSTERIA LADRILLO MACIZO EN SOGA BASE Y TAPA EN CONCRETO SIMPLE 3000 PSI MEZCLADO EN OBRA.": {
+    "nombre": "Caja de inspección 50x50 cm en ladrillo macizo",
+    "descripcion": "Caja de inspección 50x50 cm con muro en mampostería de ladrillo macizo en soga, base y tapa en concreto simple 3000 psi mezclado en obra"
+  },
+  "CAJA DE INSPECCION 60X60 MURO EN MANPOSTERIA LADRILLO MACIZO EN SOGA BASE Y TAPA EN CONCRETO SIMPLE 3000 PSI MEZCLADO EN OBRA.": {
+    "nombre": "Caja de inspección 60x60 cm en ladrillo macizo",
+    "descripcion": "Caja de inspección 60x60 cm con muro en mampostería de ladrillo macizo en soga, base y tapa en concreto simple 3000 psi mezclado en obra"
+  },
+  "CAJA DE INSPECCION 70 70 MURO EN MANPOSTERIA LADRILLO MACIZO EN SOGA BASE Y TAPA EN CONCRETO SIMPLE 3000 PSI MEZCLADO EN OBRA.": {
+    "nombre": "Caja de inspección 70x70 cm en ladrillo macizo",
+    "descripcion": "Caja de inspección 70x70 cm con muro en mampostería de ladrillo macizo en soga, base y tapa en concreto simple 3000 psi mezclado en obra"
+  },
+  "CAJA DE INSPECCION 80X80 MURO EN MANPOSTERIA LADRILLO MACIZO EN SOGA BASE Y TAPA EN CONCRETO SIMPLE 3000 PSI MEZCLADO EN OBRA.": {
+    "nombre": "Caja de inspección 80x80 cm en ladrillo macizo",
+    "descripcion": "Caja de inspección 80x80 cm con muro en mampostería de ladrillo macizo en soga, base y tapa en concreto simple 3000 psi mezclado en obra"
+  },
+  "CALENTADOR DE AGUA BOSCH TRONIC 4000 T 100 LITROS 220V": {
+    "nombre": "Calentador eléctrico Bosch Tronic 4000 T 100 L 220 V",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE CANAL EN LAMINA GALVANIZADA CALIBRE 14 DE 0 30 M DE ANCHO Y ALTURA VARIABLE ENTRE 0 20 Y 0 25 M CON PENDIENTE DEL 1 INCLUYE ACCESORIOS DE UNION SOPORTES FIJACIONES SELLADO Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Canal en lámina galvanizada cal. 14 a=0,30 m",
+    "descripcion": "Canal en lámina galvanizada calibre 14 de 0,30 m de ancho y altura variable entre 0,20 y 0,25 m, con pendiente del 1%; incluye accesorios de unión, soportes, fijaciones, sellado y demás elementos para su correcta instalación y funcionamiento"
+  },
+  "CHEQUE 1/2": {
+    "nombre": "Válvula de cheque 1/2\"",
+    "descripcion": null
+  },
+  "CHEQUE 3/4": {
+    "nombre": "Válvula de cheque 3/4\"",
+    "descripcion": null
+  },
+  "CODO HG 1/2": {
+    "nombre": "Codo HG 1/2\"",
+    "descripcion": null
+  },
+  "CODO HG 3/4": {
+    "nombre": "Codo HG 3/4\"",
+    "descripcion": null
+  },
+  "CODO PRES 1/2": {
+    "nombre": "Codo PVC presión 1/2\"",
+    "descripcion": null
+  },
+  "CODO PRES 3/4": {
+    "nombre": "Codo PVC presión 3/4\"",
+    "descripcion": null
+  },
+  "CONEXION A RED EXISTENTE": {
+    "nombre": "Conexión a red existente",
+    "descripcion": null
+  },
+  "CONEXION A RED EXISTENTE DE AGUAS LLUVIAS EN TUBERIA 8 INCLUYE EJECUCION DE REGATAS ACCESORIOS DE CONEXION INSTALACION RESANE Y DEMAS MATERIALES HERRAMIENTAS EQUIPOS Y MANO DE OBRA NECESARIOS PARA SU CORRECTA EJECUCION.": {
+    "nombre": "Conexión a red existente de aguas lluvias 8\"",
+    "descripcion": "Conexión a red existente de aguas lluvias en tubería de 8\"; incluye regatas, accesorios de conexión, instalación, resane y demás materiales, herramientas, equipos y mano de obra"
+  },
+  "CONEXION A RED SANITARIA EXISTENTE EN TUBERIA DE 6 INCLUYE EJECUCION DE REGATAS ACCESORIOS DE CONEXION INSTALACION RESANE Y DEMAS MATERIALES HERRAMIENTAS EQUIPOS Y MANO DE OBRA NECESARIOS PARA SU CORRECTA EJECUCION.": {
+    "nombre": "Conexión a red sanitaria existente 6\"",
+    "descripcion": "Conexión a red sanitaria existente en tubería de 6\"; incluye regatas, accesorios de conexión, instalación, resane y demás materiales, herramientas, equipos y mano de obra"
+  },
+  "DESCOLE DE AGUAS LLUVIAS MEDIANTE CAMA DE INFILTRACION EN ARENA LAVADA Y PIEDRA/GRAVA SELECCIONADA EN SUELO A PROFUNDIDAD H 1.30 M CON GEOTEXTIL NT 1600 SEGUN PLANO SANPLUV P1": {
+    "nombre": "Cama de infiltración para descole de aguas lluvias",
+    "descripcion": "Descole de aguas lluvias mediante cama de infiltración en arena lavada y piedra/grava seleccionada, a profundidad h=1,30 m, con geotextil NT-1600 (según plano SANPLUV P1)"
+  },
+  "SUMINISTRO E INSTALACION DE EQUIPO HIDRONEUMATICO DUPLEX DE PRESION CONSTANTE 2 BOMBAS DE 2.0 HP EN ALTERNANCIA Q 0.66 L/S ADT 30 M.C.A. TANQUE HIDROACUMULADOR TABLERO ALTERNADOR Y VALVULAS SEGUN PLANO HID PL2": {
+    "nombre": "Equipo hidroneumático dúplex 2x2 HP presión constante",
+    "descripcion": "Equipo hidroneumático dúplex de presión constante: 2 bombas de 2,0 HP en alternancia, Q=0,66 L/s, ADT=30 m.c.a., tanque hidroacumulador, tablero alternador y válvulas (según plano HID PL2)"
+  },
+  "GRIFO 1/2": {
+    "nombre": "Grifo 1/2\"",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE LAVAMANOS CON PEDESTAL MANANTIAL COLOR BLANCO REFERENCIA 731101001 MARCA CORONA INCLUYE GRIFERIA ACOPLES CONEXIONES HIDRAULICAS ELEMENTOS DE FIJACION SELLADO Y DEMAS ACCESORIOS NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Lavamanos de pedestal Corona Manantial blanco",
+    "descripcion": "Lavamanos con pedestal Manantial color blanco, ref. 731101001, marca Corona; incluye grifería, acoples, conexiones hidráulicas, fijaciones, sellado y demás accesorios para su correcta instalación y funcionamiento"
+  },
+  "SUMINISTRO E INSTALACION DE LAVAMANOS INSTITUCIONAL AQUAJET COLOR BLANCO CODIGO 117368 MARCA CORONA INCLUYE ACCESORIOS DE INSTALACION GRIFERIA CONEXIONES HIDRAULICAS ELEMENTOS DE FIJACION SELLADO Y DEMAS COMPONENTES NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Lavamanos institucional Corona Aquajet blanco",
+    "descripcion": "Lavamanos institucional Aquajet color blanco, código 117368, marca Corona; incluye accesorios de instalación, grifería, conexiones hidráulicas, fijaciones, sellado y demás componentes para su correcta instalación y funcionamiento"
+  },
+  "SUMINISTRO E INSTALACION DE LAVAMANOS QUIRURGICO FABRICADO EN ACERO INOXIDABLE REF 304 INCLUYE ACCESORIOS DE FIJACION A MURO SIFON DESAGUE ACOPLES GRIFERIA CON SENSOR DE PROXIMIDAD CUELLO DE SISNE CON CONEXION ELECTRICA O DE PILAS SELLADO DE JUNTAS EN LA PARED.": {
+    "nombre": "Lavamanos quirúrgico en acero inoxidable 304",
+    "descripcion": "Lavamanos quirúrgico en acero inoxidable 304; incluye accesorios de fijación a muro, sifón, desagüe, acoples, grifería cuello de cisne con sensor de proximidad (conexión eléctrica o pilas) y sellado de juntas en la pared"
+  },
+  "SUMINISTRO E INSTALACION DE LAVATRAPERO PREFABRICADO DE 60 60 CM INCLUYE GRIFO TIPO JARDIN CONEXIONES HIDRAULICAS Y SANITARIAS ELEMENTOS DE FIJACION SELLADO Y DEMAS ACCESORIOS NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Lavatraperos prefabricado 60x60 cm",
+    "descripcion": "Lavatraperos prefabricado de 60x60 cm; incluye grifo tipo jardín, conexiones hidráulicas y sanitarias, fijaciones, sellado y demás accesorios para su correcta instalación y funcionamiento"
+  },
+  "LLAVE DE PASO TIPO BOLA CPVC 1/2": {
+    "nombre": "Llave de paso tipo bola CPVC 1/2\"",
+    "descripcion": null
+  },
+  "LLAVE DE PASO TIPO BOLA PVC 1": {
+    "nombre": "Llave de paso tipo bola PVC 1\"",
+    "descripcion": null
+  },
+  "LLAVE DE PASO TIPO BOLA PVC 1/2": {
+    "nombre": "Llave de paso tipo bola PVC 1/2\"",
+    "descripcion": null
+  },
+  "LLAVE DE PASO TIPO BOLA PVC 3/4": {
+    "nombre": "Llave de paso tipo bola PVC 3/4\"",
+    "descripcion": null
+  },
+  "LLAVE PD 1/2": {
+    "nombre": "Llave de paso directo 1/2\"",
+    "descripcion": null
+  },
+  "LLAVE PD 3/4": {
+    "nombre": "Llave de paso directo 3/4\"",
+    "descripcion": null
+  },
+  "LLAVES DE PASO TIPO BOLA EN CPVC 1/2 PARA CONTROL DE AGUA CALIENTE EN RECINTOS HUMEDOS": {
+    "nombre": "Llave de paso bola CPVC 1/2\" agua caliente",
+    "descripcion": "Llaves de paso tipo bola en CPVC Ø1/2\" para control de agua caliente en recintos húmedos"
+  },
+  "LLAVES DE PASO TIPO BOLA PESADA EN PVC/BRONCE 1/2 CON CAJILLA Y TAPA DE REGISTRO PARA CONTROL DE BANOS Y ZONAS HUMEDAS": {
+    "nombre": "Llave de paso bola pesada 1/2\" con cajilla",
+    "descripcion": "Llaves de paso tipo bola pesada en PVC/bronce Ø1/2\" con cajilla y tapa de registro para control de baños y zonas húmedas"
+  },
+  "LLAVES DE PASO TIPO BOLA PESADA EN PVC/BRONCE 3/4 Y 1 EN RED PRINCIPAL Y CUARTO DE BOMBEO": {
+    "nombre": "Llave de paso bola pesada 3/4\" y 1\" red principal",
+    "descripcion": "Llaves de paso tipo bola pesada en PVC/bronce Ø3/4\" y Ø1\" en red principal y cuarto de bombeo"
+  },
+  "FABRICACION E INSTALACION DE MESON EN ACERO INOX FABRICADO EN ACERO INOXIDABLE REF 304 SUPERFICIE EN LAMINA CALIBRE 16 CON LAVAPLATOS DE 40 X 60 X 25 CON SALPICADERO CONTINUO DE 8 CM CUERPO EN MELAMINA RH COLOR BLANCO CON DOS ENTREPANOS PUERTAS CIERRE LENTO INCLUYE GRIFERIA CUELLO ALTO DE ACERO INOX CON SENSOR INFRAROJO EN ACERO INOX CONEXION ELECTRICA O BATERIAS.": {
+    "nombre": "Mesón en acero inoxidable 304 con lavaplatos",
+    "descripcion": "Mesón en acero inoxidable 304, superficie en lámina cal. 16 con lavaplatos de 40x60x25 cm y salpicadero continuo de 8 cm; cuerpo en melamina RH blanca con dos entrepaños y puertas de cierre lento. Incluye grifería cuello alto en acero inoxidable con sensor infrarrojo (conexión eléctrica o baterías)"
+  },
+  "NIPLE HG 1/2": {
+    "nombre": "Niple HG 1/2\"",
+    "descripcion": null
+  },
+  "NIPLE HG 3/4": {
+    "nombre": "Niple HG 3/4\"",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE PUNTO DE AGUAS LLUVIAS EN TUBERIA DE 4 INCLUYE REJILLA DE PISO TIPO GRANADA ACCESORIOS DE CONEXION FIJACIONES SELLADO Y DEMAS MATERIALES HERRAMIENTAS EQUIPOS Y MANO DE OBRA NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Punto de aguas lluvias 4\" con rejilla",
+    "descripcion": "Punto de aguas lluvias en tubería de 4\"; incluye rejilla de piso tipo granada, accesorios de conexión, fijaciones, sellado y demás materiales, herramientas, equipos y mano de obra"
+  },
+  "PUNTO HIDRAULICO DE 1/2": {
+    "nombre": "Punto hidráulico PVC 1/2\"",
+    "descripcion": null
+  },
+  "PUNTO HIDRAULICO EN CPVC DE 1/2": {
+    "nombre": "Punto hidráulico CPVC 1/2\"",
+    "descripcion": null
+  },
+  "PUNTO SANITARIO DE 2": {
+    "nombre": "Punto sanitario 2\"",
+    "descripcion": null
+  },
+  "PUNTO SANITARIO DE 4": {
+    "nombre": "Punto sanitario 4\"",
+    "descripcion": null
+  },
+  "REGISTRO 1/2": {
+    "nombre": "Registro 1/2\"",
+    "descripcion": null
+  },
+  "REGISTRO 3/4": {
+    "nombre": "Registro 3/4\"",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE SANITARIO SMART ALONGADO COLOR BLANCO REFERENCIA O39181001 MARCA CORONA INCLUYE ACCESORIOS DE INSTALACION CONEXIONES HIDRAULICAS Y SANITARIAS ELEMENTOS DE FIJACION SELLADO Y DEMAS COMPONENTES NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Sanitario Corona Smart alongado blanco",
+    "descripcion": "Sanitario Smart alongado color blanco, ref. O39181001, marca Corona; incluye accesorios de instalación, conexiones hidráulicas y sanitarias, fijaciones, sellado y demás componentes para su correcta instalación y funcionamiento"
+  },
+  "SIFON PVC 2": {
+    "nombre": "Sifón PVC 2\"",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE SISTEMA SEPTICO INTEGRADO ROTOPLAST 3.000 LITROS EN POLIETILENO 2 CAMARAS REACTOR ANAEROBIO FAFA CON MEDIO FILTRANTE PET SEGUN PLANO SANPLUV P2": {
+    "nombre": "Sistema séptico integrado Rotoplast 3.000 L",
+    "descripcion": "Sistema séptico integrado Rotoplast de 3.000 L en polietileno: 2 cámaras y reactor anaerobio FAFA con medio filtrante PET (según plano SANPLUV P2)"
+  },
+  "SUMIDERO A.LL": {
+    "nombre": "Sumidero de aguas lluvias",
+    "descripcion": null
+  },
+  "TAPA BASES CAM INSPECC H 1.80 MT": {
+    "nombre": "Tapa y base cámara de inspección h>1,80 m",
+    "descripcion": null
+  },
+  "TEE PRES 1/2": {
+    "nombre": "Tee PVC presión 1/2\"",
+    "descripcion": null
+  },
+  "TEE PRES 3/4": {
+    "nombre": "Tee PVC presión 3/4\"",
+    "descripcion": null
+  },
+  "TRAMPA DE GRASAS PREFABRICADA EN POLIETILENO DE 50 LITROS CON ACCESORIOS DE ENTRADA/SALIDA Y TAPA HERMETICA SEGUN PLANO SANPLUV P2": {
+    "nombre": "Trampa de grasas prefabricada 50 L",
+    "descripcion": "Trampa de grasas prefabricada en polietileno de 50 L con accesorios de entrada/salida y tapa hermética (según plano SANPLUV P2)"
+  },
+  "SUMINISTRO E INSTALACION DE TUBERIA 4 PARA RED DE AGUAS LLUVIAS INCLUYE ACCESORIOS DE UNION SOPORTES FIJACIONES Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Tubería aguas lluvias 4\" con accesorios",
+    "descripcion": "Tubería de 4\" para red de aguas lluvias; incluye accesorios de unión, soportes, fijaciones y demás elementos para su correcta instalación y funcionamiento"
+  },
+  "SUMINISTRO E INSTALACION DE TUBERIA 6 PARA RED DE AGUAS LLUVIAS INCLUYE ACCESORIOS DE UNION SOPORTES FIJACIONES Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Tubería aguas lluvias 6\" con accesorios",
+    "descripcion": "Tubería de 6\" para red de aguas lluvias; incluye accesorios de unión, soportes, fijaciones y demás elementos para su correcta instalación y funcionamiento"
+  },
+  "TUBERIA CPVC DE 1/2": {
+    "nombre": "Tubería CPVC 1/2\"",
+    "descripcion": null
+  },
+  "TUBERIA CPVC DE 3/4": {
+    "nombre": "Tubería CPVC 3/4\"",
+    "descripcion": null
+  },
+  "TUBERIA DE SUCCION E IMPULSION EN PVC PRESION / HG 1 EN TANQUE Y CUARTO DE BOMBAS INCLUYE CHEQUE DE PIE 1 Y UNIVERSALES SEGUN PLANO HID PL2": {
+    "nombre": "Tubería de succión e impulsión PVC/HG 1\"",
+    "descripcion": "Tubería de succión e impulsión en PVC presión / HG Ø1\" en tanque y cuarto de bombas; incluye cheque de pie Ø1\" y universales (según plano HID PL2)"
+  },
+  "TUBERIA DE VENTILACION PVC 2": {
+    "nombre": "Tubería de ventilación PVC 2\"",
+    "descripcion": null
+  },
+  "TUBERIA DE VENTILACION PVC 3": {
+    "nombre": "Tubería de ventilación PVC 3\"",
+    "descripcion": null
+  },
+  "TUBERIA PVC DE 1": {
+    "nombre": "Tubería PVC 1\"",
+    "descripcion": null
+  },
+  "TUBERIA PVC PRESION 1 1/2": {
+    "nombre": "Tubería PVC presión 1 1/2\"",
+    "descripcion": null
+  },
+  "TUBERIA PVC PRESION 1/2": {
+    "nombre": "Tubería PVC presión 1/2\"",
+    "descripcion": null
+  },
+  "TUBERIA PVC PRESION 3/4": {
+    "nombre": "Tubería PVC presión 3/4\"",
+    "descripcion": null
+  },
+  "TUBERIA SANITARIA PVC DE 2": {
+    "nombre": "Tubería PVC sanitaria 2\"",
+    "descripcion": null
+  },
+  "TUBERIA SANITARIA PVC DE 3": {
+    "nombre": "Tubería PVC sanitaria 3\"",
+    "descripcion": null
+  },
+  "TUBERIA SANITARIA PVC DE 4": {
+    "nombre": "Tubería PVC sanitaria 4\"",
+    "descripcion": null
+  },
+  "TUBERIA SANITARIA PVC DE 6": {
+    "nombre": "Tubería PVC sanitaria 6\"",
+    "descripcion": null
+  },
+  "TUBERIA SANITARIA PVC DE 8": {
+    "nombre": "Tubería PVC sanitaria 8\"",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE VALVULA ANTIRREFLUJO SANITARIA PVC 4 LLAVE DE PASO 4 A LA SALIDA DEL SISTEMA SEPTICO SEGUN PLANO SANPLUV P1 Y P2": {
+    "nombre": "Válvula antirreflujo PVC 4\" y llave de paso 4\"",
+    "descripcion": "Válvula antirreflujo sanitaria PVC Ø4\" y llave de paso Ø4\" a la salida del sistema séptico (según plano SANPLUV P1 y P2)"
+  },
+  "ACOMETIDA EN BAJA TENSION DESDE TABLERO GENERAL EXISTENTE TGE HASTA UNIDAD ALIMENTADORA DE LA ELECTROBARRA SCP630A 3X 3F 250 1N 250 KCMIL 6 2/0T AWG COBRE HF LS 90 C": {
+    "nombre": "Acometida BT de TGE a electrobarra SCP 630 A",
+    "descripcion": "Acometida en baja tensión desde tablero general existente TGE hasta unidad alimentadora de la electrobarra SCP 630 A: 3x(3F #250 + 1N #250) kcmil + 6 #2/0 T AWG, cobre HF LS 90 °C"
+  },
+  "ACOMETIDA EN BAJA TENSION DESDE TABLERO GENERAL EXISTENTE TGE HASTA TABLERO DE DISTRIBUCION GENERAL DE LA UNIDAD DE DIAGNOSTICO CARDIOVASCULAR TDG UDC MEDIANTE ELECTROBARRA DE ALUMINIO SCP 630A 5 CONDUCTORES TIERRA AISLADA 3F N T PE 75 M": {
+    "nombre": "Acometida BT en electrobarra aluminio SCP 630 A, 75 m",
+    "descripcion": "Acometida en baja tensión desde tablero general existente TGE hasta tablero de distribución general de la Unidad de Diagnóstico Cardiovascular TDG_UDC, mediante electrobarra de aluminio SCP 630 A, 5 conductores, tierra aislada (3F+N+T+PE), longitud 75 m"
+  },
+  "ALIMENTADOR EN BAJA TENSION DESDE TABLERO 480VAC A UPS DE 100KVA 480VAC Y DE UPS 100KVA 480V A TABLERO DE ANGIOGRAFO 3F 1/0 1 6T COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT tablero 480 V - UPS 100 kVA - angiógrafo",
+    "descripcion": "Alimentador en baja tensión desde tablero 480 VAC a UPS de 100 kVA 480 VAC y de UPS a tablero de angiógrafo (3F #1/0 + 1 #6 T), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION DESDE TDG UDC A ASCENSOR ASC 3F 6 1 8T COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT TDG_UDC a ascensor (3F #6 + #8 T)",
+    "descripcion": "Alimentador en baja tensión desde TDG_UDC a ascensor ASC (3F #6 + 1 #8 T), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION DESDE TDG UDC A EQUIPO DE PRESION DE AGUA EPA 3F 10 1T 10T COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT TDG_UDC a equipo de presión (3F #10)",
+    "descripcion": "Alimentador en baja tensión desde TDG_UDC a equipo de presión de agua EPA (3F #10 + 1T #10), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION DESDE TDG UDC A TABLERO ELECTRICO DE AIRE TE AA 2X 3F 2/0 1N 2/0 1 6T COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT TDG_UDC a tablero de aire TE_AA",
+    "descripcion": "Alimentador en baja tensión desde TDG_UDC a tablero eléctrico de aire acondicionado TE_AA: 2x(3F #2/0 + 1N #2/0 + 1 #6 T), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION DESDE TDG UDC A TABLERO DE DISTRIBUCION EN CUARTO DE MAQUINAS ASCENSOR TD ASC 2F 8F 1N 8 1 10T COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT TDG_UDC a tablero cuarto máquinas TD_ASC",
+    "descripcion": "Alimentador en baja tensión desde TDG_UDC a tablero de distribución en cuarto de máquinas del ascensor TD_ASC (2F #8 + 1N #8 + 1 #10 T), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION DESDE TDG UDC A TABLEROS DISTRIBUCION NORMAL 1 2 TN1/TN2 3F 2 1N 2 1T 8 COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT TDG_UDC a tableros TN1/TN2 (3F #2)",
+    "descripcion": "Alimentador en baja tensión desde TDG_UDC a tableros de distribución normal 1 y 2 TN1/TN2 (3F #2 + 1N #2 + 1T #8), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION DESDE TDG UDC A TABLEROS DISTRIBUCION NORMAL TN3 3F 8 1N 8 1T 10 AWG COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT TDG_UDC a tablero TN3 (3F #8)",
+    "descripcion": "Alimentador en baja tensión desde TDG_UDC a tablero de distribución normal TN3 (3F #8 + 1N #8 + 1T #10 AWG), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION DESDE TDG UDC A TRANSFORMADOR ELEVADOR BAJA BAJA DE 100KVA Y DESDE TRANSFORMADOR ELEVADOR BAJA BAJA DE 100KVA A TABLERO 480VAC 3X 3F 1/0 1N 1/0 1 6T COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT TDG_UDC - transformador 100 kVA - 480 V",
+    "descripcion": "Alimentador en baja tensión desde TDG_UDC a transformador elevador baja-baja de 100 kVA y desde este a tablero 480 VAC: 3x(3F #1/0 + 1N #1/0 + 1 #6 T), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION DESDE TDG UDC A UPS Y DESDE UPS A TGR 3F 4 1N 4 1T 8 AWG COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT TDG_UDC - UPS - TGR (3F #4)",
+    "descripcion": "Alimentador en baja tensión desde TDG_UDC a UPS y desde UPS a TGR (3F #4 + 1N #4 + 1T #8 AWG), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION PARA TABLERO DE AISLAMIENTO TAIS 2F 6 1T 8 COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT tablero de aislamiento TAIS (2F #6)",
+    "descripcion": "Alimentador en baja tensión para tablero de aislamiento TAIS (2F #6 + 1T #8), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION PARA TABLERO DISTRIBUCION CRITICO 2 TC2 2F 10 1N 10 1T 10 COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT tablero crítico TC2 (2F #10)",
+    "descripcion": "Alimentador en baja tensión para tablero de distribución crítico 2 TC2 (2F #10 + 1N #10 + 1T #10), cobre HF LS 90 °C"
+  },
+  "ALIMENTADOR EN BAJA TENSION PARA TABLEROS DISTRIBUCION REGULADOS 1 2 3 TR1/TR2/TR3 2F 8 1N 8 1T 10 COBRE HF LS 90 C": {
+    "nombre": "Alimentador BT tableros regulados TR1/TR2/TR3 (2F #8)",
+    "descripcion": "Alimentador en baja tensión para tableros de distribución regulados 1-2-3 TR1/TR2/TR3 (2F #8 + 1N #8 + 1T #10), cobre HF LS 90 °C"
+  },
+  "SUMINISTRO E INSTALACION DE APLIQUE DE PARED LED TIPO OJO DE LUPA 8W PARA HABITACIONES SEGUN CUADRO DE CARGAS": {
+    "nombre": "Aplique de pared LED ojo de lupa 8 W",
+    "descripcion": "Aplique de pared LED tipo ojo de lupa 8 W para habitaciones (según cuadro de cargas)"
+  },
+  "APLIQUE PARED LED TIPO TORTUGA 12W": {
+    "nombre": "Aplique de pared LED tipo tortuga 12 W",
+    "descripcion": null
+  },
+  "AVISO DE SALIDA LED 5W": {
+    "nombre": "Aviso de salida LED 5 W",
+    "descripcion": null
+  },
+  "BOTON TIMBRE LUMINEX": {
+    "nombre": "Botón de timbre Luminex",
+    "descripcion": null
+  },
+  "CABLEADO EN COBRE CAL 10": {
+    "nombre": "Cableado en cobre No. 10 AWG",
+    "descripcion": null
+  },
+  "CABLEADO EN COBRE CAL 12": {
+    "nombre": "Cableado en cobre No. 12 AWG",
+    "descripcion": null
+  },
+  "CABLEADO EN COBRE CAL 6": {
+    "nombre": "Cableado en cobre No. 6 AWG",
+    "descripcion": null
+  },
+  "CABLEADO EN COBRE CAL 8": {
+    "nombre": "Cableado en cobre No. 8 AWG",
+    "descripcion": null
+  },
+  "CAJA PARA TOTALIZADOR TRIFASICO DE ASCENSOR": {
+    "nombre": "Caja para totalizador trifásico de ascensor",
+    "descripcion": null
+  },
+  "CAJILLA GALVA 2X4": {
+    "nombre": "Cajilla galvanizada 2x4\"",
+    "descripcion": null
+  },
+  "CAJILLA GALVA OCTOGON 4X4": {
+    "nombre": "Cajilla galvanizada octagonal 4x4\"",
+    "descripcion": null
+  },
+  "CAJILLA GALVA TOMA ESPEC": {
+    "nombre": "Cajilla galvanizada para toma especial",
+    "descripcion": null
+  },
+  "CAMP TIMBRE LUMINEX": {
+    "nombre": "Campana de timbre Luminex",
+    "descripcion": null
+  },
+  "CAPACETE 1": {
+    "nombre": "Capacete 1\"",
+    "descripcion": null
+  },
+  "CAPACETE 3/4": {
+    "nombre": "Capacete 3/4\"",
+    "descripcion": null
+  },
+  "INTERRUPTOR": {
+    "nombre": "Interruptor",
+    "descripcion": null
+  },
+  "INTERRUPTOR CONMUTABLE": {
+    "nombre": "Interruptor conmutable",
+    "descripcion": null
+  },
+  "INTERRUPTOR SENCILLO": {
+    "nombre": "Interruptor sencillo",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE LAMPARA COLGANTE DECORATIVA LED 30W HABITACION PRINCIPAL COMEDOR Y COCINA SEGUN CUADRO DE CARGAS": {
+    "nombre": "Lámpara colgante decorativa LED 30 W",
+    "descripcion": "Lámpara colgante decorativa LED 30 W para habitación principal, comedor y cocina (según cuadro de cargas)"
+  },
+  "SUMINISTRO E INSTALACION DE LAMPARA EXTERIOR TIPO TABACO / BOLARDO LED 15W IP65 PARA JARDINES SEGUN CUADRO DE CARGAS": {
+    "nombre": "Lámpara bolardo exterior LED 15 W IP65",
+    "descripcion": "Lámpara exterior tipo tabaco / bolardo LED 15 W IP65 para jardines (según cuadro de cargas)"
+  },
+  "SUMINISTRO E INSTALACION DE LUMINARIA BALA LED 18W DE INCRUSTAR 23 INTERNAS 6 EXTERNAS SEGUN CUADRO DE CARGAS": {
+    "nombre": "Luminaria bala LED 18 W de incrustar",
+    "descripcion": "Luminaria bala LED 18 W de incrustar (23 internas y 6 externas según cuadro de cargas)"
+  },
+  "SUMINISTRO E INSTALACION DE LUMINARIA BALA LED 9W DE INCRUSTAR 28 INTERNAS 14 EXTERNAS SEGUN CUADRO DE CARGAS": {
+    "nombre": "Luminaria bala LED 9 W de incrustar",
+    "descripcion": "Luminaria bala LED 9 W de incrustar (28 internas y 14 externas según cuadro de cargas)"
+  },
+  "LUMINARIA DE EMERGENCIA 2X1.6W AUTONOMIA 90 MINUTOS": {
+    "nombre": "Luminaria de emergencia 2x1,6 W, 90 min",
+    "descripcion": "Luminaria de emergencia 2x1,6 W, autonomía 90 minutos"
+  },
+  "LUMINARIA LINEAL LED 40W DE INCRUSTAR": {
+    "nombre": "Luminaria lineal LED 40 W de incrustar",
+    "descripcion": null
+  },
+  "PANEL LED CUADRADO CLEANROOM DE 40W DE INCRUSTAR": {
+    "nombre": "Panel LED cuadrado cleanroom 40 W de incrustar",
+    "descripcion": null
+  },
+  "PANEL LED CUADRADO DE 40W DE INCRUSTAR": {
+    "nombre": "Panel LED cuadrado 40 W de incrustar",
+    "descripcion": null
+  },
+  "PANEL LED DE EMERGENCIA DOWN LIGHT 4.5W AUTONOMIA 90 MINUTOS": {
+    "nombre": "Panel LED de emergencia downlight 4,5 W, 90 min",
+    "descripcion": "Panel LED de emergencia tipo downlight 4,5 W, autonomía 90 minutos"
+  },
+  "PANEL LED REDONDO DE 18W DE INCRUSTAR": {
+    "nombre": "Panel LED redondo 18 W de incrustar",
+    "descripcion": null
+  },
+  "PANEL LED REDONDO DE 24W DE INCRUSTAR": {
+    "nombre": "Panel LED redondo 24 W de incrustar",
+    "descripcion": null
+  },
+  "PLAFON PORCE": {
+    "nombre": "Plafón de porcelana",
+    "descripcion": null
+  },
+  "PRUEBAS ELECTRICAS DE AISLAMIENTO Y CONTINUIDAD DICTAMEN DE INSPECCION Y CERTIFICACION PLENA RETIE Y LEGALIZACION ANTE CEDENAR S.A. E.S.P.": {
+    "nombre": "Pruebas eléctricas, certificación RETIE y legalización",
+    "descripcion": "Pruebas eléctricas de aislamiento y continuidad, dictamen de inspección y certificación plena RETIE, y legalización ante CEDENAR S.A. E.S.P."
+  },
+  "PTO ELECTRICO 110 V TERMINADO": {
+    "nombre": "Punto eléctrico 110 V terminado",
+    "descripcion": null
+  },
+  "SALIDA DE ILUMINACION 1 12F 1 12N 1 12T COBRE HF LS 90 C TUBO ELECTRICO METALICO EMT 1/2": {
+    "nombre": "Salida de iluminación EMT 1/2\"",
+    "descripcion": "Salida de iluminación con conductor 1 #12 F + 1 #12 N + 1 #12 T cobre HF LS 90 °C en tubería EMT 1/2\""
+  },
+  "SALIDA DE INTERRUPTOR CONMUTABLE DOBLE INCLUYE APARATO CONDUCTOR 12AWG COBRE HF LS 90 C TUBO ELECTRICO METALICO EMT 1/2": {
+    "nombre": "Salida interruptor conmutable doble EMT 1/2\"",
+    "descripcion": "Incluye aparato, conductor #12 AWG cobre HF LS 90 °C y tubería EMT 1/2\""
+  },
+  "SALIDA DE INTERRUPTOR CONMUTABLE SENCILLO INCLUYE APARATO CONDUCTOR 12AWG COBRE HF LS 90 C TUBO ELECTRICO METALICO EMT 1/2": {
+    "nombre": "Salida interruptor conmutable sencillo EMT 1/2\"",
+    "descripcion": "Incluye aparato, conductor #12 AWG cobre HF LS 90 °C y tubería EMT 1/2\""
+  },
+  "SALIDA DE INTERRUPTOR DOBLE INCLUYE APARATO CONDUCTOR 12AWG COBRE HF LS 90 C TUBO ELECTRICO METALICO EMT 1/2": {
+    "nombre": "Salida interruptor doble EMT 1/2\"",
+    "descripcion": "Incluye aparato, conductor #12 AWG cobre HF LS 90 °C y tubería EMT 1/2\""
+  },
+  "SALIDA DE INTERRUPTOR SENCILLO INCLUYE APARATO CONDUCTOR 12AWG COBRE HF LS 90 C TUBO ELECTRICO METALICO EMT 1/2": {
+    "nombre": "Salida interruptor sencillo EMT 1/2\"",
+    "descripcion": "Incluye aparato, conductor #12 AWG cobre HF LS 90 °C y tubería EMT 1/2\""
+  },
+  "SALIDA DE SENSOR DE MOVIMIENTO INCLUYE APARATO CONDUCTOR 12AWG COBRE HF LS 90 C TUBO ELECTRICO METALICO EMT 1/2": {
+    "nombre": "Salida sensor de movimiento EMT 1/2\"",
+    "descripcion": "Incluye aparato, conductor #12 AWG cobre HF LS 90 °C y tubería EMT 1/2\""
+  },
+  "SALIDA DE TOMACORRIENTE 220V POLO A TIERRA PARA CALENTADOR ELECTRICO ACUMULADOR 2 12F 1 12T COBRE HF LS 90 C TUBO ELECTRICO METALICO EMT 1/2": {
+    "nombre": "Salida tomacorriente 220 V para calentador EMT 1/2\"",
+    "descripcion": "Salida de tomacorriente 220 V con polo a tierra para calentador eléctrico de acumulación, 2 #12 F + 1 #12 T cobre HF LS 90 °C en tubería EMT 1/2\""
+  },
+  "SALIDA DE TOMACORRIENTE DOBLE CON POLO A TIERRA 1 12F 1 12N 1 12T COBRE HF LS 90 C TUBO ELECTRICO METALICO EMT 1/2": {
+    "nombre": "Salida tomacorriente doble con polo a tierra EMT 1/2\"",
+    "descripcion": "Conductor 1 #12 F + 1 #12 N + 1 #12 T cobre HF LS 90 °C en tubería EMT 1/2\""
+  },
+  "SALIDA ELECTR E INTERR CONMUT TODO COSTO LONG PROM 4.50M": {
+    "nombre": "Salida eléctrica con interruptor conmutable",
+    "descripcion": "Salida eléctrica con interruptor conmutable, todo costo, longitud promedio 4,50 m"
+  },
+  "SALIDA ELECTR E INTERR DOBLE TODO COSTO LONG PROM 4.50M": {
+    "nombre": "Salida eléctrica con interruptor doble",
+    "descripcion": "Salida eléctrica con interruptor doble, todo costo, longitud promedio 4,50 m"
+  },
+  "SALIDA ELECTR Y PLAFON PORCE TODO COSTO LONG PROM 4.50M": {
+    "nombre": "Salida eléctrica con plafón de porcelana",
+    "descripcion": "Salida eléctrica con plafón de porcelana, todo costo, longitud promedio 4,50 m"
+  },
+  "SALIDA ELECTR Y TOMAC SENCILL TODO COSTO LONG PROM 4.50M": {
+    "nombre": "Salida eléctrica con tomacorriente sencillo",
+    "descripcion": "Salida eléctrica con tomacorriente sencillo, todo costo, longitud promedio 4,50 m"
+  },
+  "SISTEMA DE PROTECCION CONTRA RAYOS CONFORMADO POR 9 PUNTAS CAPTADORAS UNIDAS MEDIANTE ALAMBRON DE ALUMINIO EN LAS CUBIERTAS Y 2 BAJANTES CON SUS RESPECTIVOS ELECTRODOS DE PUESTA A TIERRA Y ANILLO DE CONDUCTOR EXTERIOR CERRADO EN CABLE DE COBRE DESNUDO 2/0AWG.": {
+    "nombre": "Sistema de protección contra rayos",
+    "descripcion": "Conformado por 9 puntas captadoras unidas con alambrón de aluminio en cubiertas, 2 bajantes con sus electrodos de puesta a tierra y anillo exterior cerrado en cable de cobre desnudo 2/0 AWG"
+  },
+  "TABL CONTROL 4 CIRCUITOS": {
+    "nombre": "Tablero de control 4 circuitos",
+    "descripcion": null
+  },
+  "TABLERO DE AISLAMIENTO DE 7KVA CON TRANSFORMADOR DE AISLAMIENTO 8 CIRCUITOS BIPOLARES Y MONITOR DE AISLAMIENTO": {
+    "nombre": "Tablero de aislamiento 7 kVA",
+    "descripcion": "Tablero de aislamiento de 7 kVA con transformador de aislamiento, 8 circuitos bipolares y monitor de aislamiento"
+  },
+  "TABLERO DE DISTRIBUCION BIFASICO DE 12 CIRCUITOS CON PUERTA Y CHAPA": {
+    "nombre": "Tablero bifásico 12 circuitos con puerta y chapa",
+    "descripcion": null
+  },
+  "TABLERO DE DISTRIBUCION BIFASICO DE 8 CIRCUITOS CON PUERTA Y CHAPA": {
+    "nombre": "Tablero bifásico 8 circuitos con puerta y chapa",
+    "descripcion": null
+  },
+  "TABLERO DE DISTRIBUCION GENERAL TDG UDC INCLUYE DPS BARRAJE EN COBRE ELECTROLITICO Y LAS PROTECCIONES PARA LOS ALIMETADORES DE LOS TABLEROS. SEGUN DIAGRAMA UNIFILAR": {
+    "nombre": "Tablero de distribución general TDG_UDC",
+    "descripcion": "Incluye DPS, barraje en cobre electrolítico y protecciones para los alimentadores de los tableros, según diagrama unifilar"
+  },
+  "TABLERO DE DISTRIBUCION TRIFASICO DE 18 CIRCUITOS CON ESPACIO PARA TOTALIZADOR PUERTA Y CHAPA": {
+    "nombre": "Tablero trifásico 18 circuitos con totalizador",
+    "descripcion": "Tablero de distribución trifásico de 18 circuitos con espacio para totalizador, puerta y chapa"
+  },
+  "TABLERO DE DISTRIBUCION TRIFASICO DE 24 CIRCUITOS CON ESPACIO PARA TOTALIZADOR PUERTA Y CHAPA": {
+    "nombre": "Tablero trifásico 24 circuitos con totalizador",
+    "descripcion": "Tablero de distribución trifásico de 24 circuitos con espacio para totalizador, puerta y chapa"
+  },
+  "TABLERO GENERAL REGULADO TGR SEGUN DIAGRAMA UNIFILAR INCLUYE DPS BARRAJE EN COBRE ELECTROLITICO Y LAS PROTECCIONES PARA LOS ALIMETADORES DE LOS TABLEROS. SEGUN DIAGRAMA UNIFILAR": {
+    "nombre": "Tablero general regulado TGR",
+    "descripcion": "Incluye DPS, barraje en cobre electrolítico y protecciones para los alimentadores de los tableros, según diagrama unifilar"
+  },
+  "TOMACORREN DOBLE": {
+    "nombre": "Tomacorriente doble",
+    "descripcion": null
+  },
+  "TOMACORREN ESPECIAL TRIPOL": {
+    "nombre": "Tomacorriente especial tripolar",
+    "descripcion": null
+  },
+  "TOMACORREN SENCILLO": {
+    "nombre": "Tomacorriente sencillo",
+    "descripcion": null
+  },
+  "TOMACORRIENTE 220V CON POLO A TIERRA 30A": {
+    "nombre": "Tomacorriente 220 V 30 A con polo a tierra",
+    "descripcion": null
+  },
+  "TOMACORRIENTE DOBLE CON POLO A TIERRA 15A 120V GRADO HOSPITALARIO": {
+    "nombre": "Tomacorriente doble grado hospitalario 15 A",
+    "descripcion": "Tomacorriente doble con polo a tierra 15 A 120 V grado hospitalario"
+  },
+  "TOMACORRIENTE DOBLE CON POLO A TIERRA CRITICO 15A 120V GRADO HOSPITALARIO": {
+    "nombre": "Tomacorriente doble crítico grado hospitalario 15 A",
+    "descripcion": "Tomacorriente doble con polo a tierra, circuito crítico, 15 A 120 V grado hospitalario"
+  },
+  "TOMACORRIENTE DOBLE CON POLO A TIERRA REGULADO TIERRA AISLADA 15A 120V": {
+    "nombre": "Tomacorriente doble regulado tierra aislada 15 A",
+    "descripcion": "Tomacorriente doble con polo a tierra, regulado, tierra aislada, 15 A 120 V"
+  },
+  "TOMACORRIENTE DOBLE CON POLO A TIERRA TIPO GFCI 15A 120V GRADO HOSPITALARIO": {
+    "nombre": "Tomacorriente doble GFCI grado hospitalario 15 A",
+    "descripcion": "Tomacorriente doble con polo a tierra tipo GFCI 15 A 120 V grado hospitalario"
+  },
+  "TRANSFORMADOR TIPO SECO CLASE H ELEVADOR BAJA BAJA TRIFASICO DE 100 KVA 208/480 VAC INCLUYE CELDA DE TRANSFORMADOR": {
+    "nombre": "Transformador seco trifásico 100 kVA 208/480 V",
+    "descripcion": "Transformador tipo seco clase H, elevador baja-baja trifásico de 100 kVA, 208/480 VAC; incluye celda de transformador"
+  },
+  "TUBERIA CONDUIT PVC 3/4 DB": {
+    "nombre": "Tubería conduit PVC DB 3/4\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA EMT 1 1/2": {
+    "nombre": "Tubería EMT 1 1/2\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA EMT 1": {
+    "nombre": "Tubería EMT 1\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA EMT 2": {
+    "nombre": "Tubería EMT 2\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA EMT 3": {
+    "nombre": "Tubería EMT 3\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA EMT 3/4": {
+    "nombre": "Tubería EMT 3/4\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA IMC 1 1/2": {
+    "nombre": "Tubería IMC 1 1/2\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA IMC 1": {
+    "nombre": "Tubería IMC 1\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA IMC 1/2": {
+    "nombre": "Tubería IMC 1/2\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA IMC 2": {
+    "nombre": "Tubería IMC 2\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA IMC 3": {
+    "nombre": "Tubería IMC 3\"",
+    "descripcion": null
+  },
+  "TUBERIA ELECTRICA METALICA IMC 3/4": {
+    "nombre": "Tubería IMC 3/4\"",
+    "descripcion": null
+  },
+  "UPS ON LINE TRIFASICA DE 100000VA 3X480VAC 60 HZ INCLUYE 2 MODULOS DE 50KVA Y BANCO DE BATERIAS EXTERNO CON CAPACIDAD DE 10 MINUTOS CONFORMADO POR GABINETES COMPATIBLES CON EL UPS 1240X1300X2000 MM 40 BATERIAS DE 12VDC 150AH KIT DE CONECTORES INTERCELDAS BREAKER DE PROTECCION AVALADO POR EL FABRICANTE. SERVICIO DE ARRANQUE A CERO METROS.": {
+    "nombre": "UPS online trifásica 100 kVA 480 V",
+    "descripcion": "UPS online trifásica de 100.000 VA, 3x480 VAC, 60 Hz, con 2 módulos de 50 kVA y banco de baterías externo de 10 min de autonomía: gabinetes compatibles (1240x1300x2000 mm), 40 baterías 12 VDC-150 Ah, kit de conectores intercelda y breaker de protección avalado por el fabricante. Incluye servicio de arranque a cero metros"
+  },
+  "UPS ON LINE TRIFASICA DE 15000VA 3X120/208V 60 HZ DOBLE CONVERSION": {
+    "nombre": "UPS online trifásica 15 kVA 120/208 V",
+    "descripcion": "UPS online trifásica de 15.000 VA, 3x120/208 V, 60 Hz, doble conversión"
+  },
+  "ACCESS POINT DOBLE BANDA WI FI 6 IEEE 802.11AX": {
+    "nombre": "Access point doble banda Wi-Fi 6",
+    "descripcion": "Access point doble banda Wi-Fi 6 (IEEE 802.11ax)"
+  },
+  "BANDEJA PORTACABLES TIPO MALLA DE 54X300X3000 MM INCLUYE SOPORTES Y SPT": {
+    "nombre": "Bandeja portacables tipo malla 54x300 mm",
+    "descripcion": "Bandeja portacables tipo malla de 54x300x3000 mm; incluye soportes y SPT"
+  },
+  "CABLE F/UTP 4 PARES 23 AWG SOLIDO LSZH CATEGORIA 6A": {
+    "nombre": "Cable F/UTP categoría 6A LSZH 4 pares",
+    "descripcion": "Cable F/UTP de 4 pares, 23 AWG sólido, LSZH, categoría 6A"
+  },
+  "CAMARA IP BULLET DE 4 MP CON LENTE FOCALIZADO DE 6 MM ACCESOS EXTERIORES IP67 IR 30M": {
+    "nombre": "Cámara IP bullet 4 MP lente 6 mm",
+    "descripcion": "Cámara IP bullet de 4 MP con lente focalizado de 6 mm para accesos exteriores, IP67, IR 30 m"
+  },
+  "CAMARA IP DOMO ANTIVANDALICO 4 MP LENTE DE 2.8 MM GRAN ANGULAR IK10 IP67": {
+    "nombre": "Cámara IP domo antivandálico 4 MP lente 2,8 mm",
+    "descripcion": "Cámara IP domo antivandálico de 4 MP, lente de 2,8 mm gran angular, IK10, IP67"
+  },
+  "CAMARA IP DOMO ANTIVANDALICO 4 MP LENTE DE 3.6MM O 4MM PASILLOS DE CONSULTORIOS IK10": {
+    "nombre": "Cámara IP domo antivandálico 4 MP lente 3,6 mm",
+    "descripcion": "Cámara IP domo antivandálico de 4 MP, lente de 3,6 o 4 mm, para pasillos de consultorios, IK10"
+  },
+  "CANALETA METALICA CON DIVISION 70/30 DE 12X4 CM": {
+    "nombre": "Canaleta metálica con división 70/30 de 12x4 cm",
+    "descripcion": null
+  },
+  "CERTIFICACION SALIDAS DE DATOS": {
+    "nombre": "Certificación de salidas de datos",
+    "descripcion": null
+  },
+  "DISCO DURO SATA DE 4 TB DE GRADO DE VIGILANCIA PARA FUNCIONAMIENTO CONTINUO 24/7": {
+    "nombre": "Disco duro SATA 4 TB grado vigilancia",
+    "descripcion": "Disco duro SATA de 4 TB grado vigilancia para funcionamiento continuo 24/7"
+  },
+  "FACE PLATE PLANO DOS SALIDAS COLOR BLANCO": {
+    "nombre": "Faceplate plano doble salida blanco",
+    "descripcion": null
+  },
+  "FACE PLATE PLANO UNA SALIDA COLOR BLANCO": {
+    "nombre": "Faceplate plano una salida blanco",
+    "descripcion": null
+  },
+  "FIBRA OPTICA PRE CONECTORIZADA MONOMODO OS2 DE 4 HILOS LC LC LONGITUD 100M": {
+    "nombre": "Fibra óptica monomodo OS2 4 hilos LC-LC 100 m",
+    "descripcion": "Fibra óptica preconectorizada monomodo (OS2) de 4 hilos LC-LC, longitud 100 m"
+  },
+  "GABINETE RACK DE PISO 24RU X 58CM X 61CM ALTO ANCHO PROFUNDIDAD INCLUYE BANDEJA PARA FIBRA OPTICA BANDEJAS PARA RACK ORGANIZADORES MULTITOMA KIT VENTILADOR": {
+    "nombre": "Gabinete rack de piso 24 UR",
+    "descripcion": "Gabinete rack de piso 24 UR x 58 cm x 61 cm (alto, ancho, profundidad); incluye bandeja para fibra óptica, bandejas para rack, organizadores, multitoma y kit de ventilación"
+  },
+  "GRABADOR DE VIDEO DE RED NVR IP DE 16 CANALES INDEPENDIENTES RESOLUCION HASTA 4K": {
+    "nombre": "Grabador NVR IP 16 canales 4K",
+    "descripcion": "Grabador de video de red (NVR) IP de 16 canales independientes, resolución hasta 4K"
+  },
+  "JACK MODULAR RJ45 CATEGORIA 6A BLINDADO": {
+    "nombre": "Jack modular RJ45 categoría 6A blindado",
+    "descripcion": null
+  },
+  "PATCH CORD CATEGORIA 6A DE 1 5M": {
+    "nombre": "Patch cord categoría 6A de 1,5 m",
+    "descripcion": null
+  },
+  "PATCH PANEL DE 24 PUERTOS CATEGORIA 6A 1 UR INCLUYE 24 JACK RJ45 CAT 64": {
+    "nombre": "Patch panel 24 puertos categoría 6A 1 UR",
+    "descripcion": "Patch panel de 24 puertos categoría 6A, 1 UR; incluye 24 jacks RJ45 Cat 6A"
+  },
+  "SALIDA DE VOZ DATOS Y TV ESTRUCTURADA EN TUBERIA CONDUIT PVC 1/2 CON CABLE UTP CAT 6 LSZH JACK RJ45 Y FACEPLATE": {
+    "nombre": "Salida de voz, datos y TV UTP Cat 6",
+    "descripcion": "Salida de voz, datos y TV estructurada en tubería conduit PVC Ø1/2\" con cable UTP Cat 6 LSZH, jack RJ45 y faceplate"
+  },
+  "SALIDA PARA DATOS": {
+    "nombre": "Salida para datos",
+    "descripcion": null
+  },
+  "SWITCH ACTIVO GIGABIT DE 16 PUERTOS POE IEEE 802.3AT PRESUPUESTO DE POTENCIA DE 150W": {
+    "nombre": "Switch gigabit 16 puertos PoE+ 150 W",
+    "descripcion": "Switch activo gigabit de 16 puertos PoE+ (IEEE 802.3at), presupuesto de potencia de 150 W"
+  },
+  "SWITCH ADMINISTRABLE DE 24 PUERTOS 10 GBPS POE 4 SFP VLAN QOS ACL": {
+    "nombre": "Switch administrable 24 puertos 10 Gbps PoE+",
+    "descripcion": "Switch administrable de 24 puertos 10 Gbps, PoE+, 4 SFP+, VLAN, QoS y ACL"
+  },
+  "TUBERIA EMT DE 3/4 INCLUYE ACCESORIOS": {
+    "nombre": "Tubería EMT 3/4\" con accesorios",
+    "descripcion": null
+  },
+  "ACCESORIO DE TUBERIA REFNET KIT DOS DERIVACIONES POR KIT": {
+    "nombre": "Refnet kit de derivación para tubería",
+    "descripcion": "Accesorio de tubería Refnet kit (dos derivaciones por kit)"
+  },
+  "ACOMETIDA PRINCIPAL EN BAJA TENSION BIFASICA TRIFILAR 2X 6F 1X 6N 1X 8T CU THHN LIBRE DE HALOGENOS EN DUCTO PVC SCH 40 1 / 1 1/2 L 20 M INCLUYE MURETE CAJA Y CONTADOR ELECTRONICO BIFASICO ACTIVA/REACTIVA TOTALIZADOR 2X63A": {
+    "nombre": "Acometida BT bifásica trifilar con contador",
+    "descripcion": "Acometida principal en baja tensión bifásica trifilar (2x#6 F + 1x#6 N + 1x#8 T Cu THHN libre de halógenos) en ducto PVC SCH-40 Ø1\" / 1-1/2\", L=20 m; incluye murete, caja, contador electrónico bifásico activa/reactiva y totalizador 2x63 A"
+  },
+  "AISLAMIENTO RUBATEX PARA LOS DUCTOS EXTERIORES E INTERNAMENTE CON DUCT WRAP.": {
+    "nombre": "Aislamiento de ductos en Rubatex y duct wrap",
+    "descripcion": "Aislamiento Rubatex para ductos exteriores e internamente con duct wrap"
+  },
+  "CABLE ALIMENTACION UNICAMIENTE UNIDADES INTERNAS": {
+    "nombre": "Cable de alimentación unidades internas",
+    "descripcion": null
+  },
+  "CABLE BLINDADO APANTALLADO PARA COMUNICACION 3 X 22 AWG": {
+    "nombre": "Cable apantallado de comunicación 3x22 AWG",
+    "descripcion": null
+  },
+  "CABLE DE CONTROL CABLE 3X18 TUBERIA METALICA EMT DE 3/4 COMUNICACION DE CONTROL ENTRE LOS EQUIPOS Y EL CONTROLADOR PRINCIPAL": {
+    "nombre": "Cable de control 3x18 en EMT 3/4\"",
+    "descripcion": "Cable de control 3x18 en tubería metálica EMT 3/4\" para comunicación entre los equipos y el controlador principal"
+  },
+  "SUMINISTRO E INSTALACION DE CALENTADOR DE PASO A GAS DE 21 L/MIN TIRO FORZADO INCLUYE VALVULAS CHEQUES ACOPLES FLEXIBLES Y DUCTO EVACUACION SEGUN PLANO HID PL2": {
+    "nombre": "Calentador de paso a gas 21 L/min tiro forzado",
+    "descripcion": "Calentador de paso a gas de 21 L/min tiro forzado; incluye válvulas, cheques, acoples flexibles y ducto de evacuación (según plano HID PL2)"
+  },
+  "SUMINISTRO E INSTALACION DE CINTA LED 4W/M IP65 CON PERFIL DIFUSOR EN ALUMINIO Y DRIVER 5 M EN BANOS 25 M EN GRADAS PISCINA SEGUN CUADRO DE CARGAS": {
+    "nombre": "Cinta LED 4 W/m IP65 con perfil de aluminio",
+    "descripcion": "Cinta LED 4 W/m IP65 con perfil difusor en aluminio y driver (5 m en baños y 25 m en gradas de piscina según cuadro de cargas)"
+  },
+  "COMMUNICACION KIT AHUKIT DE COMUNICACION AHU": {
+    "nombre": "Kit de comunicación AHU",
+    "descripcion": null
+  },
+  "CONDENSADORA VRV 208 220/3F/60HZ HEAT PUMP / COOL STAGE": {
+    "nombre": "Unidad condensadora VRV 208-220 V trifásica",
+    "descripcion": "Condensadora VRV 208-220 V / 3F / 60 Hz, bomba de calor / etapa de enfriamiento"
+  },
+  "CONDUCTOS EN LAMINA GALVANIZADA CALIBRE 24": {
+    "nombre": "Ductos en lámina galvanizada cal. 24",
+    "descripcion": null
+  },
+  "CONTROLADOR REMOTO SIMPLIFICADO NEW CON CABLE TERMOSTATO .": {
+    "nombre": "Control remoto alámbrico simplificado (termostato)",
+    "descripcion": null
+  },
+  "DEMOLICION MANUAL Y/O MECANICA DE LOSA EXISTENTE EN CONCRETO INCLUYENDO CORTE FRAGMENTACION RETIRO DEL MATERIAL PRODUCTO DE LA DEMOLICION": {
+    "nombre": "Demolición de losa existente en concreto",
+    "descripcion": "Demolición manual y/o mecánica de losa existente en concreto; incluye corte, fragmentación y retiro del material de demolición"
+  },
+  "DESAGUE EN TUBERIA PVC DIAM 1/2 A 1 1/4 CON AISLAMIENTO TERMICO": {
+    "nombre": "Desagüe PVC 1/2\" a 1 1/4\" con aislamiento térmico",
+    "descripcion": null
+  },
+  "DIFUSOR DE FLUJO LAMINAR 24 X 24": {
+    "nombre": "Difusor de flujo laminar 24x24\"",
+    "descripcion": null
+  },
+  "DIFUSOR DE FLUJO LAMINAR 24X48": {
+    "nombre": "Difusor de flujo laminar 24x48\"",
+    "descripcion": null
+  },
+  "DIFUSOR LINEAL DE DOS VIAS QUIROFANO L SD TYPE 11 14 ML": {
+    "nombre": "Difusor lineal de dos vías para quirófano",
+    "descripcion": "Difusor lineal de dos vías (quirófano) L-SD type 11, 14 ml"
+  },
+  "DUCTO ACOME METAL 14 MT": {
+    "nombre": "Ducto metálico de acometida 1\" x 4 m",
+    "descripcion": null
+  },
+  "DUCTO ACOME METAL 3/44 MT": {
+    "nombre": "Ducto metálico de acometida 3/4\" x 4 m",
+    "descripcion": null
+  },
+  "DUCTO ELECTR COND MET 1": {
+    "nombre": "Ducto eléctrico conduit metálico 1\"",
+    "descripcion": null
+  },
+  "DUCTO ELECTR COND MET 1/2": {
+    "nombre": "Ducto eléctrico conduit metálico 1/2\"",
+    "descripcion": null
+  },
+  "DUCTO ELECTR COND MET 3/4": {
+    "nombre": "Ducto eléctrico conduit metálico 3/4\"",
+    "descripcion": null
+  },
+  "DUCTO ELECTR PVC 1": {
+    "nombre": "Ducto eléctrico PVC 1\"",
+    "descripcion": null
+  },
+  "DUCTO ELECTR PVC 1/2": {
+    "nombre": "Ducto eléctrico PVC 1/2\"",
+    "descripcion": null
+  },
+  "DUCTO ELECTR PVC 3/4": {
+    "nombre": "Ducto eléctrico PVC 3/4\"",
+    "descripcion": null
+  },
+  "DUCTO FLEXIBLE DE 12 AISLADO": {
+    "nombre": "Ducto flexible aislado 12\"",
+    "descripcion": null
+  },
+  "DUCTO FLEXIBLE DE 6 AISLADO": {
+    "nombre": "Ducto flexible aislado 6\"",
+    "descripcion": null
+  },
+  "EEV KIT KBTUH VALVULA DE EXPANSION ELECTRONICA BTU/H SENSORES PIPE IN PIPE OUT": {
+    "nombre": "Kit EEV válvula de expansión electrónica",
+    "descripcion": "Kit EEV, válvula de expansión electrónica (BTU/h) con sensores pipe in y pipe out"
+  },
+  "ESQUINEROS PARA DIFUSOR DE FLUJO LINEAL": {
+    "nombre": "Esquineros para difusor de flujo lineal",
+    "descripcion": null
+  },
+  "L AV F 4 OB G COLOR BLANCO 12X12": {
+    "nombre": "Difusor 4 vías L-AV con damper OB blanco 12x12\"",
+    "descripcion": "Difusor L-AV F de 4 vías con damper OB-G, color blanco, 12x12\""
+  },
+  "L AV F 4 OB G COLOR BLANCO 15X15": {
+    "nombre": "Difusor 4 vías L-AV con damper OB blanco 15x15\"",
+    "descripcion": "Difusor L-AV F de 4 vías con damper OB-G, color blanco, 15x15\""
+  },
+  "L AV F 4 OB G COLOR BLANCO 6X6": {
+    "nombre": "Difusor 4 vías L-AV con damper OB blanco 6x6\"",
+    "descripcion": "Difusor L-AV F de 4 vías con damper OB-G, color blanco, 6x6\""
+  },
+  "L AV F 4 OB G COLOR BLANCO 9X9": {
+    "nombre": "Difusor 4 vías L-AV con damper OB blanco 9x9\"",
+    "descripcion": "Difusor L-AV F de 4 vías con damper OB-G, color blanco, 9x9\""
+  },
+  "PINTURA PARA AISLAMIENTO RUBATEX.": {
+    "nombre": "Pintura para aislamiento Rubatex",
+    "descripcion": null
+  },
+  "PORTAFILTROS PARA UNIDAD DE SUMINISTRO SUM AFRESCO 01 . MERV 8 Y MERV 11 252 CFM 1 8 INWG": {
+    "nombre": "Portafiltros MERV 8/11 unidad SUM-AFRESCO-01",
+    "descripcion": "Portafiltros para unidad de suministro SUM-AFRESCO-01, filtros MERV 8 y MERV 11, 252 CFM, 1,8 inwg"
+  },
+  "PORTAFILTROS PARA UNIDAD DE SUMINISTRO SUM AFRESCO 02 . MERV 8 Y MERV 11": {
+    "nombre": "Portafiltros MERV 8/11 unidad SUM-AFRESCO-02",
+    "descripcion": "Portafiltros para unidad de suministro SUM-AFRESCO-02, filtros MERV 8 y MERV 11"
+  },
+  "PROGRAMACION DE PLATAFORMA PARA ENCENDIDO Y ARRANQUE DE LOS SISTEMAS": {
+    "nombre": "Programación de plataforma y arranque de sistemas",
+    "descripcion": "Programación de plataforma para encendido y arranque de los sistemas"
+  },
+  "REJILLA DE EXTRACCION L RA OB G COLOR BLANCO 10X10": {
+    "nombre": "Rejilla de extracción L-RA con damper blanca 10x10\"",
+    "descripcion": "Rejilla de extracción L-RA con damper OB-G, color blanco, 10x10\""
+  },
+  "REJILLA DE EXTRACCION L RA OB G COLOR BLANCO 12X12": {
+    "nombre": "Rejilla de extracción L-RA con damper blanca 12x12\"",
+    "descripcion": "Rejilla de extracción L-RA con damper OB-G, color blanco, 12x12\""
+  },
+  "REJILLA DE EXTRACCION L RA OB G COLOR BLANCO 14X14": {
+    "nombre": "Rejilla de extracción L-RA con damper blanca 14x14\"",
+    "descripcion": "Rejilla de extracción L-RA con damper OB-G, color blanco, 14x14\""
+  },
+  "REJILLA DE EXTRACCION L RA OB G COLOR BLANCO 6X4": {
+    "nombre": "Rejilla de extracción L-RA con damper blanca 6x4\"",
+    "descripcion": "Rejilla de extracción L-RA con damper OB-G, color blanco, 6x4\""
+  },
+  "REJILLA DE EXTRACCION L RA OB G COLOR BLANCO 6X6": {
+    "nombre": "Rejilla de extracción L-RA con damper blanca 6x6\"",
+    "descripcion": "Rejilla de extracción L-RA con damper OB-G, color blanco, 6x6\""
+  },
+  "REJILLA DE EXTRACCION L RA OB G COLOR BLANCO 8X8": {
+    "nombre": "Rejilla de extracción L-RA con damper blanca 8x8\"",
+    "descripcion": "Rejilla de extracción L-RA con damper OB-G, color blanco, 8x8\""
+  },
+  "SALIDA DE TOMACORRIENTE DOBLE ESTANDAR CON POLO A TIERRA 20A 125V NEMA 5 15R INCLUYE DUCTO PVC SCH 40 1/2 CABLE CU THHN 1X 12F 1X 12N 1X 14T CAJA 2X4 Y APARATO SEGUN CUADRO DE CARGAS": {
+    "nombre": "Salida tomacorriente doble 20 A con polo a tierra PVC",
+    "descripcion": "Salida de tomacorriente doble estándar con polo a tierra 20 A 125 V NEMA 5-15R; incluye ducto PVC SCH-40 Ø1/2\", cable Cu THHN 1x#12 F + 1x#12 N + 1x#14 T, caja 2x4\" y aparato (según cuadro de cargas)"
+  },
+  "SALIDA DE TOMACORRIENTE DOBLE GFCI 20A 125V PROTECCION FALLA A TIERRA PARA ZONAS HUMEDAS INCLUYE DUCTO PVC SCH 40 1/2 CABLE CU THHN 1X 12F 1X 12N 1X 14T CAJA 2X4 Y APARATO GFCI SEGUN CUADRO DE CARGAS": {
+    "nombre": "Salida tomacorriente doble GFCI 20 A zonas húmedas",
+    "descripcion": "Salida de tomacorriente doble GFCI 20 A 125 V con protección de falla a tierra para zonas húmedas; incluye ducto PVC SCH-40 Ø1/2\", cable Cu THHN 1x#12 F + 1x#12 N + 1x#14 T, caja 2x4\" y aparato GFCI (según cuadro de cargas)"
+  },
+  "SALIDA DE TOMACORRIENTE ESPECIAL BIFASICO 220V CON POLO A TIERRA EN DUCTO PVC SCH 40 3/4 Y CABLE CU THHN 2X 10F 1X 14T AWG HIDROFLOW Y HORNO COCINA SEGUN CUADRO DE CARGAS": {
+    "nombre": "Salida tomacorriente especial bifásico 220 V",
+    "descripcion": "Salida de tomacorriente especial bifásico 220 V con polo a tierra en ducto PVC SCH-40 Ø3/4\" y cable Cu THHN 2x#10 F + 1x#14 T AWG (hidroflow y horno de cocina según cuadro de cargas)"
+  },
+  "SALIDAS ELECTRICAS DE ILUMINACION E INTERRUPTORES EN TUBERIA CONDUIT PVC SCH 40 1/2 Y CONDUCTORES CU THHN LIBRE DE HALOGENOS 1X 12F 1X 12N 1X 14T AWG CON CAJAS OCTOGONALES Y 2X4": {
+    "nombre": "Salida de iluminación e interruptor en conduit PVC",
+    "descripcion": "Salidas eléctricas de iluminación e interruptores en tubería conduit PVC SCH-40 Ø1/2\" y conductores Cu THHN libre de halógenos (1x#12 F + 1x#12 N + 1x#14 T AWG), con cajas octagonales y 2x4\""
+  },
+  "SENSORES EQUIPOS VENTILADORES": {
+    "nombre": "Sensores para equipos de ventilación",
+    "descripcion": null
+  },
+  "SIMPLE WIRED REMOTE CONTROLLERTERMOSTATO SIMPLE LCD CON CABLE X 10 MON/OFF BLOQUEO SETPOINT ERROR SENSOR CONFIG. PQRCVCL0QW.": {
+    "nombre": "Termostato alámbrico LCD PQRCVCL0QW",
+    "descripcion": "Control remoto alámbrico simple (termostato LCD) con cable de 10 m: encendido/apagado, bloqueo, setpoint, error, sensor y configuración. Ref. PQRCVCL0QW"
+  },
+  "SISTEMA DE CONTROL CENTRALIZADO SIN PANTALLA HASTA 128 UNIDADES": {
+    "nombre": "Control centralizado sin pantalla hasta 128 unidades",
+    "descripcion": null
+  },
+  "SOPORTES ANTIVIBRATORIOS PARA UNIDAD MANEJADORA Y CONDENSADORA MOGOLLAS DE NEOPRENO .": {
+    "nombre": "Soportes antivibratorios en neopreno para equipos",
+    "descripcion": "Soportes antivibratorios para unidad manejadora y condensadora (mogollas de neopreno)"
+  },
+  "TAA 01": {
+    "nombre": "Tablero de aire acondicionado TAA-01",
+    "descripcion": null
+  },
+  "TARJETA DE COMUNICACION PARA CONTROLADORES.": {
+    "nombre": "Tarjeta de comunicación para controladores",
+    "descripcion": null
+  },
+  "TARJETA DE CONTROL": {
+    "nombre": "Tarjeta de control",
+    "descripcion": null
+  },
+  "TUBERIA DE COBRE 1 1/4 CON AISLAMIENTO RUBATEX": {
+    "nombre": "Tubería de cobre 1 1/4\" con aislamiento Rubatex",
+    "descripcion": null
+  },
+  "TUBERIA DE COBRE 1 1/8 CON AISLAMIENTO RUBATEX": {
+    "nombre": "Tubería de cobre 1 1/8\" con aislamiento Rubatex",
+    "descripcion": null
+  },
+  "TUBERIA DE COBRE 1 CON AISLAMIENTO RUBATEX": {
+    "nombre": "Tubería de cobre 1\" con aislamiento Rubatex",
+    "descripcion": null
+  },
+  "TUBERIA DE COBRE 1/2 CON AISLAMIENTO RUBATEX": {
+    "nombre": "Tubería de cobre 1/2\" con aislamiento Rubatex",
+    "descripcion": null
+  },
+  "TUBERIA DE COBRE 1/4 CON AISLAMIENTO RUBATEX": {
+    "nombre": "Tubería de cobre 1/4\" con aislamiento Rubatex",
+    "descripcion": null
+  },
+  "TUBERIA DE COBRE 3/4 CON AISLAMIENTO RUBATEX": {
+    "nombre": "Tubería de cobre 3/4\" con aislamiento Rubatex",
+    "descripcion": null
+  },
+  "TUBERIA DE COBRE 3/8 CON AISLAMIENTO RUBATEX": {
+    "nombre": "Tubería de cobre 3/8\" con aislamiento Rubatex",
+    "descripcion": null
+  },
+  "TUBERIA DE COBRE 5/8 CON AISLAMIENTO RUBATEX": {
+    "nombre": "Tubería de cobre 5/8\" con aislamiento Rubatex",
+    "descripcion": null
+  },
+  "TUBERIA DE COBRE 7/8 CON AISLAMIENTO RUBATEX": {
+    "nombre": "Tubería de cobre 7/8\" con aislamiento Rubatex",
+    "descripcion": null
+  },
+  "TUBERIA DE REFRIGERACION DE ALTA TUBERIA DE COBRE TIPO L SIN COSTURA. INCLUYE ACCESORIOS DE COBRE PARA SOLDAR SOPORTERIA SOLDADURA DE PLATA Y AISLAMIENTO ELASTOMERICO DE CELDA CERRADA": {
+    "nombre": "Tubería de refrigeración de alta en cobre tipo L",
+    "descripcion": "Tubería de cobre tipo L sin costura para línea de alta; incluye accesorios de cobre para soldar, soportería, soldadura de plata y aislamiento elastomérico de celda cerrada"
+  },
+  "TUBERIA DE REFRIGERACION DE BAJA TUBERIA DE COBRE TIPO L SIN COSTURA. INCLUYE ACCESORIOS DE COBRE PARA SOLDAR SOPORTERIA SOLDADURA DE PLATA Y AISLAMIENTO ELASTOMERICO DE CELDA CERRADA": {
+    "nombre": "Tubería de refrigeración de baja en cobre tipo L",
+    "descripcion": "Tubería de cobre tipo L sin costura para línea de baja; incluye accesorios de cobre para soldar, soportería, soldadura de plata y aislamiento elastomérico de celda cerrada"
+  },
+  "UNIDAD CONDENSADORA 220 V 1 FASES 80.000 BTU/H": {
+    "nombre": "Unidad condensadora 80.000 BTU/h 220 V monofásica",
+    "descripcion": null
+  },
+  "UNIDAD CONDENSADORA 220 V 3 FASES CON BOMBA DE CALOR 120.000 BTU/H": {
+    "nombre": "Unidad condensadora 120.000 BTU/h con bomba de calor",
+    "descripcion": "Unidad condensadora 220 V trifásica con bomba de calor, 120.000 BTU/h"
+  },
+  "UNIDAD DE EXTRACCION LIMPIA EXT SUCIA 02 . CAUDAL 3111 CFM CAIDA DE PRESION 1 5 INWG": {
+    "nombre": "Unidad de extracción limpia 3111 CFM",
+    "descripcion": "Unidad de extracción limpia (EXT-SUCIA-02), caudal 3111 CFM, caída de presión 1,5 inwg"
+  },
+  "UNIDAD DE EXTRACCION SUCIA EXT SUCIA 01 . CAUDAL 1840 CFM CAIDA DE PRESION 1 5 INWG": {
+    "nombre": "Unidad de extracción sucia 1840 CFM",
+    "descripcion": "Unidad de extracción sucia (EXT-SUCIA-01), caudal 1840 CFM, caída de presión 1,5 inwg"
+  },
+  "UNIDAD DE VENTILACION SUMINISTRO AIRE FRESCO SUM AFRESCO 01 . CAUDAL 1450 CFM INWG 2 0": {
+    "nombre": "Unidad de suministro de aire fresco 1450 CFM",
+    "descripcion": "Unidad de ventilación de suministro de aire fresco (SUM-AFRESCO-01), caudal 1450 CFM, 2,0 inwg"
+  },
+  "UNIDAD DE VENTILACION SUMINISTRO AIRE FRESCO SUM AFRESCO 02 . CAUDAL 250 CFM INWG 1 8": {
+    "nombre": "Unidad de suministro de aire fresco 250 CFM",
+    "descripcion": "Unidad de ventilación de suministro de aire fresco (SUM-AFRESCO-02), caudal 250 CFM, 1,8 inwg"
+  },
+  "UNIDAD FANCOIL DE PARED 11232 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil de pared 11.232 BTU/h 220 V",
+    "descripcion": "Unidad fancoil de pared 11.232 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DE PARED 11547 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil de pared 11.547 BTU/h 220 V",
+    "descripcion": "Unidad fancoil de pared 11.547 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 10701 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 10.701 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 10.701 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 10789 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 10.789 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 10.789 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 11844 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 11.844 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 11.844 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 11952 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 11.952 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 11.952 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 13074 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 13.074 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 13.074 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 13282 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 13.282 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 13.282 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 14240 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 14.240 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 14.240 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 14674 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 14.674 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 14.674 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 16329 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 16.329 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 16.329 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 16343 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 16.343 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 16.343 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 18440 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 18.440 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 18.440 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 36384 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 36.384 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 36.384 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 54648 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 54.648 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 54.648 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 6832 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 6.832 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 6.832 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD FANCOIL DESNUDO 7347 BTU 220V/ 1FASE/60 HZ": {
+    "nombre": "Fancoil desnudo 7.347 BTU/h 220 V",
+    "descripcion": "Unidad fancoil desnudo 7.347 BTU/h, 220 V / 1 fase / 60 Hz"
+  },
+  "UNIDAD MANEJADORA DOBLE PARED TIPO HOSPITALARIO . INCLUYE FILTROS MERV 8 LAVABLES. FILTROS DE MERV 14 FILTROS HEPA VENTILADOR ZIEHL ABBEG ACOPLE DIRECTO INCLUYE MANOMETRO DIFERENCIAL PARA SATURACION DE FILTROS INCLUYE CPG": {
+    "nombre": "Unidad manejadora hospitalaria doble pared",
+    "descripcion": "Unidad manejadora de doble pared tipo hospitalario; incluye filtros MERV 8 lavables, filtros MERV 14, filtros HEPA, ventilador Ziehl-Abegg de acople directo, manómetro diferencial para saturación de filtros y CPG"
+  },
+  "ANUNCIADOR REMOTO LCD CON PANTALLA DE 80 CARACTERES ANN 80 PARA ESTACION DE ENFERMERAS": {
+    "nombre": "Anunciador remoto LCD ANN-80",
+    "descripcion": "Anunciador remoto LCD con pantalla de 80 caracteres (ANN-80) para estación de enfermeras"
+  },
+  "BATERIA DE PLOMO ACIDO REGULADA POR VALVULA VRLA 12V 7.0 AH SE REQUIEREN 2 PARA 24VDC": {
+    "nombre": "Batería VRLA 12 V 7 Ah",
+    "descripcion": "Batería de plomo-ácido regulada por válvula (VRLA) 12 V 7,0 Ah (se requieren 2 para 24 VDC)"
+  },
+  "CABLE DE COBRE TRENZADO BLINDADO DE INCENDIO 16 AWG FPLR RETARDANTE A LA LLAMA LAZO SLC Y LAZO NAC": {
+    "nombre": "Cable de incendio blindado FPLR #16 AWG",
+    "descripcion": "Cable de cobre trenzado blindado de incendio #16 AWG FPLR retardante a la llama (lazo SLC y lazo NAC)"
+  },
+  "CABLE DE COBRE TRENZADO BLINDADO DE INCENDIO 18 AWG FPLR RETARDANTE A LA LLAMA ANUNCIADOR REMOTO": {
+    "nombre": "Cable de incendio blindado FPLR #18 AWG",
+    "descripcion": "Cable de cobre trenzado blindado de incendio #18 AWG FPLR retardante a la llama (anunciador remoto)"
+  },
+  "CAJA METALICA GALVANIZADA 2X4 Y ACCESORIOS PARA MONTAJE DE ESTACIONES MANUALES Y ANUNCIADOR REMOTO": {
+    "nombre": "Caja galvanizada 2x4 para estaciones manuales",
+    "descripcion": "Caja metálica galvanizada 2x4 y accesorios para montaje de estaciones manuales y anunciador remoto"
+  },
+  "CAJA METALICA GALVANIZADA 4X4 CON TAPA CIEGA Y ACCESORIOS PARA MONTAJE DE DETECTORES Y SIRENAS": {
+    "nombre": "Caja galvanizada 4x4 para detectores y sirenas",
+    "descripcion": "Caja metálica galvanizada 4x4 con tapa ciega y accesorios para montaje de detectores y sirenas"
+  },
+  "DETECTOR DE HUMO DIRECCIONABLE ANALOGICO FOTOELECTRICO INCLUYE BASE DE MONTAJE": {
+    "nombre": "Detector de humo fotoeléctrico direccionable",
+    "descripcion": "Detector de humo direccionable analógico fotoeléctrico; incluye base de montaje"
+  },
+  "DETECTOR DE HUMO Y TERMICO DIRECCIONABLE MULTICRITERIO INCLUYE BASE DE MONTAJE": {
+    "nombre": "Detector multicriterio humo y térmico direccionable",
+    "descripcion": "Detector de humo y térmico direccionable multicriterio; incluye base de montaje"
+  },
+  "ESTACION CONTROL ROCIADORES VALVULA REDUCTORA DE PRESION 3 CON MANOMETRO 0 200PSI ANTES Y DESPUES DE LA VALVULA VALVULA DE ALIVIO INTERRUPTOR DE FLUJO PMAX. 140 MCA PMIN. 23MCA": {
+    "nombre": "Estación de control de rociadores 3\"",
+    "descripcion": "Estación de control de rociadores con válvula reductora de presión 3\" y manómetros (0-200 psi) antes y después de la válvula, válvula de alivio e interruptor de flujo. Pmáx. 140 m.c.a., Pmín. 23 m.c.a."
+  },
+  "ESTACION DE CONTROL INCLUYE VALVULA MONITORIZADA SENSOR DE FLUJO Y VALVULA CHEQUE HORIZONTAL/VERTICAL": {
+    "nombre": "Estación de control con válvula monitorizada",
+    "descripcion": "Estación de control; incluye válvula monitorizada, sensor de flujo y válvula cheque horizontal/vertical"
+  },
+  "ESTACION MANUAL DE ALARMA DE DOBLE ACCION METALICA COLOR ROJO CON LLAVE LISTADO UL": {
+    "nombre": "Estación manual de alarma doble acción UL",
+    "descripcion": "Estación manual de alarma de doble acción, metálica color rojo con llave (listado UL)"
+  },
+  "SUMINISTRO E INSTALACION DE EXTINTOR DE AGUA NEBULIZADA DE 10 LB INCLUYE ACCESORIOS DE EMPOTRAMIENTO": {
+    "nombre": "Extintor de agua nebulizada 10 lb",
+    "descripcion": "Extintor de agua nebulizada de 10 lb; incluye accesorios de empotramiento"
+  },
+  "SUMINISTRO E INSTALACION DE GABINETE CONTRA INCENDIOS CLASE III DIMENSIONES 77X77X24 CM DOTADO CON EXTINTOR DE CO2 DE 10 LB Y DEMAS ACCESORIOS COMPLEMENTARIOS": {
+    "nombre": "Gabinete contra incendio clase III con extintor CO2",
+    "descripcion": "Gabinete contra incendios clase III de 77x77x24 cm, dotado con extintor de CO2 de 10 lb y demás accesorios complementarios"
+  },
+  "GABINETES TIPO 3 TOTALMENTE EQUIPADO EXTINTOR EN POLVO QUIMICO SECO": {
+    "nombre": "Gabinete tipo III equipado con extintor PQS",
+    "descripcion": "Gabinete tipo 3 totalmente equipado con extintor de polvo químico seco"
+  },
+  "PANEL DE CONTROL DE ALARMA DE INCENDIOS INTELIGENTE DIRECCIONABLE LAZO SLC DE 198 PTOS": {
+    "nombre": "Panel de alarma de incendio direccionable 198 puntos",
+    "descripcion": "Panel de control de alarma de incendios inteligente direccionable (lazo SLC de 198 puntos)"
+  },
+  "PROGRAMACION CONFIGURACION DEL LAZO SLC PRUEBAS DE ALARMA SIMULACROS Y CERTIFICACION NFPA 72": {
+    "nombre": "Programación, pruebas y certificación NFPA 72",
+    "descripcion": "Programación, configuración del lazo SLC, pruebas de alarma, simulacros y certificación NFPA 72"
+  },
+  "SUMINISTRO E INSTALACION ROCIADOR COLGANTE K5 6 1/2 INCLUYE TRAMO VERTICAL EN TUBERIA SCH 40 1/2": {
+    "nombre": "Rociador colgante K5,6 1/2\"",
+    "descripcion": "Rociador colgante K5,6 de 1/2\"; incluye tramo vertical en tubería SCH 40 de 1/2\""
+  },
+  "SUMINISTRO E INSTALACION DE SIAMESA 4 X 2 1/2 X 2 1/2 INCLUYE VAVULA DE RETENCION": {
+    "nombre": "Siamesa 4\" x 2 1/2\" x 2 1/2\"",
+    "descripcion": "Siamesa 4\" x 2 1/2\" x 2 1/2\"; incluye válvula de retención"
+  },
+  "SIRENA CON LUZ ESTROBOSCOPICA SINCRONIZADA DE PARED DE 15/30/75/110CD REGULABLE": {
+    "nombre": "Sirena con luz estroboscópica de pared",
+    "descripcion": "Sirena con luz estroboscópica sincronizada de pared, regulable 15/30/75/110 cd"
+  },
+  "SUMINISTRO DE EQUIPO CONTRA INCENDIOS DIESEL LISTADA UL Y FM POTENCIA 84 HP CABEZA DINAMICA TOTAL 140M CAUDAL 250 GPM DIAMETRO DE IMPULSION 4 MOTO BOMBA TIPO TURBINA VERTICAL INCLUYE BOMBA JOCKEY DE 1.00 HP MEDIDOR DE FLUJO DE 4 250 GPM CABEZAL DE PRUEBAS 250 GPM Y TODOS LOS ACCESORIOS PARA SU CORRECTO FUNCIONAMIENTO.": {
+    "nombre": "Equipo contra incendio diésel 84 HP 250 gpm UL/FM",
+    "descripcion": "Motobomba contra incendios diésel tipo turbina vertical listada UL y FM, 84 HP, cabeza dinámica total 140 m, caudal 250 gpm, impulsión 4\"; incluye bomba jockey de 1,00 HP, medidor de flujo de 4\" 250 gpm, cabezal de pruebas 250 gpm y todos los accesorios para su correcto funcionamiento"
+  },
+  "SUMINISTRO E INSTALACION TUBERIA AC SCH 40 1 1/2 INCLUYE ACCESORIOS DE FIJACION": {
+    "nombre": "Tubería de acero SCH 40 1 1/2\"",
+    "descripcion": "Tubería de acero SCH 40 de 1 1/2\"; incluye accesorios de fijación"
+  },
+  "SUMINISTRO E INSTALACION TUBERIA AC SCH 40 1 1/4 INCLUYE ACCESORIOS DE FIJACION": {
+    "nombre": "Tubería de acero SCH 40 1 1/4\"",
+    "descripcion": "Tubería de acero SCH 40 de 1 1/4\"; incluye accesorios de fijación"
+  },
+  "SUMINISTRO E INSTALACION TUBERIA AC SCH 40 1 INCLUYE ACCESORIOS DE FIJACION": {
+    "nombre": "Tubería de acero SCH 40 1\"",
+    "descripcion": "Tubería de acero SCH 40 de 1\"; incluye accesorios de fijación"
+  },
+  "SUMINISTRO E INSTALACION TUBERIA AC SCH 40 2 1/2 INCLUYE ACCESORIOS DE FIJACION": {
+    "nombre": "Tubería de acero SCH 40 2 1/2\"",
+    "descripcion": "Tubería de acero SCH 40 de 2 1/2\"; incluye accesorios de fijación"
+  },
+  "SUMINISTRO E INSTALACION TUBERIA AC SCH 40 2 INCLUYE ACCESORIOS DE FIJACION": {
+    "nombre": "Tubería de acero SCH 40 2\"",
+    "descripcion": "Tubería de acero SCH 40 de 2\"; incluye accesorios de fijación"
+  },
+  "SUMINISTRO E INSTALACION TUBERIA AC SCH 40 3 INCLUYE ACCESORIOS DE FIJACION": {
+    "nombre": "Tubería de acero SCH 40 3\"",
+    "descripcion": "Tubería de acero SCH 40 de 3\"; incluye accesorios de fijación"
+  },
+  "SUMINISTRO E INSTALACION TUBERIA AC SCH 40 4 INCLUYE ACCESORIOS DE FIJACION": {
+    "nombre": "Tubería de acero SCH 40 4\"",
+    "descripcion": "Tubería de acero SCH 40 de 4\"; incluye accesorios de fijación"
+  },
+  "SUMINISTRO E INSTALACION TUBERIA AC SCH 40 6 INCLUYE ACCESORIOS DE FIJACION": {
+    "nombre": "Tubería de acero SCH 40 6\"",
+    "descripcion": "Tubería de acero SCH 40 de 6\"; incluye accesorios de fijación"
+  },
+  "VALVULA ANGULAR 2": {
+    "nombre": "Válvula angular 2\"",
+    "descripcion": null
+  },
+  "VALVULA CHEQUE 4 RANURADA HORIZONTAL": {
+    "nombre": "Válvula cheque ranurada horizontal 4\"",
+    "descripcion": null
+  },
+  "VALVULA RANURADA MONITORIZADA 4": {
+    "nombre": "Válvula ranurada monitorizada 4\"",
+    "descripcion": null
+  },
+  "CIELO RASO EN PANEL DE YESO ESTANDAR STD INCLUYE SUMINISTRO E INSTALACION DE ESTRUCTURA METALICA DE SOPORTE PERFILES ELEMENTOS DE SUSPENSION PANEL DE YESO TORNILLERIA FIJACIONES Y DEMAS ACCESORIOS NECESARIOS PARA SU CORRECTA INSTALACION": {
+    "nombre": "Cielo raso en panel de yeso estándar",
+    "descripcion": "Incluye estructura metálica de soporte, perfiles, elementos de suspensión, panel de yeso estándar (STD), tornillería, fijaciones y demás accesorios para su correcta instalación"
+  },
+  "CIELORRASO EXTERIOR PLANO EN DUELA MACHIHEMBRADA TIPO MADERA WPC / PVC / ALUMINIO FOLIADO PARA EXTERIORES INCLUYE ESTRUCTURA METALICA Y REMATES": {
+    "nombre": "Cielo raso exterior en duela machihembrada tipo madera",
+    "descripcion": "Cielo raso exterior plano en duela machihembrada tipo madera (WPC, PVC o aluminio foliado para exteriores); incluye estructura metálica y remates"
+  },
+  "CIELORRASO INTERIOR EN SISTEMA DRYWALL PLACA DE YESO 1/2 ESTANDAR Y RH EN BANOS SIGUIENDO LA INCLINACION DE CUBIERTA 15 Y 50": {
+    "nombre": "Cielo raso drywall inclinado placa 1/2\" STD y RH",
+    "descripcion": "Cielo raso interior en sistema drywall (placa de yeso 1/2\" estándar y RH en baños) siguiendo la inclinación de la cubierta (15% y 50%)"
+  },
+  "ESCOTILLA DE INSPECCION EN SISTEMA DRYWALL CON PANEL DE YESO INCLUYE SUMINISTRO E INSTALACION DE MARCO DE SOPORTE ESTRUCTURA METALICA PANEL DE YESO ELEMENTOS DE FIJACION HERRAJES Y DEMAS ACCESORIOS NECESARIOS PARA SU CORRECTA INSTALACION Y FUNCIONAMIENTO.": {
+    "nombre": "Escotilla de inspección en drywall",
+    "descripcion": "Escotilla de inspección en sistema drywall con panel de yeso; incluye marco de soporte, estructura metálica, fijaciones, herrajes y demás accesorios para su correcta instalación y funcionamiento"
+  },
+  "LAMINA DE PLOMO PARA PROTECCION RADIOLOGICA INCLUYE SUMINISTRO E INSTALACION PEGANTE Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA EJECUCION.": {
+    "nombre": "Lámina de plomo para protección radiológica",
+    "descripcion": "Incluye suministro e instalación, pegante y demás elementos para su correcta ejecución"
+  },
+  "SUMINISTRO E INSTALACION DE MEDIA CANA MICROPERFORADA UNIPERFILES PARED CIELO RASO INCLUYE PERFILES ACCESORIOS DE UNION ELEMENTOS DE FIJACION ADHESIVOS Y DEMAS COMPONENTES NECESARIOS PARA SU CORRECTA INSTALACION ALINEACION Y ACABADO SANITARIO.": {
+    "nombre": "Media caña microperforada Uniperfiles pared-cielo",
+    "descripcion": "Media caña microperforada Uniperfiles pared-cielo raso; incluye perfiles, accesorios de unión, fijaciones, adhesivos y demás componentes para su correcta instalación, alineación y acabado sanitario"
+  },
+  "MURO EN SISTEMA DRYWALL DE DOBLE CARA CON PANEL DE YESO ESTANDAR STD INCLUYE SUMINISTRO E INSTALACION DE ESTRUCTURA METALICA CONFORMADA POR CANALES Y PARALES TORNILLERIA FIJACIONES Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Muro en drywall doble cara panel estándar",
+    "descripcion": "Muro en sistema drywall de doble cara con panel de yeso estándar (STD); incluye estructura metálica en canales y parales, tornillería, fijaciones y demás elementos para su correcta instalación"
+  },
+  "MURO EN SISTEMA DRYWALL DE DOBLE CARA CON PANEL RH INCLUYE SUMINISTRO E INSTALACION DE ESTRUCTURA METALICA CONFORMADA POR CANALES Y PARALES FIJACIONES Y TORNILLERIA NECESARIA PARA SU CORRECTO MONTAJE.": {
+    "nombre": "Muro en drywall doble cara panel RH",
+    "descripcion": "Muro en sistema drywall de doble cara con panel RH; incluye estructura metálica en canales y parales, fijaciones y tornillería para su correcto montaje"
+  },
+  "MURO EN SISTEMA DRYWALL DE UNA CARA CON PANEL DE YESO ESTANDAR STD INCLUYE SUMINISTRO E INSTALACION DE ESTRUCTURA METALICA CONFORMADA POR CANALES Y PARALES TORNILLERIA FIJACIONES Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Muro en drywall una cara panel estándar",
+    "descripcion": "Muro en sistema drywall de una cara con panel de yeso estándar (STD); incluye estructura metálica en canales y parales, tornillería, fijaciones y demás elementos para su correcta instalación"
+  },
+  "MURO EN SISTEMA DRYWALL DE UNA CARA CON PANEL DE YESO RESISTENTE A LA HUMEDAD RH INCLUYE SUMINISTRO E INSTALACION DE ESTRUCTURA METALICA CONFORMADA POR CANALES Y PARALES TORNILLERIA FIJACIONES Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Muro en drywall una cara panel RH",
+    "descripcion": "Muro en sistema drywall de una cara con panel de yeso resistente a la humedad (RH); incluye estructura metálica en canales y parales, tornillería, fijaciones y demás elementos para su correcta instalación"
+  },
+  "MURO EN SUPERBOARD DE 12 MM Y AISLAMIENTO TERMOACUSTICO EN FRESCASA ECO 2 1/2 PG INCLUYE SUMINISTRO E INSTALACION DE ESTRUCTURA METALICA EN CANAL 90 CALIBRE 24 Y PARALES 90 CALIBRE 24 DILATACIONES EN U INTERNA SIKADUR PANEL TORNILLERIA FIJACIONES Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA EJECUCION.": {
+    "nombre": "Muro en Superboard 12 mm con aislamiento Frescasa",
+    "descripcion": "Muro en Superboard de 12 mm con aislamiento termoacústico Frescasa ECO 2 1/2\"; incluye estructura en canal y parales 90 cal. 24, dilataciones en U interna, Sikadur Panel, tornillería, fijaciones y demás elementos para su correcta ejecución"
+  },
+  "DILATACION EN BRONCE SIN M.O.": {
+    "nombre": "Dilatación en bronce (sin mano de obra)",
+    "descripcion": null
+  },
+  "ENVOLVENTE MONOLITICA EXTERIOR CONTINUA PANETE HIDROFUGO 1 3 MALLA FIBRA DE VIDRIO 160 G/M ESTUCO FLEXIBLE 3 MANOS ACABADO ELASTOMERICO": {
+    "nombre": "Envolvente monolítica exterior con acabado elastomérico",
+    "descripcion": "Envolvente monolítica exterior continua: pañete hidrófugo 1:3, malla de fibra de vidrio 160 g/m², estuco flexible y 3 manos de acabado elastomérico"
+  },
+  "ESMALTE S/ LAMINA LINEAL": {
+    "nombre": "Esmalte sobre lámina lineal",
+    "descripcion": null
+  },
+  "ESMALTE S/ LAMINA LLENA": {
+    "nombre": "Esmalte sobre lámina llena",
+    "descripcion": null
+  },
+  "ESMALTE S/ MADERA LINEAL": {
+    "nombre": "Esmalte sobre madera lineal",
+    "descripcion": null
+  },
+  "ESMALTE S/ MADERA LLENA": {
+    "nombre": "Esmalte sobre madera llena",
+    "descripcion": null
+  },
+  "ESMALTE S/ MARCOS LAMINA": {
+    "nombre": "Esmalte sobre marcos en lámina",
+    "descripcion": null
+  },
+  "ESMALTE S/ MARCOS MADERA": {
+    "nombre": "Esmalte sobre marcos en madera",
+    "descripcion": null
+  },
+  "ESMALTE S/ MUEBLES MADERA": {
+    "nombre": "Esmalte sobre muebles de madera",
+    "descripcion": null
+  },
+  "ESPACATTO BEIGE HUILA.": {
+    "nombre": "Espacato beige Huila",
+    "descripcion": null
+  },
+  "ESPACATTO BLANCO HUILA.": {
+    "nombre": "Espacato blanco Huila",
+    "descripcion": null
+  },
+  "ESPACATTO GRIS HUILA.": {
+    "nombre": "Espacato gris Huila",
+    "descripcion": null
+  },
+  "ESPACATTO NEGRO CARACOL.": {
+    "nombre": "Espacato negro caracol",
+    "descripcion": null
+  },
+  "ESPACATTO PIEDRA MUNECA.": {
+    "nombre": "Espacato piedra muñeca",
+    "descripcion": null
+  },
+  "ESPACATTO TRAVERTINO.": {
+    "nombre": "Espacato travertino",
+    "descripcion": null
+  },
+  "ESTUC TRADIC": {
+    "nombre": "Estuco tradicional",
+    "descripcion": null
+  },
+  "ESTUCO": {
+    "nombre": "Estuco",
+    "descripcion": null
+  },
+  "ESTUCO PARA JUNTAS Y PINTURA VINILO ACRILICO TIPO 1 BLANCO MATE A TRES 3 MANOS EN CIELORRASO INTERIOR DRYWALL": {
+    "nombre": "Estuco y vinilo tipo 1 en cielo raso drywall",
+    "descripcion": "Estuco para juntas y pintura vinilo acrílico tipo 1 blanco mate a tres (3) manos en cielo raso interior drywall"
+  },
+  "ESTUCO PLASTICO / PROFESIONAL PULIDO EN MUROS INTERIORES REPELLADOS": {
+    "nombre": "Estuco plástico pulido en muros interiores",
+    "descripcion": "Estuco plástico o profesional pulido en muros interiores repellados"
+  },
+  "FILOS Y DILATACIONES": {
+    "nombre": "Filos y dilataciones en estuco",
+    "descripcion": null
+  },
+  "IMPRIM COLB RODILLO 2 MANOS": {
+    "nombre": "Imprimación con colbón a rodillo 2 manos",
+    "descripcion": null
+  },
+  "IMPRIM VINILO RODILLO 2 MANOS": {
+    "nombre": "Imprimación con vinilo a rodillo 2 manos",
+    "descripcion": null
+  },
+  "PIEDRA BLANCA": {
+    "nombre": "Enchape en piedra blanca",
+    "descripcion": null
+  },
+  "PIEDRA BOGOTANA": {
+    "nombre": "Enchape en piedra bogotana",
+    "descripcion": null
+  },
+  "PIEDRA CORALINA": {
+    "nombre": "Enchape en piedra coralina",
+    "descripcion": null
+  },
+  "PIEDRA MUNECA": {
+    "nombre": "Enchape en piedra muñeca",
+    "descripcion": null
+  },
+  "PINT EN LACA SOPLETE 2 MAN": {
+    "nombre": "Pintura en laca a soplete 2 manos",
+    "descripcion": null
+  },
+  "PINT ESMALTE PUERTAS 2 MAN": {
+    "nombre": "Pintura esmalte en puertas 2 manos",
+    "descripcion": null
+  },
+  "PINT ESMALTE REJAS ANTEP 2 MAN": {
+    "nombre": "Pintura esmalte en rejas y antepechos 2 manos",
+    "descripcion": null
+  },
+  "PINT ESMALTE VENTANAS 2 M": {
+    "nombre": "Pintura esmalte en ventanas 2 manos",
+    "descripcion": null
+  },
+  "PINT VINILO EXT BROCHA 2 MANOS": {
+    "nombre": "Vinilo exterior a brocha 2 manos",
+    "descripcion": null
+  },
+  "PINT VINILO EXT RODILLO 2 MANOS": {
+    "nombre": "Vinilo exterior a rodillo 2 manos",
+    "descripcion": null
+  },
+  "SUMINISTRO Y APLICACION PINTURA ALTA ASEPSIA ACRIL URETANO COMPUESTO POR RESANE ESTUCO Y PINTURA DE ACABADO INCLUYE PREPARACION DE SUPERFICIES CORRECCION DE FISURAS JUNTAS E IMPERFECCIONES APLICACION DE ESTUCO PANEL INPADOC MASILLA READY MASS INCLUYE MATERIALES HERRAMIENTAS EQUIPOS MANO DE OBRA Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA EJECUCION.": {
+    "nombre": "Pintura alta asepsia acril-uretano con estuco",
+    "descripcion": "Resane, estuco y pintura de acabado alta asepsia acril-uretano; incluye preparación de superficies, corrección de fisuras, juntas e imperfecciones, estuco panel Impadoc y masilla Ready Mass, materiales, herramientas, equipos y mano de obra"
+  },
+  "SUMINISTRO Y APLICACION PINTURA ULTRA ASEPSIA ACRIL URETANO COMPUESTO POR RESANE ESTUCO Y PINTURA DE ACABADO INCLUYE PREPARACION DE SUPERFICIES CORRECCION DE FISURAS JUNTAS E IMPERFECCIONES APLICACION DE ESTUCO PANEL INPADOC MASILLA READY MASS INCLUYE MATERIALES HERRAMIENTAS EQUIPOS MANO DE OBRA Y DEMAS ELEMENTOS NECESARIOS PARA SU CORRECTA EJECUCION.": {
+    "nombre": "Pintura ultra asepsia acril-uretano con estuco",
+    "descripcion": "Resane, estuco y pintura de acabado ultra asepsia acril-uretano; incluye preparación de superficies, corrección de fisuras, juntas e imperfecciones, estuco panel Impadoc y masilla Ready Mass, materiales, herramientas, equipos y mano de obra"
+  },
+  "PINTURA VINILO ACRILICO TIPO 1 LAVABLE A TRES 3 MANOS EN MUROS INTERIORES ESTUCADOS": {
+    "nombre": "Vinilo acrílico tipo 1 lavable 3 manos en muros",
+    "descripcion": "Pintura vinilo acrílico tipo 1 lavable a tres (3) manos en muros interiores estucados"
+  },
+  "PISO VINILO": {
+    "nombre": "Pintura en vinilo para piso",
+    "descripcion": null
+  },
+  "SUMINISTRO Y APLICACION DE RESANE ESTUCO IMPADOC Y PINTURA LUNA DE SEDA INCLUYE PREPARACION DE SUPERFICIES CORRECCION DE IMPERFECCIONES MASILLA READY MASS LIJADO MATERIALES HERRAMIENTAS EQUIPOS Y MANO DE OBRA NECESARIOS PARA SU CORRECTA EJECUCION.": {
+    "nombre": "Resane, estuco Impadoc y pintura Luna de Seda",
+    "descripcion": "Incluye preparación de superficies, corrección de imperfecciones, masilla Ready Mass, lijado, materiales, herramientas, equipos y mano de obra"
+  },
+  "SUMINISTRO Y APLICACION DE RESANE ESTUCO Y PINTURA VINILTEX ADVANCE COLOR BLANCO INCLUYE PREPARACION DE SUPERFICIES CORRECCION DE IMPERFECCIONES MASILLADO LIJADO IMPRIMACION MATERIALES HERRAMIENTAS EQUIPOS Y MANO DE OBRA NECESARIOS PARA SU CORRECTA EJECUCION.": {
+    "nombre": "Resane, estuco y pintura Viniltex Advance blanco",
+    "descripcion": "Incluye preparación de superficies, corrección de imperfecciones, masillado, lijado, imprimación, materiales, herramientas, equipos y mano de obra"
+  },
+  "SIKAESTUCO": {
+    "nombre": "Sikaestuco",
+    "descripcion": null
+  },
+  "TABLON GRESS ALFA GRESS 20 X 10 CM": {
+    "nombre": "Tablón de gres Alfa 20x10 cm",
+    "descripcion": null
+  },
+  "TABLON GRESS ALFA GRESS 25 X 25 CM": {
+    "nombre": "Tablón de gres Alfa 25x25 cm",
+    "descripcion": null
+  },
+  "VINILO S/REPELLO 2 MANOS": {
+    "nombre": "Vinilo sobre repello 2 manos",
+    "descripcion": null
+  },
+  "VINILO S/RUSTICO 2 MANOS": {
+    "nombre": "Vinilo sobre pañete rústico 2 manos",
+    "descripcion": null
+  },
+  "BARNIZ S/ MUEBLES MADERA": {
+    "nombre": "Barniz sobre muebles de madera",
+    "descripcion": null
+  },
+  "CABLEADO EN ALUMINIO CAL 6": {
+    "nombre": "Cableado en aluminio No. 6 AWG",
+    "descripcion": null
+  },
+  "CLOSETS DE HABITACIONES Y WALK IN CLOSET PRINCIPAL EN MELAMINA RH 18 MM INCLUYE CAJONERAS ENTREPANOS MALETEROS Y HERRAJES": {
+    "nombre": "Closets y walk-in closet en melamina RH 18 mm",
+    "descripcion": "Closets de habitaciones y walk-in closet principal en melamina RH 18 mm; incluye cajoneras, entrepaños, maleteros y herrajes"
+  },
+  "PTA ENTAMBO 0.70X2.10 MT": {
+    "nombre": "Puerta entamborada 0,70x2,10 m",
+    "descripcion": null
+  },
+  "PTA ENTAMBO 0.80X2.10 MT": {
+    "nombre": "Puerta entamborada 0,80x2,10 m",
+    "descripcion": null
+  },
+  "PTA LAMINA CAL 1.20X2.10 2 HOJ": {
+    "nombre": "Puerta en lámina 1,20x2,10 m dos hojas",
+    "descripcion": null
+  },
+  "PTA LAMINA CAL 18 0.90 X 2.10 MT": {
+    "nombre": "Puerta en lámina cal. 18 de 0,90x2,10 m",
+    "descripcion": null
+  },
+  "PTA LAMINA CAL18 1.00 X 2.10 MT": {
+    "nombre": "Puerta en lámina cal. 18 de 1,00x2,10 m",
+    "descripcion": null
+  },
+  "PUERTA 0 9 2 10 EN ALUMINIO CHAPA DE EMERGENCIA INCLUYE MARCO HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta en aluminio 0,90x2,10 m con chapa antipánico",
+    "descripcion": "Puerta de 0,90x2,10 m en aluminio con chapa de emergencia; incluye marco, herrajes y accesorios para su correcta instalación"
+  },
+  "PUERTA 0 9 2 10 PLOMADA EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA DE TRAFICO PESADO INCLUYE MARCO SELLADO EN SILICONA SIKAFLEX 221 HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta plomada melamínica RH 0,90x2,10 m",
+    "descripcion": "Puerta plomada de 0,90x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa de tráfico pesado; incluye marco, sellado con Sikaflex-221, herrajes y accesorios"
+  },
+  "PUERTA 1 20 2 10 DOBLE HOJA EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA DE TRAFICO PESADO JAMBAS 12 CM INCLUYE MARCO HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta melamínica RH doble hoja 1,20x2,10 m",
+    "descripcion": "Puerta doble hoja de 1,20x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa de tráfico pesado y jambas de 12 cm; incluye marco, herrajes y accesorios"
+  },
+  "PUERTA 1 20 2 10 EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA DE TRAFICO PESADO JAMBAS 12 CM INCLUYE MARCO HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta melamínica RH 1,20x2,10 m",
+    "descripcion": "Puerta de 1,20x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa de tráfico pesado y jambas de 12 cm; incluye marco, herrajes y accesorios"
+  },
+  "PUERTA 1 60 2 10 DOBLE HOJA EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA DE TRAFICO PESADO JAMBAS 12 CM INCLUYE MARCO HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta melamínica RH doble hoja 1,60x2,10 m",
+    "descripcion": "Puerta doble hoja de 1,60x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa de tráfico pesado y jambas de 12 cm; incluye marco, herrajes y accesorios"
+  },
+  "PUERTA 100 2 10 CORREDIZA EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA DE TRAFICO PESADO INCLUYE MARCO HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta corrediza melamínica RH 1,00x2,10 m",
+    "descripcion": "Puerta corrediza de 1,00x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa de tráfico pesado; incluye marco, herrajes y accesorios"
+  },
+  "PUERTA 100 2 10 EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA DE TRAFICO PESADO INCLUYE MARCO JAMBAS 12 CM HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta melamínica RH 1,00x2,10 m",
+    "descripcion": "Puerta de 1,00x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa de tráfico pesado; incluye marco, jambas de 12 cm, herrajes y accesorios"
+  },
+  "PUERTA 100 2 10 PLOMADA VAIVEN EN TABLERO MELAMINICO RH 6MM COLOR BLANCO VIDRIO EN PLOMO DE 0 20 X 0 40 A UNA ALTURA DE 1 40 M. CON CHAPA DE TRAFICO PESADO INCLUYE MARCO SELLADO EN SILICONA SIKAFLEX 221 HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta plomada vaivén melamínica 1,00x2,10 m",
+    "descripcion": "Puerta plomada vaivén de 1,00x2,10 m en tablero melamínico RH 6 mm blanco, con mirilla en vidrio plomado de 0,20x0,40 m a 1,40 m de altura y chapa de tráfico pesado; incluye marco, sellado con Sikaflex-221, herrajes y accesorios"
+  },
+  "PUERTA 2 00 2 10 DOBLE HOJA EN VIDRIO TEMPLADO CON CHAPA DE TRAFICO PESADO INCLUYE MARCO HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta en vidrio templado doble hoja 2,00x2,10 m",
+    "descripcion": "Puerta doble hoja de 2,00x2,10 m en vidrio templado con chapa de tráfico pesado; incluye marco, herrajes y accesorios"
+  },
+  "PUERTA 2 50 2 10 DOBLE HOJA EN VIDRIO TEMPLADO CON CHAPA DE TRAFICO PESADO INCLUYE MARCO HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta en vidrio templado doble hoja 2,50x2,10 m",
+    "descripcion": "Puerta doble hoja de 2,50x2,10 m en vidrio templado con chapa de tráfico pesado; incluye marco, herrajes y accesorios"
+  },
+  "PUERTA 200 2 10 DOBLE HOJA CORREDIZA EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA DE TRAFICO PESADO INCLUYE MARCO JAMBAS 12 CM HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta corrediza melamínica doble hoja 2,00x2,10 m",
+    "descripcion": "Puerta corrediza doble hoja de 2,00x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa de tráfico pesado; incluye marco, jambas de 12 cm, herrajes y accesorios"
+  },
+  "PUERTA 200 2 10 DOBLE HOJA EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA DE TRAFICO PESADO INCLUYE MARCO JAMBAS 12 CM HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta melamínica RH doble hoja 2,00x2,10 m",
+    "descripcion": "Puerta doble hoja de 2,00x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa de tráfico pesado; incluye marco, jambas de 12 cm, herrajes y accesorios"
+  },
+  "PUERTA 200 2 10 PLOMADA DOBLE HOJA VAIVEN EN TABLERO MELAMINICO RH 6MM COLOR BLANCO VIDRIO EN PLOMO DE 0 20 X 0 40 A UNA ALTURA DE 1 40 M. CON CHAPA DE TRAFICO PESADO INCLUYE MARCO SELLADO EN SILICONA SIKAFLEX 221 HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta plomada vaivén doble hoja 2,00x2,10 m",
+    "descripcion": "Puerta plomada vaivén doble hoja de 2,00x2,10 m en tablero melamínico RH 6 mm blanco, con mirilla en vidrio plomado de 0,20x0,40 m a 1,40 m de altura y chapa de tráfico pesado; incluye marco, sellado con Sikaflex-221, herrajes y accesorios"
+  },
+  "PUERTA 70 2 10 EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA KL TRAFICO PESADO DE PALANCA INCLUYE MARCO JAMBAS 12 CM HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta melamínica RH 0,70x2,10 m",
+    "descripcion": "Puerta de 0,70x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa KL de palanca tráfico pesado; incluye marco, jambas de 12 cm, herrajes y accesorios"
+  },
+  "PUERTA 80 2 10 EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA KL TRAFICO PESADO DE PALANCA INCLUYE MARCO JAMBAS 12 CM HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta melamínica RH 0,80x2,10 m",
+    "descripcion": "Puerta de 0,80x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa KL de palanca tráfico pesado; incluye marco, jambas de 12 cm, herrajes y accesorios"
+  },
+  "PUERTA 90 2 10 EN TABLERO MELAMINICO RH 6MM COLOR BLANCO CON CHAPA KL TRAFICO PESADO DE PALANCA INCLUYE MARCO JAMBAS 12 CM HERRAJES Y ACCESORIOS PARA SU CORRECTA INSTALACION.": {
+    "nombre": "Puerta melamínica RH 0,90x2,10 m",
+    "descripcion": "Puerta de 0,90x2,10 m en tablero melamínico RH 6 mm color blanco, con chapa KL de palanca tráfico pesado; incluye marco, jambas de 12 cm, herrajes y accesorios"
+  },
+  "PUERTA PRINCIPAL DE ACCESO EN MADERA MACIZA / DISENO ARQUITECTONICO ESPECIAL CON MARCO Y CERRADURA DE SEGURIDAD MULTIPUNTO": {
+    "nombre": "Puerta principal en madera maciza",
+    "descripcion": "Puerta principal de acceso en madera maciza, diseño arquitectónico especial, con marco y cerradura de seguridad multipunto"
+  },
+  "PUERTAS INTERIORES ENTAMBORADAS EN TABLERO MELAMINICO RH / MADERA 0.80 0.90 X 2.10 M CON MARCO JAMBAS Y CERRADURA DE PALANCA": {
+    "nombre": "Puerta interior entamborada 0,80-0,90x2,10 m",
+    "descripcion": "Puertas interiores entamboradas en tablero melamínico RH o madera (0,80-0,90x2,10 m) con marco, jambas y cerradura de palanca"
+  },
+  "TABLERO GENERAL DE DISTRIBUCION BIFASICO TN RED NORMAL DE 24 CIRCUITOS CON BARRAJE 150A PUERTA CHAPA Y BREAKERS TERMOMAGNETICOS 14 DE 1X20A 2 DE 2X20A SEGUN DIAGRAMA UNIFILAR": {
+    "nombre": "Tablero general bifásico TN 24 circuitos 150 A",
+    "descripcion": "Tablero general de distribución bifásico (TN - red normal) de 24 circuitos con barraje 150 A, puerta, chapa y breakers termomagnéticos (14 de 1x20 A y 2 de 2x20 A según diagrama unifilar)"
+  },
+  "TINTILLA S/ MUEBLES": {
+    "nombre": "Tintilla sobre muebles",
+    "descripcion": null
+  },
+  "VENTANA LAM CAL 22 CON ANTEP": {
+    "nombre": "Ventana en lámina cal. 22 con antepecho",
+    "descripcion": null
+  },
+  "VENTANA LAM CAL 22 SIN ANTEP": {
+    "nombre": "Ventana en lámina cal. 22 sin antepecho",
+    "descripcion": null
+  },
+  "VENTANERIA EN ALUMINIO ARQUITECTONICO NEGRO SERIE EURO Y VIDRIO LAMINADO DE SEGURIDAD 6 MM INCLUYE EMPAQUES HERRAJES Y SELLADO SIKAFLEX": {
+    "nombre": "Ventanería aluminio negro serie Euro vidrio laminado",
+    "descripcion": "Ventanería en aluminio arquitectónico negro serie Euro con vidrio laminado de seguridad 6 mm; incluye empaques, herrajes y sellado con Sikaflex"
+  },
+  "VIDRIO EN PLOMO MARCO EN ALUMINIO COLOR BLANCO 2 90 1 80 M": {
+    "nombre": "Vidrio plomado con marco de aluminio 2,90x1,80 m",
+    "descripcion": "Vidrio plomado con marco en aluminio color blanco de 2,90x1,80 m"
+  },
+  "VIDRIOS 3 MM": {
+    "nombre": "Vidrio de 3 mm",
+    "descripcion": null
+  },
+  "VIDRIOS 4 MM": {
+    "nombre": "Vidrio de 4 mm",
+    "descripcion": null
+  },
+  "VIDRIOS 5 MM": {
+    "nombre": "Vidrio de 5 mm",
+    "descripcion": null
+  },
+  "WING ALUMINIO": {
+    "nombre": "Wing de aluminio",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE CONJUNTO DE DUCHA MONOCONTROL MEZCLADORA AGUA FRIA Y CALIENTE CON REGADERA TIPO LLUVIA Y TELEDUCHA 4 BANOS SEGUN PLANO HID PL1": {
+    "nombre": "Ducha monocontrol con regadera lluvia y teleducha",
+    "descripcion": "Conjunto de ducha monocontrol mezcladora (agua fría y caliente) con regadera tipo lluvia y teleducha (4 baños según plano HID PL1)"
+  },
+  "DIVISIONES DE BANO PARA DUCHA EN VIDRIO TEMPLADO DE SEGURIDAD 8 MM CON HERRAJES Y ACCESORIOS EN ACERO INOXIDABLE AISI 304": {
+    "nombre": "División de ducha en vidrio templado 8 mm",
+    "descripcion": "Divisiones de baño para ducha en vidrio templado de seguridad 8 mm con herrajes y accesorios en acero inoxidable AISI 304"
+  },
+  "INCRUSTACIONES ACUACER": {
+    "nombre": "Incrustaciones de baño Acuacer",
+    "descripcion": null
+  },
+  "INCRUSTACIONES NOVA": {
+    "nombre": "Incrustaciones de baño Nova",
+    "descripcion": null
+  },
+  "INCRUSTACIONES STILO": {
+    "nombre": "Incrustaciones de baño Stilo",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION DE JUEGO DE ACCESORIOS PARA BANO EN ACERO INOXIDABLE TOALLERO PORTARROLLOS PERCHA Y JABONERA": {
+    "nombre": "Juego de accesorios de baño en acero inoxidable",
+    "descripcion": "Juego de accesorios para baño en acero inoxidable (toallero, portarrollos, percha y jabonera)"
+  },
+  "SUMINISTRO E INSTALACION DE LAVAMANOS DE SOBREPONER EN PORCELANA CON GRIFERIA MONOCONTROL ALTA MEZCLADORA AF/AC DESAGUE PUSH Y SIFON 5 BANOS SEGUN PLANO HID PL1": {
+    "nombre": "Lavamanos de sobreponer con grifería monocontrol",
+    "descripcion": "Lavamanos de sobreponer en porcelana con grifería monocontrol alta mezcladora (AF/AC), desagüe push y sifón (5 baños según plano HID PL1)"
+  },
+  "SUMINISTRO E INSTALACION DE LAVAPLATOS DOBLE POCETA EN ACERO INOXIDABLE AISI 304 CON GRIFERIA MONOCONTROL MEZCLADORA CUELLO EXTRAIBLE Y SIFON DOBLE": {
+    "nombre": "Lavaplatos doble poceta en acero inoxidable 304",
+    "descripcion": "Lavaplatos doble poceta en acero inoxidable AISI 304 con grifería monocontrol mezcladora de cuello extraíble y sifón doble"
+  },
+  "MUEBLES FLOTANTES DE BANO EN MELAMINA RH 18 MM CON MESON PARA LAVAMANOS DE SOBREPONER 5 BANOS SEGUN PLANOS": {
+    "nombre": "Mueble flotante de baño en melamina RH 18 mm",
+    "descripcion": "Muebles flotantes de baño en melamina RH 18 mm con mesón para lavamanos de sobreponer (5 baños según planos)"
+  },
+  "PUNTOS HIDRAULICOS DE AGUA CALIENTE EN TUBERIA Y ACCESORIOS CPVC 1/2 4 DUCHAS 5 LAVAMANOS Y 1 LAVAPLATOS SEGUN PLANO HID PL1": {
+    "nombre": "Punto hidráulico agua caliente CPVC 1/2\"",
+    "descripcion": "Puntos hidráulicos de agua caliente en tubería y accesorios CPVC Ø1/2\" (4 duchas, 5 lavamanos y 1 lavaplatos según plano HID PL1)"
+  },
+  "PUNTOS HIDRAULICOS DE AGUA FRIA EN PVC P 1/2 5 SANITARIOS 5 LAVAMANOS 4 DUCHAS 1 LAVAPLATOS 1 LAVADORA 2 GRIFOS SEGUN PLANO HID PL1": {
+    "nombre": "Punto hidráulico agua fría PVC 1/2\"",
+    "descripcion": "Puntos hidráulicos de agua fría en PVC-P Ø1/2\" (5 sanitarios, 5 lavamanos, 4 duchas, 1 lavaplatos, 1 lavadora y 2 grifos según plano HID PL1)"
+  },
+  "PUNTOS SANITARIOS DE DESAGUE EN PVC SANITARIA 4 PARA SANITARIOS WC 5 SANITARIOS SEGUN PLANO SANPLUV P1": {
+    "nombre": "Punto sanitario PVC 4\" para sanitario",
+    "descripcion": "Puntos sanitarios de desagüe en PVC sanitaria Ø4\" para sanitarios WC (5 sanitarios según plano SANPLUV P1)"
+  },
+  "SUMINISTRO E INSTALACION DE SANITARIO ECOLOGICO ONE PIECE DE DOBLE DESCARGA 4.8 L CON ASIENTO CIERRE LENTO BRIDA Y ACOPLE 5 BANOS SEGUN PLANO HID PL1": {
+    "nombre": "Sanitario ecológico one piece doble descarga 4,8 L",
+    "descripcion": "Sanitario ecológico one piece de doble descarga (4,8 L) con asiento de cierre lento, brida y acople (5 baños según plano HID PL1)"
+  },
+  "TUBO CORTINA DUCHA": {
+    "nombre": "Tubo para cortina de ducha",
+    "descripcion": null
+  },
+  "VIDRIO ESPEJO 4MM MARCO EN ALUMINIO COLOR BLANCO 2 00 X1 40 M": {
+    "nombre": "Espejo 4 mm con marco de aluminio 2,00x1,40 m",
+    "descripcion": "Vidrio espejo de 4 mm con marco en aluminio color blanco de 2,00x1,40 m"
+  },
+  "CERRAMIENTO DE OBRA EN POLISOMBRA BLANCA CON ESTRUCTURA EN GUADUA INCLUYE SUMINISTRO E INSTALACION DE POLISOMBRA BLANCA ESTRUCTURA DE SOPORTE EN GUADUA AMARRES FIJACIONES": {
+    "nombre": "Cerramiento de obra en polisombra blanca y guadua",
+    "descripcion": "Cerramiento de obra en polisombra blanca con estructura de soporte en guadua; incluye amarres y fijaciones"
+  },
+  "CERRAMIENTO PROVISIONAL DE OBRA EN POLISOMBRA H 2.00 M CON ESTRUCTURA EN GUADUA Y LISTON": {
+    "nombre": "Cerramiento provisional en polisombra h=2,00 m",
+    "descripcion": "Cerramiento provisional de obra en polisombra h=2,00 m con estructura en guadua y listón"
+  },
+  "CIELO RASO EN ESTERILLA": {
+    "nombre": "Cielo raso en esterilla",
+    "descripcion": null
+  },
+  "CIELO RASO EN ESTERILLA Y MORTERO": {
+    "nombre": "Cielo raso en esterilla y mortero",
+    "descripcion": null
+  },
+  "COLUMNA EN GUADUA D 10 CM INCLUYE ANCLAJE L TIPO 3 40 MT": {
+    "nombre": "Columna en guadua Ø10 cm con anclaje",
+    "descripcion": "Columna en guadua Ø10 cm; incluye anclaje (longitud tipo 3,40 m)"
+  },
+  "COLUMNA EN GUADUA D 12 CM INCLUYE ANCLAJE L TIPO 3 40 MT": {
+    "nombre": "Columna en guadua Ø12 cm con anclaje",
+    "descripcion": "Columna en guadua Ø12 cm; incluye anclaje (longitud tipo 3,40 m)"
+  },
+  "COLUMNA EN GUADUA D 14 CMINCLUYE ANCLAJE L TIPO 3 40 MT": {
+    "nombre": "Columna en guadua Ø14 cm con anclaje",
+    "descripcion": "Columna en guadua Ø14 cm; incluye anclaje (longitud tipo 3,40 m)"
+  },
+  "COLUMNA EN GUADUA D 16 CM INCLUYE ANCLAJE L TIPO 3 40 MT": {
+    "nombre": "Columna en guadua Ø16 cm con anclaje",
+    "descripcion": "Columna en guadua Ø16 cm; incluye anclaje (longitud tipo 3,40 m)"
+  },
+  "COLUMNA EN GUADUA D 18 CM INCLUYE ANCLAJE L TIPO 3 40 MT": {
+    "nombre": "Columna en guadua Ø18 cm con anclaje",
+    "descripcion": "Columna en guadua Ø18 cm; incluye anclaje (longitud tipo 3,40 m)"
+  },
+  "COLUMNA EN ROLLIZA D 10 CM SIN ANCLAJE L TIPO 3 40 MT": {
+    "nombre": "Columna en rolliza Ø10 cm sin anclaje",
+    "descripcion": "Columna en madera rolliza Ø10 cm sin anclaje (longitud tipo 3,40 m)"
+  },
+  "COLUMNA EN ROLLIZA D 12 CM SIN ANCLAJE": {
+    "nombre": "Columna en rolliza Ø12 cm sin anclaje",
+    "descripcion": null
+  },
+  "COLUMNA EN ROLLIZA D 14 CM SIN ANCLAJE L TIPO 3 40 MT": {
+    "nombre": "Columna en rolliza Ø14 cm sin anclaje",
+    "descripcion": "Columna en madera rolliza Ø14 cm sin anclaje (longitud tipo 3,40 m)"
+  },
+  "COLUMNA EN ROLLIZA D 16 CM SIN ANCLAJE COLUMNA EN ROLLIZA D 16 CM": {
+    "nombre": "Columna en rolliza Ø16 cm sin anclaje",
+    "descripcion": null
+  },
+  "COLUMNA EN ROLLIZA D 18 CM SIN ANCLAJE L TIPO 3 40 MT": {
+    "nombre": "Columna en rolliza Ø18 cm sin anclaje",
+    "descripcion": "Columna en madera rolliza Ø18 cm sin anclaje (longitud tipo 3,40 m)"
+  },
+  "COLUMNA EN ROLLIZA D 20 CM SIN ANCLAJE L TIPO 3 40 MT": {
+    "nombre": "Columna en rolliza Ø20 cm sin anclaje",
+    "descripcion": "Columna en madera rolliza Ø20 cm sin anclaje (longitud tipo 3,40 m)"
+  },
+  "CORREA EN GUADUA D 10 CM INCLUYE HERRAJES L TIPO 2 00 MT": {
+    "nombre": "Correa en guadua Ø10 cm con herrajes",
+    "descripcion": "Correa en guadua Ø10 cm; incluye herrajes (longitud tipo 2,00 m)"
+  },
+  "CORREA EN GUADUA D 12 CM INCLUYE HERRAJES L TIPO 2 00 MT": {
+    "nombre": "Correa en guadua Ø12 cm con herrajes",
+    "descripcion": "Correa en guadua Ø12 cm; incluye herrajes (longitud tipo 2,00 m)"
+  },
+  "CORREA EN GUADUA D 14 CM INCLUYE HERRAJES L TIPO 2 00 MT": {
+    "nombre": "Correa en guadua Ø14 cm con herrajes",
+    "descripcion": "Correa en guadua Ø14 cm; incluye herrajes (longitud tipo 2,00 m)"
+  },
+  "DIAGONAL EN GUADUA D 10 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Diagonal en guadua Ø10 cm con herrajes",
+    "descripcion": "Diagonal en guadua Ø10 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "DIAGONAL EN GUADUA D 12 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Diagonal en guadua Ø12 cm con herrajes",
+    "descripcion": "Diagonal en guadua Ø12 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "DIAGONAL EN GUADUA D 14 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Diagonal en guadua Ø14 cm con herrajes",
+    "descripcion": "Diagonal en guadua Ø14 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "DIAGONAL EN GUADUA D 16 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Diagonal en guadua Ø16 cm con herrajes",
+    "descripcion": "Diagonal en guadua Ø16 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "DIAGONAL EN GUADUA D 18 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Diagonal en guadua Ø18 cm con herrajes",
+    "descripcion": "Diagonal en guadua Ø18 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "ESTR MADERA 5X11 CM": {
+    "nombre": "Estructura en madera 5x11 cm",
+    "descripcion": null
+  },
+  "ESTR MADERA 7X15 CM": {
+    "nombre": "Estructura en madera 7x15 cm",
+    "descripcion": null
+  },
+  "LACA DE POLIURETANO DE 2 COMPONENTES S/ GUADUA D 10 CM": {
+    "nombre": "Laca de poliuretano bicomponente en guadua Ø10 cm",
+    "descripcion": null
+  },
+  "LACA DE POLIURETANO DE 2 COMPONENTES S/ GUADUA D 12 CM": {
+    "nombre": "Laca de poliuretano bicomponente en guadua Ø12 cm",
+    "descripcion": null
+  },
+  "LACA DE POLIURETANO DE 2 COMPONENTES S/ GUADUA D 14 CM": {
+    "nombre": "Laca de poliuretano bicomponente en guadua Ø14 cm",
+    "descripcion": null
+  },
+  "LACA DE POLIURETANO DE 2 COMPONENTES S/ GUADUA D 16 CM": {
+    "nombre": "Laca de poliuretano bicomponente en guadua Ø16 cm",
+    "descripcion": null
+  },
+  "LACA DE POLIURETANO DE 2 COMPONENTES S/ GUADUA D 18 CM": {
+    "nombre": "Laca de poliuretano bicomponente en guadua Ø18 cm",
+    "descripcion": null
+  },
+  "LINAZA/TREMENTINA GUADUA D 10 CM": {
+    "nombre": "Linaza y trementina en guadua Ø10 cm",
+    "descripcion": null
+  },
+  "LINAZA/TREMENTINA GUADUA D 12 CM": {
+    "nombre": "Linaza y trementina en guadua Ø12 cm",
+    "descripcion": null
+  },
+  "LINAZA/TREMENTINA GUADUA D 14 CM": {
+    "nombre": "Linaza y trementina en guadua Ø14 cm",
+    "descripcion": null
+  },
+  "LINAZA/TREMENTINA GUADUA D 16 CM": {
+    "nombre": "Linaza y trementina en guadua Ø16 cm",
+    "descripcion": null
+  },
+  "LINAZA/TREMENTINA GUADUA D 18 CM": {
+    "nombre": "Linaza y trementina en guadua Ø18 cm",
+    "descripcion": null
+  },
+  "MURO TENDINOSO EN ESTERILLA TIPO 2X3 MT": {
+    "nombre": "Muro tendinoso en esterilla tipo 2x3 m",
+    "descripcion": null
+  },
+  "MURO TENDINOSO EN ESTERILLA TIPO 3X3 MT": {
+    "nombre": "Muro tendinoso en esterilla tipo 3x3 m",
+    "descripcion": null
+  },
+  "MURO TENDINOSO EN ESTERILLA TIPO 4X3 MT": {
+    "nombre": "Muro tendinoso en esterilla tipo 4x3 m",
+    "descripcion": null
+  },
+  "MURO TENDINOSO MALLA C/ VENA TIPO 2X3 MT": {
+    "nombre": "Muro tendinoso en malla con vena tipo 2x3 m",
+    "descripcion": null
+  },
+  "MURO TENDINOSO MALLA C/ VENA TIPO 3X3 MT": {
+    "nombre": "Muro tendinoso en malla con vena tipo 3x3 m",
+    "descripcion": null
+  },
+  "MURO TENDINOSO MALLA C/ VENA TIPO 4X3 MT": {
+    "nombre": "Muro tendinoso en malla con vena tipo 4x3 m",
+    "descripcion": null
+  },
+  "PISO EN BALDOSA DE GUADUA 40X40": {
+    "nombre": "Piso en baldosa de guadua 40x40",
+    "descripcion": null
+  },
+  "PISO EN LATILLA DE GUADUA": {
+    "nombre": "Piso en latilla de guadua",
+    "descripcion": null
+  },
+  "PRESERVADO POR INYECCION": {
+    "nombre": "Preservado de guadua por inyección",
+    "descripcion": null
+  },
+  "TABLERO EN BALDOSA DE GUADUA 40X40": {
+    "nombre": "Tablero en baldosa de guadua 40x40",
+    "descripcion": null
+  },
+  "TABLERO EN LATILLA DE GUADUA": {
+    "nombre": "Tablero en latilla de guadua",
+    "descripcion": null
+  },
+  "TINTILLA SOBRE GUADUA D 10 CM": {
+    "nombre": "Tintilla sobre guadua Ø10 cm",
+    "descripcion": null
+  },
+  "TINTILLA SOBRE GUADUA D 12 CM": {
+    "nombre": "Tintilla sobre guadua Ø12 cm",
+    "descripcion": null
+  },
+  "TINTILLA SOBRE GUADUA D 14 CM": {
+    "nombre": "Tintilla sobre guadua Ø14 cm",
+    "descripcion": null
+  },
+  "TINTILLA SOBRE GUADUA D 16 CM": {
+    "nombre": "Tintilla sobre guadua Ø16 cm",
+    "descripcion": null
+  },
+  "TINTILLA SOBRE GUADUA D 18 CM": {
+    "nombre": "Tintilla sobre guadua Ø18 cm",
+    "descripcion": null
+  },
+  "VIGA EN GUADUA D 10 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Viga en guadua Ø10 cm con herrajes",
+    "descripcion": "Viga en guadua Ø10 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "VIGA EN GUADUA D 12 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Viga en guadua Ø12 cm con herrajes",
+    "descripcion": "Viga en guadua Ø12 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "VIGA EN GUADUA D 14 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Viga en guadua Ø14 cm con herrajes",
+    "descripcion": "Viga en guadua Ø14 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "VIGA EN GUADUA D 16 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Viga en guadua Ø16 cm con herrajes",
+    "descripcion": "Viga en guadua Ø16 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "VIGA EN GUADUA D 18 CM INCLUYE HERRAJES L TIPO 3 00 MT": {
+    "nombre": "Viga en guadua Ø18 cm con herrajes",
+    "descripcion": "Viga en guadua Ø18 cm; incluye herrajes (longitud tipo 3,00 m)"
+  },
+  "AC 5/8 TRANSFER": {
+    "nombre": "Acero de transferencia 5/8\" (pasadores)",
+    "descripcion": null
+  },
+  "ANDEN 60 CM E 10 CM": {
+    "nombre": "Andén en concreto a=60 cm, e=10 cm",
+    "descripcion": null
+  },
+  "ANDEN 90 CM E 10 CM": {
+    "nombre": "Andén en concreto a=90 cm, e=10 cm",
+    "descripcion": null
+  },
+  "BASE GRANULAR": {
+    "nombre": "Base granular",
+    "descripcion": null
+  },
+  "CORTES VIAS": {
+    "nombre": "Cortes para vías",
+    "descripcion": null
+  },
+  "EMPRADIZ DIREC": {
+    "nombre": "Empradización directa",
+    "descripcion": null
+  },
+  "RETIRO SOBRA A MANO": {
+    "nombre": "Retiro manual de material sobrante",
+    "descripcion": null
+  },
+  "SARDINEL VEHIC 12 18 X 50 CM": {
+    "nombre": "Sardinel vehicular 12-18x50 cm",
+    "descripcion": null
+  },
+  "SEPARADOR": {
+    "nombre": "Separador vial",
+    "descripcion": null
+  },
+  "TERRACEO": {
+    "nombre": "Terraceo",
+    "descripcion": null
+  },
+  "ZONA VERDE MAS DE 1000 M2": {
+    "nombre": "Zona verde (más de 1.000 m²)",
+    "descripcion": null
+  },
+  "ANDEN / PLAYA PERIMETRAL DE PISCINA EN PISO PORCELANICO ATERMICO Y ANTIDESLIZANTE ANCHO 0.60 M": {
+    "nombre": "Playa de piscina en porcelanato atérmico a=0,60 m",
+    "descripcion": "Andén o playa perimetral de piscina en piso porcelánico atérmico y antideslizante, ancho 0,60 m"
+  },
+  "CONCRETO HIDRAULICO FC 21 MPA 3000 PSI IMPERMEABILIZADO INTEGRALMENTE CON SIKA 1 Y CINTA PVC WATERSTOP V 15 PARA LOSA DE FONDO Y MUROS DE PISCINA E 15 CM": {
+    "nombre": "Concreto impermeabilizado 3000 psi vaso de piscina",
+    "descripcion": "Concreto hidráulico f'c=21 MPa (3000 psi) impermeabilizado integralmente con Sika-1 y cinta PVC Waterstop V-15 para losa de fondo y muros de piscina e=15 cm"
+  },
+  "CONSTRUCCION DE CUARTO TECNICO SUBTERRANEO DE BOMBAS Y FILTRADO PARA PISCINA LOSA MUROS IMPERMEABILIZADOS VENTILACION Y TAPA METALICA": {
+    "nombre": "Cuarto técnico subterráneo de bombas de piscina",
+    "descripcion": "Cuarto técnico subterráneo de bombas y filtrado para piscina (losa, muros impermeabilizados, ventilación y tapa metálica)"
+  },
+  "SUMINISTRO E INSTALACION DE ELECTROBOMBA AUTOCEBANTE DE 1.5 HP CON TRAMPA DE CABELLOS PARA RECIRCULACION DE PISCINA": {
+    "nombre": "Electrobomba autocebante 1,5 HP para piscina",
+    "descripcion": "Electrobomba autocebante de 1,5 HP con trampa de cabellos para recirculación de piscina"
+  },
+  "EXCAVACION MECANICA Y PERFILADO MANUAL PARA VASO DE PISCINA 32.38 M Y TANQUE SUBTERRANEO DE AGUA POTABLE": {
+    "nombre": "Excavación mecánica para piscina y tanque",
+    "descripcion": "Excavación mecánica y perfilado manual para vaso de piscina (32,38 m²) y tanque subterráneo de agua potable"
+  },
+  "SUMINISTRO E INSTALACION DE FILTRO DE ARENA DE SILICE DE ALTA VELOCIDAD CON VALVULA SELECTORA MULTIVIAS Y CARGA FILTRANTE": {
+    "nombre": "Filtro de arena sílice para piscina",
+    "descripcion": "Filtro de arena de sílice de alta velocidad con válvula selectora multivías y carga filtrante"
+  },
+  "SUMINISTRO E INSTALACION DE KIT DE ACCESORIOS HIDRAULICOS EMPOTRADOS EN PISCINA 1 DESNATADOR SKIMMER 3 BOQUILLAS DE RETORNO 1 REJILLA DE FONDO ANTIVORTICE 1 TOMA LIMPIAFONDOS Y TUBERIA PVC P": {
+    "nombre": "Kit de accesorios hidráulicos empotrados de piscina",
+    "descripcion": "Kit de accesorios hidráulicos empotrados en piscina: 1 desnatador skimmer, 3 boquillas de retorno, 1 rejilla de fondo antivórtice, 1 toma limpiafondos y tubería PVC-P"
+  },
+  "SUMINISTRO E INSTALACION DE LAMPARAS LED SUMERGIBLES PARA PISCINA 36W 12V IP68 CON NICHO Y TRANSFORMADOR SEGUN CUADRO DE CARGAS ELECTRICO": {
+    "nombre": "Lámpara LED sumergible piscina 36 W 12 V IP68",
+    "descripcion": "Lámparas LED sumergibles para piscina 36 W 12 V IP68 con nicho y transformador (según cuadro de cargas eléctrico)"
+  },
+  "SUMINISTRO E INSTALACION DE LUMINARIA HERMETICA LED 36W IP65 PARQUEADERO CUBIERTO Y CUARTO DE PISCINA SEGUN CUADRO DE CARGAS": {
+    "nombre": "Luminaria hermética LED 36 W IP65",
+    "descripcion": "Luminaria hermética LED 36 W IP65 para parqueadero cubierto y cuarto de piscina (según cuadro de cargas)"
+  },
+  "PANETE IMPERMEABILIZADO 1 3 CON SIKA 1 MEMBRANA SEMIFLEXIBLE BICOMPONENTE SIKATOP 107 SEAL 3 MANOS EN INTERIOR DEL VASO DE PISCINA": {
+    "nombre": "Pañete impermeabilizado 1:3 y SikaTop 107 en piscina",
+    "descripcion": "Pañete impermeabilizado 1:3 con Sika-1 y membrana semiflexible bicomponente SikaTop 107 Seal (3 manos) en interior del vaso de piscina"
+  },
+  "PUERTAS VENTANAS CORREDIZAS DE GRAN FORMATO EN ALUMINIO MONUMENTAL NEGRO Y VIDRIO TEMPLADO/LAMINADO 8 MM HACIA TERRAZA Y PISCINA": {
+    "nombre": "Puerta-ventana corrediza aluminio negro vidrio 8 mm",
+    "descripcion": "Puertas-ventanas corredizas de gran formato en aluminio monumental negro y vidrio templado/laminado 8 mm hacia terraza y piscina"
+  },
+  "PUNTOS SANITARIOS DE DESAGUE EN PVC SANITARIA 3 CON SIFON Y REJILLA DRENAJE CUARTO DE BOMBAS Y PISCINA SEGUN PLANO SANPLUV P1": {
+    "nombre": "Punto sanitario PVC 3\" con sifón y rejilla",
+    "descripcion": "Puntos sanitarios de desagüe en PVC sanitaria Ø3\" con sifón y rejilla (drenaje de cuarto de bombas y piscina según plano SANPLUV P1)"
+  },
+  "SUMINISTRO E INSTALACION DE REFLECTOR LED 50W IP65 PARA ILUMINACION EXTERIOR DE ZONA DE PISCINA SEGUN CUADRO DE CARGAS": {
+    "nombre": "Reflector LED 50 W IP65 zona de piscina",
+    "descripcion": "Reflector LED 50 W IP65 para iluminación exterior de zona de piscina (según cuadro de cargas)"
+  },
+  "REVESTIMIENTO DE VASO DE PISCINA EN VITROCERAMICA / MOSAICO VENECIANO CON ADHESIVO ESPECIALIZADO DE INMERSION Y BOQUILLA EPOXICA ANTI ALGAS": {
+    "nombre": "Revestimiento de piscina en mosaico veneciano",
+    "descripcion": "Revestimiento de vaso de piscina en vitrocerámica o mosaico veneciano con adhesivo especializado de inmersión y boquilla epóxica antialgas"
+  },
+  "SOLADO DE LIMPIEZA EN CONCRETO FC 17.5 MPA 2500 PSI E 5 CM Y CAPA DE RECEBO COMPACTADO BAJO LOSA DE FONDO DE PISCINA": {
+    "nombre": "Solado 2500 psi e=5 cm y recebo bajo piscina",
+    "descripcion": "Solado de limpieza en concreto f'c=17,5 MPa (2500 psi) e=5 cm y capa de recebo compactado bajo losa de fondo de piscina"
+  },
+  "TUBERIA PVC SANITARIA 3 PARA DESAGUE DE CUARTO DE MAQUINAS Y DRENAJE PISCINA INCLUYE ACCESORIOS Y SOLDADURA PVC SEGUN TABLA PLANO SANPLUV P1": {
+    "nombre": "Tubería PVC sanitaria 3\" drenaje de piscina",
+    "descripcion": "Tubería PVC sanitaria Ø3\" para desagüe de cuarto de máquinas y drenaje de piscina; incluye accesorios y soldadura PVC (según tabla plano SANPLUV P1)"
+  },
+  "ACOPLE A RED PRINCIPAL": {
+    "nombre": "Acople a red principal de gases",
+    "descripcion": null
+  },
+  "SUMINISTRO E INSTALACION ALARMA SONORA Y VISUAL ANALOGA NACIONAL CON PRESOSTATOS CUMPLE NORMA NFPA 99/2024 3 GASES": {
+    "nombre": "Alarma sonora y visual de gases medicinales 3 gases",
+    "descripcion": "Alarma sonora y visual análoga nacional con presostatos para 3 gases, cumple norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE CAJAS DE CORTE EN ALUMINIO CON TAPA ACRILICA VALVULA EN ACERO INOXIDABLE DE TRES CUERPOS Y PUERTO PARA MANOMETRO DE 3 GASES": {
+    "nombre": "Caja de corte en aluminio para 3 gases",
+    "descripcion": "Cajas de corte en aluminio con tapa acrílica, válvula en acero inoxidable de tres cuerpos y puerto para manómetro, para 3 gases"
+  },
+  "SISTEMA DE EVACUACION DE GASES COMPRESOR DE AIRE TUBERIA DE COBRE MANGUERA TOMA DE EVACUACION DE GASES SEGUN NORMA NFPA 99/2024": {
+    "nombre": "Sistema de evacuación de gases anestésicos",
+    "descripcion": "Sistema de evacuación de gases (compresor de aire, tubería de cobre, manguera y toma de evacuación) según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE TOMAS QC AIRE CIELITICA PARA ENTRADA /SALIDA DE GAS DOBLE VALVULA CHEQUE Y CODIFICACION CHEMETRON DE COLOR SEGUN NORMA NFPA 99/2024": {
+    "nombre": "Toma QC de aire medicinal cialítica",
+    "descripcion": "Toma QC de aire cialítica para entrada/salida de gas, doble válvula cheque y codificación de color Chemetron según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE TOMAS QC AIRE DE PARED PARA ENTRADA /SALIDA DE GAS DOBLE VALVULA CHEQUE Y CODIFICACION CHEMETRON DE COLOR SEGUN NORMA NFPA 99/2024": {
+    "nombre": "Toma QC de aire medicinal de pared",
+    "descripcion": "Toma QC de aire de pared para entrada/salida de gas, doble válvula cheque y codificación de color Chemetron según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE TOMAS QC OXIGENO CIELITICA PARA ENTRADA /SALIDA DE GAS DOBLE VALVULA CHEQUE Y CODIFICACION CHEMETRON DE COLOR SEGUN NORMA NFPA 99/2024": {
+    "nombre": "Toma QC de oxígeno cialítica",
+    "descripcion": "Toma QC de oxígeno cialítica para entrada/salida de gas, doble válvula cheque y codificación de color Chemetron según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE TOMAS QC OXIGENO DE PARED PARA ENTRADA /SALIDA DE GAS DOBLE VALVULA CHEQUE Y CODIFICACION CHEMETRON DE COLOR SEGUN NORMA NFPA 99/2024": {
+    "nombre": "Toma QC de oxígeno de pared",
+    "descripcion": "Toma QC de oxígeno de pared para entrada/salida de gas, doble válvula cheque y codificación de color Chemetron según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE TOMAS QC VACIO CIELITICA PARA ENTRADA /SALIDA DE GAS DOBLE VALVULA CHEQUE Y CODIFICACION CHEMETRON DE COLOR SEGUN NORMA NFPA 99/2024": {
+    "nombre": "Toma QC de vacío cialítica",
+    "descripcion": "Toma QC de vacío cialítica para entrada/salida de gas, doble válvula cheque y codificación de color Chemetron según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE TOMAS QC VACIO DE PARED PARA ENTRADA /SALIDA DE GAS DOBLE VALVULA CHEQUE Y CODIFICACION CHEMETRON DE COLOR SEGUN NORMA NFPA 99/2024": {
+    "nombre": "Toma QC de vacío de pared",
+    "descripcion": "Toma QC de vacío de pared para entrada/salida de gas, doble válvula cheque y codificación de color Chemetron según norma NFPA 99/2024"
+  },
+  "TUBERIA TIPO L DE 1 SUMINISTRO E INSTALACION DE TUBERIA DE COBRE INCLUYE SOPORTES ACCESORIOS GASES INDUSTRIALES SOLDADURA MARCACION Y PRUEBAS DESPUES DE INSTALADA DE ACUERDO A NORMA NFPA 99 2024": {
+    "nombre": "Tubería de cobre tipo L 1\" gases medicinales",
+    "descripcion": "Tubería de cobre tipo L de 1\"; incluye soportes, accesorios, gases industriales, soldadura, marcación y pruebas posteriores a la instalación según norma NFPA 99/2024"
+  },
+  "TUBERIA TIPO L DE 1/2 SUMINISTRO E INSTALACION DE TUBERIA DE COBRE INCLUYE SOPORTES ACCESORIOS GASES INDUSTRIALES SOLDADURA MARCACION Y PRUEBAS DESPUES DE INSTALADA DE ACUERDO A NORMA NFPA 99 2024": {
+    "nombre": "Tubería de cobre tipo L 1/2\" gases medicinales",
+    "descripcion": "Tubería de cobre tipo L de 1/2\"; incluye soportes, accesorios, gases industriales, soldadura, marcación y pruebas posteriores a la instalación según norma NFPA 99/2024"
+  },
+  "TUBERIA TIPO L DE 3/4 SUMINISTRO E INSTALACION DE TUBERIA DE COBRE INCLUYE SOPORTES ACCESORIOS GASES INDUSTRIALES SOLDADURA MARCACION Y PRUEBAS DESPUES DE INSTALADA DE ACUERDO A NORMA NFPA 99 2024": {
+    "nombre": "Tubería de cobre tipo L 3/4\" gases medicinales",
+    "descripcion": "Tubería de cobre tipo L de 3/4\"; incluye soportes, accesorios, gases industriales, soldadura, marcación y pruebas posteriores a la instalación según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE VALVULAS EN ACERO INOXIDABLE 1/2 INCLUYE ACCESORIOS GASES INDUSTRIALES SOLDADA PRUEBAS DE FUGAS SEGUN NORMA NFPA 99 2024": {
+    "nombre": "Válvula en acero inoxidable 1/2\" gases medicinales",
+    "descripcion": "Válvula en acero inoxidable de 1/2\"; incluye accesorios, gases industriales, soldadura y pruebas de fugas según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE VALVULAS EN ACERO INOXIDABLE 1/4 INCLUYE ACCESORIOS GASES INDUSTRIALES SOLDADA PRUEBAS DE FUGAS SEGUN NORMA NFPA 99 2024": {
+    "nombre": "Válvula en acero inoxidable 1/4\" gases medicinales",
+    "descripcion": "Válvula en acero inoxidable de 1/4\"; incluye accesorios, gases industriales, soldadura y pruebas de fugas según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE VALVULAS EN ACERO INOXIDABLE 3/4 INCLUYE ACCESORIOS GASES INDUSTRIALES SOLDADA PRUEBAS DE FUGAS SEGUN NORMA NFPA 99 2024": {
+    "nombre": "Válvula en acero inoxidable 3/4\" gases medicinales",
+    "descripcion": "Válvula en acero inoxidable de 3/4\"; incluye accesorios, gases industriales, soldadura y pruebas de fugas según norma NFPA 99/2024"
+  },
+  "SUMINISTRO E INSTALACION DE VALVULAS EN ACERO INOXIDABLE RACORES DE BRONCE 1/4 INCLUYE ACCESORIOS GASES INDUSTRIALES SOLDADA PRUEBAS DE FUGAS SEGUN NORMA NFPA 99 2024": {
+    "nombre": "Válvula inoxidable con racores de bronce 1/4\"",
+    "descripcion": "Válvula en acero inoxidable con racores de bronce de 1/4\"; incluye accesorios, gases industriales, soldadura y pruebas de fugas según norma NFPA 99/2024"
+  },
+  "ASEO PERMANENTE DE OBRA CLASIFICACION DE RESIDUOS Y ACOPIO INTERNO DURANTE LA EJECUCION 6 MESES": {
+    "nombre": "Aseo permanente de obra y manejo de residuos",
+    "descripcion": "Aseo permanente de obra, clasificación de residuos y acopio interno durante la ejecución (6 meses)"
+  },
+  "LIMPIEZA GENERAL FINA DESMANCHADO DE PISOS VIDRIOS CARPINTERIAS APARATOS SANITARIOS PRUEBAS GENERALES Y ENTREGA FINAL DE LA VIVIENDA": {
+    "nombre": "Limpieza general fina y entrega final",
+    "descripcion": "Limpieza general fina, desmanchado de pisos, vidrios, carpinterías y aparatos sanitarios, pruebas generales y entrega final de la vivienda"
+  }
+}

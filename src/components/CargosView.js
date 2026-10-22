@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useStore } from '@/store/StoreContext';
+import FactorPrestacionalPanel from '@/components/FactorPrestacionalPanel';
 
 const UNIDADES = ['Hora', 'Día', 'Mes'];
 
@@ -35,10 +36,11 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
   const [newMemberId, setNewMemberId] = useState('');
   const [newMemberQty, setNewMemberQty] = useState(1);
   const [newMemberFactor, setNewMemberFactor] = useState('');
+  const [tab, setTab] = useState('cargos'); // 'cargos' | 'factor'
 
   const smlv = state.config?.find(c => c.clave === 'SMLV')?.valor || 2200000;
   const horasDia = state.config?.find(c => c.clave === 'HORAS_DIA')?.valor || 8;
-  const horasMes = state.config?.find(c => c.clave === 'HORAS_MES')?.valor || 192;
+  const horasMes = state.config?.find(c => c.clave === 'HORAS_MES')?.valor || 240;
 
   const currentMembers = useMemo(() => {
     if (!editingId) return [];
@@ -208,6 +210,20 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
       )}
 
       <div className="page-body">
+        {/* Pestañas: cargos/cuadrillas | factor prestacional */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 'var(--space-md)' }}>
+          <button className={`btn ${tab === 'cargos' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setTab('cargos')}>
+            Cargos y cuadrillas
+          </button>
+          <button className={`btn ${tab === 'factor' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setTab('factor')}>
+            Factor prestacional
+          </button>
+        </div>
+
+        {tab === 'factor' ? (
+          <FactorPrestacionalPanel />
+        ) : (
+        <>
         {/* SMLV Config Bar */}
         <div className="card" style={{ marginBottom: 'var(--space-md)', background: 'var(--color-bg-alt)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)', padding: 'var(--space-md)' }}>
@@ -462,6 +478,8 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
             </table>
           </div>
         </div>
+        </>
+        )}
       </div>
 
       {showModal && (

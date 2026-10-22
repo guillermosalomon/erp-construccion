@@ -176,11 +176,52 @@ export const CUADRILLA_GENERAL = {
   categorias: [],
 };
 
-export function cuadrillaParaCategoria(categoria, cuadrillas = CUADRILLAS_DEFAULT) {
-  const cat = String(categoria || '').toUpperCase().trim();
-  return cuadrillas.find(c => (c.categorias || []).includes(cat)) || CUADRILLA_GENERAL;
-}
+/**
+ * Capítulos oficiales (CAPITULOS_APU en src/lib/catalogo-taxonomia.js) → cuadrilla del cotizador.
+ * Se mantienen además los nombres antiguos dentro de `categorias` de cada cuadrilla (compatibilidad).
+ */
+export const CAPITULO_A_CUADRILLA = {
+  'BASICOS': 'CQ-02',
+  'PRELIMINARES': 'CQ-01',
+  'MOVIMIENTO DE TIERRAS': 'CQ-01',
+  'CIMENTACION': 'CQ-02',
+  'ESTRUCTURA EN CONCRETO': 'CQ-02',
+  'ESTRUCTURA METALICA': 'CQ-06',
+  'MAMPOSTERIA': 'CQ-03',
+  'PANETES': 'CQ-03',
+  'PISOS Y ENCHAPES': 'CQ-07',
+  'CUBIERTAS': 'CQ-06',
+  'HIDROSANITARIAS': 'CQ-04',
+  'ELECTRICAS': 'CQ-05',
+  'VOZ Y DATOS': 'CQ-05',
+  'AIRE ACONDICIONADO': 'CQ-05',
+  'RED CONTRA INCENDIO': 'CQ-04',
+  'DRYWALL Y CIELOS': 'CQ-07',
+  'ESTUCO Y PINTURA': 'CQ-07',
+  'CARPINTERIA': 'CQ-06',
+  'APARATOS SANITARIOS': 'CQ-04',
+  'GUADUA Y MADERA': 'CQ-08',
+  'EXTERIORES Y VIAS': 'CQ-02',
+  'PISCINAS': 'CQ-02',
+  'GASES MEDICINALES': 'CQ-04',
+  'ASEO Y ENTREGA': 'CQ-07',
+};
 
+const normCat = (s) => String(s || '').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+
+export function cuadrillaParaCategoria(categoria, cuadrillas = CUADRILLAS_DEFAULT) {
+  const cat = normCat(categoria);
+  const lista = cuadrillas && cuadrillas.length ? cuadrillas : CUADRILLAS_DEFAULT;
+  // 1) Coincidencia explícita en las categorías de la cuadrilla (nombres antiguos o personalizados)
+  const directa = lista.find(c => (c.categorias || []).some(x => normCat(x) === cat));
+  if (directa) return directa;
+  // 2) Capítulo oficial → código de cuadrilla
+  const codigo = CAPITULO_A_CUADRILLA[cat];
+  if (codigo) {
+    return lista.find(c => c.codigo === codigo) || CUADRILLAS_DEFAULT.find(c => c.codigo === codigo) || CUADRILLA_GENERAL;
+  }
+  return CUADRILLA_GENERAL;
+}
 /* ─── Rendimientos por defecto (unidades por día por cuadrilla) ─── */
 const REND_POR_UNIDAD = { M3: 2.5, M2: 12, ML: 15, M: 15, UN: 4, KG: 120, GL: 1, LB: 120, DIA: 1 };
 const REND_POR_CUADRILLA = {

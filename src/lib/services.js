@@ -1055,6 +1055,26 @@ export const proveedoresService = {
   }
 };
 
+/* ─── Cotizaciones por insumo (USO INTERNO — nunca exponer en páginas públicas) ─── */
+export const insumoCotizacionesService = {
+  /** Lista cotizaciones de proveedores. Tolerante: devuelve [] si la tabla no existe o RLS lo impide. */
+  async getAll({ soloVigentes = false } = {}) {
+    if (!db()) return [];
+    try {
+      let q = db().from('insumo_cotizaciones').select('*').order('precio_compra', { ascending: true });
+      if (soloVigentes) q = q.eq('vigente', true);
+      const { data, error } = await q;
+      if (error) {
+        console.warn('insumo_cotizaciones no disponible:', error.message);
+        return [];
+      }
+      return data || [];
+    } catch {
+      return [];
+    }
+  },
+};
+
 /* ─── Órdenes de Compra Programadas ─── */
 export const ordenesCompraService = {
   async getAll() {

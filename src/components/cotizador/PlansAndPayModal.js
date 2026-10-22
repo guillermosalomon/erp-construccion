@@ -142,7 +142,7 @@ export default function PlansAndPayModal({
                 </span>
               </div>
               <div style={{ fontSize: 12, color: '#cbd5e1', marginTop: 4, lineHeight: 1.4 }}>
-                <strong>Incluye 7 libros estructurados:</strong> Cuadro Presupuesto oficial, Desglose Analítico de APUs, Explosión de Insumos para compras, Cuadrillas y Mano de Obra 2026, Cronograma de tiempos y <strong>Tabla Comparativa de 3 Proveedores</strong>.
+                <strong>Incluye 6 hojas:</strong> Presupuesto, AIU, APU detallados, Materiales a precios almacén Kalarti, Mano de obra (salarios y cuadrillas) y Cronograma.
               </div>
               <div style={{ fontSize: 15, fontWeight: 900, color: 'white', marginTop: 6 }}>
                 {formatMoney(PRODUCTOS.export.precio[currency], currency)} <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 400 }}>pago único por proyecto</span>

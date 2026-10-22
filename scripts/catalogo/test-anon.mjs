@@ -1,0 +1,12 @@
+import path from 'path';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+require('dotenv').config({ path: '.env.local', quiet: true });
+const { createClient } = require('@supabase/supabase-js');
+import { crearContexto, costoAPU } from '../../src/lib/apu-engine.js';
+const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+const all = async (t) => { let o = [], f = 0; for (;;) { const { data, error } = await sb.from(t).select('*').range(f, f + 999); if (error) return o; o = o.concat(data); if (data.length < 1000) break; f += 1000; } return o; };
+const [apus, det, insumos, cargos, cd, cfg] = await Promise.all(['apu', 'apu_detalle', 'insumos', 'cargos', 'cargo_detalle', 'global_config'].map(all));
+console.log('anon: cargo_detalle', cd.length, 'config', cfg.length, 'CUA-OC', cargos.find((c) => c.codigo === 'CUA-OC')?.factor_smlv);
+const ctx = crearContexto({ insumos, cargos, cargoDetalles: cd, apuDetalles: det, config: cfg });
+apus.filter((a) => /Excavación manual en terreno|Muro en ladrillo farol No. 6 para/.test(a.nombre)).forEach((a) => { const c = costoAPU(ctx, a.id); console.log(a.nombre, Math.round(c.total), 'MO', Math.round(c.mano_obra)); });

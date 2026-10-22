@@ -1,0 +1,1160 @@
+{
+ "d055b455-86e7-412c-9b53-d89e571e48da": {
+  "precio": 5500,
+  "fuente": "Acero liso 1/4\" ~5.500/kg ferretería 2026",
+  "confianza": "media"
+ },
+ "6ec9e63f-36a7-44e4-ac38-d015b42193fa": {
+  "precio": 28000,
+  "fuente": "Tubo concreto simple 8\" x 1 m, prefabricados regionales",
+  "confianza": "baja"
+ },
+ "efbca33b-258c-4163-8690-3efd56bd3402": {
+  "precio": 45000,
+  "fuente": "Registro/válvula bola bronce 3/4\" ferretería",
+  "confianza": "media"
+ },
+ "45051e38-4a18-40a7-9cc6-df4ec9fb4580": {
+  "precio": 5500,
+  "fuente": "Codo galvanizado 3/4\" (similitud PVC 830 era errónea)",
+  "confianza": "media"
+ },
+ "5e769579-5332-42e2-a60c-722eb471d3b2": {
+  "precio": 28000,
+  "fuente": "Thinner corriente galón ferretería 2026",
+  "confianza": "media"
+ },
+ "8adb7019-b575-4ddd-8d44-fb7c786e54bf": {
+  "precio": 280000,
+  "fuente": "Ventana lámina cal 22 con anticorrosivo, taller metalmecánico, m2",
+  "confianza": "baja"
+ },
+ "f4dfc33f-2f86-4cac-a413-c057bd139cfa": {
+  "precio": 8000,
+  "fuente": "Tubo EMT 1/2\" x 3 m ~24.000 /3",
+  "confianza": "media"
+ },
+ "675c7cd4-ae3b-4219-800c-ad3eed1af4f9": {
+  "precio": 75000,
+  "fuente": "Teja traslúcida/claraboya fibrocemento No.4 estimado",
+  "confianza": "baja"
+ },
+ "f3c6184c-6f7a-4146-a8a8-e4993616ca5d": {
+  "precio": 2500,
+  "fuente": "Unión EMT 3/4\"",
+  "confianza": "media"
+ },
+ "c4d24ae5-8cb2-4e0a-9a08-1c09af2786ba": {
+  "precio": 140000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "439199fc-7262-4527-9b86-8f19aad9eb38": {
+  "precio": 280000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "8bc8b34f-a292-45ab-9e08-68830faeeb17": {
+  "precio": 55000,
+  "fuente": "Baldosa terrazo/granito 30x30 m2 prefabricados",
+  "confianza": "baja"
+ },
+ "47c20679-7341-432c-98b2-b8c94133b99a": {
+  "precio": 85000,
+  "fuente": "Juego incrustaciones baño (gama media)",
+  "confianza": "baja"
+ },
+ "fee7e901-37bf-455c-bbb2-bc952800d5ed": {
+  "precio": 75000,
+  "fuente": "Tintilla madera galón",
+  "confianza": "media"
+ },
+ "aaf939d0-4665-4902-a755-c6b5dec8b01e": {
+  "precio": 12000,
+  "fuente": "Brocha 4\" ferretería",
+  "confianza": "media"
+ },
+ "5bfaa711-f6a2-4f13-8059-e5d8436c85bd": {
+  "precio": 7000,
+  "fuente": "Guadua inmunizada ~12 cm, por ml",
+  "confianza": "baja"
+ },
+ "bf3a221e-2b41-4f9b-bdb7-fd1e2920ac82": {
+  "precio": 14000,
+  "fuente": "Rollizo eucalipto 16 cm, por ml",
+  "confianza": "baja"
+ },
+ "f7636c21-43e6-4e52-b172-854f4de45fe5": {
+  "precio": 135000,
+  "fuente": "Tablero aglomerado 18-20 mm 1.22x2.44 Homecenter",
+  "confianza": "media"
+ },
+ "38f272c9-ed21-4cb5-8e54-08bef9b03801": {
+  "precio": 8000,
+  "fuente": "Alquiler compresor + pistola ~60.000/día",
+  "confianza": "media"
+ },
+ "170ffc35-3c9a-452e-a71c-2a410f53ebe6": {
+  "precio": 18000,
+  "fuente": "Bloque abrasivo pulido granito",
+  "confianza": "baja"
+ },
+ "c8b60f85-481c-434a-b90c-8156a2c07ed5": {
+  "precio": 6500,
+  "fuente": "Cinta aislante 3/4\" x 20 m (25.875 corresponde a gama premium)",
+  "confianza": "media"
+ },
+ "c5b5b191-0c3a-42cb-89c7-fd3582c0f6fe": {
+  "precio": 22000,
+  "fuente": "Bulto gravilla lavada ~40 kg",
+  "confianza": "baja"
+ },
+ "c9389b4b-5eb6-4237-aa99-f07d794b2171": {
+  "precio": 45000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "776115ac-63a5-47e3-8448-060df820620f": {
+  "precio": 15000,
+  "fuente": "Trompo abrasivo pulido granito",
+  "confianza": "baja"
+ },
+ "9a184652-6142-4df7-959e-e06cc2816a91": {
+  "precio": 10500,
+  "fuente": "Tubo EMT 3/4\" x 3 m ~31.500 /3",
+  "confianza": "media"
+ },
+ "3aee19dd-45ec-4ff1-bed2-19e960fde750": {
+  "precio": 105000,
+  "fuente": "Teja traslúcida/claraboya fibrocemento No.6 estimado",
+  "confianza": "baja"
+ },
+ "15cdcd30-b7b5-4509-9793-92b8a884ce9a": {
+  "precio": 3500,
+  "fuente": "Unión EMT 1\"",
+  "confianza": "media"
+ },
+ "4b018df7-b7a4-4951-9b81-3cd6aec5da7f": {
+  "precio": 130000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "2d6910a5-07a6-465a-a94b-6c030b5fe409": {
+  "precio": 260000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "1f1c8aba-d44a-4a42-a6be-a8cdeba80cc8": {
+  "precio": 60000,
+  "fuente": "Baldosa terrazo/granito 33x33 m2",
+  "confianza": "baja"
+ },
+ "2e0d7860-4373-479d-98ce-a60b062f4bf1": {
+  "precio": 32000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "27248847-2284-4be2-b6a6-90e9e36fb940": {
+  "precio": 15000,
+  "fuente": "Remate redondeado porcelana por ml",
+  "confianza": "baja"
+ },
+ "9364cb42-1f3f-427f-b851-d9f6d7ed7bdf": {
+  "precio": 65000,
+  "fuente": "Piedra decorativa enchape m2",
+  "confianza": "baja"
+ },
+ "76b2aeff-86f7-48f2-a4ca-713e06bd39e9": {
+  "precio": 8500,
+  "fuente": "Guadua inmunizada ~14 cm, por ml",
+  "confianza": "baja"
+ },
+ "3d3a4604-7735-4166-8273-d15942d5f592": {
+  "precio": 17000,
+  "fuente": "Rollizo eucalipto 18 cm, por ml",
+  "confianza": "baja"
+ },
+ "b4cccb57-e527-47b5-8c67-a3d3e5829b32": {
+  "precio": 55000,
+  "fuente": "Pegante bituminoso parquet galón",
+  "confianza": "baja"
+ },
+ "6a416da5-83dc-41c0-8280-2ff78286f1a0": {
+  "precio": 12000,
+  "fuente": "Alquiler pulidora granito al agua ~95.000/día",
+  "confianza": "baja"
+ },
+ "2ff6217d-c62a-4b83-bd90-dd7e1edcc70b": {
+  "precio": 15000,
+  "fuente": "Trompo abrasivo pulido granito",
+  "confianza": "baja"
+ },
+ "225fb09b-1ece-4442-a6ea-35347f1e8c34": {
+  "precio": 1000,
+  "fuente": "Amarre/gancho para teja, unidad",
+  "confianza": "baja"
+ },
+ "006896ed-c4c5-4b71-9d41-e69762097e94": {
+  "precio": 5000,
+  "fuente": "Aceite quemado galón (residuo)",
+  "confianza": "baja"
+ },
+ "fb823473-61c1-4310-88b0-975d4928845b": {
+  "precio": 4500,
+  "fuente": "Curva EMT 1/2\"",
+  "confianza": "media"
+ },
+ "c9e9dac4-3992-4118-bf45-35c03bee8b6c": {
+  "precio": 320000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "28b3b4ba-304e-44e2-a64e-d24ded0c29f9": {
+  "precio": 32000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "8744e7d1-c3ec-4c4f-b0fc-fd0f7a110d9f": {
+  "precio": 18000,
+  "fuente": "Perfil remate metálico por ml",
+  "confianza": "baja"
+ },
+ "43f22145-57e7-450e-853c-68707f1f488c": {
+  "precio": 130000,
+  "fuente": "Wash primer componente B galón",
+  "confianza": "baja"
+ },
+ "3a11e3eb-91a1-49f1-a02b-736951b49057": {
+  "precio": 3500,
+  "fuente": "Brocha 1\" ferretería",
+  "confianza": "media"
+ },
+ "bfa27f3e-ab06-4f03-b650-91b305469bb1": {
+  "precio": 60000,
+  "fuente": "Piedra muñeca enchape m2",
+  "confianza": "baja"
+ },
+ "81eb9a10-ad60-4d45-b370-2f38fea95318": {
+  "precio": 10000,
+  "fuente": "Guadua inmunizada ~16 cm, por ml",
+  "confianza": "baja"
+ },
+ "e1a01132-9aa2-4c16-b5e5-8e1c80fd8abd": {
+  "precio": 20000,
+  "fuente": "Rollizo eucalipto 20 cm, por ml",
+  "confianza": "baja"
+ },
+ "ff49fb00-2f70-4234-bc33-48ef4bd80f7a": {
+  "precio": 45000,
+  "fuente": "Pegante PVA madera galón",
+  "confianza": "media"
+ },
+ "b01cc224-4817-40ba-9908-b5b6ac4b04c7": {
+  "precio": 112000,
+  "fuente": "Tarifa INVIAS Nariño 2025 vibrocompactador",
+  "confianza": "alta"
+ },
+ "d35fe04c-b79a-40a0-8f9e-f5a3bad38ee3": {
+  "precio": 15000,
+  "fuente": "Alquiler pulidora pisos disco diamantado ~120.000/día",
+  "confianza": "media"
+ },
+ "2f4f0f01-700d-4458-9738-18928c7831b4": {
+  "precio": 150000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm) (550.000 era excesivo)",
+  "confianza": "baja"
+ },
+ "a66f13f0-5d96-4272-bab7-4cdc81db5191": {
+  "precio": 40000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "c81f0264-b959-4ea5-b5a6-bb97f442777e": {
+  "precio": 12000,
+  "fuente": "Piedra abrasiva pulir granito",
+  "confianza": "baja"
+ },
+ "4ab83498-4022-48d4-9aba-c6770e85e323": {
+  "precio": 12000,
+  "fuente": "Piedra abrasiva pulir granito",
+  "confianza": "baja"
+ },
+ "e515d668-dea9-4ea1-b98a-c7066daa8534": {
+  "precio": 15500,
+  "fuente": "Tubo EMT 1\" x 3 m ~46.500 /3",
+  "confianza": "media"
+ },
+ "dd8a7798-dc9b-493a-9482-2529b20f6da4": {
+  "precio": 95000,
+  "fuente": "Teja ventilación fibrocemento No.4 estimado",
+  "confianza": "baja"
+ },
+ "fa846f28-6d15-4330-8bc3-ec4e24ca009f": {
+  "precio": 6500,
+  "fuente": "Curva EMT 3/4\"",
+  "confianza": "media"
+ },
+ "ab351ea4-e74f-4ebf-9127-ddf088883cd4": {
+  "precio": 180000,
+  "fuente": "Travertino m2 placa 2 cm",
+  "confianza": "baja"
+ },
+ "45d79631-58fb-4630-8ce0-a4a5b78c7d64": {
+  "precio": 280000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "dc47408c-d0f1-445f-a3fe-c4ccbb23ee85": {
+  "precio": 34000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "41308751-e513-4911-ad2f-9cbb7ba098e5": {
+  "precio": 20000,
+  "fuente": "Tubo aluminio cortina ducha por ml",
+  "confianza": "baja"
+ },
+ "9c7eb5b3-9182-4bc1-b07b-797d0bc38d35": {
+  "precio": 45000,
+  "fuente": "Acabado tipo Espacatto, material por m2 estimado",
+  "confianza": "baja"
+ },
+ "a135e67d-62e9-44c4-a5f3-268067677a8d": {
+  "precio": 75000,
+  "fuente": "Piedra coralina enchape m2",
+  "confianza": "baja"
+ },
+ "4d9843b8-e6a1-471e-b684-8f156b940001": {
+  "precio": 12000,
+  "fuente": "Guadua inmunizada ~18 cm, por ml",
+  "confianza": "baja"
+ },
+ "6859ce2e-7cf5-46bd-9f1e-eb1b0d59e2e6": {
+  "precio": 160000,
+  "fuente": "Laca poliuretano pisos galón",
+  "confianza": "media"
+ },
+ "09c0193e-d00a-4ee6-aa4d-81df6dddbe3e": {
+  "precio": 38000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "9e252bf8-9d4a-45c9-9a6e-e8c9e5565cd6": {
+  "precio": 95000,
+  "fuente": "Pintura tráfico galón (230.945 excesivo)",
+  "confianza": "media"
+ },
+ "986c3d03-9dae-4466-bba5-abbbb7edcd39": {
+  "precio": 9000,
+  "fuente": "Varilla roscada 1/2\" x 1 m (170.900 absurdo por ml)",
+  "confianza": "media"
+ },
+ "ca903686-3830-4db4-9563-3a68829379e5": {
+  "precio": 130000,
+  "fuente": "Teja ventilación fibrocemento No.6 estimado",
+  "confianza": "baja"
+ },
+ "572a463d-bb00-40f2-b3f3-72216045b17c": {
+  "precio": 10000,
+  "fuente": "Curva EMT 1\"",
+  "confianza": "media"
+ },
+ "0ca3f21b-37fd-4515-9622-87700c3567fc": {
+  "precio": 220000,
+  "fuente": "Mármol importado, m2 placa 2 cm",
+  "confianza": "baja"
+ },
+ "cb0726f2-cee4-4284-abe2-18342fdf9a5e": {
+  "precio": 130000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "8e161ea7-042b-4d12-8445-7e1d39d0c163": {
+  "precio": 300000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "fd1555f3-03d6-44a0-be5e-fddd76fd8131": {
+  "precio": 45000,
+  "fuente": "Acabado tipo Espacatto, material por m2 estimado",
+  "confianza": "baja"
+ },
+ "e7f3fba8-9701-4f3e-96df-7201a7a3dbf4": {
+  "precio": 65000,
+  "fuente": "Tapaporos madera galón",
+  "confianza": "media"
+ },
+ "06248def-05c1-4722-9582-0bb9fb7bd05a": {
+  "precio": 45000,
+  "fuente": "Acabado tipo Espacatto, material por m2 estimado",
+  "confianza": "baja"
+ },
+ "7ccfaf7b-5187-4141-b8f2-10a4948e3fef": {
+  "precio": 55000,
+  "fuente": "Tableta arcilla m2",
+  "confianza": "baja"
+ },
+ "4c4c25df-1488-4973-a1e2-5b51b9ac2557": {
+  "precio": 4500,
+  "fuente": "Esterilla guadua ancho 40 cm por ml",
+  "confianza": "baja"
+ },
+ "84d4b876-3c18-45e5-9c83-e66fe462eb4b": {
+  "precio": 60000,
+  "fuente": "Disolvente glicol galón",
+  "confianza": "baja"
+ },
+ "26770a7a-12b3-415a-a5aa-5fc75a1db5d5": {
+  "precio": 35000,
+  "fuente": "Teja fibrocemento No.4 ferretería 2026",
+  "confianza": "media"
+ },
+ "379499ca-d861-4fe9-b7f7-69080061fe1a": {
+  "precio": 9000,
+  "fuente": "Microsílice por kg (bolsa/saco)",
+  "confianza": "baja"
+ },
+ "7faa390c-bfcb-49b3-8daf-e3d08133eabc": {
+  "precio": 8000,
+  "fuente": "Pulsador timbre",
+  "confianza": "media"
+ },
+ "da14d64f-0ebc-4433-8c85-ed6244fecb15": {
+  "precio": 140000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "9d64189b-7338-4a81-ac6e-85e1613d48df": {
+  "precio": 140000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "a21155d4-24c3-4a31-9f4a-90618618114c": {
+  "precio": 15000,
+  "fuente": "Cal de carburo bolsa 10 kg",
+  "confianza": "baja"
+ },
+ "507252fd-f23a-4de8-87c7-d944b0e3ccd7": {
+  "precio": 45000,
+  "fuente": "Acabado tipo Espacatto, material por m2 estimado",
+  "confianza": "baja"
+ },
+ "11f0420c-41d2-4010-be11-bab42cbfe7d3": {
+  "precio": 60000,
+  "fuente": "Tableta arcilla m2",
+  "confianza": "baja"
+ },
+ "6a853cbb-a115-402d-bcfc-bed1f3487b29": {
+  "precio": 1200,
+  "fuente": "Latilla guadua por ml",
+  "confianza": "baja"
+ },
+ "2cc9dd75-efdc-488f-a9a2-decfdd591176": {
+  "precio": 2500,
+  "fuente": "Pliego lija ferretería",
+  "confianza": "media"
+ },
+ "592e217b-a2b0-42b9-81c9-02651cc2e5bc": {
+  "precio": 7500,
+  "fuente": "Soporte canal PVC (54.600 excesivo)",
+  "confianza": "media"
+ },
+ "76797167-2ec1-43d5-bf88-e6113573f5f7": {
+  "precio": 35000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "d6938e7f-5958-446f-afff-27e40726c77e": {
+  "precio": 65000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "29730c78-6625-42ac-a3cf-2fc935c40329": {
+  "precio": 42000,
+  "fuente": "Teja fibrocemento No.5 ferretería 2026",
+  "confianza": "media"
+ },
+ "8c70fdf2-f2dd-4e2a-ba3a-8c89ee32a629": {
+  "precio": 400,
+  "fuente": "Unión conduit PVC 1/2\"",
+  "confianza": "media"
+ },
+ "e285e91b-414f-4a09-a761-8ba7676e4db7": {
+  "precio": 25000,
+  "fuente": "Timbre/zumbador",
+  "confianza": "media"
+ },
+ "822b81bf-5865-4304-a001-c57f2a805be0": {
+  "precio": 130000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "0560a86d-3eda-41ff-b8c9-6707548087f1": {
+  "precio": 280000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "75b8688f-6979-445a-93d8-d9d54cddac24": {
+  "precio": 45000,
+  "fuente": "Acabado tipo Espacatto, material por m2 estimado",
+  "confianza": "baja"
+ },
+ "e116831a-3dcd-47e9-9d28-709662523f7a": {
+  "precio": 50000,
+  "fuente": "Tablón arcilla m2",
+  "confianza": "baja"
+ },
+ "0549ede4-c500-46e0-b192-4d065e0d4b75": {
+  "precio": 120000,
+  "fuente": "Baldosa guadua laminada m2",
+  "confianza": "baja"
+ },
+ "34dacc83-4ee7-4e14-b856-72b667b30620": {
+  "precio": 75000,
+  "fuente": "Tintilla madera galón",
+  "confianza": "media"
+ },
+ "a12006f2-e132-4719-a0c8-b77d90896ffd": {
+  "precio": 14000,
+  "fuente": "Rejilla sifón aluminio 2\" (27.900 alto)",
+  "confianza": "media"
+ },
+ "46ab69e3-4bb5-42c8-82b3-e3b2dba9686f": {
+  "precio": 42000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "7c0bc14b-e64e-48cb-898e-1dd6d093694e": {
+  "precio": 50000,
+  "fuente": "Teja fibrocemento No.6 ferretería 2026",
+  "confianza": "media"
+ },
+ "ddb238be-ac34-4542-a992-e8572eaaec2a": {
+  "precio": 600,
+  "fuente": "Unión conduit PVC 3/4\"",
+  "confianza": "media"
+ },
+ "5770fb18-e828-45c0-9844-8104ac2a1f00": {
+  "precio": 130000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "6b868785-d7f9-4f35-8f06-cb6f4458dbd0": {
+  "precio": 220000,
+  "fuente": "Travertino importado m2",
+  "confianza": "baja"
+ },
+ "ab23752b-b23a-4764-844d-dccf50085d86": {
+  "precio": 260000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "5ff7ea01-92d9-43e7-ae79-040f0aa94e68": {
+  "precio": 85000,
+  "fuente": "Esmalte sintético galón",
+  "confianza": "media"
+ },
+ "64efc339-102e-4222-9b43-8736b7c491af": {
+  "precio": 45000,
+  "fuente": "Acabado tipo Espacatto, material por m2 estimado",
+  "confianza": "baja"
+ },
+ "f0575da6-8d7c-4b0f-a216-95022249cb5d": {
+  "precio": 52000,
+  "fuente": "Tablón arcilla m2",
+  "confianza": "baja"
+ },
+ "35764f2b-6310-48b8-bc17-280d1a981c7d": {
+  "precio": 7000,
+  "fuente": "Rollizo eucalipto 10 cm, por ml",
+  "confianza": "baja"
+ },
+ "7db99655-4c5e-4e5e-af76-bb27eecc1f00": {
+  "precio": 12000,
+  "fuente": "Ácido bórico kg",
+  "confianza": "baja"
+ },
+ "ae5aa104-1d89-4732-ba1c-cd83ec4c2efe": {
+  "precio": 180000,
+  "fuente": "Laca poliuretano 2 comp galón",
+  "confianza": "media"
+ },
+ "38925314-d1a5-4d72-a3b4-b755aa51a0e2": {
+  "precio": 100000,
+  "fuente": "Tarifa INVIAS Nariño 2025 volqueta 90.000-120.000/h",
+  "confianza": "alta"
+ },
+ "5b51c9d6-fb06-41a0-a90d-73ccfa793dd1": {
+  "precio": 48000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "e3286379-3e62-4b3c-ba9f-7771c1ec110c": {
+  "precio": 65000,
+  "fuente": "Teja fibrocemento No.8 ferretería 2026",
+  "confianza": "media"
+ },
+ "5913d2d2-dca2-41f5-a687-ff5999b038f3": {
+  "precio": 25000,
+  "fuente": "Válvula/canastilla pozuelo 2\"",
+  "confianza": "baja"
+ },
+ "3c12ca0b-9ce5-4403-977a-8777a10bec70": {
+  "precio": 25000,
+  "fuente": "Canal PVC 3 m ~75.000 /3",
+  "confianza": "media"
+ },
+ "d9b141e9-dbfb-40ee-9db6-03fd7cd1b5af": {
+  "precio": 15000,
+  "fuente": "Ácido oxálico kg",
+  "confianza": "baja"
+ },
+ "d6bb2d89-ef0a-439c-9a61-03d3d1dfea5c": {
+  "precio": 160000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "9eb0cbf2-800f-4048-af85-aab52518f44b": {
+  "precio": 280000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "985c24f1-4f37-462b-92f4-25a936841d38": {
+  "precio": 130000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "f974836a-b1b6-4129-9103-4887bcad30a1": {
+  "precio": 75000,
+  "fuente": "Juego incrustaciones baño (gama económica)",
+  "confianza": "baja"
+ },
+ "e6c82c51-6752-4332-8db2-ff9ea6d64ec5": {
+  "precio": 80000,
+  "fuente": "Piedra bogotana enchape m2",
+  "confianza": "baja"
+ },
+ "4e80497b-a280-4cb1-9667-c06d6cc31451": {
+  "precio": 55000,
+  "fuente": "Tablón arcilla m2",
+  "confianza": "baja"
+ },
+ "569f0a93-4450-4279-a8c8-9f8d904bcfd7": {
+  "precio": 9000,
+  "fuente": "Rollizo eucalipto 12 cm, por ml",
+  "confianza": "baja"
+ },
+ "5994c23d-38b6-4c95-83e4-9f880123b263": {
+  "precio": 10000,
+  "fuente": "Bórax kg",
+  "confianza": "baja"
+ },
+ "1d51ee22-ddd4-4114-a9c7-3746350345d0": {
+  "precio": 85000,
+  "fuente": "Aceite linaza galón",
+  "confianza": "baja"
+ },
+ "08dc0c32-bc99-4e46-adbb-f0cdb7277044": {
+  "precio": 80000,
+  "fuente": "Teja fibrocemento No.10 ferretería 2026",
+  "confianza": "media"
+ },
+ "19ce892c-0e9f-43bc-9495-d6c7bef8816f": {
+  "precio": 12000,
+  "fuente": "Codo bajante PVC",
+  "confianza": "baja"
+ },
+ "76911386-5dcc-42ce-93e2-fc2242c5b7cb": {
+  "precio": 35000,
+  "fuente": "Válvula/canastilla 3\"",
+  "confianza": "baja"
+ },
+ "734b4b76-b919-46d7-9251-e341a4af529d": {
+  "precio": 1800,
+  "fuente": "Unión EMT 1/2\"",
+  "confianza": "media"
+ },
+ "fadad627-cc35-4681-a195-fb22c03d215b": {
+  "precio": 130000,
+  "fuente": "Mármol nacional, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "443190d8-a82e-4e57-b115-83039ee60244": {
+  "precio": 280000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "5492c902-c2f7-48cd-a36f-dacdff80fb5a": {
+  "precio": 260000,
+  "fuente": "Granito importado, marmolerías Colombia 2026 (m2 placa 2 cm)",
+  "confianza": "baja"
+ },
+ "731cb0c4-8bab-4ff5-8177-f8ee87f64275": {
+  "precio": 150000,
+  "fuente": "Barniz pisos tipo vitrificado galón",
+  "confianza": "baja"
+ },
+ "d01aa7b2-e4f8-45d2-8999-d5d19c89f47b": {
+  "precio": 5500,
+  "fuente": "Guadua inmunizada ~10 cm, por ml (vara 6 m)",
+  "confianza": "baja"
+ },
+ "bda3a573-577d-49d0-8fef-b996fcc93040": {
+  "precio": 11500,
+  "fuente": "Rollizo eucalipto 14 cm, por ml",
+  "confianza": "baja"
+ },
+ "99eec4cd-fae4-44e7-baf5-520236f8138e": {
+  "precio": 70000,
+  "fuente": "Trementina galón",
+  "confianza": "baja"
+ },
+ "dabd5b28-800c-4446-bd52-5ea6556a4b5d": {
+  "precio": 250000,
+  "fuente": "Alquiler estación total/comisión equipo por día",
+  "confianza": "media"
+ },
+ "c6bb7ff1-44b3-4705-896b-e07160c3db86": {
+  "precio": 45000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "88db3dfd-389d-4e2a-aaf7-3949e6f98e3e": {
+  "precio": 800,
+  "fuente": "Marmolina bulto 40 kg ~32.000/40 (11.594/kg era precio bulto)",
+  "confianza": "media"
+ },
+ "916455c7-da79-4df0-9022-6c6747a72161": {
+  "precio": 22000,
+  "fuente": "Bulto gravilla lavada ~40 kg",
+  "confianza": "baja"
+ },
+ "dcf2c664-5fd8-4eb1-add5-70550676c392": {
+  "precio": 10400,
+  "fuente": "Puntilla kg (igual a puntilla 2\")",
+  "confianza": "media"
+ },
+ "22974201-0bb7-4ff5-8106-5f766e3d2618": {
+  "precio": 7500,
+  "fuente": "Varenga madera 5x5 x 3 m",
+  "confianza": "baja"
+ },
+ "ba894621-e06c-4499-8d51-1e6ac9f32c46": {
+  "precio": 18000,
+  "fuente": "Tubo concreto simple 6\" x 1 m",
+  "confianza": "baja"
+ },
+ "33a04e9f-1182-4d1d-a230-85eaf80cda57": {
+  "precio": 25000,
+  "fuente": "Válvula cheque bronce 1/2\"",
+  "confianza": "media"
+ },
+ "b3b5f81f-c9ea-4204-bb04-39439c4161b1": {
+  "precio": 45000,
+  "fuente": "Imprimante galón",
+  "confianza": "media"
+ },
+ "274bf0ad-e058-40c1-8352-a2b726b42cd6": {
+  "precio": 35000,
+  "fuente": "Baldosa cemento m2",
+  "confianza": "baja"
+ },
+ "a941cea7-b030-42ba-8323-c40727656bff": {
+  "precio": 14000,
+  "fuente": "Óxido/color mineral por kg",
+  "confianza": "media"
+ },
+ "c8c503af-9557-4515-aadf-e96190bd2b23": {
+  "precio": 1000,
+  "fuente": "Yeso bulto 25 kg ~25.000",
+  "confianza": "media"
+ },
+ "42088a46-bfab-4aa9-a323-5427bbbf216d": {
+  "precio": 60000,
+  "fuente": "Tierra negra m3 puesta en obra",
+  "confianza": "baja"
+ },
+ "a1559c9c-c557-4335-8aa9-30ec7a79784e": {
+  "precio": 200,
+  "fuente": "Tornillo pequeño unidad (34 muy bajo)",
+  "confianza": "media"
+ },
+ "eb655764-74e4-42ef-9f59-c9f8446537c0": {
+  "precio": 5500,
+  "unidad": "KG",
+  "nombre": "Acero corrugado 1/2\"",
+  "fuente": "Precio por kg (APU consume 1 kg/kg); ref. acero figurado 5.350/kg",
+  "confianza": "media"
+ },
+ "aed267af-e907-464e-be34-78d36a298b7c": {
+  "precio": 14000,
+  "fuente": "Listón madera 5x10 x 3 m",
+  "confianza": "baja"
+ },
+ "01d1206d-ac1b-454f-82e3-e7daf8b58671": {
+  "precio": 12000,
+  "fuente": "Tubo concreto simple 4\" x 1 m",
+  "confianza": "baja"
+ },
+ "eff5e7c0-2bc0-4c47-8891-997f79050303": {
+  "precio": 32000,
+  "fuente": "Válvula cheque bronce 3/4\"",
+  "confianza": "media"
+ },
+ "77c89556-7886-4f0c-8322-6e26f5f182bb": {
+  "precio": 25000,
+  "fuente": "Grifo 1/2\" metálico",
+  "confianza": "media"
+ },
+ "c8b11e76-447e-43d8-9233-14d45bb7fe60": {
+  "precio": 7000,
+  "fuente": "Tomacorriente sencillo",
+  "confianza": "media"
+ },
+ "95cd08a3-fd9e-4396-968b-314daa92f87b": {
+  "precio": 1500,
+  "fuente": "Caolín kg",
+  "confianza": "baja"
+ },
+ "b80a40dd-fc2c-46ff-a380-3e45f346db2a": {
+  "precio": 5500,
+  "unidad": "KG",
+  "nombre": "Acero corrugado 8 mm",
+  "fuente": "Precio por kg (APU consume 1 kg/kg); ref. acero figurado 5.350/kg",
+  "confianza": "media"
+ },
+ "da267bc2-0689-491b-83f3-173de283d597": {
+  "precio": 5500,
+  "unidad": "KG",
+  "nombre": "Acero corrugado 12 mm",
+  "fuente": "Precio por kg (APU consume 1 kg/kg); ref. acero figurado 5.350/kg",
+  "confianza": "media"
+ },
+ "5465bb80-1e65-4e1d-9bb2-f1c1ec5145b7": {
+  "precio": 65000,
+  "fuente": "Tablón gres m2",
+  "confianza": "baja"
+ },
+ "ded5dd5f-f395-4ef3-b275-64b5f1cf1fb2": {
+  "precio": 8000,
+  "fuente": "Codo concreto 4\" estimado",
+  "confianza": "baja"
+ },
+ "22b3b58a-6305-4fb0-bb7c-d16e8b760544": {
+  "precio": 65000,
+  "fuente": "Tee PVC sanitaria 6\"",
+  "confianza": "media"
+ },
+ "f7e422d5-64aa-4819-a2ab-60f6ea0690b0": {
+  "precio": 22000,
+  "fuente": "Breaker enchufable 1x15A",
+  "confianza": "media"
+ },
+ "2e8da63f-6387-49e5-bf8d-dc238f5eeb3c": {
+  "precio": 35000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "c6616512-554c-4a55-9288-a14fd1762726": {
+  "precio": 3500,
+  "fuente": "Wing/perfil plástico por ml",
+  "confianza": "baja"
+ },
+ "1933594c-d25b-4a6e-a62b-b7374ae152a6": {
+  "precio": 45000,
+  "fuente": "Vidrio crudo 3 mm m2 vidriería (19.800 bajo)",
+  "confianza": "media"
+ },
+ "fdd58c18-21f6-49a9-9ac9-b8979be689ec": {
+  "precio": 5500,
+  "unidad": "KG",
+  "nombre": "Acero corrugado 9.5 mm",
+  "fuente": "Precio por kg (APU consume 1 kg/kg); ref. acero figurado 5.350/kg",
+  "confianza": "media"
+ },
+ "8b07085f-6b87-4973-8c44-b4c9970e3e8c": {
+  "precio": 45000,
+  "fuente": "Cera emulsión galón",
+  "confianza": "baja"
+ },
+ "8a6e26cf-caf8-4f82-bb36-2db558bfd25c": {
+  "precio": 60000,
+  "fuente": "Tablón gres m2",
+  "confianza": "baja"
+ },
+ "2508271a-be6e-4c32-b961-88b48283ad68": {
+  "precio": 100000,
+  "fuente": "Pegante de contacto galón (37.650 ≈ 1/4 gal)",
+  "confianza": "media"
+ },
+ "47692d02-328e-4702-bf68-c29ed0f06c10": {
+  "precio": 5500,
+  "unidad": "KG",
+  "nombre": "Acero corrugado 5/8\"",
+  "fuente": "Precio por kg (APU consume 1 kg/kg); ref. acero figurado 5.350/kg",
+  "confianza": "media"
+ },
+ "e0b1ff1a-ec09-4837-8057-151f055f2388": {
+  "precio": 40000,
+  "fuente": "Tubo gres 8\" x 1 m",
+  "confianza": "baja"
+ },
+ "b08d19c0-511d-4b04-abd7-d0bf636f2a82": {
+  "precio": 900,
+  "fuente": "Curva conduit PVC 1/2\" (APU es ducto PVC, no EMT)",
+  "confianza": "media"
+ },
+ "c5d9ae2e-b628-49d3-ae6b-94112b6ec1bb": {
+  "precio": 28000,
+  "fuente": "Breaker enchufable 1x40A",
+  "confianza": "media"
+ },
+ "02ac7f79-1db3-440c-bf62-33c7079bcd1c": {
+  "precio": 38000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "86c36fca-cf25-4ccd-b774-85c1ab1ce54f": {
+  "precio": 55000,
+  "fuente": "Vidrio crudo 4 mm m2",
+  "confianza": "media"
+ },
+ "9f3006e2-4f0e-4757-a7bd-83f2534f2f58": {
+  "precio": 5500,
+  "unidad": "KG",
+  "nombre": "Acero corrugado 10.5 mm",
+  "fuente": "Precio por kg (APU consume 1 kg/kg); ref. acero figurado 5.350/kg",
+  "confianza": "media"
+ },
+ "8f81792d-0c68-4c1f-a2ba-39c4522bcd15": {
+  "precio": 1500,
+  "fuente": "Papel periódico kg",
+  "confianza": "baja"
+ },
+ "6c5db288-c004-4da3-9b51-b0d263dbbdef": {
+  "precio": 5500,
+  "unidad": "KG",
+  "nombre": "Acero corrugado 3/4\"",
+  "fuente": "Precio por kg (APU consume 1 kg/kg); ref. acero figurado 5.350/kg",
+  "confianza": "media"
+ },
+ "2d42fb4a-83a6-42ae-ac9e-93974ae94872": {
+  "precio": 25000,
+  "fuente": "Tubo gres 6\" x 1 m",
+  "confianza": "baja"
+ },
+ "0c8f1a63-53e4-4c57-a96c-2b6ca54f7d27": {
+  "precio": 12000,
+  "fuente": "Tee PVC sanitaria 3\"",
+  "confianza": "media"
+ },
+ "f1ca64ac-a5c5-40ea-a84b-f2d14ee50a99": {
+  "precio": 1200,
+  "fuente": "Curva conduit PVC 3/4\" (APU es ducto PVC, no IMC)",
+  "confianza": "media"
+ },
+ "2015a804-dbf4-49aa-8185-6906088c539c": {
+  "precio": 42000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "d509c2ca-1046-4939-b9d6-aa2a3c38964b": {
+  "precio": 25000,
+  "fuente": "Indeterminado (consumo 8 m2/m2 dudoso); estimado",
+  "confianza": "baja"
+ },
+ "ae41db31-49e7-412c-994f-00937bbf39ad": {
+  "precio": 68000,
+  "fuente": "Vidrio crudo 5 mm m2",
+  "confianza": "media"
+ },
+ "5ffcaeab-8daa-407f-a2f4-705a65146f44": {
+  "precio": 55000,
+  "fuente": "Pegante PVA madera galón",
+  "confianza": "media"
+ },
+ "116368d7-086b-4c0a-aadb-52fe90fcd8e4": {
+  "precio": 18000,
+  "fuente": "Bloque abrasivo pulido granito",
+  "confianza": "baja"
+ },
+ "45d56513-b019-44ae-9f66-2c210c0085e6": {
+  "precio": 45000,
+  "fuente": "Codo PVC sanitario 6\" (2.979 muy bajo)",
+  "confianza": "media"
+ },
+ "81311646-3a3b-4912-b651-100ffd63dbdd": {
+  "precio": 9500,
+  "fuente": "Tubo PVC lluvias 3\" x 6 m ~57.000 /6",
+  "confianza": "media"
+ },
+ "3e874cd5-10e9-43c4-b78f-5023934d2d42": {
+  "precio": 5500,
+  "unidad": "KG",
+  "nombre": "Acero corrugado 7/8\"",
+  "fuente": "Precio por kg (APU consume 1 kg/kg); ref. acero figurado 5.350/kg",
+  "confianza": "media"
+ },
+ "13cbf3c7-3486-4674-929c-0b68239e0043": {
+  "precio": 15000,
+  "fuente": "Tubo gres 4\" x 1 m",
+  "confianza": "baja"
+ },
+ "989979e2-9c54-46da-9102-9bad5e6b0dda": {
+  "precio": 900,
+  "fuente": "Adaptador macho PVC presión 3/4\"",
+  "confianza": "media"
+ },
+ "f8981d6c-5b9f-4707-9fca-2abe123b8ddf": {
+  "precio": 2000,
+  "fuente": "Curva conduit PVC 1\" (APU es ducto PVC)",
+  "confianza": "media"
+ },
+ "621310d1-eff1-4284-88f4-dcb1e6058a02": {
+  "precio": 35000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "873caf1a-3ff5-4b61-ae08-4c329de44315": {
+  "precio": 10000,
+  "fuente": "Listón achapo 5x10 por ml",
+  "confianza": "baja"
+ },
+ "25c483c4-26db-4459-9ec8-f16080892681": {
+  "precio": 420000,
+  "fuente": "Puerta lámina cal 18 0.90x2.10 con marco",
+  "confianza": "baja"
+ },
+ "db516212-211f-4816-9d70-49f0a4e053ad": {
+  "precio": 48000,
+  "fuente": "Estuco listo bulto 20-25 kg",
+  "confianza": "media"
+ },
+ "4f8cdc74-1a70-45c4-9108-90e6d7c83962": {
+  "precio": 18000,
+  "fuente": "Bloque abrasivo pulido granito",
+  "confianza": "baja"
+ },
+ "c09980ac-9c25-4da9-85ec-cee2ae69ffdf": {
+  "precio": 5500,
+  "unidad": "KG",
+  "nombre": "Acero corrugado 1\"",
+  "fuente": "Precio por kg (APU consume 1 kg/kg); ref. acero figurado 5.350/kg",
+  "confianza": "media"
+ },
+ "4ddfee45-e70c-4c07-80b5-8ec9b1fb5db2": {
+  "precio": 12000,
+  "fuente": "Codo gres 4\"",
+  "confianza": "baja"
+ },
+ "5b21a340-6072-4a82-8bd9-1825472f9132": {
+  "precio": 600,
+  "fuente": "Adaptador hembra PVC 1/2\"",
+  "confianza": "media"
+ },
+ "74288114-d946-4524-ba0f-ee520a3cd072": {
+  "precio": 5000,
+  "fuente": "Plafón porcelana",
+  "confianza": "media"
+ },
+ "e21b60fe-24f3-45b1-a167-ae037f513b4a": {
+  "precio": 40000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "96b08c3a-3af7-4558-8b34-7f8df783800b": {
+  "precio": 45000,
+  "fuente": "Piso vinílico m2",
+  "confianza": "baja"
+ },
+ "c9b63583-a6e3-43dc-8659-e124f83f774f": {
+  "precio": 460000,
+  "fuente": "Puerta lámina cal 18 1.00x2.10 con marco",
+  "confianza": "baja"
+ },
+ "5c748d67-7335-4a8b-8fda-092cb235fba4": {
+  "precio": 20000,
+  "fuente": "Viga achapo 7x15 por ml",
+  "confianza": "baja"
+ },
+ "62f50efa-bbd7-4131-a5c2-bf7dfe70cf2e": {
+  "precio": 55000,
+  "fuente": "Tubo concreto simple 12\" x 1 m",
+  "confianza": "baja"
+ },
+ "088d1f4a-34aa-4906-b019-1109041e91ed": {
+  "precio": 9000,
+  "fuente": "Grama en capote m2",
+  "confianza": "baja"
+ },
+ "55597fb2-2f60-49df-92f1-e1c0527a1273": {
+  "precio": 70000,
+  "fuente": "Tubo PVC sanitario/alcantarillado 8\" por ml",
+  "confianza": "baja"
+ },
+ "b9b0f43c-1e17-4b4d-9bb1-c227f5f545d9": {
+  "precio": 14000,
+  "fuente": "Guardaescoba madera por ml (43.900 alto)",
+  "confianza": "baja"
+ },
+ "077b225b-9de6-4456-ae00-dc28c7fdfe30": {
+  "precio": 900,
+  "fuente": "Adaptador hembra PVC 3/4\"",
+  "confianza": "media"
+ },
+ "51e54db2-cfdf-488f-a858-b2ce45857863": {
+  "precio": 5000,
+  "fuente": "Niple galvanizado 3/4\" x 10 cm",
+  "confianza": "media"
+ },
+ "0d09efdf-ecea-48ec-871f-576dd3d20dfd": {
+  "precio": 45000,
+  "fuente": "Cerámica nacional Homecenter/Corona 2026 m2",
+  "confianza": "media"
+ },
+ "a911d4c2-c66d-4a6d-8df8-79c50321693e": {
+  "precio": 650000,
+  "fuente": "Puerta lámina 1.20x2.10 2 hojas con marco",
+  "confianza": "baja"
+ },
+ "0d256e65-86a9-408c-af4b-0ae69673c176": {
+  "precio": 40000,
+  "fuente": "Tubo concreto simple 10\" x 1 m",
+  "confianza": "baja"
+ },
+ "33da25db-93e0-45ab-8fe3-cc20518ebe45": {
+  "precio": 6000,
+  "fuente": "Asfalto sólido para juntas kg",
+  "confianza": "baja"
+ },
+ "00405fe6-5882-4790-979d-03c1ad899d5e": {
+  "precio": 22000,
+  "fuente": "Bulto gravilla lavada ~40 kg (115.000 excesivo)",
+  "confianza": "baja"
+ },
+ "5cdb8131-2ecb-4752-a49f-df1abcb9bec3": {
+  "precio": 50000,
+  "fuente": "Tubo PVC sanitario 6\" x 6 m /6",
+  "confianza": "media"
+ },
+ "25a129f6-6f3a-4287-ad35-2064c85ae902": {
+  "precio": 110000,
+  "fuente": "Laca nitrocelulosa galón (230.945 excesivo)",
+  "confianza": "media"
+ },
+ "036c418f-06cb-4e45-b81c-d49893aeabea": {
+  "precio": 4000,
+  "fuente": "Caja galvanizada 4x4",
+  "confianza": "media"
+ },
+ "9817a9e3-193f-4a49-acf8-10305e55c855": {
+  "precio": 350000,
+  "fuente": "Aro + tapa hierro fundido pozo",
+  "confianza": "baja"
+ },
+ "0528b9b6-f693-4c8a-9b9e-56575d412d4b": {
+  "precio": 22000,
+  "fuente": "Bulto gravilla lavada ~40 kg",
+  "confianza": "baja"
+ }
+}

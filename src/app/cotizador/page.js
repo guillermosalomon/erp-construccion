@@ -69,6 +69,12 @@ export default function CotizadorPage() {
         if (data.cuadrillas) setCuadrillas(data.cuadrillas);
         setLoadingCat(false);
 
+        // Descartar ítems del borrador que ya no están publicados en el catálogo
+        if (Array.isArray(data.catalogo) && data.catalogo.length > 0) {
+          const ids = new Set(data.catalogo.map(c => c.id));
+          setItems(prev => prev.filter(it => ids.has(it.apu_id)));
+        }
+
         // Si no hay ítems y es primera vez, precargar una plantilla básica de bienvenida
         try {
           const hasDraft = window.localStorage.getItem(DRAFT_KEY);
@@ -163,7 +169,8 @@ export default function CotizadorPage() {
           proyectoNombre,
           ubicacion,
           items,
-          catalogoMap: Object.fromEntries(catalogoMap),
+          // Solo los APUs usados en el presupuesto (el servidor recalcula con el motor único)
+          catalogoMap: Object.fromEntries(items.filter(it => catalogoMap.has(it.apu_id)).map(it => [it.apu_id, catalogoMap.get(it.apu_id)])),
           fechaInicio,
           duracionDias: cronograma.duracionDias,
           cronograma,
@@ -359,7 +366,7 @@ export default function CotizadorPage() {
                     marginBottom: 8,
                   }}>
                     <span style={{ fontSize: 13, fontWeight: 800, color: '#fbbf24' }}>
-                      📁 {cap.capitulo}
+                      📁 {cap.numero}. {cap.capitulo}
                     </span>
                     <span style={{ fontSize: 12, fontWeight: 700, color: '#cbd5e1' }}>
                       {formatMoney(cap.subtotal, currency)}
@@ -374,13 +381,13 @@ export default function CotizadorPage() {
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
                             <span style={{ fontSize: 10, background: 'rgba(255, 255, 255, 0.08)', padding: '2px 6px', borderRadius: 4, color: '#94a3b8' }}>
-                              {apu.codigo}
+                              {it.numero}
                             </span>
                             <span style={{ fontSize: 10, color: apu.cuadrilla_color || '#3b82f6', fontWeight: 600 }}>
                               👷 {apu.cuadrilla_nombre || 'Cuadrilla'}
                             </span>
                           </div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }} title={apu.descripcion || undefined}>
                             {apu.nombre}
                           </div>
                           <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>
