@@ -964,7 +964,8 @@ export async function loadAllData() {
     bimLinks, avances, notas, bodegas, inventario, 
     pagos, usuarios, personal, cargos, config, cargoDetalles,
     personalProyecto, itemChecklistItems, itemDocuments, controlAsistencia,
-    mkTiendas, mkPuntosVenta, mkOfertas, mkPedidos, chatCotizaciones
+    mkTiendas, mkPuntosVenta, mkOfertas, mkPedidos, chatCotizaciones,
+    proveedores, ordenesCompra, posAgenda
   ] = await Promise.all([
     safeLoad(categoriasService.getAll(), 'categorias'),
     safeLoad(insumosService.getAll(), 'insumos'),
