@@ -5,7 +5,7 @@ import { useStore } from '@/store/StoreContext';
 import BIMViewer from './BIMViewer';
 
 export default function BIM5DView() {
-  const { state, dispatch, calcularCostoAPU } = useStore();
+  const { state, dispatch, calcularCostoAPU, zonaProyecto } = useStore();
   const [selectedProyectoId, setSelectedProyectoId] = useState('');
   const [selectedElementId, setSelectedElementId] = useState(null);
   const [viewMode, setViewMode] = useState('split'); // 'split', 'full-3d', 'full-budget'
@@ -165,7 +165,7 @@ export default function BIM5DView() {
                         </div>
                         <div style={{ fontWeight: 600, fontSize: 13, margin: '2px 0' }}>{item.descripcion || apu?.nombre}</div>
                         <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>
-                          {item.cantidad} {apu?.unidad} • {formatCurrency(calcularCostoAPU(item.apu_id))}
+                          {item.cantidad} {apu?.unidad} • {formatCurrency(calcularCostoAPU(item.apu_id, zonaProyecto(item.proyecto_id)))}
                         </div>
                       </div>
                       <button 

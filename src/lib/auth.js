@@ -1,7 +1,8 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { supabase, isSupabaseConfigured } from './supabase';
+import { sincronizarIdentidad } from './identidad';
 
 const AuthContext = createContext(null);
 
@@ -12,6 +13,16 @@ export function AuthProvider({ children }) {
   const [authError, setAuthError] = useState(null);
 
   const isConfigured = isSupabaseConfigured();
+
+  // Identidad unificada: profiles es la persona; personal (staff) o clientes (CLIENTE)
+  // quedan enlazados por profile_id. Rol por defecto seguro: nunca asumir ADMIN.
+  // Una sola sincronización por usuario y sesión de pestaña (evita repetir en cada refresh de token).
+  const syncedRef = useRef(null);
+  const syncProfile = useCallback(async (sUser) => {
+    if (syncedRef.current === sUser.id) return;
+    syncedRef.current = sUser.id;
+    await sincronizarIdentidad(sUser);
+  }, []);
 
   // Listen for auth state changes
   useEffect(() => {
@@ -38,45 +49,7 @@ export function AuthProvider({ children }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [isConfigured]);
-
-  const syncProfile = async (sUser) => {
-    try {
-      // Rol por defecto seguro: nunca asumir ADMIN para registros nuevos
-      const metaRole = (sUser.user_metadata?.role || 'CLIENTE').toUpperCase();
-      // 1. Sync to profiles table
-      const { data: profileData, error: profileErr } = await supabase.from('profiles').select('id').eq('id', sUser.id).maybeSingle();
-      if (!profileData && !profileErr) {
-        await supabase.from('profiles').upsert({
-          id: sUser.id,
-          email: sUser.email,
-          nombre: sUser.user_metadata?.nombre || sUser.email.split('@')[0],
-          role: metaRole
-        }, { onConflict: 'id' });
-      }
-
-      // Los clientes del cotizador no son personal de obra
-      if (metaRole === 'CLIENTE') return;
-
-      // 2. Sync to personal table (so the user appears in the Personnel admin view)
-      const { data: personalData } = await supabase.from('personal').select('id').eq('email', sUser.email).maybeSingle();
-      if (!personalData) {
-        const nombreCompleto = sUser.user_metadata?.nombre || sUser.email.split('@')[0];
-        const parts = nombreCompleto.split(' ');
-        await supabase.from('personal').insert({
-          email: sUser.email,
-          nombre: nombreCompleto,
-          nombres: parts[0] || '',
-          apellidos: parts.slice(1).join(' ') || '',
-          profesion: sUser.user_metadata?.profesion || '',
-          app_role: metaRole,
-          user_id: sUser.id
-        });
-      }
-    } catch (e) {
-      console.warn('Sync Profile error (non-blocking):', e);
-    }
-  };
+  }, [isConfigured, syncProfile]);
 
   // ── Login ──
   const login = useCallback(async (email, password, role = 'ADMIN') => {
@@ -110,43 +83,14 @@ export function AuthProvider({ children }) {
       return { error };
     }
     
-    // Immediate sync for new registration — create profile (+ personal si no es cliente)
+    // Immediate sync for new registration — profile + personal (staff) o cliente CRM (CLIENTE), enlazados por profile_id
+    // (user_metadata ya contiene la metadata del registro; syncProfile evita duplicar con onAuthStateChange)
     if (data?.user) {
-      const role = (metadata.role || 'CLIENTE').toUpperCase();
-      try {
-        await supabase.from('profiles').upsert({
-          id: data.user.id,
-          email: data.user.email,
-          nombre: metadata.nombre || data.user.email.split('@')[0],
-          role
-        }, { onConflict: 'id' });
-
-        if (role !== 'CLIENTE') {
-          // Also create a personal entry
-          const nombreCompleto = metadata.nombre || data.user.email.split('@')[0];
-          const parts = nombreCompleto.split(' ');
-          await supabase.from('personal').insert({
-            email: data.user.email,
-            nombre: nombreCompleto,
-            nombres: parts[0] || '',
-            apellidos: parts.slice(1).join(' ') || '',
-            profesion: metadata.profesion || '',
-            app_role: role,
-            tipo_documento: metadata.tipo_documento || 'CC',
-            cedula: metadata.cedula || '',
-            ciudad: metadata.ciudad || '',
-            pais: metadata.pais || 'Colombia',
-            plan: metadata.plan || 'free',
-            user_id: data.user.id
-          });
-        }
-      } catch (e) {
-        console.warn('Error creating profile/personal on register:', e);
-      }
+      await syncProfile(data.user);
     }
 
     return { data };
-  }, [isConfigured]);
+  }, [isConfigured, syncProfile]);
 
   // ── Logout ──
   const logout = useCallback(async () => {

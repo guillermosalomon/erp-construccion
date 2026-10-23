@@ -5,6 +5,7 @@ import { useStore } from '@/store/StoreContext';
 import { useAuth } from '@/lib/auth';
 import { personalService } from '@/lib/services';
 import { supabase } from '@/lib/supabase';
+import { vincularPerfil } from '@/lib/identidad';
 
 const UNIDADES_PAGO = ['Mes', 'Día', 'Hora'];
 
@@ -55,6 +56,7 @@ export default function PersonalView() {
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [linkedClient, setLinkedClient] = useState(null);
+  const [perfiles, setPerfiles] = useState([]);
   const [search, setSearch] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState('person');
@@ -90,6 +92,12 @@ export default function PersonalView() {
       return updated;
     });
   };
+
+  // Perfiles de usuario (identidad unificada web/ERP) para mostrar y fijar el vínculo
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.from('profiles').select('*').then(({ data, error }) => { if (!error) setPerfiles(data || []); });
+  }, []);
 
   useEffect(() => {
     const handleOpenMyProfile = () => {
@@ -1341,6 +1349,39 @@ export default function PersonalView() {
                           </div>
                         </div>
                       )}
+
+                      {/* Perfil de usuario (identidad web/ERP) */}
+                      {(() => {
+                        const perfil = perfiles.find(p => p.id === (form.profile_id || form.user_id));
+                        const sugerido = !perfil && form.email ? perfiles.find(p => (p.email || '').toLowerCase() === form.email.toLowerCase()) : null;
+                        const vincular = async (profileId) => {
+                          try {
+                            if (editingId) await vincularPerfil('personal', editingId, profileId);
+                            setForm(f => ({ ...f, profile_id: profileId }));
+                          } catch (err) { alert('No se pudo vincular: ' + (err.message || err)); }
+                        };
+                        if (perfil) {
+                          const roles = [...new Set([perfil.role, ...(perfil.roles || [])].filter(Boolean).map(r => String(r).toUpperCase()))];
+                          return (
+                            <div style={{ marginTop:8, padding:'6px 12px', background:'#eef2ff', borderRadius:8, border:'1px solid #c7d2fe', fontSize:10 }}>
+                              <div style={{ fontWeight:700, color:'#3730a3' }}>🪪 Perfil de usuario: {perfil.email}</div>
+                              <div style={{ color:'#4338ca' }}>Roles: {roles.join(', ') || '—'}{!form.profile_id ? ' · enlazado por cuenta (user_id)' : ''}</div>
+                              {!form.profile_id && editingId && (
+                                <button type="button" className="btn btn-ghost btn-sm" style={{ fontSize:10, padding:'2px 6px' }} onClick={() => vincular(perfil.id)}>🔗 Fijar vínculo</button>
+                              )}
+                            </div>
+                          );
+                        }
+                        if (sugerido && editingId) {
+                          return (
+                            <div style={{ marginTop:8, padding:'6px 12px', background:'#f8fafc', borderRadius:8, border:'1px dashed #c7d2fe', fontSize:10, display:'flex', alignItems:'center', gap:8 }}>
+                              <span style={{ flex:1 }}>🪪 Existe una cuenta con este correo ({(sugerido.role || '').toUpperCase()}).</span>
+                              <button type="button" className="btn btn-ghost btn-sm" style={{ fontSize:10, padding:'2px 6px' }} onClick={() => vincular(sugerido.id)}>Vincular perfil</button>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
                     </div>
                     <div className="form-row">
                       <div className="form-group">

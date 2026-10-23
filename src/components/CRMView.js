@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useStore } from '@/store/StoreContext';
+import { vincularPerfil, convertirEnCliente, buscarClienteExistente, normEmail } from '@/lib/identidad';
 
 const emptyClient = {
   nombre:'', empresa:'', nit:'', email:'', telefono:'', whatsapp:'', telegram_id:'',
@@ -27,6 +28,9 @@ export default function CRMView() {
   const [form, setForm] = useState(emptyClient);
   const [selectedClient, setSelectedClient] = useState(null);
   const [linkedPersonal, setLinkedPersonal] = useState(null);
+  const [perfiles, setPerfiles] = useState([]);
+  const [showPendientes, setShowPendientes] = useState(false);
+  const [pendientes, setPendientes] = useState({ leads: [], chats: [] });
 
   // Load
   useEffect(() => { loadClientes(); }, []);
@@ -47,12 +51,68 @@ export default function CRMView() {
 
   async function loadLinkedPersonal(client) {
     if (!client) return;
+    // Identidad unificada: primero por perfil enlazado, luego por email / Telegram
+    if (client.profile_id) {
+      const { data: porPerfil } = await supabase.from('personal').select('*').eq('profile_id', client.profile_id).limit(1);
+      if (porPerfil?.length) { setLinkedPersonal(porPerfil[0]); return; }
+    }
+    const filtros = [client.email && `email.eq.${client.email}`, client.telegram_id && `telegram_id.eq.${client.telegram_id}`].filter(Boolean);
+    if (!filtros.length) { setLinkedPersonal(null); return; }
     const { data } = await supabase.from('personal')
       .select('*')
-      .or(`email.eq.${client.email},telegram_id.eq.${client.telegram_id}`)
-      .maybeSingle();
-    setLinkedPersonal(data || null);
+      .or(filtros.join(','))
+      .limit(1);
+    setLinkedPersonal(data?.[0] || null);
   }
+
+  // ── Perfiles (identidad web/ERP) ──
+  useEffect(() => {
+    supabase.from('profiles').select('*').then(({ data, error }) => { if (!error) setPerfiles(data || []); });
+  }, []);
+  const perfilDe = (c) => {
+    if (!c) return null;
+    if (c.profile_id) return perfiles.find(p => p.id === c.profile_id) || null;
+    return null;
+  };
+  const perfilSugerido = (c) => {
+    if (!c || c.profile_id || !c.email) return null;
+    return perfiles.find(p => normEmail(p.email) === normEmail(c.email)) || null;
+  };
+  const vincularClientePerfil = async (c, profileId) => {
+    try {
+      await vincularPerfil('clientes', c.id, profileId);
+      const actualizado = { ...c, profile_id: profileId };
+      setSelectedClient(actualizado);
+      setClientes(prev => prev.map(x => x.id === c.id ? actualizado : x));
+    } catch (err) {
+      alert('No se pudo vincular: ' + (err.message || err));
+    }
+  };
+
+  // ── Leads (marketing_leads) y contactos de chat por convertir ──
+  async function loadPendientes() {
+    const [leads, chats] = await Promise.all([
+      supabase.from('marketing_leads').select('*').order('created_at', { ascending: false }).limit(200),
+      supabase.from('chat_usuarios').select('*').order('ultimo_contacto', { ascending: false }).limit(200),
+    ]);
+    const sinCliente = (r) => !r.cliente_id;
+    setPendientes({
+      leads: (leads.data || []).filter(sinCliente).map(r => ({ ...r, _tabla: 'marketing_leads' })),
+      chats: (chats.data || []).filter(sinCliente).map(r => ({ ...r, _tabla: 'chat_usuarios' })),
+    });
+  }
+  const convertir = async (fila) => {
+    try {
+      const { cliente, reutilizado, enlazado } = await convertirEnCliente(fila._tabla, fila);
+      alert((reutilizado
+        ? `Se reutilizó el cliente existente "${cliente.nombre}".`
+        : `Cliente "${cliente.nombre}" creado.`)
+        + (enlazado ? '' : '\n(Aviso: no se pudo guardar cliente_id en el origen; ejecute migration-fase20.)'));
+      await Promise.all([loadClientes(), loadPendientes()]);
+    } catch (err) {
+      alert('No se pudo convertir: ' + (err.message || err));
+    }
+  };
 
   const filtered = useMemo(() => {
     return clientes.filter(c => {
@@ -80,6 +140,15 @@ export default function CRMView() {
     if (editingId) {
       await supabase.from('clientes').update(payload).eq('id', editingId);
     } else {
+      // Evitar duplicados: reutilizar cliente existente con el mismo email/teléfono
+      const existente = await buscarClienteExistente({ email: form.email, telefono: form.telefono, whatsapp: form.whatsapp });
+      if (existente) {
+        if (confirm(`Ya existe el cliente "${existente.nombre}" con ese correo o teléfono. ¿Abrirlo en lugar de crear uno nuevo?`)) {
+          setShowModal(false);
+          setSelectedClient(existente);
+          return;
+        }
+      }
       await supabase.from('clientes').insert(payload);
       // Sync: also create in personal table if not exists
       if (form.nombre) {
@@ -121,8 +190,44 @@ export default function CRMView() {
           <h1>CRM — Gestión de Clientes</h1>
           <div className="page-header-subtitle">Registro y seguimiento de clientes</div>
         </div>
-        <button className="btn btn-primary" onClick={openCreate}>+ Nuevo Cliente</button>
+        <div style={{ display:'flex', gap:8 }}>
+          <button className="btn btn-ghost" onClick={() => { const v = !showPendientes; setShowPendientes(v); if (v) loadPendientes(); }}>
+            📥 Leads y chats{pendientes.leads.length + pendientes.chats.length > 0 ? ` (${pendientes.leads.length + pendientes.chats.length})` : ''}
+          </button>
+          <button className="btn btn-primary" onClick={openCreate}>+ Nuevo Cliente</button>
+        </div>
       </div>
+
+      {/* Leads web y contactos de chat sin cliente asignado */}
+      {showPendientes && (
+        <div className="card" style={{ padding:16, marginBottom:20 }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+            <div style={{ fontWeight:700, fontSize:14 }}>📥 Por convertir en cliente</div>
+            <div style={{ fontSize:11, color:'#64748b' }}>Si ya existe un cliente con el mismo correo o teléfono, se reutiliza.</div>
+          </div>
+          {pendientes.leads.length + pendientes.chats.length === 0 ? (
+            <div style={{ fontSize:12, color:'#94a3b8', padding:12 }}>No hay leads ni contactos pendientes.</div>
+          ) : (
+            <table className="data-table">
+              <thead>
+                <tr><th>Origen</th><th>Nombre</th><th>Contacto</th><th>Detalle</th><th>Fecha</th><th></th></tr>
+              </thead>
+              <tbody>
+                {[...pendientes.leads, ...pendientes.chats].map(r => (
+                  <tr key={`${r._tabla}-${r.id}`}>
+                    <td style={{ fontSize:11 }}>{r._tabla === 'marketing_leads' ? `🌐 Lead ${r.fuente || 'web'}` : `💬 Chat ${r.plataforma || ''}`}</td>
+                    <td style={{ fontSize:12, fontWeight:600 }}>{r.nombre || '—'}</td>
+                    <td style={{ fontSize:11 }}>{[r.email, r.telefono || r.whatsapp || r.telegram_id].filter(Boolean).join(' · ') || '—'}</td>
+                    <td style={{ fontSize:11, color:'#64748b', maxWidth:260, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{[r.servicio, r.ciudad, r.mensaje].filter(Boolean).join(' · ') || '—'}</td>
+                    <td style={{ fontSize:11 }}>{fmt(r.created_at || r.ultimo_contacto)}</td>
+                    <td><button className="btn btn-sm btn-primary" onClick={() => convertir(r)}>Convertir</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
 
       {/* Stats */}
       <div className="stats-grid" style={{ gridTemplateColumns:'repeat(4,1fr)', marginBottom:20 }}>
@@ -202,6 +307,7 @@ export default function CRMView() {
                                     {c.empresa || 'Independiente'} 
                                     {c.plataforma === 'telegram' ? ' • 📱 Telegram' : (c.origen === 'whatsapp' ? ' • 💬 WhatsApp' : '')}
                                     {c.creado_por ? ` • 👤 ${c.creado_por.split('@')[0]}` : ''}
+                                    {c.profile_id ? ' • 🪪 Cuenta web' : ''}
                                   </div>
                                 </div>
                               </div>
@@ -334,6 +440,44 @@ export default function CRMView() {
                 </div>
               </div>
             </div>
+
+            {/* Perfil de usuario (cuenta web / ERP) */}
+            {(() => {
+              const perfil = perfilDe(selectedClient);
+              const sugerido = perfilSugerido(selectedClient);
+              if (perfil) {
+                const roles = [...new Set([perfil.role, ...(perfil.roles || [])].filter(Boolean).map(r => String(r).toUpperCase()))];
+                return (
+                  <div style={{ marginTop:20, padding:12, background:'#eef2ff', borderRadius:10, border:'1px solid #c7d2fe' }}>
+                    <div style={{ fontSize:11, fontWeight:700, color:'#3730a3', marginBottom:6 }}>🪪 Perfil de usuario</div>
+                    <div style={{ fontSize:12, fontWeight:600 }}>{perfil.email}</div>
+                    <div style={{ fontSize:10, color:'#4338ca', marginTop:2 }}>Roles: {roles.join(', ') || '—'}</div>
+                    <button className="btn btn-ghost btn-sm" style={{ marginTop:6, fontSize:10, color:'#ef4444' }} onClick={() => { if (confirm('¿Desvincular este perfil del cliente?')) vincularClientePerfil(selectedClient, null); }}>Desvincular</button>
+                  </div>
+                );
+              }
+              return (
+                <div style={{ marginTop:20, padding:12, background:'#f8fafc', borderRadius:10, border:'1px solid #e2e8f0' }}>
+                  <div style={{ fontSize:11, fontWeight:700, color:'#64748b', marginBottom:6 }}>🪪 Perfil de usuario</div>
+                  {sugerido ? (
+                    <>
+                      <div style={{ fontSize:11, color:'#475569' }}>Hay una cuenta con el mismo correo: <strong>{sugerido.email}</strong></div>
+                      <button className="btn btn-ghost btn-sm" style={{ width:'100%', marginTop:8, fontSize:10 }} onClick={() => vincularClientePerfil(selectedClient, sugerido.id)}>🔗 Vincular perfil</button>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontSize:11, color:'#94a3b8' }}>Sin cuenta web vinculada.</div>
+                      {perfiles.length > 0 && (
+                        <select className="form-select" style={{ marginTop:8, fontSize:11 }} value="" onChange={e => { if (e.target.value) vincularClientePerfil(selectedClient, e.target.value); }}>
+                          <option value="">Vincular a un perfil existente...</option>
+                          {perfiles.map(p => <option key={p.id} value={p.id}>{p.nombre || p.email} — {p.email}</option>)}
+                        </select>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })()}
 
             {linkedPersonal ? (
               <div style={{ marginTop:20, padding:12, background:'#f0fdf4', borderRadius:10, border:'1px solid #bbf7d0' }}>

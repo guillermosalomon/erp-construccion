@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import ExcelJS from 'exceljs';
 import { AIU } from '@/lib/cotizador/config';
 import { agruparPorCapitulo, calcularPresupuesto } from '@/lib/cotizador/engine';
-import { costoAPU, datosCargo, bucketInsumo } from '@/lib/apu-engine';
+import { costoAPU, datosCargo, bucketInsumo, ctxParaZona } from '@/lib/apu-engine';
 import { crearClienteLectura, cargarDatosCatalogo } from '@/lib/server/catalogo-data';
 
 /**
@@ -152,7 +152,7 @@ export async function POST(request) {
     } catch (e) {
       console.warn('Export: sin datos de servidor, se usan los del cliente:', e?.message);
     }
-    const ctx = datos?.ctx || null;
+    const ctx = datos?.ctx ? ctxParaZona(datos.ctx, ubicacion) : null;
     const apuById = new Map((datos?.apus || []).map((a) => [a.id, a]));
 
     const catalogo = {};

@@ -27,6 +27,7 @@ import PuntoVentaView from '@/components/PuntoVentaView';
 import HistorialPOSView from '@/components/HistorialPOSView';
 import VendedorPortalView from '@/components/VendedorPortalView';
 import CRMView from '@/components/CRMView';
+import UsuariosView from '@/components/UsuariosView';
 import ChatView from '@/components/ChatView';
 
 const BIMViewer = dynamic(() => import('@/components/BIMViewer'), { ssr: false });
@@ -118,6 +119,7 @@ export default function Home() {
   // BYPASS DE EMERGENCIA PARA EL ADMINISTRADOR
   const adminEmails = ['gsalo90@outlook.com', 'guillermosalomonsolarte@gmail.com', 'arq.guillermo_salomon@kalarti.com'];
   if (adminEmails.includes(user?.email)) userRole = 'ADMIN';
+  const isCorporateUser = !!user?.email?.endsWith('@kalarti.com') || adminEmails.includes(user?.email);
 
   // Role-based interception: Mobile/field workers
   if (userRole === 'TIENDA') {
@@ -202,6 +204,9 @@ export default function Home() {
         return <HistorialPOSView />;
       case 'crm':
         return <CRMView />;
+      case 'usuarios':
+        // Solo administradores (mismo criterio que el menú corporativo)
+        return userRole === 'ADMIN' || isCorporateUser ? <UsuariosView /> : <Dashboard />;
       case 'chat-history':
         return <ChatView />;
       default:

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import APUModal from './APUModal';
+import { UBICACIONES_COTIZADOR } from '@/lib/cotizador/config';
 import { useStore } from '@/store/StoreContext';
 import { calcularPrecioMercado } from '@/lib/price-engine';
 
@@ -23,6 +24,8 @@ export default function APUView() {
   const [expandedId, setExpandedId] = useState(null);
   const [isReloading, setIsReloading] = useState(false);
   const [categoriaFilter, setCategoriaFilter] = useState('Todos');
+  // Ubicación de costeo: precios de insumos (POS de la zona) y mano de obra (MO_ZONAS) según el municipio
+  const [zonaApu, setZonaApu] = useState(UBICACIONES_COTIZADOR[0].nombre);
   const [detalleForm, setDetalleForm] = useState({ 
     tipo_linea: 'insumo', 
     insumo_id: '', 
@@ -262,6 +265,16 @@ export default function APUView() {
             ))}
           </select>
 
+          <select
+            className="form-select"
+            value={zonaApu}
+            onChange={(e) => setZonaApu(e.target.value)}
+            title="Ubicación: precios de insumos del POS y mano de obra de esa zona"
+            style={{ fontSize: 12, fontWeight: 600, padding: '8px 12px', borderRadius: 8, minWidth: 200 }}
+          >
+            {UBICACIONES_COTIZADOR.map((u) => <option key={u.id} value={u.nombre}>📍 {u.nombre}</option>)}
+          </select>
+
           <div className="toolbar-spacer" />
           <span style={{ fontSize: 12, color: 'var(--color-text-tertiary)' }}>
             {apusFiltered.length} APU{apusFiltered.length !== 1 ? 's' : ''}
@@ -274,7 +287,7 @@ export default function APUView() {
             {apusFiltered.map((apu) => {
               const isExpanded = expandedId === apu.id;
               const detalles = getDetalles(apu.id);
-              const costoTotal = calcularCostoAPU(apu.id);
+              const costoTotal = calcularCostoAPU(apu.id, zonaApu);
 
               return (
                 <div className="card" key={apu.id}>
@@ -380,7 +393,7 @@ export default function APUView() {
                                   if (subApu) {
                                     recursoNombre = `[APU] ${subApu.nombre}`;
                                     recursoUnidad = subApu.unidad;
-                                    precioUnit = calcularCostoAPU(subApu.id);
+                                    precioUnit = calcularCostoAPU(subApu.id, zonaApu);
                                   }
                                 }
 
@@ -515,7 +528,7 @@ export default function APUView() {
                               <option value="">Seleccionar APU...</option>
                               {availableSubAPUs.map((a) => (
                                 <option key={a.id} value={a.id}>
-                                  {a.codigo} — {a.nombre} ({a.unidad}) — {formatCurrency(calcularCostoAPU(a.id))}
+                                  {a.codigo} — {a.nombre} ({a.unidad}) — {formatCurrency(calcularCostoAPU(a.id, zonaApu))}
                                 </option>
                               ))}
                             </select>
@@ -637,6 +650,7 @@ export default function APUView() {
       <APUModal 
         apuId={activeApuId} 
         isOpen={showApuModal} 
+        zona={zonaApu}
         onClose={() => setShowApuModal(false)} 
       />
     </>

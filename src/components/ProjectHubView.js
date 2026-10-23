@@ -7,11 +7,16 @@ import ProgressView from './ProgressView';
 import LogisticsView from './LogisticsView';
 import FinanceView from './FinanceView';
 import AgendaView from './AgendaView';
+import AbastecimientoObraView from './AbastecimientoObraView';
 
 function ProjectSummary({ proyectoId }) {
   const { state, calcularPresupuesto } = useStore();
   const proyecto = state.proyectos.find(p => p.id === proyectoId);
   const presupuesto = calcularPresupuesto(proyectoId);
+  // Fletes de compras y traslados hacia esta obra (costo de transporte del proyecto destino)
+  const costoTransporte = (state.ordenesCompra || [])
+    .filter(o => o.proyecto_id === proyectoId && o.estado !== 'CANCELADO')
+    .reduce((s, o) => s + (Number(o.costo_transporte) || 0), 0);
 
   const formatCurrency = (v) =>
     new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(v);
@@ -36,6 +41,10 @@ function ProjectSummary({ proyectoId }) {
               <div style={{ fontSize: 13, color: '#737373', fontWeight: 600, textTransform: 'uppercase' }}>Presupuesto Total</div>
               <div style={{ fontSize: 16, fontWeight: 500, color: '#2563eb' }}>{formatCurrency(presupuesto.gran_total)}</div>
             </div>
+            <div>
+              <div style={{ fontSize: 13, color: '#737373', fontWeight: 600, textTransform: 'uppercase' }}>Transporte de materiales</div>
+              <div style={{ fontSize: 16, fontWeight: 500, color: '#ea580c' }}>{formatCurrency(costoTransporte)}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -59,7 +68,8 @@ export default function ProjectHubView({ proyectoId, onBack }) {
     { id: 'agenda', label: 'Agenda' },
     { id: 'presupuesto', label: 'Presupuesto' },
     { id: 'progress', label: 'Seguimiento 4D/5D' },
-    { id: 'logistics', label: 'Bodega Móvil' },
+    { id: 'abastecimiento', label: 'Abastecimiento' },
+    { id: 'logistics', label: 'Bodega de obra' },
     { id: 'finance', label: 'Control Financiero' },
   ];
 
@@ -115,6 +125,7 @@ export default function ProjectHubView({ proyectoId, onBack }) {
         {activeTab === 'agenda' && <AgendaView proyectoId={proyectoId} />}
         {activeTab === 'presupuesto' && <PresupuestoView proyectoId={proyectoId} />}
         {activeTab === 'progress' && <ProgressView contextProyectoId={proyectoId} />}
+        {activeTab === 'abastecimiento' && <AbastecimientoObraView proyectoId={proyectoId} />}
         {activeTab === 'logistics' && <LogisticsView contextProyectoId={proyectoId} />}
         {activeTab === 'finance' && <FinanceView contextProyectoId={proyectoId} />}
       </div>

@@ -1,8 +1,16 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
   // Turbopack config (Next.js 16 default bundler)
-  turbopack: {},
+  turbopack: {
+    root: __dirname,
+  },
   
   // Webpack fallback for compatibility
   webpack: (config, { isServer }) => {

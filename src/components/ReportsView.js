@@ -8,7 +8,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
 export default function ReportsView() {
-  const { state, calcularCostoAPU, calcularPresupuesto, calcularExplosionInsumos } = useStore();
+  const { state, calcularCostoAPU, calcularPresupuesto, calcularExplosionInsumos, zonaProyecto } = useStore();
   const [selectedProyectoId, setSelectedProyectoId] = useState('');
   const [logo, setLogo] = useState(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -63,7 +63,7 @@ export default function ReportsView() {
         const itemsInCap = presupuestoItems.filter(i => (i.capitulo || 'GENERAL') === cap);
         itemsInCap.forEach((item, itemIdx) => {
           const row = sheet.getRow(currentRow++);
-          const costUnit = calcularCostoAPU(item.apu_id);
+          const costUnit = calcularCostoAPU(item.apu_id, zonaProyecto(item.proyecto_id));
           const total = costUnit * (item.cantidad || 0);
           row.values = [`${capIdx + 1}.${itemIdx + 1}`, item.descripcion, state.apus.find(a => a.id === item.apu_id)?.unidad || 'un', item.cantidad, costUnit, total];
           row.getCell(5).numFmt = '"$"#,##0'; row.getCell(6).numFmt = '"$"#,##0';
@@ -167,7 +167,7 @@ export default function ReportsView() {
       tableData.push([{ content: cap.toUpperCase(), colSpan: 6, styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } }]);
       const itemsInCap = presupuestoItems.filter(i => (i.capitulo || 'GENERAL') === cap);
       itemsInCap.forEach((item, itemIdx) => {
-        const costUnit = calcularCostoAPU(item.apu_id);
+        const costUnit = calcularCostoAPU(item.apu_id, zonaProyecto(item.proyecto_id));
         tableData.push([`${capIdx+1}.${itemIdx+1}`, item.descripcion, state.apus.find(a => a.id === item.apu_id)?.unidad || 'un', item.cantidad, formatCurrency(costUnit), formatCurrency(costUnit * item.cantidad)]);
       });
     });

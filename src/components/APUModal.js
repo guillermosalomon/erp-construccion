@@ -6,7 +6,7 @@ import { calcularPrecioMercado } from '@/lib/price-engine';
 
 const UNIDADES = ['un', 'kg', 'm', 'm2', 'm3', 'lt', 'gl', 'hr', 'día', 'viaje', 'saco'];
 
-export default function APUModal({ apuId, isOpen, onClose }) {
+export default function APUModal({ apuId, isOpen, onClose, zona }) {
   const { state, dispatch, calcularCostoAPU } = useStore();
   
   if (!isOpen) return null;
@@ -24,13 +24,14 @@ export default function APUModal({ apuId, isOpen, onClose }) {
       state={state} 
       dispatch={dispatch} 
       calcularCostoAPU={calcularCostoAPU} 
+      zona={zona}
       isOpen={isOpen} 
       onClose={onClose} 
     />
   );
 }
 
-function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isOpen, onClose }) {
+function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, zona, isOpen, onClose }) {
   const [form, setForm] = useState({ 
     nombre: apu.nombre, 
     descripcion: apu.descripcion || '', 
@@ -336,7 +337,7 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, isO
 
           <div style={{ background: '#f1f5f9', padding: '12px 16px', borderRadius: 8, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12, marginBottom: 20 }}>
             <span style={{ fontWeight: 700, fontSize: 13, color: '#475569' }}>Costo Unitario Total:</span>
-            <span style={{ textAlign: 'right', fontWeight: 800, color: 'var(--color-accent)', fontSize: 20 }}>{formatCurrency(calcularCostoAPU(apu.id))}</span>
+            <span style={{ textAlign: 'right', fontWeight: 800, color: 'var(--color-accent)', fontSize: 20 }}>{formatCurrency(calcularCostoAPU(apu.id, zona))}</span>
           </div>
 
           <section style={{ borderTop: '1px solid #e2e8f0', paddingTop: 20 }}>

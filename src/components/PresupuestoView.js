@@ -5,7 +5,7 @@ import APUModal from './APUModal';
 import { useStore, calculateEndDate } from '@/store/StoreContext';
 
 export default function PresupuestoView({ proyectoId, onBack }) {
-  const { state, dispatch, calcularCostoAPU, calcularPresupuesto } = useStore();
+  const { state, dispatch, calcularCostoAPU, calcularPresupuesto, zonaProyecto } = useStore();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [addForm, setAddForm] = useState({ apu_id: '', apu_search: '', cantidad: '', descripcion: '', capitulo: '', etapa: '', sub_capitulo: '', asignado_a_cuadrilla: '', fecha_inicio: '', num_cuadrillas: 1 });
@@ -183,7 +183,7 @@ export default function PresupuestoView({ proyectoId, onBack }) {
 
     chapters.forEach((chapterItems, capName) => {
       const capSubtotal = chapterItems.reduce((s, item) => {
-        return s + (calcularCostoAPU(item.apu_id) * (Number(item.cantidad) || 0));
+        return s + (calcularCostoAPU(item.apu_id, zonaProyecto(item.proyecto_id)) * (Number(item.cantidad) || 0));
       }, 0);
 
       tableRows += `<tr style="background:#f0f4ff;font-weight:600"><td colspan="6">${capName} — Subtotal: ${formatCurrency(capSubtotal)}</td></tr>`;
@@ -191,7 +191,7 @@ export default function PresupuestoView({ proyectoId, onBack }) {
       chapterItems.forEach((item) => {
         itemNum++;
         const apu = state.apus.find((a) => a.id === item.apu_id);
-        const costoUnit = calcularCostoAPU(item.apu_id);
+        const costoUnit = calcularCostoAPU(item.apu_id, zonaProyecto(item.proyecto_id));
         const subtotal = costoUnit * (Number(item.cantidad) || 0);
         tableRows += `<tr>
           <td>${itemNum}</td>
@@ -355,7 +355,7 @@ export default function PresupuestoView({ proyectoId, onBack }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
             {[...chapters.entries()].map(([capName, capItems]) => {
               const capSubtotal = capItems.reduce((s, item) => {
-                return s + (calcularCostoAPU(item.apu_id) * (Number(item.cantidad) || 0));
+                return s + (calcularCostoAPU(item.apu_id, zonaProyecto(item.proyecto_id)) * (Number(item.cantidad) || 0));
               }, 0);
 
               return (
@@ -427,7 +427,7 @@ export default function PresupuestoView({ proyectoId, onBack }) {
                       <tbody>
                         {capItems.map((item, idx) => {
                           const apu = state.apus.find((a) => a.id === item.apu_id);
-                          const costoUnit = apu ? calcularCostoAPU(apu.id) : 0;
+                          const costoUnit = apu ? calcularCostoAPU(apu.id, zonaProyecto(proyectoId)) : 0;
                           const subtotal = costoUnit * (Number(item.cantidad) || 0);
 
                           // Personal disponible en este proyecto (vínculo dinámico)

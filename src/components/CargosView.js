@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@/store/StoreContext';
 import FactorPrestacionalPanel from '@/components/FactorPrestacionalPanel';
-import MoZonasPanel from '@/components/MoZonasPanel';
 
 const UNIDADES = ['Hora', 'Día', 'Mes'];
 
@@ -222,10 +221,7 @@ export default function CargosView() {  const { state, dispatch, calcularDatosCa
         </div>
 
         {tab === 'factor' ? (
-          <>
-            <FactorPrestacionalPanel />
-            <MoZonasPanel />
-          </>
+          <FactorPrestacionalPanel />
         ) : (
         <>
         {/* SMLV Config Bar */}

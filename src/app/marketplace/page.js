@@ -1,260 +1,258 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+/* ============================================================
+   Tienda virtual Kalarti — catálogo público
+   Ofertas reales de mk_ofertas: CATALOGO (despacho directo del
+   proveedor) y SOBRANTE (stock disponible en una obra).
+   ============================================================ */
 
-const mockProductos = [
-  {
-    id: '1',
-    nombre: 'Cemento Argos Uso General 50kg',
-    precio: 32000,
-    categoria: 'Materiales',
-    proveedor: 'Ferretería Central',
-    imagen: '/api/placeholder/300/300',
-    descripcion: 'Cemento de uso general para construcción.'
-  },
-  {
-    id: '2',
-    nombre: 'Acero Corrugado 1/2" x 6m',
-    precio: 28500,
-    categoria: 'Aceros',
-    proveedor: 'Aceros de Colombia',
-    imagen: '/api/placeholder/300/300',
-    descripcion: 'Varilla de acero corrugado de alta resistencia.'
-  },
-  {
-    id: '3',
-    nombre: 'Ladrillo Prensado Rojo',
-    precio: 1200,
-    categoria: 'Obra Gris',
-    proveedor: 'Ladrillera Santa Fe',
-    imagen: '/api/placeholder/300/300',
-    descripcion: 'Ladrillo prensado para fachadas y muros divisorios.'
-  },
-  {
-    id: '4',
-    nombre: 'Pintura Viniltex Blanco 5 Galones',
-    precio: 250000,
-    categoria: 'Acabados',
-    proveedor: 'Pinturas y Color',
-    imagen: '/api/placeholder/300/300',
-    descripcion: 'Pintura acrílica de alta calidad para interiores y exteriores.'
-  }
-];
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import {
+  fmt, norm, ofertaToProducto, readCart, writeCart, cartSubtotal, clampQty,
+  loadOfertasPublicadas, TiendaHeader, ui,
+} from './_lib/shared';
 
-export default function MarketplaceProductos() {
+const POR_PAGINA = 24;
+
+export default function MarketplacePage() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [categoriaFilter, setCategoriaFilter] = useState('Todas');
-  const [paisFilter, setPaisFilter] = useState('Todas');
+  const [error, setError] = useState('');
+  const [categoria, setCategoria] = useState('');
+  const [municipio, setMunicipio] = useState('');
+  const [origen, setOrigen] = useState('');
+  const [busqueda, setBusqueda] = useState('');
+  const [visibles, setVisibles] = useState(POR_PAGINA);
+  const [cart, setCart] = useState([]);
+  const [drawer, setDrawer] = useState(false);
+  const [aviso, setAviso] = useState('');
 
   useEffect(() => {
-    fetchProductos();
+    let vivo = true;
+    (async () => {
+      try {
+        const rows = await loadOfertasPublicadas();
+        if (!vivo) return;
+        setProductos(rows.map(ofertaToProducto).filter((p) => p.precio > 0 && (p.origen !== 'SOBRANTE' || p.stock > 0)));
+      } catch {
+        if (vivo) setError('No pudimos cargar el catálogo. Intenta de nuevo en unos minutos.');
+      } finally {
+        if (vivo) setLoading(false);
+      }
+    })();
+    const sync = () => setCart(readCart());
+    sync();
+    window.addEventListener('kalarti-cart-change', sync);
+    window.addEventListener('storage', sync);
+    return () => {
+      vivo = false;
+      window.removeEventListener('kalarti-cart-change', sync);
+      window.removeEventListener('storage', sync);
+    };
   }, []);
 
-  const fetchProductos = async () => {
-    setLoading(true);
-    try {
-      // Obtenemos los productos publicados en el marketplace y unimos con insumos y tiendas
-      const { data, error } = await supabase
-        .from('mk_ofertas')
-        .select(`
-          *,
-          insumo:insumos(*),
-          tienda:mk_tiendas(nombre),
-          punto_venta:mk_puntos_venta(ciudad)
-        `)
-        .eq('publicado_marketplace', true)
-        .eq('activo', true)
-        .order('created_at', { ascending: false })
-        .limit(100);
-        
-      if (error) throw error;
-      setProductos(data && data.length > 0 ? data : mockProductos);
-    } catch (err) {
-      console.error('Error fetching productos:', err);
-      setProductos(mockProductos);
-    } finally {
-      setLoading(false);
-    }
+  // Categorías y municipios desde los datos
+  const categorias = useMemo(() => {
+    const m = new Map();
+    productos.forEach((p) => m.set(p.categoria, (m.get(p.categoria) || 0) + 1));
+    return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0], 'es'));
+  }, [productos]);
+
+  const municipios = useMemo(() => {
+    const m = new Map();
+    productos.forEach((p) => { if (p.municipio) m.set(p.municipio, (m.get(p.municipio) || 0) + 1); });
+    return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0], 'es'));
+  }, [productos]);
+
+  const filtrados = useMemo(() => {
+    const q = norm(busqueda);
+    const terms = q ? q.split(/\s+/).filter(Boolean) : [];
+    return productos.filter((p) => {
+      if (categoria && p.categoria !== categoria) return false;
+      if (municipio && p.municipio !== municipio) return false;
+      if (origen && p.origen !== origen) return false;
+      if (terms.length) {
+        const hay = norm(`${p.nombre} ${p.categoria}`);
+        if (!terms.every((t) => hay.includes(t))) return false;
+      }
+      return true;
+    });
+  }, [productos, categoria, municipio, origen, busqueda]);
+
+  // Reinicia la paginación al cambiar filtros
+  const conReset = (fn) => (v) => { fn(v); setVisibles(POR_PAGINA); };
+  const fCategoria = conReset(setCategoria);
+  const fMunicipio = conReset(setMunicipio);
+  const fOrigen = conReset(setOrigen);
+  const fBusqueda = conReset(setBusqueda);
+
+  const saveCart = useCallback((items) => { setCart(items); writeCart(items); }, []);
+
+  const agregar = (p) => {
+    const ex = cart.find((i) => i.id === p.id);
+    const item = ex || {
+      id: p.id, insumo_id: p.insumo_id, nombre: p.nombre, unidad: p.unidad, precio: p.precio,
+      origen: p.origen, bodega_id: p.bodega_id, categoria: p.categoria, municipio: p.municipio,
+      sector: p.sector, cantidad: 0, stock_max: p.origen === 'SOBRANTE' ? p.stock : null,
+    };
+    const cantidad = clampQty(item, (item.cantidad || 0) + 1);
+    if (ex && cantidad === ex.cantidad) { setAviso('Alcanzaste el stock disponible de este sobrante.'); return; }
+    saveCart(ex ? cart.map((i) => (i.id === p.id ? { ...i, cantidad } : i)) : [...cart, { ...item, cantidad }]);
+    setAviso(`Agregado: ${p.nombre}`);
   };
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
-  };
+  useEffect(() => {
+    if (!aviso) return undefined;
+    const t = setTimeout(() => setAviso(''), 2200);
+    return () => clearTimeout(t);
+  }, [aviso]);
 
-  const categorias = ['Todas', 'Básicos', 'Aceros', 'Madera', 'Ferretería', 'Tuberías y Accesorios', 'Eléctricos', 'Herramientas', 'Agregados', 'Mampostería', 'Pinturas', 'Otros'];
-  const paises = ['Colombia', 'USA', 'Brazil'];
-  
-  // Extraer ciudades dinámicamente de los productos cargados
-  const ciudadesDisponibles = ['Todas', ...Array.from(new Set(productos.map(p => p.punto_venta?.ciudad || p.ciudad).filter(Boolean)))];
+  const setCantidad = (id, qty) => saveCart(cart.map((i) => (i.id === id ? { ...i, cantidad: clampQty(i, qty) } : i)));
+  const quitar = (id) => saveCart(cart.filter((i) => i.id !== id));
+  const unidadesCart = cart.reduce((s, i) => s + Number(i.cantidad || 0), 0);
+  const subtotal = cartSubtotal(cart);
 
-  const filteredProductos = productos.filter(p => {
-    const catFinal = p.categoria || p.insumo?.categoria || 'General';
-    const ciudadFinal = p.punto_venta?.ciudad || p.ciudad || '';
-    const matchCat = categoriaFilter === 'Todas' || catFinal === categoriaFilter;
-    const matchCiudad = paisFilter === 'Todas' || ciudadFinal === paisFilter; // Usamos paisFilter como state para ciudad temporalmente o lo renombramos a ciudadFilter
-    return matchCat && matchCiudad;
+  const chip = (activo) => ({
+    padding: '7px 14px', borderRadius: 999, border: activo ? '1px solid #2563eb' : '1px solid #e2e8f0',
+    background: activo ? '#2563eb' : 'white', color: activo ? 'white' : '#334155', fontSize: 13, fontWeight: 600,
+    cursor: 'pointer', whiteSpace: 'nowrap',
   });
 
-  const [selectedPais, setSelectedPais] = useState('Colombia');
-
   return (
-    <div style={{ fontFamily: 'Inter, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
-      <style>{`
-        .search-bar-flex {
-          display: flex;
-          gap: 8px;
-          flex-direction: row;
-        }
-        @media (max-width: 768px) {
-          .search-bar-flex {
-            flex-direction: column !important;
-          }
-          nav {
-            flex-direction: column;
-            padding: 20px !important;
-            gap: 12px;
-          }
-          .nav-links {
-            flex-wrap: wrap;
-            justify-content: center;
-          }
-        }
-      `}</style>
-      {/* HEADER PUBLICO */}
-      <nav style={{ 
-        background: '#0f172a', padding: '20px 40px', display: 'flex', 
-        justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 
-      }}>
-        <Link href="/" style={{ fontSize: '24px', fontWeight: '800', color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <img src="/icon.png" alt="Kalarti Logo" style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'contain' }} />
-          KALARTI Materiales
-        </Link>
-        <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <select 
-            value={selectedPais}
-            onChange={(e) => setSelectedPais(e.target.value)}
-            style={{ background: 'transparent', color: '#f8fafc', border: '1px solid #334155', padding: '6px 12px', borderRadius: '6px', outline: 'none', cursor: 'pointer' }}
-          >
-            {paises.map(p => <option key={p} value={p} style={{ color: '#0f172a' }}>🌎 {p}</option>)}
-          </select>
-          <Link href="/" style={{ color: '#f8fafc', textDecoration: 'none', fontWeight: '500' }}>Ecosistema</Link>
-          <Link href="/propiedades" style={{ color: '#f8fafc', textDecoration: 'none', fontWeight: '500' }}>Inmuebles</Link>
-          <Link href="/erp" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '600' }}>Ingresar al ERP</Link>
-        </div>
-      </nav>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <TiendaHeader cartCount={unidadesCart} onCart={() => setDrawer(true)} />
 
-      {/* HERO BUSCADOR */}
-      <div style={{ 
-        background: 'linear-gradient(rgba(15,23,42,0.9), rgba(15,23,42,0.9)), url(/api/placeholder/1200/600) center/cover', 
-        padding: '60px 40px', textAlign: 'center', color: 'white' 
-      }}>
-        <h1 style={{ fontSize: '40px', fontWeight: '800', marginBottom: '16px' }}>Encuentra materiales de construcción B2B/B2C</h1>
-        <p style={{ fontSize: '18px', color: '#cbd5e1', marginBottom: '40px', maxWidth: '600px', margin: '0 auto 40px' }}>
-          Compra directo a ferreterías y proveedores de la red Kalarti.
+      {/* Hero */}
+      <header style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)', color: 'white', padding: '40px 24px 32px', textAlign: 'center' }}>
+        <h1 style={{ fontSize: 34, fontWeight: 800, margin: '0 0 8px' }}>Materiales para tu obra</h1>
+        <p style={{ fontSize: 16, color: '#dbeafe', margin: '0 auto 20px', maxWidth: 640 }}>
+          Despacho directo del proveedor y sobrantes de obra a precio de liquidación.
         </p>
-
-        {/* Barra de Filtros */}
-        <div className="search-bar-flex" style={{ 
-          background: 'white', padding: '8px', borderRadius: '12px', 
-          maxWidth: '900px', margin: '0 auto', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' 
-        }}>
-          <input 
-            type="text" 
-            placeholder="Ej. Cemento, Varilla, Pintura..." 
-            style={{ flex: 1, padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '16px', outline: 'none' }} 
+        <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <input
+            type="search"
+            placeholder="Buscar producto o categoría…"
+            value={busqueda}
+            onChange={(e) => fBusqueda(e.target.value)}
+            style={{ ...ui.input, flex: '1 1 320px', padding: '14px 16px', fontSize: 15, border: 'none' }}
           />
-          <select 
-            value={paisFilter} 
-            onChange={(e) => setPaisFilter(e.target.value)}
-            style={{ width: '180px', padding: '0 16px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '16px', outline: 'none', background: '#f8fafc', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}
-          >
-            {ciudadesDisponibles.map(ciudad => (
-              <option key={ciudad} value={ciudad}>📍 {ciudad}</option>
-            ))}
+          <select value={municipio} onChange={(e) => fMunicipio(e.target.value)} style={{ ...ui.input, flex: '0 1 200px', padding: '14px 12px', border: 'none' }}>
+            <option value="">📍 Todos los municipios</option>
+            {municipios.map(([m, n]) => <option key={m} value={m}>{m} ({n})</option>)}
           </select>
-          <button style={{ background: '#3b82f6', color: 'white', padding: '16px 32px', borderRadius: '8px', border: 'none', fontWeight: '700', fontSize: '16px', cursor: 'pointer' }}>
-            Buscar
-          </button>
         </div>
-      </div>
+      </header>
 
-      <div style={{ padding: '40px', maxWidth: '1400px', margin: '0 auto', display: 'flex', gap: '40px' }}>
-        
-        {/* SIDEBAR CATEGORIAS */}
-        <div style={{ width: '250px', flexShrink: 0 }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0f172a', marginBottom: '20px' }}>Categorías</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {categorias.map(cat => (
-              <button 
-                key={cat}
-                onClick={() => setCategoriaFilter(cat)}
-                style={{ 
-                  textAlign: 'left', padding: '12px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-                  background: categoriaFilter === cat ? '#eff6ff' : 'transparent',
-                  color: categoriaFilter === cat ? '#2563eb' : '#475569',
-                  fontWeight: categoriaFilter === cat ? 'bold' : '500',
-                  transition: 'background 0.2s'
-                }}
-              >
-                {cat}
-              </button>
-            ))}
+      <main style={{ maxWidth: 1240, margin: '0 auto', padding: '24px 20px 64px' }}>
+        {/* Categorías */}
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 12 }}>
+          <button style={chip(!categoria)} onClick={() => fCategoria('')}>Todas ({productos.length})</button>
+          {categorias.map(([c, n]) => (
+            <button key={c} style={chip(categoria === c)} onClick={() => fCategoria(c)}>{c} ({n})</button>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 18 }}>
+          <div style={{ fontSize: 14, color: '#475569' }}>
+            {loading ? 'Cargando catálogo…' : `${filtrados.length.toLocaleString('es-CO')} productos`}
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button style={chip(origen === '')} onClick={() => fOrigen('')}>Todo</button>
+            <button style={chip(origen === 'CATALOGO')} onClick={() => fOrigen('CATALOGO')}>🚚 Despacho directo</button>
+            <button style={chip(origen === 'SOBRANTE')} onClick={() => fOrigen('SOBRANTE')}>🏗️ Sobrantes de obra</button>
           </div>
         </div>
 
-        {/* GRID PRODUCTOS */}
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b' }}>
-              {categoriaFilter === 'Todas' ? 'Todos los materiales' : categoriaFilter}
-            </h2>
-            <div style={{ color: '#64748b' }}>{filteredProductos.length} productos</div>
+        {error && <div style={{ ...ui.card, color: '#b91c1c', marginBottom: 16 }}>{error}</div>}
+
+        {!loading && filtrados.length === 0 && !error && (
+          <div style={{ ...ui.card, textAlign: 'center', color: '#64748b', padding: 48 }}>
+            No encontramos productos con esos filtros.
           </div>
-          
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: '#64748b' }}>Cargando catálogo...</div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
-              {filteredProductos.map(producto => (
-                <div 
-                  key={producto.id} 
-                  style={{ 
-                    background: 'white', borderRadius: '16px', overflow: 'hidden',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', transition: 'all 0.3s', border: '1px solid #e2e8f0',
-                    display: 'flex', flexDirection: 'column'
-                  }}
-                >
-                  <div style={{ height: '200px', padding: '24px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ fontSize: '60px' }}>📦</div>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 18 }}>
+          {filtrados.slice(0, visibles).map((p) => (
+            <article key={p.id} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: 0.4 }}>{p.categoria}</div>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: 0, lineHeight: 1.35, minHeight: 40 }}>{p.nombre}</h3>
+              <div style={{ fontSize: 12, color: '#64748b' }}>Unidad: {p.unidad}</div>
+              {p.origen === 'SOBRANTE' ? (
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#92400e', background: '#fef3c7', padding: '4px 8px', borderRadius: 6, alignSelf: 'flex-start' }}>
+                  Sobrante de obra · 📍 {p.municipio}{p.sector ? ` – ${p.sector}` : ''}
+                </span>
+              ) : (
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#166534', background: '#dcfce7', padding: '4px 8px', borderRadius: 6, alignSelf: 'flex-start' }}>
+                  Despacho directo del proveedor
+                </span>
+              )}
+              <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8, paddingTop: 8 }}>
+                <div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: '#0f172a' }}>{fmt(p.precio)}</div>
+                  {p.origen === 'SOBRANTE' && <div style={{ fontSize: 11, color: '#64748b' }}>Disponibles: {p.stock}</div>}
+                </div>
+                <button onClick={() => agregar(p)} style={{ ...ui.btnPrimary, padding: '9px 14px', fontSize: 13 }}>Agregar</button>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {visibles < filtrados.length && (
+          <div style={{ textAlign: 'center', marginTop: 28 }}>
+            <button style={ui.btnGhost} onClick={() => setVisibles((v) => v + POR_PAGINA)}>
+              Ver más ({(filtrados.length - visibles).toLocaleString('es-CO')} restantes)
+            </button>
+          </div>
+        )}
+      </main>
+
+      {aviso && (
+        <div style={{ position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', background: '#0f172a', color: 'white', padding: '10px 18px', borderRadius: 8, fontSize: 13, zIndex: 300 }}>
+          {aviso}
+        </div>
+      )}
+
+      {/* Carrito */}
+      {drawer && (
+        <div onClick={() => setDrawer(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.45)', zIndex: 200 }}>
+          <aside onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 'min(420px, 100%)', background: 'white', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ padding: '18px 20px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>Tu carrito</h2>
+              <button onClick={() => setDrawer(false)} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer' }} aria-label="Cerrar">×</button>
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {cart.length === 0 && <div style={{ color: '#64748b', textAlign: 'center', marginTop: 40 }}>Tu carrito está vacío.</div>}
+              {cart.map((i) => (
+                <div key={i.id} style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: 12 }}>
+                  <div style={{ fontWeight: 600, fontSize: 14, color: '#0f172a' }}>{i.nombre}</div>
+                  <div style={{ fontSize: 12, color: '#64748b', margin: '2px 0 8px' }}>
+                    {fmt(i.precio)} / {i.unidad} · {i.origen === 'SOBRANTE' ? `Sobrante · ${i.municipio}` : 'Despacho directo'}
                   </div>
-                  <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ color: '#3b82f6', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '8px' }}>
-                      {producto.categoria || producto.insumo?.categoria || 'General'}
-                    </div>
-                    <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', marginBottom: '12px', flex: 1 }}>
-                      {producto.nombre_comercial || producto.insumo?.nombre || producto.nombre}
-                    </h3>
-                    <div style={{ fontSize: '22px', fontWeight: '900', color: '#0f172a', marginBottom: '8px' }}>
-                      {formatCurrency(producto.precio_venta || producto.precio)}
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '20px' }}>
-                      Vendido por: <strong>{producto.tienda?.nombre || producto.tienda_nombre || producto.proveedor}</strong>
-                      <br/>📍 {producto.punto_venta?.ciudad || producto.ciudad}
-                    </div>
-                    <button style={{ width: '100%', background: '#f8fafc', color: '#0f172a', border: '1px solid #cbd5e1', padding: '12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={(e) => {e.target.style.background = '#0f172a'; e.target.style.color = 'white'}} onMouseOut={(e) => {e.target.style.background = '#f8fafc'; e.target.style.color = '#0f172a'}}>
-                      Añadir al Carrito
-                    </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <button style={{ ...ui.btnGhost, padding: '4px 10px' }} onClick={() => setCantidad(i.id, i.cantidad - 1)}>−</button>
+                    <input value={i.cantidad} onChange={(e) => setCantidad(i.id, e.target.value)} inputMode="numeric" style={{ ...ui.input, width: 64, textAlign: 'center', padding: '6px' }} />
+                    <button style={{ ...ui.btnGhost, padding: '4px 10px' }} onClick={() => setCantidad(i.id, i.cantidad + 1)}>+</button>
+                    <div style={{ marginLeft: 'auto', fontWeight: 700 }}>{fmt(i.precio * i.cantidad)}</div>
+                    <button onClick={() => quitar(i.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 13 }}>Quitar</button>
                   </div>
                 </div>
               ))}
             </div>
-          )}
+            <div style={{ padding: 20, borderTop: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 800, marginBottom: 12 }}>
+                <span>Subtotal</span><span>{fmt(subtotal)}</span>
+              </div>
+              <a
+                href={cart.length ? '/marketplace/checkout' : undefined}
+                style={{ ...ui.btnPrimary, display: 'block', textAlign: 'center', textDecoration: 'none', opacity: cart.length ? 1 : 0.5, pointerEvents: cart.length ? 'auto' : 'none' }}
+              >
+                Finalizar compra
+              </a>
+              <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 8, textAlign: 'center' }}>El costo de envío se confirma al coordinar el despacho.</div>
+            </div>
+          </aside>
         </div>
-
-      </div>
+      )}
     </div>
   );
 }

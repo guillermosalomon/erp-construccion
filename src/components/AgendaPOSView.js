@@ -3,9 +3,23 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@/store/StoreContext';
 import { useAuth } from '@/lib/auth';
-import { generarOrdenesCompraProgramadas } from '@/lib/compras-engine';
 
-const fmt = v => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(v);
+/* Agenda comercial: pos_agenda con ambito 'COMERCIAL' (null se trata como COMERCIAL) */
+const TIPOS_COMERCIAL = {
+  DESPACHO: { label: 'Despacho', bg: '#dbeafe', color: '#1e40af', icon: '🚚' },
+  ENTREGA_OBRA: { label: 'Entrega en obra', bg: '#e0e7ff', color: '#3730a3', icon: '🏗️' },
+  RECEPCION: { label: 'Recepción', bg: '#dcfce7', color: '#166534', icon: '📥' },
+  LLAMAR_PROVEEDOR: { label: 'Llamar proveedor', bg: '#ede9fe', color: '#5b21b6', icon: '📞' },
+  TAREA: { label: 'Tarea', bg: '#f1f5f9', color: '#64748b', icon: '📋' },
+};
+// Tipos anteriores a la agenda centralizada
+const TIPOS_LEGACY = {
+  entrega_cliente: 'DESPACHO',
+  recepcion_proveedor: 'RECEPCION',
+  reposicion_stock: 'LLAMAR_PROVEEDOR',
+  visita_obra: 'ENTREGA_OBRA',
+};
+const tipoNormalizado = (t) => (TIPOS_COMERCIAL[t] ? t : TIPOS_LEGACY[t] || 'TAREA');
 
 export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre }) {
   const { state, dispatch } = useStore();
@@ -15,13 +29,11 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
   const [filterTipo, setFilterTipo] = useState('todos');
   const [search, setSearch] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showAutoOrdersModal, setShowAutoOrdersModal] = useState(false);
-  const [selectedProyectoId, setSelectedProyectoId] = useState('');
 
   const [newItem, setNewItem] = useState({
     titulo: '',
     descripcion: '',
-    tipo: 'entrega_cliente',
+    tipo: 'DESPACHO',
     fecha_programada: new Date().toISOString().split('T')[0],
     prioridad: 'media',
     contacto_nombre: '',
@@ -29,19 +41,20 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
     direccion: '',
   });
 
-  // Filtrar agenda para este punto de venta / tienda
+  // Filtrar agenda comercial para este punto de venta / tienda
   const posItems = useMemo(() => {
     let list = (state.posAgenda || []).filter(item => {
+      if ((item.ambito || 'COMERCIAL') !== 'COMERCIAL') return false;
       if (puntoVentaId && item.punto_venta_id && item.punto_venta_id !== puntoVentaId) return false;
       if (tiendaId && item.tienda_id && item.tienda_id !== tiendaId) return false;
       return true;
     });
 
     if (filterEstado !== 'todos') {
-      list = list.filter(i => i.estado === filterEstado);
+      list = list.filter(i => (i.estado || 'pendiente') === filterEstado);
     }
     if (filterTipo !== 'todos') {
-      list = list.filter(i => i.tipo === filterTipo);
+      list = list.filter(i => tipoNormalizado(i.tipo) === filterTipo);
     }
     if (search) {
       const s = search.toLowerCase();
@@ -52,7 +65,7 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
       );
     }
 
-    return list.sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada));
+    return [...list].sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada));
   }, [state.posAgenda, puntoVentaId, tiendaId, filterEstado, filterTipo, search]);
 
   const handleAddItem = (e) => {
@@ -62,10 +75,11 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
     const payload = {
       ...newItem,
       id: crypto.randomUUID(),
-      tienda_id: tiendaId,
-      punto_venta_id: puntoVentaId,
+      ambito: 'COMERCIAL',
+      tienda_id: tiendaId || null,
+      punto_venta_id: puntoVentaId || null,
+      responsable_id: user?.id || null,
       estado: 'pendiente',
-      user_id: user?.id,
       created_at: new Date().toISOString(),
     };
 
@@ -74,7 +88,7 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
     setNewItem({
       titulo: '',
       descripcion: '',
-      tipo: 'entrega_cliente',
+      tipo: 'DESPACHO',
       fecha_programada: new Date().toISOString().split('T')[0],
       prioridad: 'media',
       contacto_nombre: '',
@@ -100,68 +114,9 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
     }
   };
 
-  // ── Generación de órdenes de compra desde un proyecto ──
-  const previewOrdenes = useMemo(() => {
-    if (!selectedProyectoId) return [];
-    const proyItems = state.presupuestoItems.filter(pi => pi.proyecto_id === selectedProyectoId);
-    if (proyItems.length === 0) return [];
-
-    const catalogoMap = {};
-    (state.apus || []).forEach(a => { catalogoMap[a.id] = a; });
-
-    return generarOrdenesCompraProgramadas({
-      presupuestoItems: proyItems,
-      catalogoMap,
-      proyectoId: selectedProyectoId,
-      tiendaId,
-      puntoVentaId,
-    });
-  }, [selectedProyectoId, state.presupuestoItems, state.apus, tiendaId, puntoVentaId]);
-
-  const handleConfirmarOrdenesAuto = () => {
-    if (previewOrdenes.length === 0) return;
-
-    previewOrdenes.forEach(oc => {
-      // 1. Guardar orden de compra
-      dispatch({ type: 'ADD_ORDEN_COMPRA', payload: oc });
-
-      // 2. Agendar en la Agenda POS como recepción programada
-      dispatch({
-        type: 'ADD_POS_AGENDA',
-        payload: {
-          id: crypto.randomUUID(),
-          tienda_id: tiendaId,
-          punto_venta_id: puntoVentaId,
-          titulo: `📥 Recepción de Materiales: ${oc.proveedor_nombre} (${oc.numero_orden})`,
-          descripcion: `Pedido de ${oc.items.length} insumos por valor de ${fmt(oc.total)}.`,
-          tipo: 'recepcion_proveedor',
-          fecha_programada: oc.fecha_programada,
-          prioridad: 'alta',
-          estado: 'pendiente',
-          contacto_nombre: oc.proveedor_nombre,
-          relacion_id: oc.id,
-          user_id: user?.id,
-          created_at: new Date().toISOString(),
-        }
-      });
-    });
-
-    alert(`¡Éxito! Se han agendado ${previewOrdenes.length} órdenes de compra al proveedor más barato.`);
-    setShowAutoOrdersModal(false);
-    setSelectedProyectoId('');
-  };
-
   const tipoBadge = (t) => {
-    switch (t) {
-      case 'entrega_cliente':
-        return <span style={{ background: '#dbeafe', color: '#1e40af', padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}>🚚 Entrega Obra</span>;
-      case 'recepcion_proveedor':
-        return <span style={{ background: '#dcfce7', color: '#166534', padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}>📥 Recepción Prov.</span>;
-      case 'reposicion_stock':
-        return <span style={{ background: '#fef3c7', color: '#92400e', padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}>🔄 Reposición</span>;
-      default:
-        return <span style={{ background: '#f1f5f9', color: '#64748b', padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}>📋 General</span>;
-    }
+    const tipo = TIPOS_COMERCIAL[tipoNormalizado(t)];
+    return <span style={{ background: tipo.bg, color: tipo.color, padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}>{tipo.icon} {tipo.label}</span>;
   };
 
   const estadoBadge = (e) => {
@@ -216,20 +171,11 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
             style={{ width: 140, fontSize: 12 }}
           >
             <option value="todos">Todos los tipos</option>
-            <option value="entrega_cliente">Entregas Obra</option>
-            <option value="recepcion_proveedor">Recepciones Prov.</option>
-            <option value="reposicion_stock">Reposición Stock</option>
+            {Object.entries(TIPOS_COMERCIAL).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
           </select>
         </div>
 
         <div style={{ display: 'flex', gap: 8 }}>
-          <button
-            className="btn btn-secondary btn-sm"
-            onClick={() => setShowAutoOrdersModal(true)}
-            style={{ fontSize: 11, fontWeight: 700 }}
-          >
-            ⚡ Auto-Compras por Fecha
-          </button>
           <button
             className="btn btn-primary btn-sm"
             onClick={() => setShowAddModal(true)}
@@ -246,7 +192,7 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#94a3b8', padding: 40 }}>
             <div style={{ fontSize: 36, marginBottom: 8 }}>📅</div>
             <p style={{ fontSize: 13, fontWeight: 600 }}>No hay despachos ni entregas programadas</p>
-            <p style={{ fontSize: 11 }}>Crea un despacho manual o genera las órdenes de compra automáticas desde un proyecto.</p>
+            <p style={{ fontSize: 11 }}>Crea un despacho o tarea comercial. Las compras de obra se programan en Proyecto → Abastecimiento.</p>
           </div>
         ) : (
           <table className="data-table">
@@ -351,9 +297,7 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
                       value={newItem.tipo}
                       onChange={e => setNewItem({ ...newItem, tipo: e.target.value })}
                     >
-                      <option value="entrega_cliente">Entrega a Obra / Cliente</option>
-                      <option value="recepcion_proveedor">Recepción de Proveedor</option>
-                      <option value="reposicion_stock">Reposición de Stock</option>
+                      {Object.entries(TIPOS_COMERCIAL).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                     </select>
                   </div>
                   <div className="form-group" style={{ flex: 1 }}>
@@ -419,78 +363,6 @@ export default function AgendaPOSView({ tiendaId, puntoVentaId, puntoVentaNombre
         </div>
       )}
 
-      {/* Modal: Compras Inteligentes Automáticas por Fecha */}
-      {showAutoOrdersModal && (
-        <div className="modal-overlay" onClick={() => setShowAutoOrdersModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 650 }}>
-            <div className="modal-header">
-              <h2>⚡ Programar Compras al Proveedor Más Barato</h2>
-              <button className="btn btn-ghost btn-icon" onClick={() => setShowAutoOrdersModal(false)}>✕</button>
-            </div>
-            <div className="modal-body">
-              <div style={{ marginBottom: 14 }}>
-                <label className="form-label">Seleccionar Proyecto del ERP *</label>
-                <select
-                  className="form-select"
-                  value={selectedProyectoId}
-                  onChange={e => setSelectedProyectoId(e.target.value)}
-                >
-                  <option value="">Selecciona un proyecto...</option>
-                  {(state.proyectos || []).map(p => (
-                    <option key={p.id} value={p.id}>{p.nombre} ({p.ciudad || 'Pasto'})</option>
-                  ))}
-                </select>
-              </div>
-
-              {previewOrdenes.length > 0 ? (
-                <div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', marginBottom: 8 }}>
-                    Órdenes de Compra Sugeridas ({previewOrdenes.length} proveedores):
-                  </div>
-                  <div style={{ maxHeight: 240, overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: 8 }}>
-                    <table className="data-table" style={{ fontSize: 11 }}>
-                      <thead>
-                        <tr>
-                          <th>Proveedor (Mejor Tarifa)</th>
-                          <th>Fecha Entrega</th>
-                          <th>Insumos</th>
-                          <th style={{ textAlign: 'right' }}>Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {previewOrdenes.map(oc => (
-                          <tr key={oc.id}>
-                            <td style={{ fontWeight: 700, color: '#059669' }}>⭐ {oc.proveedor_nombre}</td>
-                            <td>📅 {oc.fecha_programada}</td>
-                            <td>{oc.items.length} ítems</td>
-                            <td style={{ textAlign: 'right', fontWeight: 700 }}>{fmt(oc.total)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ) : selectedProyectoId ? (
-                <div style={{ padding: 16, background: '#f8fafc', borderRadius: 8, fontSize: 12, color: '#64748b', textAlign: 'center' }}>
-                  Este proyecto no tiene ítems de presupuesto con insumos vinculados.
-                </div>
-              ) : (
-                <div style={{ padding: 16, background: '#eff6ff', borderRadius: 8, fontSize: 12, color: '#1e40af', lineHeight: 1.5 }}>
-                  💡 <strong>¿Cómo funciona?</strong> El algoritmo analiza todos los materiales requeridos para la obra, compara automáticamente las cotizaciones de los proveedores registrados (Homecenter, Construrama, Casa Andina, etc.), y agenda las órdenes de compra por fecha hacia el proveedor con la tarifa más baja. Si un proveedor no tiene stock, puedes alternarlo fácilmente.
-                </div>
-              )}
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setShowAutoOrdersModal(false)}>Cerrar</button>
-              {previewOrdenes.length > 0 && (
-                <button className="btn btn-primary" onClick={handleConfirmarOrdenesAuto}>
-                  Confirmar y Agendar {previewOrdenes.length} Órdenes
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

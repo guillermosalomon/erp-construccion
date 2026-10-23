@@ -166,9 +166,12 @@ export const templateService = {
   },
 
   /**
-   * Sube la plantilla a Supabase Storage para compartir
+   * Sube la plantilla a Supabase Storage para compartir.
+   * El bucket 'plantillas' puede no existir: en ese caso se informa con un mensaje claro
+   * (la descarga local sigue disponible).
    */
   async uploadToCloud(template, userId) {
+    if (!supabase) throw new Error('Supabase no está configurado. Use "Descargar plantilla".');
     const fileName = `${userId}/${template.name.replace(/\s+/g, '_')}_${Date.now()}.json`;
     const blob = new Blob([JSON.stringify(template)], { type: 'application/json' });
     
@@ -176,19 +179,28 @@ export const templateService = {
       .from('plantillas')
       .upload(fileName, blob);
       
-    if (error) throw error;
+    if (error) {
+      if (/bucket|not found/i.test(error.message || '')) {
+        throw new Error('El almacenamiento de plantillas en la nube no está habilitado. Use "Descargar plantilla".');
+      }
+      throw error;
+    }
     return data;
   },
 
   /**
-   * Lista plantillas disponibles en la nube
+   * Lista plantillas disponibles en la nube (devuelve [] si el bucket no existe)
    */
   async listCloudTemplates() {
+    if (!supabase) return [];
     const { data, error } = await supabase.storage
       .from('plantillas')
       .list('', { limit: 100, sortBy: { column: 'name', order: 'desc' } });
       
-    if (error) throw error;
-    return data;
+    if (error) {
+      console.warn('Plantillas en la nube no disponibles:', error.message);
+      return [];
+    }
+    return data || [];
   }
 };

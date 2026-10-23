@@ -33,12 +33,16 @@ import {
   proveedoresService,
   ordenesCompraService,
   posAgendaService,
+  bodegasObraService,
 } from '@/lib/services';
 import proveedoresReferente from '@/lib/cotizador/proveedores_referente.json';
 import {
   crearContexto,
   datosCargo as engineDatosCargo,
   costoAPU as engineCostoAPU,
+  ctxParaZona,
+  normZona,
+  precioInsumo,
   costoMO as engineCostoMO,
 } from '@/lib/apu-engine';
 import { isCorporateEmail } from '@/lib/access';
@@ -551,6 +555,8 @@ function baseStoreReducer(state, action) {
       return { ...state, bodegas: [...state.bodegas, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }] };
     case 'DELETE_BODEGA':
       return { ...state, bodegas: state.bodegas.filter((b) => b.id !== action.payload) };
+    case 'UPDATE_BODEGA': // Fase 20: dirección / municipio de la bodega de obra
+      return { ...state, bodegas: state.bodegas.map((b) => (b.id === action.payload.id ? { ...b, ...action.payload } : b)) };
 
     // ── Inventario Movimientos ──
     case 'ADD_INVENTARIO_MOV':
@@ -1010,6 +1016,11 @@ async function syncToSupabase(action, state) {
         case 'DELETE_BODEGA':
           await bodegaService.remove(action.payload);
           break;
+        case 'UPDATE_BODEGA': {
+          const { id, ...changes } = action.payload;
+          await bodegasObraService.update(id, changes);
+          break;
+        }
 
         // Inventario
         case 'ADD_INVENTARIO_MOV': {
@@ -1682,15 +1693,27 @@ export function StoreProvider({ children }) {
     return metrics;
   }, [state.presupuestoItems, state.cargos, getApuLaborRequirements, calcularDatosCargo, apuCtx]);
 
-  // Costo unitario total del APU (motor único). Firma compatible: (apuId, visited)
+  // Zona de precios del proyecto: municipio de su bodega de obra o, en su defecto, su ubicación.
+  // Los precios de insumos salen del POS de esa zona (respaldo: POS matriz Pasto → precio base).
+  const zonaProyecto = useCallback((proyectoId) => {
+    if (!proyectoId) return '';
+    const bod = state.bodegas.find((b) => b.proyecto_id === proyectoId && b.municipio);
+    if (bod) return normZona(bod.municipio);
+    const p = state.proyectos.find((x) => x.id === proyectoId);
+    const texto = String(p?.ubicacion || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    for (const z of apuCtx.ofertasZona.keys()) if (z && texto.includes(z)) return z;
+    return normZona(p?.ubicacion);
+  }, [state.bodegas, state.proyectos, apuCtx]);
+
+  // Costo unitario total del APU (motor único). Segundo parámetro opcional: zona/municipio de precios
   const calcularCostoAPU = useCallback(
-    (apuId) => engineCostoAPU(apuCtx, apuId).total,
+    (apuId, zona) => engineCostoAPU(ctxParaZona(apuCtx, zona), apuId).total,
     [apuCtx]
   );
 
   // Desglose completo: { total, equipo, material, mano_obra, transporte, lineas[] }
   const calcularDesgloseAPU = useCallback(
-    (apuId) => engineCostoAPU(apuCtx, apuId),
+    (apuId, zona) => engineCostoAPU(ctxParaZona(apuCtx, zona), apuId),
     [apuCtx]
   );
 
@@ -1707,7 +1730,7 @@ export function StoreProvider({ children }) {
 
       const items = state.presupuestoItems.filter((pi) => pi.proyecto_id === proyectoId);
       const costoDirecto = items.reduce((sum, item) => {
-        const costoAPU = calcularCostoAPU(item.apu_id);
+        const costoAPU = calcularCostoAPU(item.apu_id, zonaProyecto(proyectoId));
         return sum + costoAPU * (item.cantidad || 0);
       }, 0);
 
@@ -1735,12 +1758,13 @@ export function StoreProvider({ children }) {
         pctRete: proyecto.aiu_retefuente || 0,
       };
     },
-    [state.proyectos, state.presupuestoItems, calcularCostoAPU]
+    [state.proyectos, state.presupuestoItems, calcularCostoAPU, zonaProyecto]
   );
 
   const calcularExplosionInsumos = useCallback(
     (proyectoId) => {
       const items = state.presupuestoItems.filter(pi => pi.proyecto_id === proyectoId);
+      const ctxZ = ctxParaZona(apuCtx, zonaProyecto(proyectoId)); // precios del POS de la zona
       const explosion = {}; // insumoId -> { insumo, cantidad_total }
 
       const processAPU = (apuId, multiplier) => {
@@ -1768,10 +1792,11 @@ export function StoreProvider({ children }) {
 
       return Object.values(explosion).map(e => ({
         ...e,
-        total_costo: e.cantidad_total * (Number(e.precio_unitario) || 0)
+        precio_unitario: precioInsumo(ctxZ, e.id) || Number(e.precio_unitario) || 0,
+        total_costo: e.cantidad_total * (precioInsumo(ctxZ, e.id) || Number(e.precio_unitario) || 0)
       }));
     },
-    [state.presupuestoItems, state.apuDetalles, state.insumos]
+    [state.presupuestoItems, state.apuDetalles, state.insumos, apuCtx, zonaProyecto]
   );
 
   const calculateExecutionValue = useCallback((proyectoId) => {
@@ -1780,10 +1805,10 @@ export function StoreProvider({ children }) {
       const executed = state.avances
         .filter(a => a.presupuesto_item_id === item.id)
         .reduce((sum, a) => sum + Number(a.cantidad_incremental), 0);
-      const unitCost = calcularCostoAPU(item.apu_id);
+      const unitCost = calcularCostoAPU(item.apu_id, zonaProyecto(proyectoId));
       return total + (executed * unitCost);
     }, 0);
-  }, [state.presupuestoItems, state.avances, calcularCostoAPU]);
+  }, [state.presupuestoItems, state.avances, calcularCostoAPU, zonaProyecto]);
 
   const calculateTotalPayments = useCallback((proyectoId) => {
     return state.pagos
@@ -1840,7 +1865,7 @@ export function StoreProvider({ children }) {
       const item = state.presupuestoItems.find(i => i.id === action.payload.presupuesto_item_id);
       if (!item) return;
 
-      const unitCost = calcularCostoAPU(item.apu_id);
+      const unitCost = calcularCostoAPU(item.apu_id, zonaProyecto(item.proyecto_id));
       const newVal = action.payload.cantidad_incremental * unitCost;
       const totalExec = calculateExecutionValue(item.proyecto_id);
       const totalPay = calculateTotalPayments(item.proyecto_id);
@@ -2149,7 +2174,7 @@ export function StoreProvider({ children }) {
       state,
       dispatch: dispatchWithSync,
       calcularCostoAPU,
-      calcularCostoMO, calcularDesgloseAPU,
+      calcularCostoMO, calcularDesgloseAPU, zonaProyecto,
       calcularPresupuesto,
       calcularExplosionInsumos,
       calculateExecutionValue,

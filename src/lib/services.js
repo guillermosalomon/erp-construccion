@@ -1140,3 +1140,76 @@ export const posAgendaService = {
     return true;
   }
 };
+
+/* ─── Bodegas de obra: edición (dirección, municipio, responsable) — Fase 20 ─── */
+export const bodegasObraService = {
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('bodegas').update({ ...changes }).eq('id', id).select().maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+};
+
+/* ─── Pedidos web del Marketplace (tienda Kalarti) — Fase 20 ─── */
+export const mkPedidosWebService = {
+  /** Pedidos de la tienda web (los que tienen número MK-…). Tolerante a columnas faltantes. */
+  async getAll() {
+    if (!db()) return [];
+    try {
+      const { data, error } = await db().from('mk_pedidos').select('*').not('numero', 'is', null).order('created_at', { ascending: false });
+      if (error) {
+        const { data: d2, error: e2 } = await db().from('mk_pedidos').select('*').order('created_at', { ascending: false });
+        if (e2) throw e2;
+        return (d2 || []).filter((p) => String(p.numero || '').startsWith('MK-'));
+      }
+      return data || [];
+    } catch (e) {
+      console.warn('mk_pedidos (web) no disponible:', e?.message);
+      return [];
+    }
+  },
+  async update(id, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('mk_pedidos').update(changes).eq('id', id).select().maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+  /** Actualiza los pagos asociados a un pedido (requiere política de staff en pagos_plataforma). */
+  async updatePagos(mkPedidoId, changes) {
+    if (!db()) return null;
+    const { data, error } = await db().from('pagos_plataforma').update({ ...changes, updated_at: new Date().toISOString() }).eq('mk_pedido_id', mkPedidoId).select();
+    if (error) throw error;
+    return data;
+  },
+  async getPagos(mkPedidoId) {
+    if (!db()) return [];
+    try {
+      const { data, error } = await db().from('pagos_plataforma').select('*').eq('mk_pedido_id', mkPedidoId).order('created_at', { ascending: false });
+      if (error) return [];
+      return data || [];
+    } catch { return []; }
+  },
+  /** Margen por pedido desde la vista v_margen_marketplace (null si la vista no existe). */
+  async getMargen() {
+    if (!db()) return null;
+    try {
+      const { data, error } = await db().from('v_margen_marketplace').select('*');
+      if (error) return null;
+      return data || [];
+    } catch { return null; }
+  },
+  /** Salida de inventario por venta de un sobrante de obra. */
+  async registrarSalidaVenta({ bodega_id, insumo_id, cantidad, costo_unitario, numero }) {
+    if (!db()) return null;
+    const uid = await getUserId();
+    const mov = {
+      bodega_id, insumo_id, tipo: 'SALIDA', cantidad: Number(cantidad) || 0,
+      costo_unitario: costo_unitario != null ? Number(costo_unitario) : null,
+      origen: 'VENTA', motivo: `Venta Marketplace ${numero || ''}`.trim(), user_id: uid,
+    };
+    const { data, error } = await db().from('inventario_transacciones').insert(mov).select().single();
+    if (error) throw error;
+    return data;
+  },
+};

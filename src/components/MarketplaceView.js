@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { useStore } from '@/store/StoreContext';
 import { useAuth } from '@/lib/auth';
 import { calcularPrecioMercado, calcularDiferencia, proyectarPrecios } from '@/lib/price-engine';
+import PedidosMarketplaceView from '@/components/PedidosMarketplaceView';
 
 const TIPOS = [
   { value: 'MATERIAL', label: 'Material', color: '#2563eb' },
@@ -12,7 +13,29 @@ const TIPOS = [
 ];
 const fmt = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0}).format(v);
 
+/* Contenedor con pestañas: catálogo de precios y pedidos de la tienda web */
 export default function MarketplaceView() {
+  const [tab, setTab] = useState('catalogo');
+  const tabBtn = (id, label) => (
+    <button
+      onClick={() => setTab(id)}
+      style={{ padding: '8px 16px', border: 'none', borderBottom: tab === id ? '3px solid #2563eb' : '3px solid transparent', background: 'none', fontWeight: tab === id ? 700 : 500, color: tab === id ? '#2563eb' : '#475569', cursor: 'pointer', fontSize: 14 }}
+    >
+      {label}
+    </button>
+  );
+  return (
+    <>
+      <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid #e2e8f0', padding: '0 24px', marginBottom: 4 }}>
+        {tabBtn('catalogo', '🛒 Catálogo')}
+        {tabBtn('pedidos', '📦 Pedidos web')}
+      </div>
+      {tab === 'catalogo' ? <MarketplaceCatalogo /> : <PedidosMarketplaceView />}
+    </>
+  );
+}
+
+function MarketplaceCatalogo() {
   const { state, dispatch } = useStore();
   const { user } = useAuth();
   const [search, setSearch] = useState('');
@@ -103,7 +126,7 @@ export default function MarketplaceView() {
           <div className="empty-state-icon">🛒</div>
           <h3>Marketplace vacío</h3>
           <p style={{ maxWidth: 400, margin: '8px auto', lineHeight: 1.5 }}>
-            Aún no hay productos publicados. Las tiendas deben crear ofertas desde su <strong>Punto de Venta</strong> y activar el toggle <strong>"Publicar en Marketplace"</strong>.
+            Aún no hay productos publicados. Las tiendas deben crear ofertas desde su <strong>Punto de Venta</strong> y activar el toggle <strong>&quot;Publicar en Marketplace&quot;</strong>.
           </p>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 12 }}>
             <div style={{ padding: '10px 14px', background: '#f8fafc', borderRadius: 8, fontSize: 11, color: '#64748b', textAlign: 'center' }}>

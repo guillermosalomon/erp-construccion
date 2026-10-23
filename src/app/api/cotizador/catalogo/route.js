@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { CUADRILLAS_DEFAULT, cuadrillaParaCategoria, rendimientoSugerido } from '@/lib/cotizador/config';
-import { costoAPU } from '@/lib/apu-engine';
+import { costoAPU, ctxParaZona, normZona, zonaTienePrecios, ZONA_MATRIZ } from '@/lib/apu-engine';
 import { ordenCapitulo } from '@/lib/catalogo-taxonomia';
 import { crearClienteLectura, cargarDatosCatalogo, aComponentes } from '@/lib/server/catalogo-data';
 
@@ -8,18 +8,26 @@ export const revalidate = 600; // Cache 10 min
 
 const normTxt = (s) => String(s || '').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
-export async function GET() {
+export async function GET(request) {
   try {
+    // Zona de precios: ?municipio=Ricaurte → precios del POS de esa zona (respaldo: Pasto → precio base)
+    const municipio = new URL(request.url).searchParams.get('municipio') || '';
     // Sin credenciales embebidas: service role (si existe) o anon key con RLS de lectura pública
     const sb = crearClienteLectura();
     if (!sb) {
       return NextResponse.json({ catalogo: [], cuadrillas: CUADRILLAS_DEFAULT, count: 0 }, { status: 200 });
     }
 
+    // Cuadrillas: CUADRILLAS_DEFAULT (CUA-*). La tabla cotizador_cuadrillas queda en cuarentena (zz_);
+    // si aún existe con datos se respeta, y ante cualquier error se usa el valor por defecto.
     let cuadrillas = CUADRILLAS_DEFAULT;
-    const { data: dbCuadrillas } = await sb.from('cotizador_cuadrillas').select('*');
-    if (dbCuadrillas && dbCuadrillas.length > 0) {
-      cuadrillas = dbCuadrillas;
+    try {
+      const { data: dbCuadrillas, error: errCuadrillas } = await sb.from('cotizador_cuadrillas').select('*');
+      if (!errCuadrillas && dbCuadrillas && dbCuadrillas.length > 0) {
+        cuadrillas = dbCuadrillas;
+      }
+    } catch {
+      cuadrillas = CUADRILLAS_DEFAULT;
     }
 
     // APUs + composición + insumos + cuadrillas + configuración → motor único de costos (idéntico al ERP)
@@ -27,7 +35,8 @@ export async function GET() {
     if (!datos || !datos.apus.length) {
       return NextResponse.json({ catalogo: [], cuadrillas, count: 0 }, { status: 200 });
     }
-    const { apus, ctx } = datos;
+    const { apus, ctx: ctxBase } = datos;
+    const ctx = ctxParaZona(ctxBase, municipio);
 
     // Excluir básicos puros (salvo concretos/morteros por M3)
     const apusCurados = apus.filter((a) => normTxt(a.categoria_apu) !== 'BASICOS' || normTxt(a.unidad) === 'M3');
@@ -74,6 +83,8 @@ export async function GET() {
       count: catalogo.length,
       catalogo,
       cuadrillas,
+      zona: normZona(municipio) || ZONA_MATRIZ,
+      zona_con_precios_propios: zonaTienePrecios(ctxBase, municipio),
       actualizado: new Date().toISOString(),
     });
   } catch (err) {

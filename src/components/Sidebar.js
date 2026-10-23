@@ -60,6 +60,8 @@ export default function Sidebar({ activeSection, onNavigate }) {
       label: 'CRM',
       items: [
         { id: 'crm', name: 'Clientes', icon: '👥' },
+        // Solo visible en el menú corporativo (administradores)
+        { id: 'usuarios', name: 'Usuarios y perfiles', icon: '🪪' },
       ],
     },
     {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useTransition } from 'react';
+import { useState, useEffect, useMemo, useRef, useTransition } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
 import {
@@ -60,9 +60,12 @@ export default function CotizadorPage() {
     }
   }, []);
 
-  // Cargar catálogo desde la API pública
+  // Cargar catálogo desde la API pública (precios del POS de la zona seleccionada)
+  const primeraCargaCat = useRef(true);
   useEffect(() => {
-    fetch('/api/cotizador/catalogo')
+    const primera = primeraCargaCat.current;
+    primeraCargaCat.current = false;
+    fetch(`/api/cotizador/catalogo?municipio=${encodeURIComponent(ubicacion)}`)
       .then(res => res.json())
       .then(data => {
         if (data.catalogo) setCatalogo(data.catalogo);
@@ -78,7 +81,7 @@ export default function CotizadorPage() {
         // Si no hay ítems y es primera vez, precargar una plantilla básica de bienvenida
         try {
           const hasDraft = window.localStorage.getItem(DRAFT_KEY);
-          if (!hasDraft && data.catalogo?.length > 5) {
+          if (primera && !hasDraft && data.catalogo?.length > 5) {
             const defaults = data.catalogo.slice(0, 4).map(c => ({ apu_id: c.id, cantidad: 10 }));
             setItems(defaults);
           }
@@ -88,7 +91,7 @@ export default function CotizadorPage() {
         console.error('Error cargando catálogo:', err);
         setLoadingCat(false);
       });
-  }, []);
+  }, [ubicacion]);
 
   // Persistir en localStorage en cada cambio
   useEffect(() => {

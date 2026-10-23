@@ -40,6 +40,41 @@ export function factorConversion(unidadInsumo, unidadDetalle) {
  * Crea el contexto indexado para cálculos rápidos.
  * @param {{insumos?:Array, cargos?:Array, cargoDetalles?:Array, apuDetalles?:Array, config?:Array, ofertas?:Array}} data
  */
+/** Zona matriz: sede principal de Kalarti (respaldo de precios) */
+export const ZONA_MATRIZ = 'pasto';
+
+/**
+ * Normaliza un municipio/ubicación a una clave de zona.
+ * "Ricaurte / Costa Nariñense" → "ricaurte"; "Pasto (Nariño) - Sede Principal" → "pasto"
+ */
+export function normZona(s) {
+  const t = String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return t.split(/[(/,\-–]/)[0].replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Lee global_config.MO_ZONAS: { "ricaurte": { "factor_general": 1.10, "cargos": { "MO-OFI": 1.15 } } }
+ * @returns {Map<string, {general:number, cargos:Object}>}
+ */
+export function leerMoZonas(valor) {
+  const out = new Map();
+  let obj = valor;
+  if (typeof obj === 'string') { try { obj = JSON.parse(obj); } catch { obj = null; } }
+  if (obj && typeof obj === 'object') {
+    Object.entries(obj).forEach(([k, v]) => {
+      out.set(normZona(k), { general: Number(v?.factor_general) || 1, cargos: v?.cargos || {} });
+    });
+  }
+  return out;
+}
+
+/** Factor de mano de obra de un cargo en la zona del contexto (excepción por cargo > factor general > 1) */
+export function factorZonaMO(ctx, cargo) {
+  const z = ctx.zona ? ctx.moZonas?.get(ctx.zona) : null;
+  if (!z || !cargo) return 1;
+  return Number(z.cargos?.[cargo.codigo]) || z.general || 1;
+}
+
 export function crearContexto(data = {}) {
   const cfg = (k) => (data.config || []).find((c) => c.clave === k)?.valor;
   const ctx = {
@@ -51,6 +86,10 @@ export function crearContexto(data = {}) {
     integrantes: new Map(),
     detalles: new Map(),
     ofertas: new Map(),
+    ofertasZona: new Map(), // zona normalizada → Map(insumo_id → precio del POS)
+    zona: null,
+    moZonas: leerMoZonas(cfg('MO_ZONAS')), // factor de mano de obra por zona (global_config.MO_ZONAS)
+    _zonas: new Map(),
     _cargoMemo: new Map(),
     _apuMemo: new Map(),
   };
@@ -66,8 +105,15 @@ export function crearContexto(data = {}) {
     if (o.insumo_id && o.activo !== false && Number(o.precio_venta) > 0 && !ctx.ofertas.has(o.insumo_id)) {
       ctx.ofertas.set(o.insumo_id, Number(o.precio_venta));
     }
+    // Precios por zona: solo ofertas de catálogo del POS (el sobrante usa precio de liquidación)
+    const z = normZona(o.ciudad);
+    if (z && o.insumo_id && o.activo !== false && o.origen !== 'SOBRANTE' && Number(o.precio_venta) > 0) {
+      if (!ctx.ofertasZona.has(z)) ctx.ofertasZona.set(z, new Map());
+      const m = ctx.ofertasZona.get(z);
+      if (!m.has(o.insumo_id)) m.set(o.insumo_id, Number(o.precio_venta));
+    }
   });
-  return ctx;
+  return data.zona ? ctxParaZona(ctx, data.zona) : ctx;
 }
 
 /**
@@ -88,16 +134,17 @@ export function datosCargo(ctx, cargoId, visited = new Set()) {
   let res;
   if (integrantes.length === 0) {
     if (!cargo) return vacio;
-    const totalFactor = (Number(cargo.factor_smlv) || 1) * factorMult;
+    const zf = factorZonaMO(ctx, cargo); // ajuste de mano de obra por municipio
+    const totalFactor = (Number(cargo.factor_smlv) || 1) * factorMult * zf;
     const mensual = smlv * totalFactor;
     const precioHora = mensual / horasMes + (Number(cargo.recargo_cop) || 0) / horasMes;
-    res = { precio: Math.round(escalar(precioHora, cargo.unidad, ctx)), precioHora, factor: totalFactor, factorMultiplicador: factorMult };
+    res = { precio: Math.round(escalar(precioHora, cargo.unidad, ctx)), precioHora, factor: totalFactor, factorMultiplicador: factorMult, zonaFactor: zf };
   } else {
     let costoHora = 0;
     let sumaFactores = 0;
     integrantes.forEach((d) => {
       const sub = datosCargo(ctx, d.cargo_hijo_id, new Set(visited));
-      const f = d.factor_smlv ? Number(d.factor_smlv) : sub.factor;
+      const f = d.factor_smlv ? Number(d.factor_smlv) * (sub.zonaFactor || 1) : sub.factor;
       costoHora += ((smlv * f) / horasMes) * (Number(d.cantidad) || 0);
       sumaFactores += f;
     });
@@ -120,7 +167,32 @@ export function datosCargo(ctx, cargoId, visited = new Set()) {
 /** Precio de un insumo (precio almacén Kalarti; fallback a oferta marketplace) */
 export function precioInsumo(ctx, insumoId) {
   const ins = ctx.insumos.get(insumoId);
+  // Cascada por zona: 1) POS de la zona  2) POS matriz (Pasto)  3) precio base del insumo  4) cualquier oferta
+  const local = ctx.zona ? ctx.ofertasZona.get(ctx.zona)?.get(insumoId) : null;
+  if (local) return local;
+  const matriz = ctx.ofertasZona.get(ZONA_MATRIZ)?.get(insumoId);
+  if (matriz) return matriz;
   return Number(ins?.precio_unitario) || ctx.ofertas.get(insumoId) || 0;
+}
+
+/**
+ * Contexto derivado para un municipio: comparte los datos y recalcula APUs con los precios del POS de esa zona.
+ * Se cachea por zona dentro del contexto base.
+ */
+export function ctxParaZona(ctx, zona) {
+  const z = normZona(zona);
+  if (!z || z === ctx.zona) return ctx;
+  const base = ctx._base || ctx;
+  if (!base._zonas.has(z)) {
+    base._zonas.set(z, { ...base, _base: base, zona: z, _apuMemo: new Map(), _cargoMemo: new Map() });
+  }
+  return base._zonas.get(z);
+}
+
+/** ¿Hay precios propios del POS en esa zona? (para avisar si se usa matriz como respaldo) */
+export function zonaTienePrecios(ctx, zona) {
+  const z = normZona(zona);
+  return !!z && (ctx.ofertasZona.get(z)?.size || 0) > 0;
 }
 
 /**

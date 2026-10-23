@@ -55,7 +55,7 @@ export async function cargarDatosCatalogo(sb) {
     cargoDetalles,
     apuDetalles: apuDetalles.map((d) => (d.apu_hijo_id ? { ...d, _nombre_hijo: apuNombre.get(d.apu_hijo_id) } : d)),
     config,
-    ofertas: ofertas.filter((o) => o.activo && o.publicado_marketplace),
+    ofertas: ofertas.filter((o) => o.activo),
   });
   return { apus, insumos, cargos, cargoDetalles, config, ctx };
 }
