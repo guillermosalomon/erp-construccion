@@ -1,17 +1,84 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 
 export default function KalartiHub() {
   const [scrolled, setScrolled] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      const sy = window.scrollY;
+      setScrolled(sy > 50);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(sy);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = 0.45;
+
+    const playAudio = () => {
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {
+        setIsPlaying(false);
+      });
+    };
+
+    // Intentar reproducir automáticamente (según política de autoplay del navegador)
+    playAudio();
+
+    // En navegadores que bloquean autoplay sin interacción previa,
+    // se inicia con el primer clic, toque de pantalla o interacción:
+    const handleFirstInteraction = () => {
+      if (audio.paused) {
+        audio.play().then(() => {
+          setIsPlaying(true);
+        }).catch(() => {});
+      }
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('touchstart', handleFirstInteraction);
+    window.addEventListener('keydown', handleFirstInteraction);
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+  }, []);
+
+  const toggleMusic = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {});
+    }
+  };
 
   return (
     <div className="hub-wrapper">
@@ -105,17 +172,47 @@ export default function KalartiHub() {
           overflow: hidden;
         }
 
-        .hero-bg {
+        .hero-parallax-bg {
+          position: absolute;
+          top: -20%;
+          left: 0;
+          width: 100%;
+          height: 140%;
+          background-image: url('/Banner%20principal.jpg');
+          background-size: cover;
+          background-position: center center;
+          background-repeat: no-repeat;
+          will-change: transform;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        @media (max-width: 768px) {
+          .hero-parallax-bg {
+            background-image: url('/Banner%20principal%20responsivo.jpg');
+            background-position: center center;
+            top: -15%;
+            height: 130%;
+          }
+        }
+
+        .hero-overlay {
           position: absolute;
           top: 0; left: 0; right: 0; bottom: 0;
-          background: radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.15) 0%, transparent 40%),
-                      radial-gradient(circle at 20% 80%, rgba(51, 65, 85, 0.5) 0%, transparent 40%);
-          z-index: 0;
+          background: linear-gradient(
+            135deg,
+            rgba(15, 23, 42, 0.88) 0%,
+            rgba(15, 23, 42, 0.65) 50%,
+            rgba(15, 23, 42, 0.92) 100%
+          ),
+          radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.16) 0%, transparent 50%);
+          z-index: 1;
+          pointer-events: none;
         }
 
         .hero-content {
           position: relative;
-          z-index: 1;
+          z-index: 2;
           max-width: 800px;
           margin-top: 80px;
         }
@@ -324,7 +421,92 @@ export default function KalartiHub() {
         .card-highlight { border: 1px solid rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.06); }
         .card-highlight::before { background: #10b981; }
 
+        /* Floating Music Player Pill */
+        .audio-player-pill {
+          position: fixed;
+          bottom: 24px;
+          left: 24px;
+          z-index: 99;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: rgba(15, 23, 42, 0.92);
+          border: 1px solid rgba(245, 158, 11, 0.45);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          padding: 8px 16px;
+          border-radius: 9999px;
+          color: white;
+          cursor: pointer;
+          font-family: inherit;
+          transition: all 0.25s ease;
+          user-select: none;
+        }
+        .audio-player-pill:hover {
+          background: rgba(30, 41, 59, 0.98);
+          border-color: #f59e0b;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 32px rgba(245, 158, 11, 0.3);
+        }
+        .audio-eq-bars {
+          display: inline-flex;
+          align-items: flex-end;
+          gap: 3px;
+          height: 15px;
+          width: 15px;
+        }
+        .audio-bar {
+          width: 3px;
+          background: #fbbf24;
+          border-radius: 2px;
+          height: 4px;
+          transition: height 0.2s ease;
+        }
+        .audio-bar.playing:nth-child(1) {
+          animation: audioBarAnim 0.7s ease-in-out infinite alternate;
+        }
+        .audio-bar.playing:nth-child(2) {
+          animation: audioBarAnim 0.5s ease-in-out 0.15s infinite alternate;
+        }
+        .audio-bar.playing:nth-child(3) {
+          animation: audioBarAnim 0.8s ease-in-out 0.3s infinite alternate;
+        }
+        @keyframes audioBarAnim {
+          0% { height: 3px; }
+          100% { height: 15px; }
+        }
+        .audio-text {
+          font-size: 13px;
+          font-weight: 600;
+          color: #f8fafc;
+          white-space: nowrap;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .audio-track-name {
+          color: #fbbf24;
+          font-weight: 700;
+        }
+        .audio-status-tag {
+          font-size: 11px;
+          padding: 2px 8px;
+          border-radius: 10px;
+          background: rgba(245, 158, 11, 0.15);
+          color: #fbbf24;
+          border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
         @media (max-width: 768px) {
+          .audio-player-pill {
+            bottom: 16px;
+            left: 14px;
+            padding: 7px 12px;
+          }
+          .audio-status-tag {
+            display: none;
+          }
           .hub-nav { padding: 14px 20px; background: rgba(15, 23, 42, 0.95); }
           .hero-section { padding: 0 20px; }
           .hero-title { font-size: 40px; }
@@ -349,6 +531,34 @@ export default function KalartiHub() {
           .ecosystem-section { padding: 70px 20px; }
         }
       `}} />
+
+      {/* Audio de Fondo: Shefa Flow */}
+      <audio
+        ref={audioRef}
+        src="/Shefa%20flow.mpeg"
+        loop
+        preload="auto"
+      />
+
+      {/* Floating Ambient Music Control Pill */}
+      <button
+        type="button"
+        onClick={toggleMusic}
+        className="audio-player-pill"
+        title={isPlaying ? 'Pausar música ambiental (Shefa Flow)' : 'Activar música ambiental (Shefa Flow)'}
+        aria-label="Control de música ambiental Shefa Flow"
+      >
+        <div className="audio-eq-bars" aria-hidden="true">
+          <span className={`audio-bar ${isPlaying ? 'playing' : ''}`} style={{ height: isPlaying ? undefined : '4px' }} />
+          <span className={`audio-bar ${isPlaying ? 'playing' : ''}`} style={{ height: isPlaying ? undefined : '10px' }} />
+          <span className={`audio-bar ${isPlaying ? 'playing' : ''}`} style={{ height: isPlaying ? undefined : '6px' }} />
+        </div>
+        <div className="audio-text">
+          <span>{isPlaying ? '🔊' : '🔇'}</span>
+          <span className="audio-track-name">Shefa Flow</span>
+          <span className="audio-status-tag">{isPlaying ? 'En reproducción' : 'Pausa'}</span>
+        </div>
+      </button>
 
       <nav className="hub-nav">
         <Link href="/" className="nav-brand">
@@ -376,7 +586,13 @@ export default function KalartiHub() {
       <main>
         {/* HERO */}
         <section className="hero-section">
-          <div className="hero-bg"></div>
+          <div
+            className="hero-parallax-bg"
+            style={{
+              transform: `translate3d(0, ${scrollY * 0.35}px, 0)`
+            }}
+          />
+          <div className="hero-overlay" />
           <div className="hero-content">
             <div className="hero-badge">🚀 El Hub de la Construcción</div>
             <h1 className="hero-title">
