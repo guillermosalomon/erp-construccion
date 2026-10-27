@@ -3,6 +3,13 @@
 import { useState } from 'react';
 import { PRODUCTOS, PLAN_FEATURES, formatMoney, APU_COUNT_LABEL } from '@/lib/cotizador/config';
 
+const MAPA_TIPO_PRODUCTO_MP = {
+  export: 'EXPORTAR_EXCEL',
+  mensual: 'PLAN_SUSCRIPCION_MENSUAL',
+  semestral: 'PLAN_SUSCRIPCION_SEMESTRAL',
+  anual: 'PLAN_SUSCRIPCION_ANUAL',
+};
+
 export default function PlansAndPayModal({
   isOpen,
   onClose,
@@ -11,6 +18,9 @@ export default function PlansAndPayModal({
   onExportExcel,
   proyectoNombre,
   ubicacion,
+  userEmail,
+  userId,
+  pagoAprobado = false,
 }) {
   const [loadingAction, setLoadingAction] = useState(null);
 
@@ -34,13 +44,38 @@ export default function PlansAndPayModal({
   const handleDescargaCompleta = async () => {
     setLoadingAction('completo');
     try {
-      if (onExportExcel) {
+      // Solo si el usuario regresó con pago aprobado de Mercado Pago se descarga el archivo completo
+      if (pagoAprobado && onExportExcel) {
         await onExportExcel('completo');
+        onClose();
+        return;
       }
-      onClose();
+
+      // Iniciar preferencia Checkout Pro con redirección en Mercado Pago (único medio de pago)
+      const res = await fetch('/api/pagos/mercadopago/preference', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tipoProducto: 'EXPORTAR_EXCEL',
+          referenciaId: proyectoNombre || 'EXCEL-COTIZADOR',
+          userEmail,
+          userId,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.init_point) {
+        window.location.href = data.init_point;
+        return;
+      }
+
+      alert(
+        data.error ||
+          'No se pudo iniciar la pasarela de Mercado Pago. Verifica MERCADOPAGO_ACCESS_TOKEN en .env.local.'
+      );
     } catch (e) {
       console.error(e);
-      alert('Error descargando archivo completo');
+      alert('Error conectando con la pasarela de Mercado Pago.');
     } finally {
       setLoadingAction(null);
     }
@@ -49,26 +84,30 @@ export default function PlansAndPayModal({
   const handleCheckoutPlan = async (prodKey) => {
     setLoadingAction(prodKey);
     try {
-      const res = await fetch('/api/pagos/checkout', {
+      // Único medio de pago: Checkout Pro con redirección (SDK oficial Mercado Pago)
+      const mpRes = await fetch('/api/pagos/mercadopago/preference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          productoId: prodKey,
-          moneda: currency,
-          proyectoId: proyectoNombre,
-          ubicacion: ubicacion,
+          tipoProducto: MAPA_TIPO_PRODUCTO_MP[prodKey] || 'PLAN_SUSCRIPCION_MENSUAL',
+          referenciaId: `${prodKey.toUpperCase()}-${Date.now()}`,
+          userEmail,
+          userId,
         }),
       });
-
-      const data = await res.json();
-      if (data.url) {
-        window.open(data.url, '_blank');
-      } else {
-        alert('Redirigiendo a pasarela...');
+      const mpData = await mpRes.json();
+      if (mpData.init_point) {
+        window.location.href = mpData.init_point;
+        return;
       }
+
+      alert(
+        mpData.error ||
+          'No se pudo iniciar la pasarela de Mercado Pago. Verifica MERCADOPAGO_ACCESS_TOKEN en .env.local.'
+      );
     } catch (err) {
       console.error('Error en checkout:', err);
-      alert('Error iniciando suscripción.');
+      alert('Error conectando con Mercado Pago.');
     } finally {
       setLoadingAction(null);
     }
@@ -155,7 +194,11 @@ export default function PlansAndPayModal({
               className="btn-action-primary"
               style={{ padding: '10px 16px', fontSize: 13, flexShrink: 0 }}
             >
-              {loadingAction === 'completo' ? 'Generando...' : '⭐ Descargar Completo'}
+              {loadingAction === 'completo'
+                ? 'Conectando con pasarela...'
+                : pagoAprobado
+                ? '⭐ Descargar Completo'
+                : '📊 Pagar y Descargar Excel (PSE / Tarjeta)'}
             </button>
           </div>
         </div>

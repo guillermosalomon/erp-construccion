@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import APUModal from './APUModal';
+import CategoriasModal, { categoriasActivasPara } from './CategoriasModal';
 import { UBICACIONES_COTIZADOR } from '@/lib/cotizador/config';
 import { useStore } from '@/store/StoreContext';
 import { calcularPrecioMercado } from '@/lib/price-engine';
@@ -24,6 +25,7 @@ export default function APUView() {
   const [expandedId, setExpandedId] = useState(null);
   const [isReloading, setIsReloading] = useState(false);
   const [categoriaFilter, setCategoriaFilter] = useState('Todos');
+  const [showCategoriasModal, setShowCategoriasModal] = useState(false);
   // Ubicación de costeo: precios de insumos (POS de la zona) y mano de obra (MO_ZONAS) según el municipio
   const [zonaApu, setZonaApu] = useState(UBICACIONES_COTIZADOR[0].nombre);
   const [detalleForm, setDetalleForm] = useState({ 
@@ -55,8 +57,11 @@ export default function APUView() {
   }, [state.apus, categoriaFilter, search]);
 
   const categoriasList = useMemo(() => {
-    return ['Todos', ...Array.from(new Set(state.apus.map(a => a.categoria_apu || 'Otros'))).filter(c => c !== 'Otros').sort(), 'Otros'];
-  }, [state.apus]);
+    const activas = categoriasActivasPara(state, 'APU').map((c) => c.nombre);
+    const usadas = state.apus.map((a) => a.categoria_apu || 'Otros').filter((c) => c !== 'Otros');
+    const unicas = Array.from(new Set([...activas, ...usadas]));
+    return ['Todos', ...unicas, 'Otros'];
+  }, [state]);
 
   // Conteo por categoría para las badges
   const conteoCategoria = useMemo(() => {
@@ -264,6 +269,15 @@ export default function APUView() {
               </option>
             ))}
           </select>
+
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={() => setShowCategoriasModal(true)}
+            title="Crear, renombrar o desactivar categorías de APU e Insumos"
+          >
+            ⚙️ Gestionar Categorías
+          </button>
 
           <select
             className="form-select"
@@ -652,6 +666,11 @@ export default function APUView() {
         isOpen={showApuModal} 
         zona={zonaApu}
         onClose={() => setShowApuModal(false)} 
+      />
+      <CategoriasModal
+        isOpen={showCategoriasModal}
+        onClose={() => setShowCategoriasModal(false)}
+        ambitoInicial="APU"
       />
     </>
   );

@@ -40,6 +40,36 @@ export default function CotizadorPage() {
   const [isSaveOpen, setIsSaveOpen] = useState(false);
   const [isPayOpen, setIsPayOpen] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [pagoAprobado, setPagoAprobado] = useState(false);
+  const descargaAutoPagoRef = useRef(false);
+
+  // Detectar retorno de Mercado Pago (?pago=success|failure|pending)
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const estadoPago = params.get('pago');
+      const tipoProd = params.get('tipo') || 'EXPORTAR_EXCEL';
+      if (estadoPago === 'success') {
+        setPagoAprobado(true);
+        if (tipoProd === 'EXPORTAR_EXCEL' || tipoProd === 'export') {
+          descargaAutoPagoRef.current = true;
+          setNotification('✅ ¡Pago aprobado en Mercado Pago! Descargando tu Presupuesto Excel Completo...');
+        } else {
+          setNotification('✅ ¡Suscripción activada con éxito en Mercado Pago!');
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+        setTimeout(() => setNotification(null), 9000);
+      } else if (estadoPago === 'pending') {
+        setNotification('⏳ Tu pago en Mercado Pago está pendiente de confirmación (PSE / Efecty).');
+        window.history.replaceState({}, '', window.location.pathname);
+        setTimeout(() => setNotification(null), 8000);
+      } else if (estadoPago === 'failure') {
+        setNotification('⚠️ El pago no fue completado. Puedes intentarlo nuevamente cuando quieras.');
+        window.history.replaceState({}, '', window.location.pathname);
+        setTimeout(() => setNotification(null), 7000);
+      }
+    } catch (_) {}
+  }, []);
 
   // Detección inicial de moneda y carga de borrador
   useEffect(() => {
@@ -196,6 +226,14 @@ export default function CotizadorPage() {
       alert('Hubo un problema generando el archivo Excel.');
     }
   };
+
+  // Si regresó de Mercado Pago con pago aprobado de Excel, disparar descarga apenas cargue el catálogo
+  useEffect(() => {
+    if (descargaAutoPagoRef.current && !loadingCat && catalogoMap.size > 0 && items.length > 0) {
+      descargaAutoPagoRef.current = false;
+      handleExportExcelDirect('completo');
+    }
+  }, [loadingCat, catalogoMap, items]);
 
   return (
     <div className="cot-container">
@@ -564,6 +602,9 @@ export default function CotizadorPage() {
         currency={currency}
         proyectoNombre={proyectoNombre}
         ubicacion={ubicacion}
+        userEmail={user?.email}
+        userId={user?.id}
+        pagoAprobado={pagoAprobado}
         onExportExcel={handleExportExcelDirect}
       />
     </div>

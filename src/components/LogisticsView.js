@@ -5,12 +5,14 @@ import { useStore } from '@/store/StoreContext';
 import { storageService } from '@/lib/services';
 import { calcularStockBodegas } from '@/lib/compras-engine';
 import BodegaObraView from './BodegaObraView';
+import AbastecimientoObraView from './AbastecimientoObraView';
 
 const fmt = (v) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(Number(v) || 0);
 
-export default function LogisticsView({ contextProyectoId }) {
+export default function LogisticsView({ contextProyectoId, defaultSubTab = 'abastecimiento' }) {
   const { state, dispatch } = useStore();
   const [selectedProyectoId, setSelectedProyectoId] = useState('');
+  const [subTab, setSubTab] = useState(defaultSubTab); // 'abastecimiento' | 'bodega' | 'dividida'
   const [showAIModal, setShowAIModal] = useState(false);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [aiResult, setAiResult] = useState(null);
@@ -165,7 +167,36 @@ export default function LogisticsView({ contextProyectoId }) {
           </div>
         </div>
       ) : (
-        <BodegaObraView proyectoId={effectiveProyectoId} onOpenAI={() => setShowAIModal(true)} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, background: '#f8fafc', padding: '8px 12px', borderRadius: 10, border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {[
+                { id: 'abastecimiento', label: '📋 1. Tablero de Abastecimiento' },
+                { id: 'bodega', label: '🏗️ 2. Inventario en Sitio (Bodega de Obra)' },
+                { id: 'dividida', label: '🔲 Vista Consolidada (Ambos)' },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  className={`btn btn-sm ${subTab === t.id ? 'btn-primary' : 'btn-secondary'}`}
+                  onClick={() => setSubTab(t.id)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+            <span style={{ fontSize: 12, color: '#64748b' }}>
+              Logística de Obra vinculada en tiempo real (requerimientos ⇄ existencias y consumos)
+            </span>
+          </div>
+
+          {(subTab === 'abastecimiento' || subTab === 'dividida') && (
+            <AbastecimientoObraView proyectoId={effectiveProyectoId} />
+          )}
+          {(subTab === 'bodega' || subTab === 'dividida') && (
+            <BodegaObraView proyectoId={effectiveProyectoId} onOpenAI={() => setShowAIModal(true)} />
+          )}
+        </div>
       )}
 
       {showAIModal && (

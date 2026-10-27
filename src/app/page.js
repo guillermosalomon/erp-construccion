@@ -8,7 +8,18 @@ export default function KalartiHub() {
   const [scrollY, setScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const audioRef = useRef(null);
+  const userPausedRef = useRef(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768 || (typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)));
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -30,50 +41,73 @@ export default function KalartiHub() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.volume = 0.45;
+    audio.muted = false;
+    audio.volume = 0.65;
 
-    const playAudio = () => {
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch(() => {
-        setIsPlaying(false);
-      });
+    const detachFallback = () => {
+      window.removeEventListener('pointerdown', handleUnlock, true);
+      window.removeEventListener('touchstart', handleUnlock, true);
+      window.removeEventListener('touchend', handleUnlock, true);
+      window.removeEventListener('click', handleUnlock, true);
+      window.removeEventListener('keydown', handleUnlock, true);
     };
 
-    // Intentar reproducir automáticamente (según política de autoplay del navegador)
-    playAudio();
-
-    // En navegadores que bloquean autoplay sin interacción previa,
-    // se inicia con el primer clic, toque de pantalla o interacción:
-    const handleFirstInteraction = () => {
-      if (audio.paused) {
-        audio.play().then(() => {
+    const tryPlayUnmuted = () => {
+      if (!audio || userPausedRef.current) return;
+      audio.muted = false;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
           setIsPlaying(true);
-        }).catch(() => {});
+          detachFallback();
+        }).catch(() => {
+          setIsPlaying(false);
+        });
       }
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('touchstart', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
     };
 
-    window.addEventListener('click', handleFirstInteraction);
-    window.addEventListener('touchstart', handleFirstInteraction);
-    window.addEventListener('keydown', handleFirstInteraction);
+    const handleUnlock = (e) => {
+      if (userPausedRef.current) return;
+      if (e && e.target && typeof e.target.closest === 'function' && e.target.closest('.audio-player-pill')) {
+        return;
+      }
+      if (audio && (audio.paused || audio.muted)) {
+        tryPlayUnmuted();
+      }
+    };
+
+    // Reproducir apenas el primer fragmento de audio esté disponible (sin esperar a descargar todo el archivo)
+    tryPlayUnmuted();
+    audio.addEventListener('loadeddata', tryPlayUnmuted, { once: true });
+    audio.addEventListener('canplay', tryPlayUnmuted, { once: true });
+
+    // Fase de captura (true) para respuesta inmediata en el primer micro-evento si el navegador bloqueó el arranque en frío
+    window.addEventListener('pointerdown', handleUnlock, true);
+    window.addEventListener('touchstart', handleUnlock, true);
+    window.addEventListener('touchend', handleUnlock, true);
+    window.addEventListener('click', handleUnlock, true);
+    window.addEventListener('keydown', handleUnlock, true);
 
     return () => {
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('touchstart', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
+      audio.removeEventListener('loadeddata', tryPlayUnmuted);
+      audio.removeEventListener('canplay', tryPlayUnmuted);
+      detachFallback();
     };
   }, []);
 
-  const toggleMusic = () => {
+  const toggleMusic = (e) => {
+    if (e) {
+      e.stopPropagation();
+    }
     const audio = audioRef.current;
     if (!audio) return;
-    if (isPlaying) {
+    if (!audio.paused) {
+      userPausedRef.current = true;
       audio.pause();
       setIsPlaying(false);
     } else {
+      userPausedRef.current = false;
+      audio.muted = false;
       audio.play().then(() => {
         setIsPlaying(true);
       }).catch(() => {});
@@ -118,14 +152,16 @@ export default function KalartiHub() {
         }
 
         .nav-brand {
-          font-size: 24px;
-          font-weight: 800;
+          font-family: var(--font-oswald), 'Oswald', sans-serif;
+          font-size: 26px;
+          font-weight: 400;
           color: white;
           text-decoration: none;
-          letter-spacing: 1px;
+          letter-spacing: 0.186em;
           display: flex;
           align-items: center;
           gap: 12px;
+          text-transform: uppercase;
         }
 
         .nav-logo-k {
@@ -170,44 +206,31 @@ export default function KalartiHub() {
           padding: 0 40px;
           position: relative;
           overflow: hidden;
+          clip-path: inset(0);
+          -webkit-clip-path: inset(0);
         }
 
         .hero-parallax-bg {
-          position: absolute;
-          top: -20%;
+          position: fixed;
+          top: 0;
           left: 0;
           width: 100%;
-          height: 140%;
+          height: 100vh;
           background-image: url('/Banner%20principal.jpg');
           background-size: cover;
           background-position: center center;
           background-repeat: no-repeat;
-          will-change: transform;
           pointer-events: none;
           z-index: 0;
+          will-change: transform;
         }
 
         @media (max-width: 768px) {
           .hero-parallax-bg {
             background-image: url('/Banner%20principal%20responsivo.jpg');
             background-position: center center;
-            top: -15%;
-            height: 130%;
+            will-change: transform;
           }
-        }
-
-        .hero-overlay {
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: linear-gradient(
-            135deg,
-            rgba(15, 23, 42, 0.88) 0%,
-            rgba(15, 23, 42, 0.65) 50%,
-            rgba(15, 23, 42, 0.92) 100%
-          ),
-          radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.16) 0%, transparent 50%);
-          z-index: 1;
-          pointer-events: none;
         }
 
         .hero-content {
@@ -215,18 +238,7 @@ export default function KalartiHub() {
           z-index: 2;
           max-width: 800px;
           margin-top: 80px;
-        }
-
-        .hero-badge {
-          display: inline-block;
-          padding: 6px 16px;
-          background: rgba(245, 158, 11, 0.1);
-          color: var(--gold-400);
-          border-radius: 20px;
-          font-size: 14px;
-          font-weight: 600;
-          margin-bottom: 24px;
-          border: 1px solid rgba(245, 158, 11, 0.2);
+          will-change: transform;
         }
 
         .hero-title {
@@ -234,23 +246,26 @@ export default function KalartiHub() {
           line-height: 1.1;
           font-weight: 800;
           margin-bottom: 24px;
-          background: linear-gradient(to right, #fff, #cbd5e1);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+          color: #ffffff;
         }
 
-        .hero-title span {
-          background: linear-gradient(to right, var(--gold-400), var(--gold-600));
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+        .hero-title .text-white-part {
+          text-shadow: 0 3px 16px rgba(0, 0, 0, 0.75), 0 1px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        .hero-title .text-gold-part {
+          color: #fbbf24;
+          font-weight: 900;
+          text-shadow: 0 3px 16px rgba(0, 0, 0, 0.85), 0 1px 4px rgba(0, 0, 0, 0.95);
         }
 
         .hero-desc {
           font-size: 20px;
-          color: var(--text-muted);
+          color: #f8fafc;
           line-height: 1.6;
           margin-bottom: 40px;
           max-width: 600px;
+          text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 0.95);
         }
 
         .hero-actions {
@@ -260,21 +275,28 @@ export default function KalartiHub() {
         }
 
         .btn-primary {
-          background: var(--gold-500);
-          color: var(--navy-900);
+          background: rgba(245, 158, 11, 0.22);
+          color: #fde047;
           padding: 16px 32px;
-          border-radius: 8px;
+          border-radius: 12px;
           text-decoration: none;
           font-weight: 700;
           font-size: 16px;
-          transition: transform 0.2s, background 0.2s;
+          border: 1.5px solid rgba(251, 191, 36, 0.65);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+          transition: all 0.25s ease;
           display: inline-flex;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
         }
         .btn-primary:hover {
-          background: var(--gold-400);
+          background: rgba(245, 158, 11, 0.45);
+          color: #ffffff;
+          border-color: rgba(251, 191, 36, 0.95);
           transform: translateY(-2px);
+          box-shadow: 0 10px 36px rgba(245, 158, 11, 0.35);
         }
 
         .btn-secondary {
@@ -352,11 +374,6 @@ export default function KalartiHub() {
           transform: scaleX(1);
         }
 
-        .card-icon {
-          font-size: 48px;
-          margin-bottom: 24px;
-        }
-
         .card-title {
           font-size: 24px;
           font-weight: 700;
@@ -404,19 +421,29 @@ export default function KalartiHub() {
         }
 
         .btn-cotizador {
-          background: linear-gradient(135deg, #10b981, #059669);
-          color: white;
+          background: rgba(16, 185, 129, 0.22);
+          color: #6ee7b7;
           padding: 16px 32px;
-          border-radius: 8px;
+          border-radius: 12px;
           text-decoration: none;
           font-weight: 700;
           font-size: 16px;
+          border: 1.5px solid rgba(52, 211, 153, 0.65);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
           display: inline-flex;
           align-items: center;
-          gap: 10px;
-          transition: transform 0.2s;
+          gap: 12px;
+          transition: all 0.25s ease;
         }
-        .btn-cotizador:hover { transform: translateY(-2px); }
+        .btn-cotizador:hover {
+          background: rgba(16, 185, 129, 0.45);
+          color: #ffffff;
+          border-color: rgba(52, 211, 153, 0.95);
+          transform: translateY(-2px);
+          box-shadow: 0 10px 36px rgba(16, 185, 129, 0.35);
+        }
 
         .card-highlight { border: 1px solid rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.06); }
         .card-highlight::before { background: #10b981; }
@@ -532,12 +559,18 @@ export default function KalartiHub() {
         }
       `}} />
 
+      <link rel="preload" href="/shefa-flow.mp3" as="audio" type="audio/mpeg" />
+
       {/* Audio de Fondo: Shefa Flow */}
       <audio
         ref={audioRef}
-        src="/Shefa%20flow.mpeg"
+        src="/shefa-flow.mp3"
+        autoPlay
         loop
         preload="auto"
+        playsInline
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
       />
 
       {/* Floating Ambient Music Control Pill */}
@@ -589,27 +622,34 @@ export default function KalartiHub() {
           <div
             className="hero-parallax-bg"
             style={{
-              transform: `translate3d(0, ${scrollY * 0.35}px, 0)`
+              transform: `translate3d(0, -${scrollY * 0.15}px, 0) scale(${1 + Math.min(scrollY * 0.00025, 0.1)})`
             }}
           />
-          <div className="hero-overlay" />
-          <div className="hero-content">
-            <div className="hero-badge">🚀 El Hub de la Construcción</div>
+          <div
+            className="hero-content"
+            style={{
+              transform: `translate3d(0, -${scrollY * 0.22}px, 0)`
+            }}
+          >
             <h1 className="hero-title">
-              Conectamos todo el ecosistema de <span>Construcción y Bienes Raíces</span>
+              <span className="text-white-part">Conectamos todo el ecosistema de </span>
+              <span className="text-gold-part">Construcción y Bienes Raíces</span>
             </h1>
             <p className="hero-desc">
-              Kalarti no es solo un software. Es el ecosistema donde clientes, constructores, ferreterías y proveedores se unen para presupuestar, construir y comercializar de manera eficiente.
+              Conectamos clientes, constructores, ferreterías y proveedores para presupuestar, construir y comercializar de manera eficiente.
             </p>
             <div className="hero-actions">
               <Link href="/cotizador" className="btn-cotizador">
-                🧮 Cotiza tu obra gratis ➔
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <rect x="4" y="2" width="16" height="20" rx="3" />
+                  <line x1="8" y1="6" x2="16" y2="6" />
+                  <line x1="16" y1="14" x2="16" y2="18" />
+                  <path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01" />
+                </svg>
+                Cotiza tu obra gratis ➔
               </Link>
               <Link href="/erp" className="btn-primary">
                 Ingresar al ERP / Marketplace ➔
-              </Link>
-              <Link href="/blog" className="btn-secondary">
-                Explorar Blog Técnico & Bio-Construcción
               </Link>
             </div>
           </div>
@@ -645,7 +685,6 @@ export default function KalartiHub() {
           <div className="grid-cards">
             {/* Cotizador público */}
             <div className="card card-highlight">
-              <div className="card-icon">🧮</div>
               <h3 className="card-title">Cotizador de Obra Gratis</h3>
               <p className="card-desc">
                 Arma el presupuesto de tu proyecto desde el celular con más de 400 APUs verificados, y mira el cronograma de obra con cuadrillas Kalarti asignadas automáticamente.
@@ -657,7 +696,6 @@ export default function KalartiHub() {
 
             {/* Blog Técnico & Bio-Construcción */}
             <div className="card">
-              <div className="card-icon">📖</div>
               <h3 className="card-title">Blog Técnico & Bio-Construcción</h3>
               <p className="card-desc">
                 Guías de cálculo sismo-resistente NSR-10, estructuras en Guadua Angustifolia, diseño de interiores, tendencias BIM y más....
@@ -669,7 +707,6 @@ export default function KalartiHub() {
 
             {/* Servicios */}
             <div className="card">
-              <div className="card-icon">🏗️</div>
               <h3 className="card-title">Servicios y Construcción</h3>
               <p className="card-desc">
                 Diseño arquitectónico, modelado BIM 5D, y construcción llave en mano para clientes finales e inversionistas.
@@ -681,7 +718,6 @@ export default function KalartiHub() {
 
             {/* Marketplace */}
             <div className="card">
-              <div className="card-icon">🛒</div>
               <h3 className="card-title">Marketplace B2B/B2C</h3>
               <p className="card-desc">
                 Compra de materiales, alquiler de maquinaria y productos de ferreterías afiliadas directamente desde tus presupuestos.
@@ -693,7 +729,6 @@ export default function KalartiHub() {
 
             {/* Proyectos e Inmuebles */}
             <div className="card">
-              <div className="card-icon">🏢</div>
               <h3 className="card-title">Inmuebles en Venta</h3>
               <p className="card-desc">
                 Explora el portafolio de proyectos inmobiliarios, casas y apartamentos disponibles desarrollados por la red Kalarti.
@@ -705,7 +740,6 @@ export default function KalartiHub() {
 
             {/* ERP / Afiliados */}
             <div className="card">
-              <div className="card-icon">💻</div>
               <h3 className="card-title">ERP para Afiliados</h3>
               <p className="card-desc">
                 Proveedores, contratistas y ferreterías usan nuestra plataforma para control de obra, inventario y ventas omnicanal.

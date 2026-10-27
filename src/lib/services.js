@@ -39,14 +39,33 @@ export const categoriasService = {
     if (!db()) return null;
     const uid = await getUserId();
     const { data, error } = await db().from('categorias').insert({ ...categoria, user_id: uid }).select().single();
+    if (error && (error.code === 'PGRST204' || error.message?.includes('schema cache'))) {
+      const { aplica_a: _a, orden: _o, activa: _ac, ...safe } = categoria;
+      const r2 = await db().from('categorias').insert({ ...safe, user_id: uid }).select().single();
+      if (r2.error) throw r2.error;
+      return r2.data;
+    }
     if (error) throw error;
     return data;
   },
   async update(id, changes) {
     if (!db()) return null;
-    const { data, error } = await db().from('categorias').update({ ...changes, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    const { oldNombre: _old, ...clean } = changes;
+    const { data, error } = await db().from('categorias').update({ ...clean, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error && (error.code === 'PGRST204' || error.message?.includes('schema cache'))) {
+      const { aplica_a: _a, orden: _o, activa: _ac, ...safe } = clean;
+      const r2 = await db().from('categorias').update({ ...safe, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+      if (r2.error) throw r2.error;
+      return r2.data;
+    }
     if (error) throw error;
     return data;
+  },
+  async cascadeRename(oldNombre, newNombre, newCatId = null) {
+    if (!db() || !oldNombre || !newNombre || oldNombre === newNombre) return;
+    await db().from('apu').update({ categoria_apu: newNombre, ...(newCatId ? { categoria_id: newCatId } : {}) }).eq('categoria_apu', oldNombre);
+    await db().from('insumos').update({ categoria: newNombre, ...(newCatId ? { categoria_id: newCatId } : {}) }).eq('categoria', oldNombre);
+    await db().from('mk_ofertas').update({ categoria: newNombre }).eq('categoria', oldNombre);
   },
   async remove(id) {
     if (!db()) return null;

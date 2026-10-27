@@ -18,11 +18,14 @@ export default function PresupuestoView({ proyectoId, onBack }) {
   const fileInputRef = useRef(null);
 
   const proyecto = state.proyectos.find((p) => p.id === proyectoId);
-  if (!proyecto) return null;
 
-  const items = state.presupuestoItems
-    .filter((pi) => pi.proyecto_id === proyectoId)
-    .sort((a, b) => (a.orden || 0) - (b.orden || 0));
+  const items = useMemo(
+    () =>
+      state.presupuestoItems
+        .filter((pi) => pi.proyecto_id === proyectoId)
+        .sort((a, b) => (a.orden || 0) - (b.orden || 0)),
+    [state.presupuestoItems, proyectoId]
+  );
 
   const presupuesto = calcularPresupuesto(proyectoId);
 
@@ -69,6 +72,8 @@ export default function PresupuestoView({ proyectoId, onBack }) {
     const current = items.map(i => i.sub_capitulo).filter(Boolean);
     return [...new Set([...defaults, ...current])].sort();
   }, [items]);
+
+  if (!proyecto) return null;
 
   // ── Add item ──
   const handleAddItem = (e) => {

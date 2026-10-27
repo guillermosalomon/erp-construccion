@@ -1,82 +1,92 @@
 import { NextResponse } from 'next/server';
+import { MercadoPagoConfig, Preference } from 'mercadopago';
 import { PRODUCTOS } from '@/lib/cotizador/config';
 
+/**
+ * POST /api/pagos/checkout
+ * Único medio de pago habilitado: Mercado Pago Checkout Pro con redirección.
+ */
 export async function POST(request) {
   try {
-    const { productoId, moneda = 'COP', email, proyectoId } = await request.json();
+    const { productoId, email, proyectoId } = await request.json();
 
     const prod = PRODUCTOS[productoId];
     if (!prod) {
       return NextResponse.json({ error: 'Producto no válido' }, { status: 400 });
     }
 
-    const valor = prod.precio[moneda] || prod.precio.COP;
-
-    // Mercado Pago Access Token
     const mpToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
-    const paypalClientId = process.env.PAYPAL_CLIENT_ID;
-
-    // Si tiene configurado Mercado Pago y es COP
-    if (mpToken && moneda === 'COP') {
-      try {
-        const prefRes = await fetch('https://api.mercadopago.com/checkout/preferences', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${mpToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            items: [
-              {
-                title: `Kalarti - ${prod.nombre}`,
-                quantity: 1,
-                currency_id: 'COP',
-                unit_price: Number(valor),
-              },
-            ],
-            payer: email ? { email } : undefined,
-            external_reference: `${productoId}__${proyectoId || 'sin_pry'}__${Date.now()}`,
-            back_urls: {
-              success: `${process.env.NEXT_PUBLIC_SITE_URL || ''}/cotizador?pago=success`,
-              failure: `${process.env.NEXT_PUBLIC_SITE_URL || ''}/cotizador?pago=failure`,
-              pending: `${process.env.NEXT_PUBLIC_SITE_URL || ''}/cotizador?pago=pending`,
-            },
-            auto_return: 'approved',
-          }),
-        });
-
-        const prefData = await prefRes.json();
-        if (prefData.init_point) {
-          return NextResponse.json({
-            provider: 'mercadopago',
-            url: prefData.init_point,
-            sandbox_url: prefData.sandbox_init_point,
-          });
-        }
-      } catch (mpErr) {
-        console.warn('Error iniciando preferencia MP:', mpErr);
-      }
+    if (!mpToken) {
+      return NextResponse.json(
+        {
+          error:
+            'MERCADOPAGO_ACCESS_TOKEN no está configurado en el servidor (.env.local).',
+        },
+        { status: 503 }
+      );
     }
 
-    // Modo enlace directo / WhatsApp de confirmación con pasarela asistida
-    const whatsMsg = encodeURIComponent(
-      `¡Hola Kalarti! Quiero activar: *${prod.nombre}* (${valor} ${moneda}) para mi proyecto.\nCorreo: ${email || 'por definir'}`
-    );
-    const checkoutLink = `https://wa.me/573177725056?text=${whatsMsg}`;
+    const valor = prod.precio.COP;
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
+    const isHttps = siteUrl.startsWith('https://');
+    const refSafe = `${productoId}__${proyectoId || 'sin_pry'}__${Date.now()}`;
+    const testPayerEmail = process.env.MERCADOPAGO_TEST_PAYER_EMAIL;
+    const payerEmail =
+      testPayerEmail && !String(email || '').endsWith('@testuser.com')
+        ? testPayerEmail
+        : email || 'cliente@ejemplo.com';
+
+    const client = new MercadoPagoConfig({ accessToken: mpToken });
+    const preference = new Preference(client);
+    const result = await preference.create({
+      body: {
+        items: [
+          {
+            id: refSafe,
+            title: `Kalarti - ${prod.nombre}`,
+            quantity: 1,
+            currency_id: 'COP',
+            unit_price: Number(valor),
+          },
+        ],
+        payer: { email: payerEmail },
+        external_reference: refSafe,
+        back_urls: {
+          success: `${siteUrl}/cotizador?pago=success&tipo=${encodeURIComponent(productoId)}&ref=${encodeURIComponent(refSafe)}`,
+          failure: `${siteUrl}/cotizador?pago=failure`,
+          pending: `${siteUrl}/cotizador?pago=pending`,
+        },
+        ...(isHttps
+          ? {
+              auto_return: 'approved',
+              notification_url: `${siteUrl}/api/webhooks/mercadopago`,
+            }
+          : {}),
+        metadata: {
+          tipo_producto: productoId,
+          producto_db: productoId,
+          referencia_id: refSafe,
+          user_email: email || null,
+        },
+      },
+    });
+
+    if (!result?.init_point) {
+      return NextResponse.json(
+        { error: 'No se pudo generar la preferencia de Mercado Pago.' },
+        { status: 502 }
+      );
+    }
 
     return NextResponse.json({
-      provider: 'asistido',
-      url: checkoutLink,
-      info: {
-        producto: prod.nombre,
-        valor,
-        moneda,
-        paypalAvailable: !!paypalClientId,
-        mercadopagoAvailable: !!mpToken,
-      },
+      provider: 'mercadopago',
+      init_point: result.init_point,
+      url: result.init_point,
+      sandbox_url: result.sandbox_init_point,
+      id: result.id,
     });
   } catch (err) {
     console.error('Error en /api/pagos/checkout:', err);
-    return NextResponse.json({ error: 'Error al procesar checkout' }, { status: 500 });
+    return NextResponse.json({ error: 'Error al procesar checkout en Mercado Pago' }, { status: 500 });
   }
 }

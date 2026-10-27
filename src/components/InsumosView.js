@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@/store/StoreContext';
 import ExcelImporter from './ExcelImporter';
+import CategoriasModal, { categoriasActivasPara } from './CategoriasModal';
 import { calcularPrecioMercado, calcularDiferencia } from '@/lib/price-engine';
 
 const TIPOS = [
@@ -56,6 +57,8 @@ export default function InsumosView() {
   const [search, setSearch] = useState('');
   const [filterTipo, setFilterTipo] = useState('');
   const [filterCategoria, setFilterCategoria] = useState('');
+  const [showCategoriasModal, setShowCategoriasModal] = useState(false);
+  const categoriasInsumos = useMemo(() => categoriasActivasPara(state, 'INSUMO'), [state]);
   const [marcaFilters, setMarcaFilters] = useState({});
 
   const filteredInsumos = useMemo(() => {
@@ -65,10 +68,11 @@ export default function InsumosView() {
         i.nombre.toLowerCase().includes(search.toLowerCase()) ||
         i.codigo.toLowerCase().includes(search.toLowerCase());
       const matchTipo = !filterTipo || i.tipo === filterTipo;
-      const matchCat = !filterCategoria || i.categoria_id === filterCategoria;
+      const catSel = categoriasInsumos.find((c) => (c.id || c.nombre) === filterCategoria);
+      const matchCat = !filterCategoria || i.categoria_id === filterCategoria || (catSel && String(i.categoria || '').toUpperCase() === String(catSel.nombre || '').toUpperCase());
       return matchSearch && matchTipo && matchCat;
     });
-  }, [state.insumos, search, filterTipo, filterCategoria]);
+  }, [state.insumos, search, filterTipo, filterCategoria, categoriasInsumos]);
 
   const openCreate = () => {
     setForm(emptyForm);
@@ -92,10 +96,12 @@ export default function InsumosView() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const catObj = categoriasInsumos.find((c) => (c.id || c.nombre) === form.categoria_id);
     const payload = {
       ...form,
       precio_unitario: parseFloat(form.precio_unitario) || 0,
-      categoria_id: form.categoria_id === '' ? null : form.categoria_id,
+      categoria_id: catObj?.id || (form.categoria_id === '' ? null : form.categoria_id),
+      categoria: catObj?.nombre || undefined,
     };
 
     if (editingId) {
@@ -247,10 +253,18 @@ export default function InsumosView() {
             style={{ width: 180 }}
           >
             <option value="">Todas las categorías</option>
-            {state.categorias?.map((cat) => (
-              <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+            {categoriasInsumos.map((cat) => (
+              <option key={cat.id || cat.nombre} value={cat.id || cat.nombre}>{cat.nombre}</option>
             ))}
           </select>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={() => setShowCategoriasModal(true)}
+            title="Crear, renombrar o desactivar categorías"
+          >
+            ⚙️ Gestionar Categorías
+          </button>
           <div className="toolbar-spacer" />
           <span style={{ fontSize: 12, color: 'var(--color-text-tertiary)' }}>
             {filteredInsumos.length} registro{filteredInsumos.length !== 1 ? 's' : ''}
@@ -309,11 +323,21 @@ export default function InsumosView() {
                           <select 
                             className="inline-edit-input"
                             style={{ width: '100%', fontSize: 10 }}
-                            value={insumo.categoria_id || ''}
-                            onChange={(e) => dispatch({ type: 'UPDATE_INSUMO', payload: { id: insumo.id, categoria_id: e.target.value === '' ? null : e.target.value } })}
+                            value={insumo.categoria_id || categoriasInsumos.find((c) => String(c.nombre).toUpperCase() === String(insumo.categoria || '').toUpperCase())?.id || ''}
+                            onChange={(e) => {
+                              const catObj = categoriasInsumos.find((c) => (c.id || c.nombre) === e.target.value);
+                              dispatch({
+                                type: 'UPDATE_INSUMO',
+                                payload: {
+                                  id: insumo.id,
+                                  categoria_id: catObj?.id || null,
+                                  categoria: catObj?.nombre || null,
+                                },
+                              });
+                            }}
                           >
-                            <option value="">Sin Categoría</option>
-                            {state.categorias?.map(cat => <option key={cat.id} value={cat.id}>{cat.nombre}</option>)}
+                            <option value="">{insumo.categoria || 'Sin Categoría'}</option>
+                            {categoriasInsumos.map(cat => <option key={cat.id || cat.nombre} value={cat.id || cat.nombre}>{cat.nombre}</option>)}
                           </select>
                         </td>
                         <td>
@@ -501,8 +525,8 @@ export default function InsumosView() {
                     onChange={(e) => setForm({ ...form, categoria_id: e.target.value })}
                   >
                     <option value="">Sin Categoría</option>
-                    {state.categorias?.map((cat) => (
-                      <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                    {categoriasInsumos.map((cat) => (
+                      <option key={cat.id || cat.nombre} value={cat.id || cat.nombre}>{cat.nombre}</option>
                     ))}
                   </select>
                 </div>
@@ -561,6 +585,12 @@ export default function InsumosView() {
           </div>
         </div>
       )}
+
+      <CategoriasModal
+        isOpen={showCategoriasModal}
+        onClose={() => setShowCategoriasModal(false)}
+        ambitoInicial="INSUMO"
+      />
 
       {/* Import Modal */}
       {showImport && (

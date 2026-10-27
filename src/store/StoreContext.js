@@ -431,8 +431,34 @@ function baseStoreReducer(state, action) {
     case 'ADD_CATEGORIA':
       return {
         ...state,
-        categorias: [...state.categorias, { ...action.payload, id: generateId(), created_at: now() }],
+        categorias: [...state.categorias, { ...action.payload, id: action.payload.id || generateId(), created_at: now() }],
       };
+    case 'UPDATE_CATEGORIA': {
+      const { id, nombre, oldNombre, ...rest } = action.payload;
+      const normCat = (s) => String(s || '').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      const kOld = normCat(oldNombre);
+      const cambioNombre = kOld && normCat(nombre) && oldNombre !== nombre;
+      return {
+        ...state,
+        categorias: state.categorias.map((c) => (c.id === id ? { ...c, nombre, ...rest, updated_at: now() } : c)),
+        apus: cambioNombre ? state.apus.map((a) => (normCat(a.categoria_apu) === kOld ? { ...a, categoria_apu: nombre, categoria_id: id } : a)) : state.apus,
+        insumos: cambioNombre ? state.insumos.map((i) => (i.categoria_id === id || normCat(i.categoria) === kOld ? { ...i, categoria: nombre, categoria_id: id } : i)) : state.insumos,
+        mkOfertas: cambioNombre ? state.mkOfertas.map((o) => (normCat(o.categoria) === kOld ? { ...o, categoria: nombre } : o)) : state.mkOfertas,
+      };
+    }
+    case 'DEACTIVATE_CATEGORIA': {
+      const { id, nombre, aplica_a = 'AMBOS', orden = 100, reasignarA } = action.payload;
+      const normCat = (s) => String(s || '').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      const kOld = normCat(nombre);
+      const descBaja = `AMBITO:${aplica_a}|ORDEN:${orden}|ACTIVA:false`;
+      return {
+        ...state,
+        categorias: state.categorias.map((c) => (c.id === id ? { ...c, activa: false, descripcion: descBaja, updated_at: now() } : c)),
+        apus: reasignarA ? state.apus.map((a) => (normCat(a.categoria_apu) === kOld ? { ...a, categoria_apu: reasignarA.nombre, categoria_id: reasignarA.id } : a)) : state.apus,
+        insumos: reasignarA ? state.insumos.map((i) => (i.categoria_id === id || normCat(i.categoria) === kOld ? { ...i, categoria: reasignarA.nombre, categoria_id: reasignarA.id } : i)) : state.insumos,
+        mkOfertas: reasignarA ? state.mkOfertas.map((o) => (normCat(o.categoria) === kOld ? { ...o, categoria: reasignarA.nombre } : o)) : state.mkOfertas,
+      };
+    }
 
     // ── Proyectos ──
     case 'ADD_PROYECTO': {
@@ -808,6 +834,25 @@ async function syncToSupabase(action, state) {
         case 'ADD_CATEGORIA':
           await categoriasService.create(action.payload);
           break;
+        case 'UPDATE_CATEGORIA': {
+          const { id, nombre, oldNombre, ...rest } = action.payload;
+          await categoriasService.update(id, { nombre, ...rest });
+          if (oldNombre && oldNombre !== nombre) {
+            await categoriasService.cascadeRename(oldNombre, nombre, id);
+          }
+          break;
+        }
+        case 'DEACTIVATE_CATEGORIA': {
+          const { id, nombre, aplica_a = 'AMBOS', orden = 100, reasignarA } = action.payload;
+          if (reasignarA && nombre) {
+            await categoriasService.cascadeRename(nombre, reasignarA.nombre, reasignarA.id);
+          }
+          await categoriasService.update(id, {
+            activa: false,
+            descripcion: `AMBITO:${aplica_a}|ORDEN:${orden}|ACTIVA:false`,
+          });
+          break;
+        }
 
         // Insumos
         case 'ADD_INSUMO':
@@ -1577,6 +1622,19 @@ async function syncToSupabase(action, state) {
         case 'DELETE_POS_AGENDA':
           try { await posAgendaService.remove(action.payload); } catch(e) { console.warn('⚠️ pos_agenda sync:', e.message); }
           break;
+      }
+      // Sincronización en tiempo real ERP -> Cotizador Web
+      const ACCIONES_COTIZADOR = new Set([
+        'ADD_APU', 'UPDATE_APU', 'DELETE_APU', 'DUPLICATE_APU',
+        'ADD_APU_DETALLE', 'UPDATE_APU_DETALLE', 'DELETE_APU_DETALLE',
+        'ADD_INSUMO', 'UPDATE_INSUMO', 'DELETE_INSUMO', 'ADD_INSUMOS_BATCH',
+        'ADD_CARGO', 'UPDATE_CARGO', 'DELETE_CARGO',
+        'ADD_CARGO_DETALLE', 'UPDATE_CARGO_DETALLE', 'DELETE_CARGO_DETALLE',
+        'UPDATE_CONFIG', 'ADD_CATEGORIA', 'UPDATE_CATEGORIA', 'DEACTIVATE_CATEGORIA',
+        'ADD_MK_OFERTA', 'UPDATE_MK_OFERTA', 'DELETE_MK_OFERTA',
+      ]);
+      if (ACCIONES_COTIZADOR.has(action.type) && typeof window !== 'undefined') {
+        fetch('/api/cotizador/revalidar', { method: 'POST' }).catch(() => {});
       }
     } catch (err) {
       console.error(`🔴 [Sync Error] ${action.type}:`, err.message || err);

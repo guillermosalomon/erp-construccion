@@ -68,8 +68,7 @@ export default function ProjectHubView({ proyectoId, onBack }) {
     { id: 'agenda', label: 'Agenda' },
     { id: 'presupuesto', label: 'Presupuesto' },
     { id: 'progress', label: 'Seguimiento 4D/5D' },
-    { id: 'abastecimiento', label: 'Abastecimiento' },
-    { id: 'logistics', label: 'Bodega de obra' },
+    { id: 'logistics', label: 'Logística de Obra (Abastecimiento y Bodega)' },
     { id: 'finance', label: 'Control Financiero' },
   ];
 
@@ -125,7 +124,6 @@ export default function ProjectHubView({ proyectoId, onBack }) {
         {activeTab === 'agenda' && <AgendaView proyectoId={proyectoId} />}
         {activeTab === 'presupuesto' && <PresupuestoView proyectoId={proyectoId} />}
         {activeTab === 'progress' && <ProgressView contextProyectoId={proyectoId} />}
-        {activeTab === 'abastecimiento' && <AbastecimientoObraView proyectoId={proyectoId} />}
         {activeTab === 'logistics' && <LogisticsView contextProyectoId={proyectoId} />}
         {activeTab === 'finance' && <FinanceView contextProyectoId={proyectoId} />}
       </div>

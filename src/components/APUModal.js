@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useStore } from '@/store/StoreContext';
+import { categoriasActivasPara } from './CategoriasModal';
 import { calcularPrecioMercado } from '@/lib/price-engine';
 
 const UNIDADES = ['un', 'kg', 'm', 'm2', 'm3', 'lt', 'gl', 'hr', 'día', 'viaje', 'saco'];
@@ -323,10 +324,13 @@ function APUModalContent({ apu, detalles, state, dispatch, calcularCostoAPU, zon
               <div className="form-group">
                 <label className="form-label">Categoría</label>
                 <select className="form-select" value={form.categoria_apu} onChange={(e) => setForm({ ...form, categoria_apu: e.target.value })}>
-                  <option value="Otros">Otros</option>
-                  {Array.from(new Set(state.apus.map(a => a.categoria_apu || 'Otros'))).filter(c => c !== 'Otros').sort().map(c => (
+                  {Array.from(new Set([
+                    ...categoriasActivasPara(state, 'APU').map((c) => c.nombre),
+                    ...state.apus.map((a) => a.categoria_apu || 'Otros').filter((c) => c !== 'Otros'),
+                  ])).map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
+                  <option value="Otros">Otros</option>
                 </select>
               </div>
             </div>

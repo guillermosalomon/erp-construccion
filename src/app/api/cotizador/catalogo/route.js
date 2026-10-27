@@ -4,7 +4,8 @@ import { costoAPU, ctxParaZona, normZona, zonaTienePrecios, ZONA_MATRIZ } from '
 import { ordenCapitulo } from '@/lib/catalogo-taxonomia';
 import { crearClienteLectura, cargarDatosCatalogo, aComponentes } from '@/lib/server/catalogo-data';
 
-export const revalidate = 600; // Cache 10 min
+export const dynamic = 'force-dynamic';
+export const revalidate = 0; // Sincronización en tiempo real ERP -> Cotizador Web
 
 const normTxt = (s) => String(s || '').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
@@ -38,8 +39,12 @@ export async function GET(request) {
     const { apus, ctx: ctxBase } = datos;
     const ctx = ctxParaZona(ctxBase, municipio);
 
-    // Excluir básicos puros (salvo concretos/morteros por M3)
-    const apusCurados = apus.filter((a) => normTxt(a.categoria_apu) !== 'BASICOS' || normTxt(a.unidad) === 'M3');
+    // Excluir inactivos/no disponibles y básicos puros (salvo concretos/morteros por M3)
+    const apusCurados = apus.filter((a) =>
+      a.activo !== false &&
+      a.disponible_cotizador !== false &&
+      (normTxt(a.categoria_apu) !== 'BASICOS' || normTxt(a.unidad) === 'M3')
+    );
 
     const catalogo = [];
     for (const a of apusCurados) {

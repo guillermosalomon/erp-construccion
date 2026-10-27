@@ -10,7 +10,7 @@
  *   - movimientosRecepcion / eventosAgendaOrden: efectos de una orden (inventario y agenda).
  */
 
-import { costoAPU, factorConversion } from './apu-engine';
+import { costoAPU, factorConversion } from './apu-engine.js';
 
 export const FLETE_DEFAULT = { mismo_municipio: 60000, otro_municipio: 180000 };
 
