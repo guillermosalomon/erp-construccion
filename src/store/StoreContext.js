@@ -2057,7 +2057,7 @@ export function StoreProvider({ children }) {
               }
             }
 
-            const isClienteCotizador = (authUser?.user_metadata?.role || '').toUpperCase() === 'CLIENTE';
+            const isClienteCotizador = ['CLIENTE', 'PROFESIONAL', 'COMERCIO', 'PROVEEDOR'].includes((authUser?.user_metadata?.role || authUser?.user_metadata?.tipo_registro || '').toUpperCase());
             if (authUser?.email && !isClienteCotizador) {
               const existsInPersonal = data.personal?.some(p => p.email?.toLowerCase() === authUser.email.toLowerCase());
               if (!existsInPersonal) {

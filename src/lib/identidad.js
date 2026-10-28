@@ -8,7 +8,7 @@
  */
 import { supabase } from './supabase';
 
-export const ROLES_PERFIL = ['ADMIN', 'STAFF', 'RESIDENTE', 'CUADRILLA', 'VENDEDOR', 'CLIENTE'];
+export const ROLES_PERFIL = ['ADMIN', 'STAFF', 'RESIDENTE', 'CUADRILLA', 'VENDEDOR', 'CLIENTE', 'PROFESIONAL', 'CONSTRUCTOR', 'COMERCIO', 'PROVEEDOR'];
 
 export const normEmail = (e) => String(e || '').trim().toLowerCase();
 /** Últimos 10 dígitos del teléfono (ignora indicativo +57, espacios, guiones). */
@@ -24,7 +24,10 @@ const sin = (obj, claves) => {
   return out;
 };
 
-const COLS_PERFIL_NUEVAS = ['telefono', 'whatsapp', 'documento', 'ciudad', 'empresa', 'roles', 'avatar_url', 'activo'];
+const COLS_PERFIL_NUEVAS = [
+  'telefono', 'whatsapp', 'documento', 'ciudad', 'empresa', 'roles', 'avatar_url', 'activo',
+  'tipo_registro', 'estado_verificacion', 'pais', 'profesion', 'acepta_habeas_data', 'fecha_habeas_data',
+];
 
 /** Une roles sin duplicados, en mayúsculas. */
 export function unirRoles(...listas) {
@@ -53,6 +56,10 @@ export async function sincronizarPerfil(authUser, metadata = {}) {
     ciudad: meta.ciudad || null,
     documento: meta.cedula || meta.documento || null,
     empresa: meta.empresa || null,
+    pais: meta.pais || 'Colombia',
+    profesion: meta.profesion || null,
+    tipo_registro: meta.tipo_registro || metaRole,
+    ...(meta.acepta_habeas_data ? { acepta_habeas_data: true, fecha_habeas_data: new Date().toISOString() } : {}),
   };
 
   let payload;
@@ -127,21 +134,41 @@ export async function asegurarPersonal(authUser, metadata = {}) {
 
   const nombreCompleto = meta.nombre || authUser.email.split('@')[0];
   const parts = nombreCompleto.split(' ');
+  const cargosIds = Array.isArray(meta.cargos_ids) ? meta.cargos_ids : [];
+  const ciudadVal = meta.ciudad || '';
   return insertarTolerante('personal', {
     email: authUser.email,
     nombre: nombreCompleto,
     nombres: parts[0] || '',
     apellidos: parts.slice(1).join(' ') || '',
+    telefono: meta.telefono || null,
+    whatsapp: meta.whatsapp || meta.telefono || null,
     profesion: meta.profesion || '',
-    app_role: role,
+    app_role: role.toLowerCase(),
+    cargo_id: cargosIds[0] || meta.cargo_id || null,
+    cargos_ids: cargosIds,
     tipo_documento: meta.tipo_documento || 'CC',
     cedula: meta.cedula || '',
-    ciudad: meta.ciudad || '',
+    ciudad: ciudadVal,
     pais: meta.pais || 'Colombia',
     plan: meta.plan || 'free',
+    tarifa_referencia: meta.tarifa_referencia ? Number(meta.tarifa_referencia) : null,
+    tarifa_unidad: meta.tarifa_unidad || 'Día',
+    municipios_cobertura: Array.isArray(meta.municipios_cobertura)
+      ? meta.municipios_cobertura
+      : (ciudadVal ? [ciudadVal] : ['Pasto']),
+    disponible_red_talento: meta.disponible_red_talento !== undefined
+      ? Boolean(meta.disponible_red_talento)
+      : (meta.tipo_registro === 'PROFESIONAL' || role === 'PROFESIONAL'),
+    anos_experiencia: meta.anos_experiencia ? Number(meta.anos_experiencia) : 0,
+    resumen_experiencia: meta.resumen_experiencia || null,
     user_id: authUser.id,
     profile_id: authUser.id,
-  }, ['profile_id', 'tipo_documento', 'cedula', 'pais', 'plan']);
+  }, [
+    'profile_id', 'tipo_documento', 'cedula', 'pais', 'plan', 'cargos_ids',
+    'tarifa_referencia', 'tarifa_unidad', 'municipios_cobertura',
+    'disponible_red_talento', 'anos_experiencia', 'resumen_experiencia',
+  ]);
 }
 
 /**
@@ -195,10 +222,73 @@ export async function asegurarClienteDePerfil(authUser, metadata = {}) {
 /** Sincronización completa al iniciar sesión / registrarse. Nunca lanza. */
 export async function sincronizarIdentidad(authUser, metadata = {}) {
   try {
-    const perfil = await sincronizarPerfil(authUser, metadata);
-    const role = String({ ...(authUser.user_metadata || {}), ...metadata }.role || perfil?.role || 'CLIENTE').toUpperCase();
-    if (role === 'CLIENTE') await asegurarClienteDePerfil(authUser, metadata);
-    else await asegurarPersonal(authUser, metadata);
+    const meta = { ...(authUser?.user_metadata || {}), ...metadata };
+    const perfil = await sincronizarPerfil(authUser, meta);
+    const role = String(meta.role || perfil?.role || 'CLIENTE').toUpperCase();
+    const tipoReg = String(meta.tipo_registro || perfil?.tipo_registro || role).toUpperCase();
+
+    if (tipoReg === 'CONSTRUCTOR' || (role === 'ADMIN' && meta.empresa)) {
+      try {
+        await supabase.rpc('crear_organizacion', {
+          p_nombre: meta.empresa || meta.nombre || 'Constructora',
+          p_nit: meta.nit || meta.cedula || null,
+          p_tipo: 'CONSTRUCTORA',
+          p_municipio: meta.ciudad || 'Pasto',
+        });
+      } catch {
+        // Tolerante si migration-fase22a aún no se ha corrido
+      }
+      await asegurarPersonal(authUser, { ...meta, role: 'ADMIN' });
+    } else if (tipoReg === 'COMERCIO' || role === 'TIENDA') {
+      try {
+        const { data: tiendaExist } = await supabase
+          .from('mk_tiendas')
+          .select('id')
+          .eq('user_id', authUser.id)
+          .limit(1);
+        if (!tiendaExist?.length) {
+          await insertarTolerante('mk_tiendas', {
+            nombre: meta.empresa || meta.nombre || 'Mi Ferretería',
+            nit: meta.nit || meta.cedula || null,
+            ciudad: meta.ciudad || 'Pasto',
+            telefono: meta.telefono || meta.whatsapp || null,
+            email: authUser.email,
+            user_id: authUser.id,
+            activa: true,
+          }, ['nit', 'ciudad']);
+        }
+      } catch (e) {
+        console.warn('mk_tiendas onboarding:', e?.message);
+      }
+      await asegurarPersonal(authUser, { ...meta, role: 'TIENDA' });
+    } else if (tipoReg === 'PROVEEDOR') {
+      try {
+        const { data: provExist } = await supabase
+          .from('erp_proveedores')
+          .select('id')
+          .eq('profile_id', authUser.id)
+          .limit(1);
+        if (!provExist?.length) {
+          await insertarTolerante('erp_proveedores', {
+            nombre: meta.empresa || meta.nombre || 'Proveedor Kalarti',
+            nit: meta.nit || meta.cedula || null,
+            ciudad: meta.ciudad || 'Pasto',
+            telefono: meta.telefono || meta.whatsapp || null,
+            email: authUser.email,
+            activo: true,
+            user_id: authUser.id,
+            profile_id: authUser.id,
+          }, ['profile_id', 'nit']);
+        }
+      } catch (e) {
+        console.warn('erp_proveedores onboarding:', e?.message);
+      }
+      await asegurarPersonal(authUser, { ...meta, role: 'TIENDA' });
+    } else if (role === 'CLIENTE' && tipoReg !== 'PROFESIONAL') {
+      await asegurarClienteDePerfil(authUser, meta);
+    } else {
+      await asegurarPersonal(authUser, meta);
+    }
     return perfil;
   } catch (e) {
     console.warn('Sincronización de identidad (no bloqueante):', e?.message || e);

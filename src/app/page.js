@@ -753,9 +753,194 @@ export default function KalartiHub() {
 
       </main>
       
-      {/* Footer minimalista */}
-      <footer style={{ background: 'var(--navy-900)', borderTop: '1px solid rgba(255,255,255,0.05)', padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-        <p>© 2026 Kalarti Ecosystem. Todos los derechos reservados.</p>
+      {/* Barra Inferior Ecosistema Kalarti (4 Puntos de Acceso) + Footer Legal */}
+      <footer
+        style={{
+          background: 'linear-gradient(180deg, #070d19 0%, #030712 100%)',
+          borderTop: '1px solid rgba(212, 175, 55, 0.22)',
+          padding: '64px 24px 36px',
+          color: 'var(--text-muted)',
+        }}
+      >
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 36 }}>
+            <span
+              style={{
+                display: 'inline-block',
+                fontSize: 11,
+                fontWeight: 800,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: '#d4af37',
+                background: 'rgba(212, 175, 55, 0.1)',
+                border: '1px solid rgba(212, 175, 55, 0.3)',
+                padding: '5px 14px',
+                borderRadius: 999,
+                marginBottom: 10,
+              }}
+            >
+              Únete al Ecosistema Kalarti
+            </span>
+            <h2 style={{ color: '#f8fafc', fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, margin: '6px 0 8px' }}>
+              Elige tu perfil en la red de construcción más completa
+            </h2>
+            <p style={{ color: '#94a3b8', fontSize: 14, maxWidth: 640, margin: '0 auto' }}>
+              Conectamos talento verificado, proveedores de materiales, ferreterías con POS y constructoras BIM 5D en una sola plataforma.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: 18,
+              marginBottom: 40,
+            }}
+          >
+            {/* 1. Trabaja con Nosotros */}
+            <Link
+              href="/unete"
+              style={{
+                textDecoration: 'none',
+                background: 'rgba(15, 23, 42, 0.85)',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                borderRadius: 14,
+                padding: '22px 20px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: 12,
+                transition: 'transform 0.2s, border-color 0.2s',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 26, marginBottom: 8 }}>👷</div>
+                <div style={{ color: '#f8fafc', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>
+                  Trabaja con Nosotros
+                </div>
+                <p style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5, margin: 0 }}>
+                  Red de Profesionales y Cuadrillas. Postúlate a licitaciones y obras, obtén tu sello Verificado y conecta con constructoras gratis.
+                </p>
+              </div>
+              <span style={{ color: '#38bdf8', fontSize: 13, fontWeight: 700 }}>
+                Ir a Red de Talento ➔
+              </span>
+            </Link>
+
+            {/* 2. Sé Proveedor Kalarti */}
+            <Link
+              href="/proveedores"
+              style={{
+                textDecoration: 'none',
+                background: 'rgba(15, 23, 42, 0.85)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                borderRadius: 14,
+                padding: '22px 20px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: 12,
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 26, marginBottom: 8 }}>🏭</div>
+                <div style={{ color: '#f8fafc', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>
+                  Sé Proveedor Kalarti / Afiliados
+                </div>
+                <p style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5, margin: 0 }}>
+                  Publica tus insumos en el Marketplace B2B/B2C y vincula tus precios directamente a los APUs de presupuestos en tu zona.
+                </p>
+              </div>
+              <span style={{ color: '#f59e0b', fontSize: 13, fontWeight: 700 }}>
+                Afiliarme como Proveedor ➔
+              </span>
+            </Link>
+
+            {/* 3. Comercio Electrónico y POS */}
+            <Link
+              href="/comercio"
+              style={{
+                textDecoration: 'none',
+                background: 'rgba(15, 23, 42, 0.85)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                borderRadius: 14,
+                padding: '22px 20px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: 12,
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 26, marginBottom: 8 }}>🏪</div>
+                <div style={{ color: '#f8fafc', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>
+                  Comercio Electrónico y POS
+                </div>
+                <p style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5, margin: 0 }}>
+                  Para ferreterías y depósitos: control de inventarios, facturación POS, CRM, ventas online y conexión automática a obras cercanas.
+                </p>
+              </div>
+              <span style={{ color: '#10b981', fontSize: 13, fontWeight: 700 }}>
+                Activar Comercio y POS ➔
+              </span>
+            </Link>
+
+            {/* 4. Constructoras y Contratistas */}
+            <Link
+              href="/planes"
+              style={{
+                textDecoration: 'none',
+                background: 'rgba(15, 23, 42, 0.85)',
+                border: '1px solid rgba(212, 175, 55, 0.35)',
+                borderRadius: 14,
+                padding: '22px 20px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: 12,
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 26, marginBottom: 8 }}>🏗️</div>
+                <div style={{ color: '#f8fafc', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>
+                  Constructoras y Contratistas
+                </div>
+                <p style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5, margin: 0 }}>
+                  Planes de Cotizador NSR-10, ERP 5D, contratación directa en la Red de Talento y subcontratación de cuadrillas entre obras.
+                </p>
+              </div>
+              <span style={{ color: '#d4af37', fontSize: 13, fontWeight: 700 }}>
+                Ver Planes y Suscripciones ➔
+              </span>
+            </Link>
+          </div>
+
+          <div
+            style={{
+              borderTop: '1px solid rgba(255,255,255,0.07)',
+              paddingTop: 24,
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 14,
+              fontSize: 13,
+            }}
+          >
+            <div>© 2026 Kalarti Ecosystem — Constructores y Consultores S.A.S. Todos los derechos reservados.</div>
+            <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
+              <Link href="/registro" style={{ color: '#d4af37', textDecoration: 'none', fontWeight: 700 }}>
+                Crear Cuenta Unificada
+              </Link>
+              <Link href="/mi-portal" style={{ color: '#94a3b8', textDecoration: 'none' }}>
+                Portal del Profesional
+              </Link>
+              <Link href="/privacidad" style={{ color: '#94a3b8', textDecoration: 'none' }}>
+                Política de Privacidad y Habeas Data (Ley 1581)
+              </Link>
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   );

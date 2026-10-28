@@ -123,9 +123,16 @@ export default function Home() {
   if (adminEmails.includes(user?.email)) userRole = 'ADMIN';
   const isCorporateUser = !!user?.email?.endsWith('@kalarti.com') || adminEmails.includes(user?.email);
 
-  // Role-based interception: Mobile/field workers
+  // Role-based interception: Mobile/field workers & Red de Talento professionals
   if (userRole === 'TIENDA') {
     return <VendedorPortalView />;
+  }
+
+  if ((userRole === 'PROFESIONAL' || (user?.user_metadata?.tipo_registro || '').toUpperCase() === 'PROFESIONAL') && !isCorporateUser) {
+    if (typeof window !== 'undefined') {
+      window.location.replace('/mi-portal');
+    }
+    return null;
   }
 
   const fieldRoles = ['CUADRILLA', 'GERENCIA', 'INTERVENTOR', 'ING_RESIDENTE', 'ARQ_RESIDENTE', 'PRACTICANTE', 'ALMACEN'];

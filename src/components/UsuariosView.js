@@ -97,7 +97,27 @@ export default function UsuariosView() {
     id: p.id, email: p.email, nombre: p.nombre || '', telefono: p.telefono || '', whatsapp: p.whatsapp || '',
     documento: p.documento || '', ciudad: p.ciudad || '', empresa: p.empresa || '',
     role: String(p.role || 'CLIENTE').toUpperCase(), roles: rolesDe(p), activo: p.activo !== false,
+    estado_verificacion: p.estado_verificacion || 'PENDIENTE',
   });
+
+  const toggleVerificacion = async (fila) => {
+    const p = fila.perfil;
+    const actual = p.estado_verificacion || fila.vinculos.personal?.[0]?.estado_verificacion || 'PENDIENTE';
+    const nuevo = actual === 'VERIFICADO' ? 'PENDIENTE' : 'VERIFICADO';
+    try {
+      await guardarPerfil(p.id, { estado_verificacion: nuevo });
+      if (fila.vinculos.personal?.length) {
+        for (const pers of fila.vinculos.personal) {
+          await supabase.from('personal').update({ estado_verificacion: nuevo }).eq('id', pers.id);
+        }
+      } else {
+        await supabase.from('personal').update({ estado_verificacion: nuevo }).or(`profile_id.eq.${p.id},user_id.eq.${p.id}`);
+      }
+      await cargar();
+    } catch (err) {
+      alert('No se pudo actualizar estado de verificación: ' + (err.message || err));
+    }
+  };
 
   const guardarEdicion = async (e) => {
     e.preventDefault();
@@ -266,7 +286,14 @@ export default function UsuariosView() {
                 return (
                   <tr key={p.id} style={{ opacity: p.activo === false ? 0.5 : 1 }}>
                     <td>
-                      <div style={{ fontWeight: 600, fontSize: 13 }}>{p.nombre || p.email?.split('@')[0] || '—'}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div style={{ fontWeight: 600, fontSize: 13 }}>{p.nombre || p.email?.split('@')[0] || '—'}</div>
+                        {(p.estado_verificacion === 'VERIFICADO' || f.vinculos.personal?.some(per => per.estado_verificacion === 'VERIFICADO')) && (
+                          <span title="Perfil Verificado en Red de Talento Kalarti" style={{ fontSize: 10, fontWeight: 800, padding: '1px 6px', borderRadius: 10, background: '#dcfce7', color: '#166534', border: '1px solid #86efac' }}>
+                            ✔ Verificado
+                          </span>
+                        )}
+                      </div>
                       <div style={{ fontSize: 11, color: '#64748b' }}>{p.email}</div>
                       {(p.telefono || p.ciudad) && <div style={{ fontSize: 10, color: '#94a3b8' }}>{[p.telefono, p.ciudad].filter(Boolean).join(' · ')}</div>}
                     </td>
@@ -290,6 +317,14 @@ export default function UsuariosView() {
                     <td style={{ textAlign: 'center', fontWeight: 600 }}>{f.nPedidos}</td>
                     <td>
                       <div style={{ display: 'flex', gap: 4 }}>
+                        <button
+                          className="btn btn-ghost btn-sm"
+                          title={(p.estado_verificacion === 'VERIFICADO' || f.vinculos.personal?.some(per => per.estado_verificacion === 'VERIFICADO')) ? 'Quitar insignia Verificado' : 'Otorgar insignia ✔ Verificado (Red de Talento)'}
+                          style={{ color: (p.estado_verificacion === 'VERIFICADO' || f.vinculos.personal?.some(per => per.estado_verificacion === 'VERIFICADO')) ? '#16a34a' : '#94a3b8', fontWeight: 800 }}
+                          onClick={() => toggleVerificacion(f)}
+                        >
+                          ✔
+                        </button>
                         <button className="btn btn-ghost btn-sm" title="Editar perfil y roles" onClick={() => abrirEdicion(p)}>✏️</button>
                         <button className="btn btn-ghost btn-sm" title="Vincular registro" onClick={() => { setVinculando(p); setVinculoBusqueda(''); setVinculoTabla('personal'); }}>🔗</button>
                       </div>

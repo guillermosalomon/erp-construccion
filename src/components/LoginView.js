@@ -378,13 +378,22 @@ export default function LoginView() {
           <div style={{ marginTop: 20, textAlign: 'center', fontSize: 13, color: '#737373' }}>
             {mode === 'login' && (
               <>
-                <button type="button" onClick={() => { setMode('register'); setStep(1); clearError(); setMsg(''); }} style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', fontWeight: 500, fontSize: 13 }}>
-                  Crear una cuenta
-                </button>
+                <a
+                  href="/registro"
+                  style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 700, fontSize: 13 }}
+                >
+                  ✨ Crear una cuenta (Onboarding Ecosistema)
+                </a>
                 <span style={{ margin: '0 8px' }}>·</span>
                 <button type="button" onClick={() => { setMode('reset'); clearError(); setMsg(''); }} style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', fontWeight: 500, fontSize: 13 }}>
                   ¿Olvidaste tu contraseña?
                 </button>
+                <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid #e2e8f0', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 6 }}>
+                  <a href="/registro?tipo=profesional" style={{ fontSize: 11, padding: '4px 8px', borderRadius: 6, background: '#f0f9ff', color: '#0369a1', textDecoration: 'none', fontWeight: 600 }}>👷 Profesional / Cuadrilla</a>
+                  <a href="/registro?tipo=constructor" style={{ fontSize: 11, padding: '4px 8px', borderRadius: 6, background: '#fefce8', color: '#a16207', textDecoration: 'none', fontWeight: 600 }}>🏗️ Constructora</a>
+                  <a href="/registro?tipo=comercio" style={{ fontSize: 11, padding: '4px 8px', borderRadius: 6, background: '#f0fdf4', color: '#15803d', textDecoration: 'none', fontWeight: 600 }}>🏪 Ferretería / POS</a>
+                  <a href="/registro?tipo=cliente" style={{ fontSize: 11, padding: '4px 8px', borderRadius: 6, background: '#faf5ff', color: '#7e22ce', textDecoration: 'none', fontWeight: 600 }}>🏢 Cliente / Inversionista</a>
+                </div>
               </>
             )}
             {(mode === 'register' || mode === 'reset') && (

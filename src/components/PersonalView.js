@@ -7,6 +7,7 @@ import { personalService } from '@/lib/services';
 import { supabase } from '@/lib/supabase';
 import { vincularPerfil } from '@/lib/identidad';
 import PersonSearchSelect from '@/components/PersonSearchSelect';
+import RedTalentoModal from '@/components/RedTalentoModal';
 
 const UNIDADES_PAGO = ['Mes', 'Día', 'Hora'];
 
@@ -75,6 +76,7 @@ export default function PersonalView({ contextProyectoId } = {}) {
   const [numCuadrillasMap, setNumCuadrillasMap] = useState({});
   const [activeCuadTab, setActiveCuadTab] = useState({});
   const [expandedCargoId, setExpandedCargoId] = useState(null);
+  const [redModalConfig, setRedModalConfig] = useState({ open: false, cargoId: '', cuadrillaIdx: 0, equipoPadreId: null, tab: 'talento' });
   
   // Posgrados form temp state
   const [newPosType, setNewPosType] = useState('Pregrado');
@@ -652,6 +654,14 @@ export default function PersonalView({ contextProyectoId } = {}) {
               </optgroup>
             </select>
           )}
+          <button
+            type="button"
+            className="btn"
+            style={{ background: '#0f172a', color: '#f59e0b', border: '1px solid #f59e0b', fontWeight: 700 }}
+            onClick={() => setRedModalConfig({ open: true, cargoId: '', cuadrillaIdx: 0, equipoPadreId: null, tab: 'talento' })}
+          >
+            🌐 Red de Talento / Vacantes
+          </button>
           <button className="btn btn-primary" onClick={() => openCreate()}>
             + Nuevo Perfil
           </button>
@@ -970,7 +980,35 @@ export default function PersonalView({ contextProyectoId } = {}) {
                   </div>
                 </div>
 
-                <h3 style={{ marginBottom: 16 }}>📋 Roles Requeridos (Presupuesto)</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
+                  <h3 style={{ margin: 0 }}>📋 Roles Requeridos (Presupuesto)</h3>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: 700, fontSize: 11 }}
+                      onClick={() => setRedModalConfig({ open: true, cargoId: '', cuadrillaIdx: 0, equipoPadreId: null, tab: 'talento' })}
+                    >
+                      🔍 Buscar en Red de Profesionales
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', fontWeight: 700, fontSize: 11 }}
+                      onClick={() => setRedModalConfig({ open: true, cargoId: '', cuadrillaIdx: 0, equipoPadreId: null, tab: 'cuadrillas' })}
+                    >
+                      🤝 Ofertar / Subcontratar Cuadrilla
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      style={{ background: '#fffbeb', color: '#b45309', border: '1px solid #fde68a', fontWeight: 700, fontSize: 11 }}
+                      onClick={() => setRedModalConfig({ open: true, cargoId: '', cuadrillaIdx: 0, equipoPadreId: null, tab: 'convocatorias' })}
+                    >
+                      📢 Publicar Vacante / Postulados
+                    </button>
+                  </div>
+                </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
                   {Object.entries(projectNeeds).map(([cargoId, metrics]) => {
                     const cargo = state.cargos.find(c => c.id === cargoId);
@@ -1092,6 +1130,15 @@ export default function PersonalView({ contextProyectoId } = {}) {
                                         });
                                       }}
                                     />
+                                    <button
+                                      type="button"
+                                      className="btn btn-ghost btn-sm"
+                                      style={{ fontSize: 10, padding: '4px 6px', color: '#0284c7', background: '#f0f9ff', border: '1px solid #bae6fd', flexShrink: 0 }}
+                                      title="Buscar profesionales disponibles en la Red de Talento Kalarti para este cargo"
+                                      onClick={() => setRedModalConfig({ open: true, cargoId: role.id, cuadrillaIdx: cuadIdx, equipoPadreId: cargoId, tab: 'talento' })}
+                                    >
+                                      🔍 Red
+                                    </button>
                                     <button
                                       type="button"
                                       className="btn btn-ghost btn-sm"
@@ -1796,6 +1843,46 @@ export default function PersonalView({ contextProyectoId } = {}) {
           </div>
         </div>
       )}
+      <RedTalentoModal
+        open={redModalConfig.open}
+        onClose={() => setRedModalConfig(prev => ({ ...prev, open: false }))}
+        proyecto={allProyectos.find(p => p.id === selectedProjectId) || null}
+        cargos={state.cargos || []}
+        initialCargoId={redModalConfig.cargoId}
+        initialCuadrillaIdx={redModalConfig.cuadrillaIdx}
+        initialEquipoPadreId={redModalConfig.equipoPadreId}
+        initialTab={redModalConfig.tab}
+        onVincularProfesional={(cand, roleId, cuadIdx = 0, eqPadreId = null) => {
+          const pr = ensurePersonRecord(cand, roleId);
+          if (!pr) return;
+          const targetProject = selectedProjectId || (state.proyectos?.[0]?.id || '');
+          if (!targetProject) {
+            alert('Profesional agregado a la base de datos de personal. Selecciona un proyecto para asignarlo a una cuadrilla.');
+            return;
+          }
+          const finalCargoId = roleId || pr.cargo_id || (Array.isArray(pr.cargos_ids) ? pr.cargos_ids[0] : null);
+          const currentCargos = Array.isArray(pr.cargos_ids) ? [...pr.cargos_ids] : (pr.cargo_id ? [pr.cargo_id] : []);
+          if (finalCargoId && !currentCargos.includes(finalCargoId)) {
+            currentCargos.push(finalCargoId);
+            dispatch({ type: 'UPDATE_PERSON', payload: { ...pr, cargos_ids: currentCargos } });
+          }
+          dispatch({
+            type: 'ADD_PERSON_PROYECTO',
+            payload: {
+              id: crypto.randomUUID(),
+              personal_id: pr.id,
+              proyecto_id: targetProject,
+              cargo_id: finalCargoId || null,
+              equipo_padre_id: eqPadreId || finalCargoId || null,
+              unidades_asignadas: 1,
+              salario_pactado: Number(cand.tarifa_referencia || pr.salario_base || 0),
+              unidad_pactada: cand.tarifa_unidad || pr.unidad_pago || 'Mes',
+              tareas_asignadas: [],
+              cuadrilla_idx: cuadIdx || 0,
+            },
+          });
+        }}
+      />
       <datalist id="profesion-options"><option value="Ingeniero Civil" /><option value="Arquitecto" /><option value="Maestro de Obra" /><option value="Administrador de Empresas" /><option value="Técnico en Construcción" /></datalist>
     </>
   );
