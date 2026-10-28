@@ -136,6 +136,9 @@ DO $$
 DECLARE
   t TEXT;
   r RECORD;
+  chk_names TEXT[];
+  chk_defs TEXT[];
+  i INT;
   tablas TEXT[] := ARRAY[
     'proyectos','presupuesto_items','bim_links','obra_avances','item_notes',
     'bodegas','inventario_transacciones','pagos_cliente','personal_proyecto',
@@ -149,7 +152,28 @@ BEGIN
       CONTINUE;
     END IF;
     EXECUTE format('ALTER TABLE public.%I ADD COLUMN IF NOT EXISTS organizacion_id UUID REFERENCES organizaciones(id)', t);
+
+    -- Pausar CHECK constraints durante el backfill para no fallar con filas históricas (ej. invtx_consumo_cuadrilla)
+    chk_names := ARRAY[]::TEXT[];
+    chk_defs  := ARRAY[]::TEXT[];
+    FOR r IN
+      SELECT c.conname, pg_get_constraintdef(c.oid) AS condef
+      FROM pg_constraint c
+      WHERE c.conrelid = ('public.' || t)::regclass AND c.contype = 'c'
+    LOOP
+      chk_names := array_append(chk_names, r.conname);
+      chk_defs  := array_append(chk_defs, r.condef);
+      EXECUTE format('ALTER TABLE public.%I DROP CONSTRAINT %I', t, r.conname);
+    END LOOP;
+
     EXECUTE format('UPDATE public.%I SET organizacion_id = public.kalarti_org_id() WHERE organizacion_id IS NULL', t);
+
+    IF array_length(chk_names, 1) IS NOT NULL THEN
+      FOR i IN 1..array_length(chk_names, 1) LOOP
+        EXECUTE format('ALTER TABLE public.%I ADD CONSTRAINT %I %s NOT VALID', t, chk_names[i], chk_defs[i]);
+      END LOOP;
+    END IF;
+
     EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON public.%I(organizacion_id)', 'idx_' || t || '_org', t);
     EXECUTE format('DROP TRIGGER IF EXISTS trg_set_org ON public.%I', t);
     EXECUTE format('CREATE TRIGGER trg_set_org BEFORE INSERT ON public.%I FOR EACH ROW EXECUTE FUNCTION public.set_organizacion_id()', t);

@@ -23,7 +23,7 @@ BEGIN
   ) THEN
     ALTER TABLE profiles
       ADD CONSTRAINT profiles_estado_verificacion_check
-      CHECK (estado_verificacion IN ('PENDIENTE', 'VERIFICADO', 'RECHAZADO'));
+      CHECK (estado_verificacion IN ('PENDIENTE', 'VERIFICADO', 'RECHAZADO')) NOT VALID;
   END IF;
 END $$;
 
