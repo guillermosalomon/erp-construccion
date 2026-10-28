@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth';
 import { personalService } from '@/lib/services';
 import { supabase } from '@/lib/supabase';
 import { vincularPerfil } from '@/lib/identidad';
+import PersonSearchSelect from '@/components/PersonSearchSelect';
 
 const UNIDADES_PAGO = ['Mes', 'Día', 'Hora'];
 
@@ -63,6 +64,8 @@ export default function PersonalView({ contextProyectoId } = {}) {
   const [form, setForm] = useState(emptyForm);
   const [linkedClient, setLinkedClient] = useState(null);
   const [perfiles, setPerfiles] = useState([]);
+  const [dbPersonal, setDbPersonal] = useState([]);
+  const [showAllInProjectTable, setShowAllInProjectTable] = useState(false);
   const [search, setSearch] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState('person');
@@ -99,11 +102,86 @@ export default function PersonalView({ contextProyectoId } = {}) {
     });
   };
 
-  // Perfiles de usuario (identidad unificada web/ERP) para mostrar y fijar el vínculo
+  // Perfiles de usuario (identidad unificada web/ERP) y personal directo de Supabase para evitar desincronización
   useEffect(() => {
     if (!supabase) return;
     supabase.from('profiles').select('*').then(({ data, error }) => { if (!error) setPerfiles(data || []); });
+    supabase.from('personal').select('*').then(({ data, error }) => { if (!error) setDbPersonal(data || []); });
   }, []);
+
+  // Lista unificada: combina state.personal + dbPersonal + perfiles que aún no tengan fila en personal
+  const allAvailablePersonal = useMemo(() => {
+    const byId = new Map();
+    (state.personal || []).forEach(p => { if (p?.id) byId.set(p.id, p); });
+    (dbPersonal || []).forEach(p => { if (p?.id && !byId.has(p.id)) byId.set(p.id, p); });
+    const mergedPersonal = Array.from(byId.values());
+
+    const linkedProfileIds = new Set(mergedPersonal.map(p => p.profile_id || p.user_id).filter(Boolean));
+    const linkedEmails = new Set(mergedPersonal.map(p => (p.email || '').trim().toLowerCase()).filter(Boolean));
+
+    const virtualFromProfiles = (perfiles || [])
+      .filter(pr => !linkedProfileIds.has(pr.id) && (!pr.email || !linkedEmails.has(pr.email.trim().toLowerCase())))
+      .map(pr => {
+        const parts = (pr.nombre || pr.email?.split('@')[0] || '').trim().split(' ');
+        return {
+          id: `profile-${pr.id}`,
+          profile_id: pr.id,
+          user_id: pr.id,
+          nombre: pr.nombre || pr.email?.split('@')[0] || 'Usuario',
+          nombres: parts.slice(0, 1).join(' ') || '',
+          apellidos: parts.slice(1).join(' ') || '',
+          email: pr.email || '',
+          telefono: pr.telefono || pr.whatsapp || '',
+          whatsapp: pr.whatsapp || pr.telefono || '',
+          cedula: pr.documento || '',
+          ciudad: pr.ciudad || '',
+          profesion: pr.role || 'Usuario Registrado',
+          app_role: (pr.role || 'cuadrilla').toLowerCase(),
+          cargos_ids: [],
+          salario_base: 0,
+          unidad_pago: 'Mes',
+          isFromProfileOnly: true,
+        };
+      });
+
+    return [...mergedPersonal, ...virtualFromProfiles];
+  }, [state.personal, dbPersonal, perfiles]);
+
+  // Garantiza que una persona seleccionada exista como registro real en state.personal
+  const ensurePersonRecord = (candidate, targetRoleId = null) => {
+    if (!candidate) return null;
+    if (!candidate.isFromProfileOnly) {
+      // Si viene de dbPersonal pero aún no estaba en state.personal, hidratarlo
+      const inStore = state.personal.find(p => p.id === candidate.id);
+      if (!inStore) {
+        dispatch({ type: 'ADD_PERSON', payload: candidate });
+      }
+      return candidate;
+    }
+    const newId = crypto.randomUUID();
+    const newPerson = {
+      id: newId,
+      profile_id: candidate.profile_id,
+      user_id: candidate.user_id,
+      nombre: candidate.nombre,
+      nombres: candidate.nombres,
+      apellidos: candidate.apellidos,
+      email: candidate.email,
+      telefono: candidate.telefono,
+      whatsapp: candidate.whatsapp,
+      cedula: candidate.cedula,
+      ciudad: candidate.ciudad,
+      profesion: candidate.profesion,
+      app_role: candidate.app_role || 'cuadrilla',
+      cargo_id: targetRoleId || null,
+      cargos_ids: targetRoleId ? [targetRoleId] : [],
+      salario_base: 0,
+      unidad_pago: 'Mes',
+    };
+    dispatch({ type: 'ADD_PERSON', payload: newPerson });
+    setDbPersonal(prev => [...prev, newPerson]);
+    return newPerson;
+  };
 
   useEffect(() => {
     const handleOpenMyProfile = () => {
@@ -150,18 +228,20 @@ export default function PersonalView({ contextProyectoId } = {}) {
   }, [state.proyectos, state.mkTiendas, state.mkPuntosVenta]);
 
   const filteredPersonal = useMemo(() => {
-    if (selectedProjectId) {
+    const baseList = allAvailablePersonal.filter(p => !p.isFromProfileOnly);
+    if (selectedProjectId && !showAllInProjectTable) {
       const assignedIds = state.personalProyecto
         .filter(ap => ap.proyecto_id === selectedProjectId || ap.tienda_id === selectedProjectId || ap.punto_venta_id === selectedProjectId)
         .map(ap => ap.personal_id);
-      return state.personal.filter(p => assignedIds.includes(p.id));
+      return baseList.filter(p => assignedIds.includes(p.id));
     }
-    return state.personal.filter(p => 
+    return baseList.filter(p => 
       !search || 
-      (p.nombres + ' ' + p.apellidos + ' ' + p.nombre).toLowerCase().includes(search.toLowerCase()) || 
-      p.email?.toLowerCase().includes(search.toLowerCase())
+      ((p.nombres || '') + ' ' + (p.apellidos || '') + ' ' + (p.nombre || '')).toLowerCase().includes(search.toLowerCase()) || 
+      p.email?.toLowerCase().includes(search.toLowerCase()) ||
+      p.profesion?.toLowerCase().includes(search.toLowerCase())
     );
-  }, [state.personal, state.personalProyecto, search, selectedProjectId]);
+  }, [allAvailablePersonal, state.personalProyecto, search, selectedProjectId, showAllInProjectTable]);
 
   const handleNotifyPerson = (p) => {
     const personCargos = Array.isArray(p.cargos_ids) && p.cargos_ids.length > 0 ? p.cargos_ids : (p.cargo_id ? [p.cargo_id] : []);
@@ -852,7 +932,7 @@ export default function PersonalView({ contextProyectoId } = {}) {
                     
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
                       {state.personalProyecto.filter(ap => ap.proyecto_id === selectedProjectId && ap.unidad_pactada === 'SUPERVISOR' && !ap.cargo_id).map(ap => {
-                        const p = state.personal.find(pers => pers.id === ap.personal_id);
+                        const p = allAvailablePersonal.find(pers => pers.id === ap.personal_id);
                         if (!p) return null;
                         return (
                           <div key={ap.id} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'white', padding: '6px 12px', borderRadius: 8, border: '1px solid #bae6fd', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
@@ -864,26 +944,29 @@ export default function PersonalView({ contextProyectoId } = {}) {
                       })}
                     </div>
 
-                    <select className="form-select" style={{ borderColor: 'var(--color-accent)', background: '#fff' }} defaultValue="" onChange={(e) => {
-                      const pid = e.target.value;
-                      if (!pid) return;
-                      dispatch({ type: 'ADD_PERSON_PROYECTO', payload: {
-                        id: crypto.randomUUID(),
-                        personal_id: pid,
-                        proyecto_id: selectedProjectId,
-                        cargo_id: null,
-                        unidades_asignadas: 0,
-                        salario_pactado: state.personal.find(p => p.id === pid)?.salario_base || 0,
-                        unidad_pactada: 'SUPERVISOR',
-                        tareas_asignadas: []
-                      }});
-                      e.target.value = '';
-                    }}>
-                      <option value="">+ Asignar Supervisor General al Proyecto...</option>
-                      {state.personal.filter(p => !state.personalProyecto.some(ap => ap.proyecto_id === selectedProjectId && ap.personal_id === p.id && ap.unidad_pactada === 'SUPERVISOR' && !ap.cargo_id)).map(p => (
-                        <option key={p.id} value={p.id}>{p.nombres || p.nombre} {p.apellidos || ''} ({p.email})</option>
-                      ))}
-                    </select>
+                    <PersonSearchSelect
+                      people={allAvailablePersonal.filter(p => !state.personalProyecto.some(ap => ap.proyecto_id === selectedProjectId && ap.personal_id === p.id && ap.unidad_pactada === 'SUPERVISOR' && !ap.cargo_id))}
+                      recommendedIds={allAvailablePersonal.filter(p => ['admin', 'operativo', 'supervisor'].includes((p.app_role || '').toLowerCase())).map(p => p.id)}
+                      placeholder="+ Asignar Supervisor General al Proyecto (escribe para filtrar)..."
+                      buttonStyle={{ borderColor: 'var(--color-accent)', background: '#fff' }}
+                      onSelect={(candidate) => {
+                        const realPerson = ensurePersonRecord(candidate);
+                        if (!realPerson) return;
+                        dispatch({
+                          type: 'ADD_PERSON_PROYECTO',
+                          payload: {
+                            id: crypto.randomUUID(),
+                            personal_id: realPerson.id,
+                            proyecto_id: selectedProjectId,
+                            cargo_id: null,
+                            unidades_asignadas: 0,
+                            salario_pactado: realPerson.salario_base || 0,
+                            unidad_pactada: 'SUPERVISOR',
+                            tareas_asignadas: [],
+                          },
+                        });
+                      }}
+                    />
                   </div>
                 </div>
 
@@ -901,7 +984,7 @@ export default function PersonalView({ contextProyectoId } = {}) {
                         })
                       : [{ id: cargoId, nombre: cargo.nombre, cantidad: 1 }];
                     const supervisors = state.personalProyecto.filter(ap => ap.proyecto_id === selectedProjectId && ap.cargo_id === cargoId && ap.unidad_pactada === 'SUPERVISOR');
-                    const supPersons = supervisors.map(ap => ({ person: state.personal.find(p => p.id === ap.personal_id), aId: ap.id })).filter(a => a.person);
+                    const supPersons = supervisors.map(ap => ({ person: allAvailablePersonal.find(p => p.id === ap.personal_id), aId: ap.id })).filter(a => a.person);
                     return (
                       <div key={cargoId} className="card" style={{ borderLeft: '4px solid #3b82f6' }}>
                         <div style={{ padding: 16 }}>
@@ -953,13 +1036,14 @@ export default function PersonalView({ contextProyectoId } = {}) {
                               const cuadIdx = (numCuadrillasMap[cargoId] || 1) > 1 ? (activeCuadTab[cargoId] || 0) : 0;
                               return rolesToShow.map((role, idx) => {
                               const assigned = state.personalProyecto.filter(ap => ap.proyecto_id === selectedProjectId && ap.cargo_id === role.id && ap.unidad_pactada !== 'SUPERVISOR' && (ap.cuadrilla_idx === cuadIdx || (!ap.cuadrilla_idx && cuadIdx === 0)));
-                              const aPersons = assigned.map(ap => ({ p: state.personal.find(pp => pp.id === ap.personal_id), aId: ap.id })).filter(a => a.p);
-                              const unassigned = state.personal.filter(p => !assigned.some(ap => ap.personal_id === p.id));
+                              const aPersons = assigned.map(ap => ({ p: allAvailablePersonal.find(pp => pp.id === ap.personal_id), aId: ap.id })).filter(a => a.p);
+                              const unassigned = allAvailablePersonal.filter(p => !assigned.some(ap => ap.personal_id === p.id));
+                              const roleNorm = (role.nombre || '').toLowerCase();
                               const recomendados = unassigned.filter(p => {
                                 const personCargos = Array.isArray(p.cargos_ids) && p.cargos_ids.length > 0 ? p.cargos_ids : (p.cargo_id ? [p.cargo_id] : []);
-                                return personCargos.includes(role.id) || p.profesion === role.nombre;
+                                const profNorm = (p.profesion || '').toLowerCase();
+                                return personCargos.includes(role.id) || (roleNorm && profNorm && (profNorm.includes(roleNorm) || roleNorm.includes(profNorm)));
                               });
-                              const otros = unassigned.filter(p => !recomendados.some(r => r.id === p.id));
 
                               return (
                                 <div key={`${role.id}-${idx}-${cuadIdx}`} style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', marginBottom: 4 }}>
@@ -977,84 +1061,47 @@ export default function PersonalView({ contextProyectoId } = {}) {
                                       <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444', fontSize: 10, padding: '2px 6px', minWidth: 'auto' }} onClick={() => { if (confirm(`¿Quitar a ${p.nombres || p.nombre}?`)) dispatch({ type: 'DELETE_PERSON_PROYECTO', payload: aId }); }} title="Quitar">✕</button>
                                     </div>
                                   ))}
-                                  {unassigned.length > 0 ? (
-                                    <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 4 }}>
-                                      <select
-                                        className="form-select"
-                                        style={{ fontSize: 11, padding: '4px 8px', flex: 1 }}
-                                        defaultValue=""
-                                        onChange={(e) => {
-                                          const pid = e.target.value;
-                                          if (!pid) return;
-                                          const pr = state.personal.find(pp => pp.id === pid);
-                                          if (!pr) return;
-                                          // Si el trabajador no tenía este cargo registrado, sumárselo a cargos_ids
-                                          const currentCargos = Array.isArray(pr.cargos_ids) ? [...pr.cargos_ids] : (pr.cargo_id ? [pr.cargo_id] : []);
-                                          if (!currentCargos.includes(role.id)) {
-                                            currentCargos.push(role.id);
-                                            dispatch({ type: 'UPDATE_PERSON', payload: { ...pr, cargos_ids: currentCargos } });
-                                          }
-                                          dispatch({
-                                            type: 'ADD_PERSON_PROYECTO',
-                                            payload: {
-                                              id: crypto.randomUUID(),
-                                              personal_id: pid,
-                                              proyecto_id: selectedProjectId,
-                                              cargo_id: role.id,
-                                              equipo_padre_id: cargoId,
-                                              unidades_asignadas: 1,
-                                              salario_pactado: pr.salario_base || 0,
-                                              unidad_pactada: pr.unidad_pago || 'Mes',
-                                              tareas_asignadas: [],
-                                              cuadrilla_idx: cuadIdx,
-                                            },
-                                          });
-                                          e.target.value = '';
-                                        }}
-                                      >
-                                        <option value="">+ Asignar a {role.nombre}...</option>
-                                        {recomendados.length > 0 && (
-                                          <optgroup label="⭐ Recomendados (con este cargo)">
-                                            {recomendados.map(p => (
-                                              <option key={p.id} value={p.id}>
-                                                ⭐ {p.nombres || p.nombre} {p.apellidos || ''} {p.email ? `(${p.email})` : ''}
-                                              </option>
-                                            ))}
-                                          </optgroup>
-                                        )}
-                                        {otros.length > 0 && (
-                                          <optgroup label="👥 Todo el personal disponible">
-                                            {otros.map(p => (
-                                              <option key={p.id} value={p.id}>
-                                                {p.nombres || p.nombre} {p.apellidos || ''} {p.email ? `(${p.email})` : ''}
-                                              </option>
-                                            ))}
-                                          </optgroup>
-                                        )}
-                                      </select>
-                                      <button
-                                        type="button"
-                                        className="btn btn-ghost btn-sm"
-                                        style={{ fontSize: 10, padding: '4px 6px', color: '#2563eb' }}
-                                        title="Registrar nuevo trabajador para este rol"
-                                        onClick={() => openCreate(role.id)}
-                                      >
-                                        + Nuevo
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
-                                      <span style={{ fontSize: 10, color: '#94a3b8', fontStyle: 'italic' }}>No hay personal disponible</span>
-                                      <button
-                                        type="button"
-                                        className="btn btn-ghost btn-sm"
-                                        style={{ fontSize: 10, color: '#2563eb', padding: '2px 6px' }}
-                                        onClick={() => openCreate(role.id)}
-                                      >
-                                        + Crear y Asignar
-                                      </button>
-                                    </div>
-                                  )}
+                                  <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 4 }}>
+                                    <PersonSearchSelect
+                                      people={unassigned}
+                                      recommendedIds={recomendados.map(r => r.id)}
+                                      placeholder={`+ Asignar a ${role.nombre}...`}
+                                      compact
+                                      onSelect={(candidate) => {
+                                        const pr = ensurePersonRecord(candidate, role.id);
+                                        if (!pr) return;
+                                        const currentCargos = Array.isArray(pr.cargos_ids) ? [...pr.cargos_ids] : (pr.cargo_id ? [pr.cargo_id] : []);
+                                        if (!currentCargos.includes(role.id)) {
+                                          currentCargos.push(role.id);
+                                          dispatch({ type: 'UPDATE_PERSON', payload: { ...pr, cargos_ids: currentCargos } });
+                                        }
+                                        dispatch({
+                                          type: 'ADD_PERSON_PROYECTO',
+                                          payload: {
+                                            id: crypto.randomUUID(),
+                                            personal_id: pr.id,
+                                            proyecto_id: selectedProjectId,
+                                            cargo_id: role.id,
+                                            equipo_padre_id: cargoId,
+                                            unidades_asignadas: 1,
+                                            salario_pactado: pr.salario_base || 0,
+                                            unidad_pactada: pr.unidad_pago || 'Mes',
+                                            tareas_asignadas: [],
+                                            cuadrilla_idx: cuadIdx,
+                                          },
+                                        });
+                                      }}
+                                    />
+                                    <button
+                                      type="button"
+                                      className="btn btn-ghost btn-sm"
+                                      style={{ fontSize: 10, padding: '4px 6px', color: '#2563eb', flexShrink: 0 }}
+                                      title="Registrar nuevo trabajador para este rol"
+                                      onClick={() => openCreate(role.id)}
+                                    >
+                                      + Nuevo
+                                    </button>
+                                  </div>
                                 </div>
                               );
                             });
@@ -1117,10 +1164,30 @@ export default function PersonalView({ contextProyectoId } = {}) {
                                 <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444', fontSize: 10, padding: '2px 6px', minWidth: 'auto' }} onClick={() => { if(confirm(`¿Quitar a ${p.nombres || p.nombre} como Supervisor de Cuadrilla?`)) dispatch({ type: 'DELETE_PERSON_PROYECTO', payload: aId }); }} title="Quitar">✕</button>
                               </div>
                             ))}
-                            <select className="form-select" style={{ fontSize: 11, padding: '4px 8px', borderColor: '#c7d2fe' }} defaultValue="" onChange={(e) => { const pid = e.target.value; if (!pid) return; dispatch({ type: 'ADD_PERSON_PROYECTO', payload: { id: crypto.randomUUID(), personal_id: pid, proyecto_id: selectedProjectId, cargo_id: cargoId, unidades_asignadas: 0, salario_pactado: 0, unidad_pactada: 'SUPERVISOR', tareas_asignadas: [] }}); e.target.value = ''; }}>
-                              <option value="">+ Asignar supervisor...</option>
-                              {state.personal.filter(p => !supervisors.some(s => s.personal_id === p.id)).map(p => <option key={p.id} value={p.id}>{p.nombres || p.nombre} {p.apellidos || ''} — {p.email}</option>)}
-                            </select>
+                            <PersonSearchSelect
+                              people={allAvailablePersonal.filter(p => !supervisors.some(s => s.personal_id === p.id))}
+                              recommendedIds={allAvailablePersonal.filter(p => ['admin', 'operativo', 'supervisor'].includes((p.app_role || '').toLowerCase())).map(p => p.id)}
+                              placeholder="+ Asignar supervisor..."
+                              compact
+                              buttonStyle={{ borderColor: '#c7d2fe' }}
+                              onSelect={(candidate) => {
+                                const realPerson = ensurePersonRecord(candidate);
+                                if (!realPerson) return;
+                                dispatch({
+                                  type: 'ADD_PERSON_PROYECTO',
+                                  payload: {
+                                    id: crypto.randomUUID(),
+                                    personal_id: realPerson.id,
+                                    proyecto_id: selectedProjectId,
+                                    cargo_id: cargoId,
+                                    unidades_asignadas: 0,
+                                    salario_pactado: 0,
+                                    unidad_pactada: 'SUPERVISOR',
+                                    tareas_asignadas: [],
+                                  },
+                                });
+                              }}
+                            />
                           </div>
                         </div>
                       </div>
@@ -1134,45 +1201,68 @@ export default function PersonalView({ contextProyectoId } = {}) {
           return null;
         })()}
 
-        <div className="toolbar">
-           <input className="form-input" style={{ width: 300 }} placeholder="Buscar por nombre o email..." value={search} onChange={(e)=>setSearch(e.target.value)} />
+        <div className="toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+          <input className="form-input" style={{ width: 300 }} placeholder="Buscar por nombre, cargo o email..." value={search} onChange={(e)=>setSearch(e.target.value)} />
+          {selectedProjectId && (
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button
+                type="button"
+                className={`btn btn-sm ${!showAllInProjectTable ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setShowAllInProjectTable(false)}
+              >
+                ✅ Asignados al Proyecto ({new Set(state.personalProyecto.filter(ap => ap.proyecto_id === selectedProjectId || ap.tienda_id === selectedProjectId || ap.punto_venta_id === selectedProjectId).map(ap => ap.personal_id)).size})
+              </button>
+              <button
+                type="button"
+                className={`btn btn-sm ${showAllInProjectTable ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setShowAllInProjectTable(true)}
+              >
+                👥 Todo el Directorio ({allAvailablePersonal.length})
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="card">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Persona</th>
-                <th>Cargo</th>
-                {selectedProjectId && <th>Equipo</th>}
-                {selectedProjectId && <th>Cuadrilla</th>}
-                <th>Encargado / Supervisor</th>
-                {selectedProjectId && <th>Tareas</th>}
-                <th>Pago Base</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedProjectId ? (
-                // === MODO PROYECTO: Mostrar personas únicas con sus roles agrupados ===
-                (() => {
-                  const projectAssignments = state.personalProyecto.filter(ap => 
-                    ap.proyecto_id === selectedProjectId || ap.tienda_id === selectedProjectId || ap.punto_venta_id === selectedProjectId
-                  );
-                  
-                  // Obtener IDs de personas únicas asignadas al proyecto
-                  const uniquePersonIds = [...new Set(projectAssignments.map(ap => ap.personal_id))];
-                  
-                  // Aplicar búsqueda si existe
-                  let personsToShow = uniquePersonIds.map(id => state.personal.find(p => p.id === id)).filter(Boolean);
-                  if (search) {
-                    const s = search.toLowerCase();
-                    personsToShow = personsToShow.filter(p => 
-                      (p.nombres || p.nombre || '').toLowerCase().includes(s) || 
-                      (p.apellidos || '').toLowerCase().includes(s) || 
-                      (p.email || '').toLowerCase().includes(s)
-                    );
-                  }
+          {(() => {
+            const hasProjectAssignments = selectedProjectId && state.personalProyecto.some(ap => ap.proyecto_id === selectedProjectId || ap.tienda_id === selectedProjectId || ap.punto_venta_id === selectedProjectId);
+            const isProjectTableMode = selectedProjectId && !showAllInProjectTable && hasProjectAssignments;
+
+            return (
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Persona</th>
+                    <th>Cargo</th>
+                    {isProjectTableMode && <th>Equipo</th>}
+                    {isProjectTableMode && <th>Cuadrilla</th>}
+                    <th>Encargado / Supervisor</th>
+                    {isProjectTableMode && <th>Tareas</th>}
+                    <th>Pago Base</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isProjectTableMode ? (
+                    // === MODO PROYECTO: Mostrar personas únicas con sus roles agrupados ===
+                    (() => {
+                      const projectAssignments = state.personalProyecto.filter(ap => 
+                        ap.proyecto_id === selectedProjectId || ap.tienda_id === selectedProjectId || ap.punto_venta_id === selectedProjectId
+                      );
+                      
+                      // Obtener IDs de personas únicas asignadas al proyecto
+                      const uniquePersonIds = [...new Set(projectAssignments.map(ap => ap.personal_id))];
+                      
+                      // Aplicar búsqueda si existe
+                      let personsToShow = uniquePersonIds.map(id => allAvailablePersonal.find(p => p.id === id)).filter(Boolean);
+                      if (search) {
+                        const s = search.toLowerCase();
+                        personsToShow = personsToShow.filter(p => 
+                          (p.nombres || p.nombre || '').toLowerCase().includes(s) || 
+                          (p.apellidos || '').toLowerCase().includes(s) || 
+                          (p.email || '').toLowerCase().includes(s)
+                        );
+                      }
 
                   return personsToShow.map((p, pIdx) => {
                     const assignments = projectAssignments.filter(ap => ap.personal_id === p.id);
@@ -1402,6 +1492,8 @@ export default function PersonalView({ contextProyectoId } = {}) {
               )}
             </tbody>
           </table>
+            );
+          })()}
         </div>
       </div>
 
@@ -1423,43 +1515,40 @@ export default function PersonalView({ contextProyectoId } = {}) {
                   <>
                     {!editingId && perfiles.length > 0 && (
                       <div style={{ marginBottom: 16, padding: '10px 14px', background: '#f0fdf4', borderRadius: 8, border: '1px solid #bbf7d0' }}>
-                        <label style={{ fontSize: 11, fontWeight: 700, color: '#166534', display: 'block', marginBottom: 4 }}>
-                          ⚡ ¿El trabajador ya tiene cuenta de usuario en el sistema? (Autocompletar datos)
+                        <label style={{ fontSize: 11, fontWeight: 700, color: '#166534', display: 'block', marginBottom: 6 }}>
+                          ⚡ ¿El trabajador ya tiene cuenta de usuario en el sistema? (Escribe para buscar y autocompletar)
                         </label>
-                        <select
-                          className="form-select"
-                          style={{ fontSize: 12, padding: '6px 10px', background: '#fff' }}
-                          defaultValue=""
-                          onChange={(e) => {
-                            const selProfId = e.target.value;
-                            if (!selProfId) return;
-                            const prof = perfiles.find(p => p.id === selProfId);
-                            if (prof) {
-                              const nombresPartes = (prof.nombre || '').trim().split(' ');
-                              const n1 = nombresPartes.slice(0, 2).join(' ');
-                              const a1 = nombresPartes.slice(2).join(' ');
-                              setForm(prev => ({
-                                ...prev,
-                                profile_id: prof.id,
-                                email: prof.email || prev.email,
-                                nombres: n1 || prof.nombre || prev.nombres,
-                                apellidos: a1 || prev.apellidos,
-                                nombre: prof.nombre || prev.nombre,
-                                telefono: prof.telefono || prof.whatsapp || prev.telefono,
-                                whatsapp: prof.whatsapp || prof.telefono || prev.whatsapp,
-                                cedula: prof.documento || prev.cedula,
-                                direccion_residencia: prof.ciudad ? `${prof.ciudad}` : prev.direccion_residencia,
-                              }));
-                            }
+                        <PersonSearchSelect
+                          people={perfiles.map(p => ({
+                            id: p.id,
+                            nombre: p.nombre || p.email?.split('@')[0] || 'Usuario',
+                            email: p.email || '',
+                            profesion: p.role || 'USUARIO',
+                            telefono: p.telefono || p.whatsapp || '',
+                            rawProfile: p,
+                          }))}
+                          placeholder="🔍 Buscar usuario existente por nombre o correo para autocompletar..."
+                          onSelect={(sel) => {
+                            const prof = sel.rawProfile;
+                            if (!prof) return;
+                            const nombresPartes = (prof.nombre || '').trim().split(' ');
+                            const n1 = nombresPartes.slice(0, 1).join(' ');
+                            const a1 = nombresPartes.slice(1).join(' ');
+                            setForm(prev => ({
+                              ...prev,
+                              profile_id: prof.id,
+                              email: prof.email || prev.email,
+                              nombres: n1 || prof.nombre || prev.nombres,
+                              apellidos: a1 || prev.apellidos,
+                              nombre: prof.nombre || prev.nombre,
+                              telefono: prof.telefono || prof.whatsapp || prev.telefono,
+                              whatsapp: prof.whatsapp || prof.telefono || prev.whatsapp,
+                              cedula: prof.documento || prev.cedula,
+                              ciudad: prof.ciudad || prev.ciudad,
+                              direccion_residencia: prof.ciudad ? `${prof.ciudad}` : prev.direccion_residencia,
+                            }));
                           }}
-                        >
-                          <option value="">Selecciona un usuario registrado para autocompletar...</option>
-                          {perfiles.map(p => (
-                            <option key={p.id} value={p.id}>
-                              {p.nombre ? `${p.nombre} — ` : ''}{p.email} ({p.role || 'USUARIO'})
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </div>
                     )}
 
