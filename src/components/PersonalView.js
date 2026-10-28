@@ -48,10 +48,16 @@ const emptyForm = {
   plan: 'free',
 };
 
-export default function PersonalView() {
+export default function PersonalView({ contextProyectoId } = {}) {
   const { user } = useAuth();
   const { state, dispatch, getProjectLaborNeeds, getCargoProjectItems, calcularDatosCargo } = useStore();
-  const [selectedProjectId, setSelectedProjectId] = useState('');
+  const [selectedProjectId, setSelectedProjectId] = useState(contextProyectoId || '');
+
+  useEffect(() => {
+    if (contextProyectoId) {
+      setSelectedProjectId(contextProyectoId);
+    }
+  }, [contextProyectoId]);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
@@ -541,25 +547,31 @@ export default function PersonalView() {
     <>
       <div className="page-header">
         <div>
-          <h1>Perfil Profesional y Personal</h1>
-          <div className="page-header-subtitle">Hoja de vida digital y asignación de obra</div>
+          <h1>{contextProyectoId ? 'Equipo y Roles de la Obra' : 'Perfil Profesional y Personal'}</h1>
+          <div className="page-header-subtitle">
+            {contextProyectoId
+              ? 'Asignación de personal y supervisores a los roles y cuadrillas del presupuesto de obra'
+              : 'Hoja de vida digital y asignación de obra'}
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
-          <select 
-            className="form-select" 
-            style={{ width: 250, border: '2px solid var(--color-primary)' }}
-            value={selectedProjectId}
-            onChange={(e) => setSelectedProjectId(e.target.value)}
-          >
-            <option value="">🌎 Base de Datos Global</option>
-            <optgroup label="Proyectos de Construcción">
-              {allProyectos.filter(p => p.tipo !== 'TIENDA' && p.tipo !== 'PUNTO_VENTA').map(pr => <option key={pr.id} value={pr.id}>🏗️ {pr.nombre}</option>)}
-            </optgroup>
-            <optgroup label="Comercios y Marketplace">
-              {allProyectos.filter(p => p.tipo === 'TIENDA').map(pr => <option key={pr.id} value={pr.id}>🏪 {pr.nombre} (Tienda)</option>)}
-              {allProyectos.filter(p => p.tipo === 'PUNTO_VENTA').map(pr => <option key={pr.id} value={pr.id}>📍 {pr.nombre} (Punto de Venta)</option>)}
-            </optgroup>
-          </select>
+          {!contextProyectoId && (
+            <select 
+              className="form-select" 
+              style={{ width: 250, border: '2px solid var(--color-primary)' }}
+              value={selectedProjectId}
+              onChange={(e) => setSelectedProjectId(e.target.value)}
+            >
+              <option value="">🌎 Base de Datos Global</option>
+              <optgroup label="Proyectos de Construcción">
+                {allProyectos.filter(p => p.tipo !== 'TIENDA' && p.tipo !== 'PUNTO_VENTA').map(pr => <option key={pr.id} value={pr.id}>🏗️ {pr.nombre}</option>)}
+              </optgroup>
+              <optgroup label="Comercios y Marketplace">
+                {allProyectos.filter(p => p.tipo === 'TIENDA').map(pr => <option key={pr.id} value={pr.id}>🏪 {pr.nombre} (Tienda)</option>)}
+                {allProyectos.filter(p => p.tipo === 'PUNTO_VENTA').map(pr => <option key={pr.id} value={pr.id}>📍 {pr.nombre} (Punto de Venta)</option>)}
+              </optgroup>
+            </select>
+          )}
           <button className="btn btn-primary" onClick={() => openCreate()}>
             + Nuevo Perfil
           </button>
@@ -942,10 +954,13 @@ export default function PersonalView() {
                               return rolesToShow.map((role, idx) => {
                               const assigned = state.personalProyecto.filter(ap => ap.proyecto_id === selectedProjectId && ap.cargo_id === role.id && ap.unidad_pactada !== 'SUPERVISOR' && (ap.cuadrilla_idx === cuadIdx || (!ap.cuadrilla_idx && cuadIdx === 0)));
                               const aPersons = assigned.map(ap => ({ p: state.personal.find(pp => pp.id === ap.personal_id), aId: ap.id })).filter(a => a.p);
-                              const candidates = state.personal.filter(p => {
+                              const unassigned = state.personal.filter(p => !assigned.some(ap => ap.personal_id === p.id));
+                              const recomendados = unassigned.filter(p => {
                                 const personCargos = Array.isArray(p.cargos_ids) && p.cargos_ids.length > 0 ? p.cargos_ids : (p.cargo_id ? [p.cargo_id] : []);
-                                return (personCargos.includes(role.id) || p.profesion === role.nombre) && !assigned.some(ap => ap.personal_id === p.id);
+                                return personCargos.includes(role.id) || p.profesion === role.nombre;
                               });
+                              const otros = unassigned.filter(p => !recomendados.some(r => r.id === p.id));
+
                               return (
                                 <div key={`${role.id}-${idx}-${cuadIdx}`} style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', marginBottom: 4 }}>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
@@ -957,18 +972,88 @@ export default function PersonalView() {
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#10b981' }}>
                                         <span>✅</span>
                                         <span style={{ fontWeight: 500 }}>{p.nombres || p.nombre} {p.apellidos || ''}</span>
-                                        <span style={{ color: '#94a3b8' }}>({p.email})</span>
+                                        <span style={{ color: '#94a3b8' }}>({p.email || p.telefono || 'Sin correo'})</span>
                                       </div>
                                       <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444', fontSize: 10, padding: '2px 6px', minWidth: 'auto' }} onClick={() => { if (confirm(`¿Quitar a ${p.nombres || p.nombre}?`)) dispatch({ type: 'DELETE_PERSON_PROYECTO', payload: aId }); }} title="Quitar">✕</button>
                                     </div>
                                   ))}
-                                  {candidates.length > 0 ? (
-                                    <select className="form-select" style={{ fontSize: 11, padding: '4px 8px', marginTop: 4 }} defaultValue="" onChange={(e) => { const pid = e.target.value; if (!pid) return; const pr = state.personal.find(pp => pp.id === pid); if (!pr) return; dispatch({ type: 'ADD_PERSON_PROYECTO', payload: { id: crypto.randomUUID(), personal_id: pid, proyecto_id: selectedProjectId, cargo_id: role.id, equipo_padre_id: cargoId, unidades_asignadas: 1, salario_pactado: pr.salario_base || 0, unidad_pactada: pr.unidad_pago || 'Mes', tareas_asignadas: [], cuadrilla_idx: cuadIdx }}); e.target.value = ''; }}>
-                                      <option value="">Asignar {role.nombre}...</option>
-                                      {candidates.map(p => <option key={p.id} value={p.id}>{p.nombres || p.nombre} {p.apellidos || ''} — {p.email}</option>)}
-                                    </select>
+                                  {unassigned.length > 0 ? (
+                                    <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 4 }}>
+                                      <select
+                                        className="form-select"
+                                        style={{ fontSize: 11, padding: '4px 8px', flex: 1 }}
+                                        defaultValue=""
+                                        onChange={(e) => {
+                                          const pid = e.target.value;
+                                          if (!pid) return;
+                                          const pr = state.personal.find(pp => pp.id === pid);
+                                          if (!pr) return;
+                                          // Si el trabajador no tenía este cargo registrado, sumárselo a cargos_ids
+                                          const currentCargos = Array.isArray(pr.cargos_ids) ? [...pr.cargos_ids] : (pr.cargo_id ? [pr.cargo_id] : []);
+                                          if (!currentCargos.includes(role.id)) {
+                                            currentCargos.push(role.id);
+                                            dispatch({ type: 'UPDATE_PERSON', payload: { ...pr, cargos_ids: currentCargos } });
+                                          }
+                                          dispatch({
+                                            type: 'ADD_PERSON_PROYECTO',
+                                            payload: {
+                                              id: crypto.randomUUID(),
+                                              personal_id: pid,
+                                              proyecto_id: selectedProjectId,
+                                              cargo_id: role.id,
+                                              equipo_padre_id: cargoId,
+                                              unidades_asignadas: 1,
+                                              salario_pactado: pr.salario_base || 0,
+                                              unidad_pactada: pr.unidad_pago || 'Mes',
+                                              tareas_asignadas: [],
+                                              cuadrilla_idx: cuadIdx,
+                                            },
+                                          });
+                                          e.target.value = '';
+                                        }}
+                                      >
+                                        <option value="">+ Asignar a {role.nombre}...</option>
+                                        {recomendados.length > 0 && (
+                                          <optgroup label="⭐ Recomendados (con este cargo)">
+                                            {recomendados.map(p => (
+                                              <option key={p.id} value={p.id}>
+                                                ⭐ {p.nombres || p.nombre} {p.apellidos || ''} {p.email ? `(${p.email})` : ''}
+                                              </option>
+                                            ))}
+                                          </optgroup>
+                                        )}
+                                        {otros.length > 0 && (
+                                          <optgroup label="👥 Todo el personal disponible">
+                                            {otros.map(p => (
+                                              <option key={p.id} value={p.id}>
+                                                {p.nombres || p.nombre} {p.apellidos || ''} {p.email ? `(${p.email})` : ''}
+                                              </option>
+                                            ))}
+                                          </optgroup>
+                                        )}
+                                      </select>
+                                      <button
+                                        type="button"
+                                        className="btn btn-ghost btn-sm"
+                                        style={{ fontSize: 10, padding: '4px 6px', color: '#2563eb' }}
+                                        title="Registrar nuevo trabajador para este rol"
+                                        onClick={() => openCreate(role.id)}
+                                      >
+                                        + Nuevo
+                                      </button>
+                                    </div>
                                   ) : (
-                                    <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 4, fontStyle: 'italic' }}>No hay profesionales "{role.nombre}" disponibles</div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                                      <span style={{ fontSize: 10, color: '#94a3b8', fontStyle: 'italic' }}>No hay personal disponible</span>
+                                      <button
+                                        type="button"
+                                        className="btn btn-ghost btn-sm"
+                                        style={{ fontSize: 10, color: '#2563eb', padding: '2px 6px' }}
+                                        onClick={() => openCreate(role.id)}
+                                      >
+                                        + Crear y Asignar
+                                      </button>
+                                    </div>
                                   )}
                                 </div>
                               );
@@ -1336,6 +1421,48 @@ export default function PersonalView() {
 
                 {activeTab === 'person' ? (
                   <>
+                    {!editingId && perfiles.length > 0 && (
+                      <div style={{ marginBottom: 16, padding: '10px 14px', background: '#f0fdf4', borderRadius: 8, border: '1px solid #bbf7d0' }}>
+                        <label style={{ fontSize: 11, fontWeight: 700, color: '#166534', display: 'block', marginBottom: 4 }}>
+                          ⚡ ¿El trabajador ya tiene cuenta de usuario en el sistema? (Autocompletar datos)
+                        </label>
+                        <select
+                          className="form-select"
+                          style={{ fontSize: 12, padding: '6px 10px', background: '#fff' }}
+                          defaultValue=""
+                          onChange={(e) => {
+                            const selProfId = e.target.value;
+                            if (!selProfId) return;
+                            const prof = perfiles.find(p => p.id === selProfId);
+                            if (prof) {
+                              const nombresPartes = (prof.nombre || '').trim().split(' ');
+                              const n1 = nombresPartes.slice(0, 2).join(' ');
+                              const a1 = nombresPartes.slice(2).join(' ');
+                              setForm(prev => ({
+                                ...prev,
+                                profile_id: prof.id,
+                                email: prof.email || prev.email,
+                                nombres: n1 || prof.nombre || prev.nombres,
+                                apellidos: a1 || prev.apellidos,
+                                nombre: prof.nombre || prev.nombre,
+                                telefono: prof.telefono || prof.whatsapp || prev.telefono,
+                                whatsapp: prof.whatsapp || prof.telefono || prev.whatsapp,
+                                cedula: prof.documento || prev.cedula,
+                                direccion_residencia: prof.ciudad ? `${prof.ciudad}` : prev.direccion_residencia,
+                              }));
+                            }
+                          }}
+                        >
+                          <option value="">Selecciona un usuario registrado para autocompletar...</option>
+                          {perfiles.map(p => (
+                            <option key={p.id} value={p.id}>
+                              {p.nombre ? `${p.nombre} — ` : ''}{p.email} ({p.role || 'USUARIO'})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
                     <div className="form-group">
                       <label className="form-label">Email de Identidad *</label>
                       <input className="form-input" type="email" value={form.email || ''} onChange={(e) => handleEmailChange(e.target.value)} required disabled={!!editingId} placeholder="ejemplo@correo.com" />

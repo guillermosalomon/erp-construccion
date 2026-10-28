@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@/store/StoreContext';
 import { calcularStockBodegas } from '@/lib/compras-engine';
+import InsumoSearchSelect from './InsumoSearchSelect';
 
 const fmt = (v) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(Number(v) || 0);
 const fmtQ = (v) => (Number(v) || 0).toLocaleString('es-CO', { maximumFractionDigits: 2 });
@@ -308,12 +309,22 @@ export default function BodegaObraView({ proyectoId, onOpenAI }) {
                 </div>
               )}
               <div className="form-group">
-                <label className="form-label">Material</label>
-                <select className="form-select" value={movModal.insumo_id} onChange={(e) => setMovModal({ ...movModal, insumo_id: e.target.value })}>
-                  <option value="">Seleccionar…</option>
-                  {(movModal.modo === 'CONSUMO' ? stock.map((s) => ({ id: s.insumo_id, codigo: '', nombre: `${s.insumo} (${fmtQ(s.existente)} ${s.unidad})` })) : state.insumos)
-                    .map((i) => <option key={i.id} value={i.id}>{i.codigo ? `${i.codigo} - ` : ''}{i.nombre}</option>)}
-                </select>
+                <label className="form-label">Material / Insumo *</label>
+                <InsumoSearchSelect
+                  insumos={state.insumos}
+                  stock={stock}
+                  value={movModal.insumo_id}
+                  mode={movModal.modo}
+                  placeholder={movModal.modo === 'CONSUMO' ? 'Escribe para buscar material en stock...' : 'Escribe para buscar entre los insumos del catálogo...'}
+                  onChange={(insumoId, item) => {
+                    const cu = item?.precio_unitario || insumoMap.get(insumoId)?.precio_unitario || '';
+                    setMovModal({
+                      ...movModal,
+                      insumo_id: insumoId,
+                      costo_unitario: movModal.modo !== 'CONSUMO' && cu ? String(cu) : movModal.costo_unitario,
+                    });
+                  }}
+                />
               </div>
               <div className="form-row">
                 <div className="form-group" style={{ flex: 1 }}>

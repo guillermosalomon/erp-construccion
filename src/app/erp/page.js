@@ -28,6 +28,7 @@ import HistorialPOSView from '@/components/HistorialPOSView';
 import VendedorPortalView from '@/components/VendedorPortalView';
 import CRMView from '@/components/CRMView';
 import UsuariosView from '@/components/UsuariosView';
+import SuscripcionesView from '@/components/SuscripcionesView';
 import ChatView from '@/components/ChatView';
 
 const BIMViewer = dynamic(() => import('@/components/BIMViewer'), { ssr: false });
@@ -70,7 +71,8 @@ export default function Home() {
       const allowedEmails = ['gsalo90@outlook.com', 'guillermosalomonsolarte@gmail.com', 'arq.guillermo_salomon@kalarti.com'];
       const isCorporate = user.email?.endsWith('@kalarti.com') || allowedEmails.includes(user.email);
       if (!isCorporate && activeSection === 'dashboard') {
-        setActiveSection('marketplace');
+        const t = setTimeout(() => setActiveSection('marketplace'), 0);
+        return () => clearTimeout(t);
       }
     }
   }, [user, activeSection]);
@@ -207,6 +209,8 @@ export default function Home() {
       case 'usuarios':
         // Solo administradores (mismo criterio que el menú corporativo)
         return userRole === 'ADMIN' || isCorporateUser ? <UsuariosView /> : <Dashboard />;
+      case 'suscripciones':
+        return userRole === 'ADMIN' || isCorporateUser ? <SuscripcionesView /> : <Dashboard />;
       case 'chat-history':
         return <ChatView />;
       default:

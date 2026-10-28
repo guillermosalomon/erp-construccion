@@ -7,6 +7,7 @@ import ProgressView from './ProgressView';
 import LogisticsView from './LogisticsView';
 import FinanceView from './FinanceView';
 import AgendaView from './AgendaView';
+import PersonalView from './PersonalView';
 import AbastecimientoObraView from './AbastecimientoObraView';
 
 function ProjectSummary({ proyectoId }) {
@@ -64,7 +65,7 @@ export default function ProjectHubView({ proyectoId, onBack }) {
 
   const tabs = [
     { id: 'summary', label: 'Resumen' },
-    { id: 'bitacora', label: 'Bitácora (Canal)' },
+    { id: 'equipo', label: 'Equipo y Roles de Obra' },
     { id: 'agenda', label: 'Agenda' },
     { id: 'presupuesto', label: 'Presupuesto' },
     { id: 'progress', label: 'Seguimiento 4D/5D' },
@@ -120,7 +121,7 @@ export default function ProjectHubView({ proyectoId, onBack }) {
 
       <div style={{ flex: 1, padding: '0 24px' }}>
         {activeTab === 'summary' && <ProjectSummary proyectoId={proyectoId} />}
-        {activeTab === 'bitacora' && <ProgressView contextProyectoId={proyectoId} defaultTab="bitacora" />}
+        {activeTab === 'equipo' && <PersonalView contextProyectoId={proyectoId} />}
         {activeTab === 'agenda' && <AgendaView proyectoId={proyectoId} />}
         {activeTab === 'presupuesto' && <PresupuestoView proyectoId={proyectoId} />}
         {activeTab === 'progress' && <ProgressView contextProyectoId={proyectoId} />}
