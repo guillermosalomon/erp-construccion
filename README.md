@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏗️ Kalarti ERP — Ecosistema Integral de Construcción
 
-## Getting Started
+Plataforma unificada para gestión de obras civiles, presupuestación paramétrica APU, visor BIM 3D/4D/5D, red logística distribuida de abastecimiento, Marketplace ferretero y contratos B2B con cuadrillas.
 
-First, run the development server:
+> 📖 **Para la documentación técnica completa, fórmulas matemáticas, políticas de seguridad RLS y especificación del sistema, consulta el documento maestro:**  
+> 👉 [**DOCUMENTACION_SISTEMA.md**](./DOCUMENTACION_SISTEMA.md)
 
+---
+
+## 🚀 Inicio Rápido (Desarrollo Local)
+
+### 1. Requisitos Previos
+- **Node.js** v20.x o superior
+- **npm** v10.x o superior
+- Archivo `.env.local` configurado con las credenciales del proyecto Supabase.
+
+### 2. Instalación de Dependencias
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Ejecución del Servidor Web (Next.js)
+```bash
+npm run dev
+```
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador para interactuar con la plataforma.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 4. Ejecución del Bot de Telegram (Kalarti Copilot)
+El bot conversacional opera como un servicio Node.js independiente:
+```bash
+cd telegram-bot
+node bot.js
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🗺️ Mapa de Rutas Principales
 
-To learn more about Next.js, take a look at the following resources:
+| Ruta | Descripción | Acceso |
+|---|---|---|
+| `/` | Landing page principal del ecosistema Kalarti | Público |
+| `/erp` | SPA central del ERP: APUs, presupuestos, obras, finanzas, nómina y BIM | Requiere Login |
+| `/cotizador` | Cotizador paramétrico de proyectos de vivienda y exportación a Excel | Público / Pago |
+| `/marketplace` | Tienda de materiales y ferreterías con checkout integrado | Público |
+| `/propiedades` | Catálogo inmobiliario de proyectos y lotes | Público |
+| `/mi-portal` | Portal de autoservicio para profesionales independientes de la Red de Talento | Público / Registro |
+| `/planes` | Tiers de suscripción SaaS con pasarela Mercado Pago | Público |
+| `/proveedores` | Portal de registro para distribuidores y ferreterías | Público |
+| `/unete` | Portal de convocatorias públicas para cuadrillas y maestros de obra | Público |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Stack Tecnológico
 
-## Deploy on Vercel
+- **Frontend & Routing:** Next.js 16.2.4 (App Router), React 19.2.4, CSS Modular.
+- **Base de Datos & Auth:** Supabase PostgreSQL con Row Level Security (RLS) multi-tenant.
+- **BIM 3D/4D/5D:** `@thatopen/components`, Three.js, Web-IFC WASM.
+- **Pagos & Suscripciones:** Mercado Pago Checkout Pro (Webhooks idempotentes).
+- **Inteligencia Artificial:** Google Gemini 2.5 Flash (Parseo visual de facturas/remisiones).
+- **Reportes & Exportación:** `jspdf`, `jspdf-autotable`, `exceljs`.
+- **Escaner QR / Barras:** `@zxing/library`, `react-zxing`.
+- **Asistente Conversacional:** `node-telegram-bot-api` con Gemini AI.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🧪 Validación y Compilación
+
+Para compilar la aplicación para producción:
+```bash
+npm run build
+```
+
+Para análisis de reglas de código y ESLint:
+```bash
+npx eslint src/
+```
+
+Para más detalles, consulta [DOCUMENTACION_SISTEMA.md](./DOCUMENTACION_SISTEMA.md).

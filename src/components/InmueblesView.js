@@ -40,10 +40,91 @@ export default function InmueblesView() {
   const [fotosAdicionales, setFotosAdicionales] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [saveMessage, setSaveMessage] = useState(null);
+  const [activeModuleTab, setActiveModuleTab] = useState('cartera');
+  const [corredores, setCorredores] = useState([]);
+  const [allLeads, setAllLeads] = useState([]);
+  const [corredorForm, setCorredorForm] = useState({
+    nombre: '',
+    documento: '',
+    email: '',
+    telefono: '',
+    ciudad: 'Pasto',
+    cargo: 'Corredor Inmobiliario',
+    comision_interna_pct: '1.5',
+  });
 
   useEffect(() => {
     fetchInmuebles();
+    fetchCorredoresAndLeads();
   }, []);
+
+  const fetchCorredoresAndLeads = async () => {
+    if (!supabase) return;
+    try {
+      const { data: cData } = await supabase
+        .from('inmueble_corredores')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (Array.isArray(cData)) setCorredores(cData);
+    } catch {
+      // tabla aún no migrada
+    }
+    try {
+      const { data: lData } = await supabase
+        .from('inmueble_leads')
+        .select('*, inmuebles(titulo, ciudad, modalidad_publicacion)')
+        .order('created_at', { ascending: false });
+      if (Array.isArray(lData)) setAllLeads(lData);
+    } catch {
+      // tabla aún no migrada
+    }
+  };
+
+  const handleCreateCorredor = async (e) => {
+    e.preventDefault();
+    if (!corredorForm.nombre.trim()) return;
+    try {
+      const { error } = await supabase.from('inmueble_corredores').insert({
+        creado_por: user?.id || null,
+        nombre: corredorForm.nombre.trim(),
+        documento: corredorForm.documento.trim() || null,
+        email: corredorForm.email.trim() || null,
+        telefono: corredorForm.telefono.trim() || null,
+        whatsapp: corredorForm.telefono.trim() || null,
+        ciudad: corredorForm.ciudad.trim() || 'Pasto',
+        cargo: corredorForm.cargo.trim() || 'Corredor Inmobiliario',
+        comision_interna_pct: Number(corredorForm.comision_interna_pct) || 0,
+        activo: true,
+      });
+      if (error) throw error;
+      setCorredorForm({
+        nombre: '',
+        documento: '',
+        email: '',
+        telefono: '',
+        ciudad: 'Pasto',
+        cargo: 'Corredor Inmobiliario',
+        comision_interna_pct: '1.5',
+      });
+      setSaveMessage('Perfil de corredor registrado.');
+      fetchCorredoresAndLeads();
+    } catch (err) {
+      alert('Ejecute migration-fase23-inmuebles-corredores.sql en Supabase: ' + err.message);
+    }
+  };
+
+  const handleUpdateLeadStatus = async (leadId, cambios) => {
+    try {
+      await supabase.from('inmueble_leads').update(cambios).eq('id', leadId);
+      fetchCorredoresAndLeads();
+      if (selectedInmueble?.id && isUuid(selectedInmueble.id)) {
+        const { data } = await supabase.from('inmueble_leads').select('*').eq('inmueble_id', selectedInmueble.id);
+        setLeads(data || []);
+      }
+    } catch (err) {
+      console.warn('Error actualizando lead:', err.message);
+    }
+  };
 
   const fetchInmuebles = async () => {
     setLoading(true);
@@ -305,6 +386,8 @@ export default function InmueblesView() {
       propietario_nombre: (fd.get('propietario_nombre') || '').toString().trim(),
       propietario_telefono: (fd.get('propietario_telefono') || '').toString().trim(),
       comision_pct: Number(fd.get('comision_pct')) || 0,
+      modalidad_publicacion: (fd.get('modalidad_publicacion') || 'KALARTI').toString(),
+      corredor_id: (fd.get('corredor_id') || '').toString().trim() || null,
       estado,
     };
 
@@ -445,6 +528,147 @@ export default function InmueblesView() {
           </button>
         </div>
       </div>
+
+      {/* PESTAÑAS DEL MÓDULO INMOBILIARIO */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 20, borderBottom: '1px solid #e2e8f0', paddingBottom: 12, flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          onClick={() => setActiveModuleTab('cartera')}
+          style={{
+            padding: '8px 16px',
+            borderRadius: 6,
+            border: '1px solid #0f172a',
+            background: activeModuleTab === 'cartera' ? '#0f172a' : '#ffffff',
+            color: activeModuleTab === 'cartera' ? '#ffffff' : '#0f172a',
+            fontWeight: 700,
+            fontSize: 13,
+            cursor: 'pointer',
+          }}
+        >
+          Cartera de Inmuebles ({inmuebles.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveModuleTab('corredores')}
+          style={{
+            padding: '8px 16px',
+            borderRadius: 6,
+            border: '1px solid #0f172a',
+            background: activeModuleTab === 'corredores' ? '#0f172a' : '#ffffff',
+            color: activeModuleTab === 'corredores' ? '#ffffff' : '#0f172a',
+            fontWeight: 700,
+            fontSize: 13,
+            cursor: 'pointer',
+          }}
+        >
+          Perfiles de Corredores ({corredores.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveModuleTab('crm')}
+          style={{
+            padding: '8px 16px',
+            borderRadius: 6,
+            border: '1px solid #0f172a',
+            background: activeModuleTab === 'crm' ? '#0f172a' : '#ffffff',
+            color: activeModuleTab === 'crm' ? '#ffffff' : '#0f172a',
+            fontWeight: 700,
+            fontSize: 13,
+            cursor: 'pointer',
+          }}
+        >
+          CRM de Prospectos ({allLeads.length})
+        </button>
+      </div>
+
+      {activeModuleTab === 'corredores' && (
+        <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: 12, padding: 24, marginBottom: 24 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px 0', color: '#0f172a' }}>
+            Administración de Perfiles de Corredores
+          </h2>
+          <p style={{ fontSize: 13, color: '#64748b', marginBottom: 16 }}>
+            Cree múltiples perfiles de corredores para asignarlos a los inmuebles y al seguimiento de prospectos en el CRM.
+          </p>
+          <form onSubmit={handleCreateCorredor} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 20, padding: 16, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+            <input required placeholder="Nombre del corredor *" value={corredorForm.nombre} onChange={(e) => setCorredorForm({ ...corredorForm, nombre: e.target.value })} style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: 6 }} />
+            <input placeholder="Documento / Cédula" value={corredorForm.documento} onChange={(e) => setCorredorForm({ ...corredorForm, documento: e.target.value })} style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: 6 }} />
+            <input required placeholder="Teléfono / WhatsApp *" value={corredorForm.telefono} onChange={(e) => setCorredorForm({ ...corredorForm, telefono: e.target.value })} style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: 6 }} />
+            <input type="email" placeholder="Correo electrónico" value={corredorForm.email} onChange={(e) => setCorredorForm({ ...corredorForm, email: e.target.value })} style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: 6 }} />
+            <input type="number" step="0.1" placeholder="% Comisión interna" value={corredorForm.comision_interna_pct} onChange={(e) => setCorredorForm({ ...corredorForm, comision_interna_pct: e.target.value })} style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: 6 }} />
+            <button type="submit" style={{ background: '#0f172a', color: '#ffffff', border: 'none', borderRadius: 6, fontWeight: 700, padding: '8px 14px', cursor: 'pointer' }}>
+              + Crear Corredor
+            </button>
+          </form>
+
+          {corredores.length === 0 ? (
+            <div style={{ color: '#64748b', fontSize: 13 }}>No hay corredores registrados en esta organización.</div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+              {corredores.map((c) => (
+                <div key={c.id} style={{ border: '1px solid #cbd5e1', borderRadius: 8, padding: 14 }}>
+                  <div style={{ fontWeight: 800, fontSize: 14, color: '#0f172a' }}>{c.nombre}</div>
+                  <div style={{ fontSize: 12, color: '#475569' }}>{c.cargo} · {c.ciudad} · Comisión interna: {c.comision_interna_pct || 0}%</div>
+                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 4 }}>{c.telefono} {c.email ? `· ${c.email}` : ''}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeModuleTab === 'crm' && (
+        <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: 12, padding: 24, marginBottom: 24 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px 0', color: '#0f172a' }}>
+            CRM de Prospectos Inmobiliarios ({allLeads.length})
+          </h2>
+          <p style={{ fontSize: 13, color: '#64748b', marginBottom: 16 }}>
+            Seguimiento de prospectos aislados por organización. Para inmuebles de propietarios particulares (3%), el equipo de corredores de Kalarti gestiona el cierre; para inmobiliarias (0.3%), la agencia administra su embudo propio.
+          </p>
+          {allLeads.length === 0 ? (
+            <div style={{ color: '#64748b', fontSize: 13 }}>No hay prospectos registrados aún.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {allLeads.map((ld) => (
+                <div key={ld.id} style={{ border: '1px solid #cbd5e1', borderRadius: 8, padding: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
+                      {ld.inmuebles?.titulo || 'Inmueble'} ({ld.inmuebles?.modalidad_publicacion || 'KALARTI'})
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: '#0f172a' }}>
+                      {ld.nombre_interesado || ld.cliente_nombre || 'Prospecto'} — {ld.telefono || ld.cliente_telefono || ld.email || 'Sin teléfono'}
+                    </div>
+                    {ld.mensaje && <div style={{ fontSize: 12.5, color: '#334155', marginTop: 4 }}>{ld.mensaje}</div>}
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <select
+                      value={ld.etapa_crm || ld.estado || 'NUEVO'}
+                      onChange={(e) => handleUpdateLeadStatus(ld.id, { etapa_crm: e.target.value })}
+                      style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 12, fontWeight: 700 }}
+                    >
+                      <option value="NUEVO">NUEVO</option>
+                      <option value="CONTACTADO">CONTACTADO</option>
+                      <option value="VISITA_PROGRAMADA">VISITA PROGRAMADA</option>
+                      <option value="PROPUESTA">PROPUESTA</option>
+                      <option value="CIERRE_GANADO">CIERRE GANADO</option>
+                      <option value="DESCARTADO">DESCARTADO</option>
+                    </select>
+                    <select
+                      value={ld.corredor_id || ''}
+                      onChange={(e) => handleUpdateLeadStatus(ld.id, { corredor_id: e.target.value || null })}
+                      style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 12 }}
+                    >
+                      <option value="">Asignar corredor...</option>
+                      {corredores.map((c) => (
+                        <option key={c.id} value={c.id}>{c.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {saveMessage && (
         <div
@@ -1342,6 +1566,35 @@ export default function InmueblesView() {
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '5px', fontSize: '13px', fontWeight: '600', color: '#334155' }}>
+                    Modalidad Contractual
+                  </label>
+                  <select
+                    name="modalidad_publicacion"
+                    defaultValue={selectedInmueble?.modalidad_publicacion || 'KALARTI'}
+                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  >
+                    <option value="KALARTI">Portafolio Oficial Kalarti</option>
+                    <option value="PARTICULAR_3">Propietario Particular (Comisión 3.0%)</option>
+                    <option value="INMOBILIARIA_03">Inmobiliaria Afiliada (Comisión 0.3%)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '13px', fontWeight: '600', color: '#334155' }}>
+                    Corredor Asignado
+                  </label>
+                  <select
+                    name="corredor_id"
+                    defaultValue={selectedInmueble?.corredor_id || ''}
+                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  >
+                    <option value="">Mesa de Corretaje Kalarti</option>
+                    {corredores.map((c) => (
+                      <option key={c.id} value={c.id}>{c.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '13px', fontWeight: '600', color: '#334155' }}>
                     % Comisión de Agencia
                   </label>
                   <input
@@ -1564,7 +1817,7 @@ export default function InmueblesView() {
                               fontStyle: 'italic',
                             }}
                           >
-                            "{lead.mensaje}"
+                            &ldquo;{lead.mensaje}&rdquo;
                           </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>

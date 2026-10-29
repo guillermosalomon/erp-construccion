@@ -1,92 +1,142 @@
 'use client';
 
-import { Suspense, useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
+import { sincronizarIdentidad } from '@/lib/identidad';
 import { PLANES_CONSTRUCTORAS, MAPA_TIPO_PRODUCTO_MP, formatMoney } from '@/lib/planes';
 
 const PERFILES_GATEWAY = [
   {
-    id: 'profesional',
-    icon: '👷',
-    titulo: 'Profesional / Mano de Obra',
-    subtitulo: 'Ingenieros, arquitectos, maestros, oficiales y cuadrillas',
-    frase: 'Quiero postularme a proyectos, licitaciones y trabajar con constructoras',
-    color: '#38bdf8',
-    badge: '100% Gratis para el trabajador',
+    key: 'profesional',
+    code: '01',
+    titulo: 'Red de Talento (Profesional / Cuadrilla)',
+    subtitulo: 'Postulación a proyectos, licitaciones y contratación directa con constructoras sin costo.',
+    role: 'PROFESIONAL',
+    tipo_registro: 'PROFESIONAL',
+    condicion: 'Vinculación 100% Gratuita',
+    detalleGeneral:
+      'Orientado a ingenieros civiles, arquitectos, maestros de obra, oficiales y cuadrillas especializadas. Permite estructurar su hoja de vida técnica, cargar soportes de ley (COPNIA/CONTE, ARL, Curso de Alturas SST), activar disponibilidad por municipio y postularse en 1 clic a las vacantes publicadas por constructoras.',
+    alcance: [
+      'Visibilidad directa en el módulo de Equipo y Roles de las obras activas en el ERP.',
+      'Insignia de Perfil Verificado tras validación documental sin costo de intermediación.',
+      'Configuración de tarifas de referencia por jornal, día o mes y municipios de cobertura.',
+      'Protección de datos personales conforme a la Ley 1581 de 2012 (Habeas Data).',
+    ],
   },
   {
-    id: 'constructor',
-    icon: '🏗️',
-    titulo: 'Constructor / Contratista',
-    subtitulo: 'Constructoras, firmas de ingeniería e interventoría',
-    frase: 'Quiero presupuestar, cotizar obras y administrar mis proyectos en el ERP',
-    color: '#d4af37',
-    badge: 'ERP 5D + Red de Talento',
+    key: 'constructor',
+    code: '02',
+    titulo: 'Constructor / Contratista (ERP 5D)',
+    subtitulo: 'Presupuestos NSR-10, programación 4D/5D, compras, almacén y acceso a la Red de Talento.',
+    role: 'ADMIN',
+    tipo_registro: 'CONSTRUCTOR',
+    condicion: 'Entorno Organizacional Aislado (Multi-Tenant)',
+    detalleGeneral:
+      'Diseñado para empresas constructoras, contratistas e interventorías que requieren presupuestar con más de 400 APUs calibrados, controlar programación 4D/5D, administrar compras y bodegas de obra, y vincular talento verificado o subcontratar cuadrillas.',
+    alcance: [
+      'Aislamiento total de información financiera, presupuestos y clientes por organización.',
+      'Acceso directo al buscador B2B de la Red de Talento y publicación de vacantes de obra.',
+      'Control de almacén, kardex de insumos, órdenes de compra y seguimiento físico-financiero.',
+      'Intercambio y subcontratación de cuadrillas con capacidad ociosa entre fases de obra.',
+    ],
   },
   {
-    id: 'comercio',
-    icon: '🏪',
-    titulo: 'Comercio / Ferretería / Proveedor',
-    subtitulo: 'Ferreterías con POS, depósitos y proveedores de insumos',
-    frase: 'Quiero gestionar inventario, facturar con POS y vender insumos en el Marketplace',
-    color: '#10b981',
-    badge: 'POS + Marketplace B2B',
+    key: 'comercio',
+    code: '03',
+    titulo: 'Comercio / Proveedor de Insumos',
+    subtitulo: 'Gestión de inventario, facturación POS, catálogo en Marketplace y conexión a APUs.',
+    role: 'TIENDA',
+    tipo_registro: 'COMERCIO',
+    condicion: 'Modalidad POS Ferretero o Proveedor Mayorista B2B',
+    detalleGeneral:
+      'Dirigido a ferreterías, depósitos de materiales, fabricantes y distribuidores. Permite operar caja registradora POS en múltiples sucursales, controlar existencias en tiempo real, vender en el Marketplace B2B/B2C y sincronizar precios con los APUs regionales.',
+    alcance: [
+      'Facturación de mostrador POS, control de ingresos, traspasos entre sedes y devoluciones.',
+      'Publicación automática de insumos con stock disponible en el Marketplace Kalarti.',
+      'Vinculación de precios unitarios a los análisis de precios unitarios (APU) de la región.',
+      'Administración de vendedores, supervisores de punto de venta y agenda comercial.',
+    ],
   },
   {
-    id: 'cliente',
-    icon: '🏢',
-    titulo: 'Inversionista / Cliente Final',
-    subtitulo: 'Propietarios de lote, remodelaciones e inversionistas',
-    frase: 'Quiero cotizar mi obra o adquirir proyectos inmobiliarios',
-    color: '#a855f7',
-    badge: 'Cotizador NSR-10 Gratis',
+    key: 'inmueble',
+    code: '04',
+    titulo: 'Publicar Inmueble (Particular 3% / Inmobiliaria 0.3%)',
+    subtitulo: 'Consignación particular asistida por nuestros corredores (3%) o plataforma CRM multi-corredor para inmobiliarias (0.3%).',
+    role: 'PROPIETARIO',
+    tipo_registro: 'PROPIETARIO',
+    condicion: 'Comisión al Éxito: Particular 3.0% | Inmobiliaria 0.3%',
+    detalleGeneral:
+      'Estructurado contractual y técnicamente en dos regímenes con aislamiento de privacidad: los propietarios particulares cuentan con asesoría e impulso comercial a cargo de los corredores de Kalarti (comisión 3%), mientras que las inmobiliarias administran su cartera, CRM de prospectos y múltiples perfiles de corredores (comisión 0.3%).',
+    alcance: [
+      'Propietario Particular (3.0%): Promoción activa con nuestros corredores, filtrado de leads y reserva absoluta de datos del propietario.',
+      'Inmobiliarias (0.3%): Creación de múltiples perfiles de corredores propios y asignación por propiedad.',
+      'Embudo CRM privado de prospectos (Nuevo, Contactado, Visita Programada, Propuesta, Cierre Ganado).',
+      'Sincronización inmediata con el catálogo público de inmuebles y proyectos.',
+    ],
+  },
+  {
+    key: 'cliente',
+    code: '05',
+    titulo: 'Inversionista / Cliente de Obra',
+    subtitulo: 'Cotización de obra nueva, remodelaciones o adquisición de proyectos inmobiliarios.',
+    role: 'CLIENTE',
+    tipo_registro: 'CLIENTE',
+    condicion: 'Acceso Directo al Cotizador NSR-10 y Portafolio',
+    detalleGeneral:
+      'Pensado para propietarios de lotes, inversionistas y clientes finales que desean estimar el presupuesto técnico de su obra, estructurar su proyecto arquitectónico/estructural o invertir en bienes raíces desarrollados en el ecosistema.',
+    alcance: [
+      'Uso del Cotizador de Obra con memorias de cantidades y programación preliminar.',
+      'Solicitud de diseño arquitectónico, modelado BIM 5D y construcción llave en mano.',
+      'Historial privado de cotizaciones, presupuestos descargables y compras en Marketplace.',
+      'Atención personalizada por el equipo de consultoría e ingeniería de KALARTI S.A.S.',
+    ],
   },
 ];
 
-const MUNICIPIOS_SUGERIDOS = [
-  'Pasto', 'Ipiales', 'Tumaco', 'Ricaurte', 'Túquerres', 'La Unión', 'Yacuanquer',
-  'Cali', 'Popayán', 'Bogotá', 'Medellín', 'Pereira', 'Manizales', 'Armenia',
+const MUNICIPIOS_BASE = [
+  'Pasto',
+  'Ipiales',
+  'Tumaco',
+  'Túquerres',
+  'La Unión',
+  'Samaniego',
+  'Sandoná',
+  'Chachagüí',
+  'Buesaco',
+  'El Bordo',
+  'Popayán',
+  'Cali',
+  'Medellín',
+  'Bogotá',
 ];
 
-function RegistroInner() {
-  const router = useRouter();
+function RegistroContent() {
   const searchParams = useSearchParams();
-  const { register } = useAuth();
+  const router = useRouter();
 
   const tipoParam = (searchParams.get('tipo') || '').toLowerCase();
-  const planParam = (searchParams.get('plan') || 'free').toLowerCase();
+  const subtipoParam = (searchParams.get('subtipo') || '').toLowerCase();
+  const planParam = (searchParams.get('plan') || 'erp_pro_mensual').toLowerCase();
+  const ofertaParam = searchParams.get('oferta') || '';
 
-  const [selectedTipo, setSelectedTipo] = useState(
-    ['profesional', 'constructor', 'comercio', 'proveedor', 'cliente'].includes(tipoParam)
-      ? tipoParam
-      : ''
+  const [selectedKey, setSelectedKey] = useState(() => {
+    if (tipoParam === 'proveedor') return 'comercio';
+    if (PERFILES_GATEWAY.some((p) => p.key === tipoParam)) return tipoParam;
+    return 'profesional';
+  });
+
+  const [subtipoComercio, setSubtipoComercio] = useState(
+    tipoParam === 'proveedor' ? 'PROVEEDOR' : 'COMERCIO'
   );
+  const [subtipoInmueble, setSubtipoInmueble] = useState(
+    subtipoParam === 'inmobiliaria' ? 'INMOBILIARIA' : 'PARTICULAR'
+  );
+  const [selectedPlan, setSelectedPlan] = useState(planParam);
 
-  useEffect(() => {
-    if (['profesional', 'constructor', 'comercio', 'proveedor', 'cliente'].includes(tipoParam)) {
-      setSelectedTipo(tipoParam);
-    }
-  }, [tipoParam]);
-
-  // Catálogo dinámico de cargos del ERP
-  const [cargos, setCargos] = useState([]);
-  const [cargoQuery, setCargoQuery] = useState('');
-
-  useEffect(() => {
-    if (!supabase) return;
-    supabase
-      .from('cargos')
-      .select('id, codigo, nombre, categoria, unidad')
-      .order('nombre', { ascending: true })
-      .then(({ data }) => {
-        if (data) {
-          setCargos(data.filter((c) => (c.nombre || '').toLowerCase() !== 'cliente'));
-        }
-      });
-  }, []);
+  const [cargosCatalogo, setCargosCatalogo] = useState([]);
+  const [selectedCargos, setSelectedCargos] = useState([]);
 
   const [form, setForm] = useState({
     nombre: '',
@@ -95,700 +145,887 @@ function RegistroInner() {
     telefono: '',
     pais: 'Colombia',
     ciudad: 'Pasto',
-    tipo_documento: 'CC',
-    cedula: '',
+    documento: '',
+    empresa: '',
     profesion: '',
-    anos_experiencia: '3',
+    anos_experiencia: '',
     tarifa_referencia: '',
     tarifa_unidad: 'Día',
-    cargos_ids: [],
-    municipios_cobertura: ['Pasto'],
-    resumen_experiencia: '',
-    empresa: '',
-    nit: '',
-    subtipo_comercio: tipoParam === 'proveedor' ? 'PROVEEDOR' : 'COMERCIO',
-    plan: planParam || 'free',
     acepta_habeas_data: false,
+    acepta_contrato_comision: false,
   });
 
-  const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
-  const filteredCargos = useMemo(() => {
-    const q = cargoQuery.trim().toLowerCase();
-    if (!q) return cargos;
-    return cargos.filter(
-      (c) =>
-        (c.nombre || '').toLowerCase().includes(q) ||
-        (c.codigo || '').toLowerCase().includes(q)
-    );
-  }, [cargos, cargoQuery]);
+  useEffect(() => {
+    if (tipoParam === 'proveedor') {
+      setSelectedKey('comercio');
+      setSubtipoComercio('PROVEEDOR');
+    } else if (PERFILES_GATEWAY.some((p) => p.key === tipoParam)) {
+      setSelectedKey(tipoParam);
+    }
+    if (subtipoParam === 'inmobiliaria') {
+      setSubtipoInmueble('INMOBILIARIA');
+    } else if (subtipoParam === 'particular') {
+      setSubtipoInmueble('PARTICULAR');
+    }
+  }, [tipoParam, subtipoParam]);
+
+  useEffect(() => {
+    if (!supabase) return;
+    supabase
+      .from('cargos')
+      .select('id, codigo, nombre, categoria, unidad')
+      .order('nombre')
+      .then(({ data }) => {
+        if (Array.isArray(data)) setCargosCatalogo(data);
+      });
+  }, []);
 
   const toggleCargo = (id) => {
-    setForm((prev) => {
-      const exists = prev.cargos_ids.includes(id);
-      const next = exists
-        ? prev.cargos_ids.filter((x) => x !== id)
-        : [...prev.cargos_ids, id];
-      return { ...prev, cargos_ids: next };
-    });
+    setSelectedCargos((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
   };
 
-  const toggleMunicipio = (mun) => {
-    setForm((prev) => {
-      const exists = prev.municipios_cobertura.includes(mun);
-      const next = exists
-        ? prev.municipios_cobertura.filter((m) => m !== mun)
-        : [...prev.municipios_cobertura, mun];
-      return { ...prev, municipios_cobertura: next.length ? next : [prev.ciudad || 'Pasto'] };
-    });
-  };
-
-  const handleSelectCard = (id) => {
-    setSelectedTipo(id);
-    if (id === 'proveedor') {
-      setForm((f) => ({ ...f, subtipo_comercio: 'PROVEEDOR' }));
-    }
-    router.replace(`/registro?tipo=${id}`, { scroll: false });
-  };
+  const perfilActual = PERFILES_GATEWAY.find((p) => p.key === selectedKey) || PERFILES_GATEWAY[0];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+    setSuccessMsg('');
 
+    if (!perfilActual) {
+      setErrorMsg('Seleccione primero el tipo de perfil.');
+      return;
+    }
     if (!form.acepta_habeas_data) {
-      setErrorMsg('Debes aceptar la política de tratamiento de datos personales (Ley 1581) para continuar.');
+      setErrorMsg('Debe aceptar la Política de Tratamiento de Datos Personales (Ley 1581 de 2012) para continuar.');
+      return;
+    }
+    if (selectedKey === 'inmueble' && !form.acepta_contrato_comision) {
+      setErrorMsg(
+        subtipoInmueble === 'INMOBILIARIA'
+          ? 'Debe aceptar las condiciones contractuales de intermediación en plataforma (comisión del 0.3% sobre venta efectiva).'
+          : 'Debe aceptar las condiciones de consignación y corretaje asistido por Kalarti (comisión del 3.0% sobre venta efectiva).'
+      );
+      return;
+    }
+    if (form.password.length < 6) {
+      setErrorMsg('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
 
-    if (selectedTipo === 'profesional' && form.cargos_ids.length === 0 && !form.profesion.trim()) {
-      setErrorMsg('Selecciona al menos un cargo/oficio o escribe tu profesión.');
-      return;
-    }
-
-    setLoading(true);
+    setBusy(true);
     try {
-      const effectiveTipo =
-        selectedTipo === 'comercio' && form.subtipo_comercio === 'PROVEEDOR'
-          ? 'PROVEEDOR'
-          : selectedTipo === 'proveedor'
-          ? 'PROVEEDOR'
-          : selectedTipo.toUpperCase();
+      const effectiveTipoRegistro =
+        selectedKey === 'comercio'
+          ? subtipoComercio
+          : selectedKey === 'inmueble'
+            ? subtipoInmueble === 'INMOBILIARIA'
+              ? 'INMOBILIARIA'
+              : 'PROPIETARIO'
+            : perfilActual.tipo_registro;
 
-      const mappedRole =
-        effectiveTipo === 'PROFESIONAL'
-          ? 'PROFESIONAL'
-          : effectiveTipo === 'CONSTRUCTOR'
-          ? 'ADMIN'
-          : effectiveTipo === 'COMERCIO' || effectiveTipo === 'PROVEEDOR'
+      const effectiveRole =
+        selectedKey === 'comercio'
           ? 'TIENDA'
-          : 'CLIENTE';
-
-      const selectedCargoNames = form.cargos_ids
-        .map((cid) => cargos.find((c) => c.id === cid)?.nombre)
-        .filter(Boolean)
-        .join(' / ');
+          : selectedKey === 'inmueble'
+            ? subtipoInmueble === 'INMOBILIARIA'
+              ? 'INMOBILIARIA'
+              : 'PROPIETARIO'
+            : perfilActual.role;
 
       const metadata = {
         nombre: form.nombre.trim(),
+        role: effectiveRole,
+        tipo_registro: effectiveTipoRegistro,
+        modalidad_inmueble: selectedKey === 'inmueble' ? subtipoInmueble : null,
+        comision_pactada_pct:
+          selectedKey === 'inmueble' ? (subtipoInmueble === 'INMOBILIARIA' ? 0.3 : 3.0) : null,
         telefono: form.telefono.trim(),
         whatsapp: form.telefono.trim(),
-        pais: form.pais,
+        pais: form.pais.trim() || 'Colombia',
         ciudad: form.ciudad.trim() || 'Pasto',
-        tipo_documento: form.tipo_documento,
-        cedula: form.cedula.trim(),
-        profesion: form.profesion.trim() || selectedCargoNames || effectiveTipo,
-        cargos_ids: form.cargos_ids,
-        tarifa_referencia: form.tarifa_referencia ? Number(form.tarifa_referencia) : null,
-        tarifa_unidad: form.tarifa_unidad,
-        municipios_cobertura: form.municipios_cobertura.length ? form.municipios_cobertura : [form.ciudad || 'Pasto'],
-        anos_experiencia: Number(form.anos_experiencia) || 0,
-        resumen_experiencia: form.resumen_experiencia.trim(),
-        disponible_red_talento: effectiveTipo === 'PROFESIONAL',
+        cedula: form.documento.trim(),
+        documento: form.documento.trim(),
+        nit: form.documento.trim(),
         empresa: form.empresa.trim() || null,
-        nit: form.nit.trim() || null,
-        plan: form.plan || 'free',
-        role: mappedRole,
-        tipo_registro: effectiveTipo,
+        profesion: form.profesion.trim() || null,
+        cargos_ids: selectedCargos,
+        cargo_id: selectedCargos[0] || null,
+        anos_experiencia: form.anos_experiencia ? Number(form.anos_experiencia) : 0,
+        tarifa_referencia: form.tarifa_referencia ? Number(form.tarifa_referencia) : null,
+        tarifa_unidad: form.tarifa_unidad || 'Día',
+        municipios_cobertura: [form.ciudad.trim() || 'Pasto'],
+        disponible_red_talento: selectedKey === 'profesional',
         acepta_habeas_data: true,
+        acepta_contrato_comision: selectedKey === 'inmueble' ? true : false,
+        plan: selectedKey === 'constructor' ? selectedPlan : 'free',
       };
 
-      const { data, error } = await register(form.email.trim(), form.password, metadata);
-      if (error) {
-        setErrorMsg(error.message || 'No se pudo completar el registro.');
-        setLoading(false);
-        return;
-      }
+      const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
+        email: form.email.trim(),
+        password: form.password,
+        options: { data: metadata },
+      });
 
-      // Si es constructor y eligió un plan de pago con Mercado Pago Checkout Pro
-      if (effectiveTipo === 'CONSTRUCTOR' && ['mensual', 'semestral', 'anual'].includes(form.plan)) {
-        try {
-          const mpRes = await fetch('/api/pagos/mercadopago/preference', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              tipoProducto: MAPA_TIPO_PRODUCTO_MP[form.plan] || 'PLAN_SUSCRIPCION_MENSUAL',
-              referenciaId: `REG-${form.plan.toUpperCase()}-${Date.now()}`,
-              userEmail: form.email.trim(),
-              userId: data?.user?.id,
-            }),
-          });
-          const mpData = await mpRes.json();
-          if (mpData.init_point) {
-            window.location.href = mpData.init_point;
-            return;
+      if (signUpErr) throw signUpErr;
+
+      const authUser = signUpData?.user;
+      if (authUser) {
+        await sincronizarIdentidad(authUser, metadata);
+
+        if (selectedKey === 'profesional' && ofertaParam) {
+          try {
+            const { data: pers } = await supabase
+              .from('personal')
+              .select('id')
+              .or(`profile_id.eq.${authUser.id},user_id.eq.${authUser.id}`)
+              .limit(1)
+              .maybeSingle();
+
+            if (pers?.id) {
+              await supabase.from('postulaciones_profesionales').insert({
+                oferta_id: ofertaParam,
+                personal_id: pers.id,
+                user_id: authUser.id,
+                estado: 'POSTULADO',
+              });
+            }
+          } catch {
+            // Postulación opcional
           }
-        } catch (mpErr) {
-          console.warn('Redirección Mercado Pago omitida:', mpErr);
         }
       }
 
-      if (effectiveTipo === 'PROFESIONAL') {
-        router.push('/mi-portal');
-      } else if (effectiveTipo === 'CLIENTE') {
+      if (selectedKey === 'constructor' && selectedPlan !== 'cotizador_free') {
+        const tipoProductoMp = MAPA_TIPO_PRODUCTO_MP[selectedPlan];
+        if (tipoProductoMp) {
+          try {
+            const resp = await fetch('/api/pagos/mercadopago/preference', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                tipo_producto: tipoProductoMp,
+                user_id: authUser?.id || null,
+                email: form.email.trim(),
+                nombre: form.nombre.trim(),
+                telefono: form.telefono.trim(),
+              }),
+            });
+            const mpData = await resp.json();
+            if (mpData?.init_point) {
+              window.location.href = mpData.init_point;
+              return;
+            }
+          } catch (mpErr) {
+            console.warn('Error iniciando checkout Mercado Pago:', mpErr);
+          }
+        }
+      }
+
+      if (!signUpData?.session) {
+        setSuccessMsg(
+          'Cuenta creada correctamente. Revise su correo electrónico para confirmar la cuenta e iniciar sesión.'
+        );
+        return;
+      }
+
+      if (selectedKey === 'profesional') {
+        router.push('/mi-portal?onboarding=1');
+      } else if (selectedKey === 'inmueble') {
+        router.push('/mi-portal?tab=inmuebles');
+      } else if (selectedKey === 'cliente') {
         router.push('/cotizador');
       } else {
         router.push('/erp');
       }
     } catch (err) {
-      setErrorMsg(err.message || 'Error inesperado durante el registro.');
+      setErrorMsg(err?.message || 'No fue posible completar el registro.');
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050b16', color: '#f8fafc', fontFamily: 'var(--font-inter), sans-serif', paddingBottom: 64 }}>
-      <header style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '18px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1180, margin: '0 auto' }}>
-        <Link href="/" style={{ color: '#f8fafc', textDecoration: 'none', fontWeight: 900, fontSize: 20 }}>
-          KALARTI <span style={{ color: '#d4af37', fontSize: 12, fontWeight: 700 }}>ONBOARDING UNIFICADO</span>
-        </Link>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <span style={{ fontSize: 13, color: '#94a3b8' }}>¿Ya tienes cuenta?</span>
-          <Link href="/erp" style={{ color: '#d4af37', textDecoration: 'none', fontWeight: 700, fontSize: 13, padding: '7px 14px', borderRadius: 8, border: '1px solid rgba(212,175,55,0.35)' }}>
-            Iniciar Sesión ➔
+    <div className="manual-reg-page">
+      <style>{`
+        .manual-reg-page {
+          min-height: 100vh;
+          background: #ffffff;
+          color: #0f172a;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          line-height: 1.6;
+        }
+        .manual-reg-nav {
+          border-bottom: 1px solid #e2e8f0;
+          padding: 16px 28px;
+          background: #ffffff;
+        }
+        .manual-reg-nav-inner {
+          max-width: 1180px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+        .manual-reg-container {
+          max-width: 1180px;
+          margin: 0 auto;
+          padding: 36px 28px 80px;
+        }
+        /* PASO 1 EN 2 COLUMNAS: Izquierda lista con check y recuadro verde / Derecha información general */
+        .step1-two-cols {
+          display: grid;
+          grid-template-columns: 0.95fr 1.25fr;
+          gap: 28px;
+          align-items: stretch;
+          margin-bottom: 36px;
+        }
+        .profile-checklist {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .profile-check-item {
+          width: 100%;
+          text-align: left;
+          background: #ffffff;
+          border: 1.5px solid #cbd5e1;
+          border-radius: 6px;
+          padding: 14px 16px;
+          cursor: pointer;
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          transition: all 0.16s ease;
+        }
+        .profile-check-item:hover {
+          border-color: #64748b;
+        }
+        .profile-check-item.selected {
+          border: 2px solid #16a34a;
+          background: #f0fdf4;
+          box-shadow: 0 2px 10px rgba(22, 163, 74, 0.08);
+        }
+        .profile-check-box {
+          width: 22px;
+          height: 22px;
+          min-width: 22px;
+          border-radius: 4px;
+          border: 2px solid #94a3b8;
+          background: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 2px;
+          font-size: 13px;
+          font-weight: 900;
+          color: transparent;
+          transition: all 0.15s ease;
+        }
+        .profile-check-item.selected .profile-check-box {
+          background: #16a34a;
+          border-color: #16a34a;
+          color: #ffffff;
+        }
+        .step1-info-panel {
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          padding: 28px;
+          background: #ffffff;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        .manual-reg-form-box {
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          padding: 32px;
+          background: #ffffff;
+        }
+        .manual-input {
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid #cbd5e1;
+          border-radius: 4px;
+          background: #ffffff;
+          color: #0f172a;
+          font-size: 14px;
+          box-sizing: border-box;
+        }
+        .manual-input:focus {
+          outline: none;
+          border-color: #0f172a;
+        }
+        .manual-label {
+          display: block;
+          font-size: 12px;
+          font-weight: 700;
+          color: #334155;
+          margin-bottom: 6px;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+        .manual-row-2 {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 16px;
+          margin-bottom: 16px;
+        }
+        .manual-row-3 {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 16px;
+          margin-bottom: 16px;
+        }
+        @media (max-width: 900px) {
+          .step1-two-cols {
+            grid-template-columns: 1fr;
+          }
+        }
+        @media (max-width: 768px) {
+          .manual-reg-container {
+            padding: 24px 18px 60px;
+          }
+          .manual-reg-form-box,
+          .step1-info-panel {
+            padding: 20px;
+          }
+          .manual-row-2,
+          .manual-row-3 {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
+
+      <header className="manual-reg-nav">
+        <div className="manual-reg-nav-inner">
+          <Link href="/" style={{ fontWeight: 800, fontSize: 15, letterSpacing: '0.08em', color: '#0f172a', textDecoration: 'none' }}>
+            KALARTI — REGISTRO UNIFICADO
           </Link>
+          <div style={{ display: 'flex', gap: 18, alignItems: 'center', fontSize: 13 }}>
+            <Link href="/erp" style={{ color: '#0f172a', fontWeight: 600, textDecoration: 'underline' }}>
+              Ya tengo cuenta — Iniciar Sesión
+            </Link>
+          </div>
         </div>
       </header>
 
-      <main style={{ maxWidth: 1080, margin: '0 auto', padding: '40px 20px' }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <h1 style={{ fontSize: 'clamp(24px, 3.6vw, 36px)', fontWeight: 900, margin: '0 0 8px' }}>
-            ¿Cómo quieres participar en el Ecosistema Kalarti?
+      <main className="manual-reg-container">
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#64748b', marginBottom: 6 }}>
+            Paso 01 — Selección de Perfil en el Ecosistema
+          </div>
+          <h1 style={{ fontSize: 'clamp(24px, 3vw, 32px)', fontWeight: 800, margin: 0 }}>
+            Seleccione su perfil a la izquierda y revise el alcance a la derecha
           </h1>
-          <p style={{ color: '#94a3b8', fontSize: 14, margin: 0 }}>
-            Selecciona tu perfil para configurar tu cuenta y herramientas a la medida desde el primer minuto.
-          </p>
         </div>
 
-        {/* Gateway de 4 Tarjetas */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(235px, 1fr))', gap: 16, marginBottom: 36 }}>
-          {PERFILES_GATEWAY.map((card) => {
-            const isSelected =
-              selectedTipo === card.id || (card.id === 'comercio' && selectedTipo === 'proveedor');
-            return (
-              <button
-                key={card.id}
-                type="button"
-                onClick={() => handleSelectCard(card.id)}
-                style={{
-                  textAlign: 'left',
-                  background: isSelected ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.78)',
-                  border: isSelected ? `2px solid ${card.color}` : '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 14,
-                  padding: 20,
-                  color: '#f8fafc',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  gap: 12,
-                  boxShadow: isSelected ? `0 8px 25px -6px ${card.color}40` : 'none',
-                  transition: 'all 0.18s',
-                }}
-              >
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                    <span style={{ fontSize: 30 }}>{card.icon}</span>
-                    <span style={{ fontSize: 10, fontWeight: 800, padding: '3px 8px', borderRadius: 999, background: `${card.color}22`, color: card.color }}>
-                      {card.badge}
-                    </span>
+        {/* PASO 1 EN 2 COLUMNAS: IZQUIERDA CASILLAS EN LISTA CON CHECK Y RECUADRO VERDE / DERECHA INFORMACIÓN GENERAL */}
+        <div className="step1-two-cols">
+          {/* COLUMNA IZQUIERDA: LISTA CON CHECK Y RECUADRO EN VERDE */}
+          <div className="profile-checklist">
+            {PERFILES_GATEWAY.map((p) => {
+              const active = selectedKey === p.key;
+              return (
+                <button
+                  key={p.key}
+                  type="button"
+                  className={`profile-check-item ${active ? 'selected' : ''}`}
+                  onClick={() => {
+                    setSelectedKey(p.key);
+                    setErrorMsg('');
+                  }}
+                >
+                  <span className="profile-check-box" aria-hidden="true">
+                    ✓
+                  </span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+                      <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase', color: active ? '#15803d' : '#64748b' }}>
+                        Perfil {p.code} {active ? '· Seleccionado' : ''}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 14.5, fontWeight: 800, color: '#0f172a', marginBottom: 3 }}>
+                      {p.titulo}
+                    </div>
+                    <div style={{ fontSize: 12.5, color: '#475569', lineHeight: 1.45 }}>
+                      {p.subtitulo}
+                    </div>
                   </div>
-                  <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }}>{card.titulo}</div>
-                  <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 8 }}>{card.subtitulo}</div>
-                  <p style={{ fontSize: 12, color: '#cbd5e1', margin: 0, lineHeight: 1.45, fontStyle: 'italic' }}>
-                    &ldquo;{card.frase}&rdquo;
-                  </p>
-                </div>
-                <div style={{ fontSize: 12, fontWeight: 800, color: card.color }}>
-                  {isSelected ? '✓ Perfil seleccionado' : 'Elegir este perfil ➔'}
-                </div>
-              </button>
-            );
-          })}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* COLUMNA DERECHA: INFORMACIÓN GENERAL Y ALCANCE DEL PERFIL SELECCIONADO */}
+          <div className="step1-info-panel">
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, paddingBottom: 14, marginBottom: 16, borderBottom: '1px solid #e2e8f0' }}>
+                <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#15803d' }}>
+                  Información General — Perfil {perfilActual.code}
+                </span>
+                <span style={{ fontSize: 11.5, fontWeight: 700, padding: '4px 10px', borderRadius: 4, background: '#f0fdf4', color: '#166534', border: '1px solid #86efac' }}>
+                  {perfilActual.condicion}
+                </span>
+              </div>
+
+              <h2 style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', margin: '0 0 10px 0' }}>
+                {perfilActual.titulo}
+              </h2>
+              <p style={{ fontSize: 14, color: '#334155', lineHeight: 1.65, margin: '0 0 18px 0' }}>
+                {perfilActual.detalleGeneral}
+              </p>
+
+              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#0f172a', marginBottom: 10 }}>
+                Funciones y Condiciones Habilitadas:
+              </div>
+              <ul style={{ margin: '0 0 20px 0', paddingLeft: 18, fontSize: 13.5, color: '#334155', lineHeight: 1.6 }}>
+                {(perfilActual.alcance || []).map((item) => (
+                  <li key={item} style={{ marginBottom: 8 }}>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div style={{ paddingTop: 14, borderTop: '1px solid #e2e8f0', fontSize: 12.5, color: '#475569', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+              <span>Identidad única sincronizada con el ecosistema web y ERP bajo Ley 1581 de 2012.</span>
+              <a href="#formulario-paso-2" style={{ color: '#15803d', fontWeight: 700, textDecoration: 'none' }}>
+                Continuar al Paso 02 ↓
+              </a>
+            </div>
+          </div>
         </div>
 
-        {/* Formulario Contextualizado */}
-        {selectedTipo && (
-          <form
-            onSubmit={handleSubmit}
-            style={{
-              background: 'rgba(15, 23, 42, 0.92)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: 16,
-              padding: '28px 24px',
-              maxWidth: 780,
-              margin: '0 auto',
-            }}
-          >
-            <div style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: 14, marginBottom: 20 }}>
-              <h2 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 4px', color: '#f8fafc' }}>
-                {selectedTipo === 'profesional' && '👷 Registro en la Red de Profesionales y Cuadrillas'}
-                {selectedTipo === 'constructor' && '🏗️ Registro de Constructora / Contratista (ERP 5D)'}
-                {(selectedTipo === 'comercio' || selectedTipo === 'proveedor') && '🏪 Registro de Comercio, Ferretería o Proveedor'}
-                {selectedTipo === 'cliente' && '🏢 Registro de Inversionista / Cliente Final'}
+        {/* PASO 2: FORMULARIO CONTEXTUALIZADO */}
+        {perfilActual && (
+          <div id="formulario-paso-2" className="manual-reg-form-box">
+            <div style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: 16, marginBottom: 22 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#15803d', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                Paso 02 — Formulario de Afiliación ({perfilActual.titulo})
+              </div>
+              <h2 style={{ fontSize: 20, fontWeight: 800, margin: '4px 0 4px 0' }}>
+                Complete los datos del titular o representante
               </h2>
-              <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>
-                Completa tus datos principales. Podrás adjuntar certificados y portafolio en el siguiente paso.
+              <p style={{ fontSize: 13.5, color: '#475569', margin: 0 }}>
+                {perfilActual.subtitulo}
               </p>
             </div>
 
             {errorMsg && (
-              <div style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#fca5a5', padding: '10px 14px', borderRadius: 8, fontSize: 13, marginBottom: 16 }}>
-                ⚠️ {errorMsg}
+              <div style={{ padding: '12px 14px', border: '1px solid #dc2626', background: '#fef2f2', color: '#991b1b', fontSize: 13, marginBottom: 18 }}>
+                {errorMsg}
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14, marginBottom: 16 }}>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
-                  Nombre Completo *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={form.nombre}
-                  onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-                  placeholder="Ej: Ing. Carlos Andrés Revelo"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
-                  Correo Electrónico *
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="correo@ejemplo.com"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
-                  Contraseña (mín. 6 caracteres) *
-                </label>
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="••••••••"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
-                  Teléfono / WhatsApp *
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={form.telefono}
-                  onChange={(e) => setForm({ ...form, telefono: e.target.value })}
-                  placeholder="Ej: 300 123 4567"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
-                  Ciudad / Municipio Base *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={form.ciudad}
-                  onChange={(e) => setForm({ ...form, ciudad: e.target.value })}
-                  placeholder="Ej: Pasto, Ipiales, Cali..."
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
-                  Documento / Cédula
-                </label>
-                <input
-                  type="text"
-                  value={form.cedula}
-                  onChange={(e) => setForm({ ...form, cedula: e.target.value })}
-                  placeholder="Número de identificación"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                />
-              </div>
-            </div>
-
-            {/* Campos específicos: PROFESIONAL */}
-            {selectedTipo === 'profesional' && (
-              <div style={{ background: 'rgba(56, 189, 248, 0.06)', border: '1px solid rgba(56, 189, 248, 0.22)', borderRadius: 12, padding: 18, marginBottom: 18 }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#38bdf8', marginBottom: 12 }}>
-                  🛠️ Perfil Técnico, Oficios y Tarifas de Referencia
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 14 }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 4 }}>
-                      Profesión o Especialidad Principal
-                    </label>
-                    <input
-                      type="text"
-                      value={form.profesion}
-                      onChange={(e) => setForm({ ...form, profesion: e.target.value })}
-                      placeholder="Ej: Maestro de Obra / Ing. Civil / Oficial"
-                      style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 4 }}>
-                      Tarifa de Referencia (COP)
-                    </label>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      <input
-                        type="number"
-                        value={form.tarifa_referencia}
-                        onChange={(e) => setForm({ ...form, tarifa_referencia: e.target.value })}
-                        placeholder="Ej: 85000"
-                        style={{ flex: 1, padding: '9px 10px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                      />
-                      <select
-                        value={form.tarifa_unidad}
-                        onChange={(e) => setForm({ ...form, tarifa_unidad: e.target.value })}
-                        style={{ width: 85, padding: '9px 6px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 12 }}
-                      >
-                        <option value="Día">/ Día</option>
-                        <option value="Mes">/ Mes</option>
-                        <option value="Hora">/ Hora</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 4 }}>
-                      Años de Experiencia
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="60"
-                      value={form.anos_experiencia}
-                      onChange={(e) => setForm({ ...form, anos_experiencia: e.target.value })}
-                      style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                    />
-                  </div>
-                </div>
-
-                {/* Selector Múltiple de Cargos / Oficios vinculado a la tabla cargos */}
-                <div style={{ marginBottom: 14 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, flexWrap: 'wrap', gap: 8 }}>
-                    <label style={{ fontSize: 12, fontWeight: 700, color: '#cbd5e1' }}>
-                      Cargos / Oficios que desempeñas en obra ({form.cargos_ids.length} seleccionados) *
-                    </label>
-                    <input
-                      type="text"
-                      value={cargoQuery}
-                      onChange={(e) => setCargoQuery(e.target.value)}
-                      placeholder="🔍 Filtrar cargos con escritura..."
-                      style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 12, width: 220 }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: 6,
-                      maxHeight: 150,
-                      overflowY: 'auto',
-                      padding: 10,
-                      background: '#070d19',
-                      borderRadius: 8,
-                      border: '1px solid #1e293b',
-                    }}
-                  >
-                    {filteredCargos.map((c) => {
-                      const active = form.cargos_ids.includes(c.id);
-                      return (
-                        <button
-                          key={c.id}
-                          type="button"
-                          onClick={() => toggleCargo(c.id)}
-                          style={{
-                            padding: '5px 10px',
-                            borderRadius: 999,
-                            fontSize: 11,
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            border: active ? '1px solid #38bdf8' : '1px solid #334155',
-                            background: active ? 'rgba(56,189,248,0.22)' : 'rgba(15,23,42,0.8)',
-                            color: active ? '#38bdf8' : '#cbd5e1',
-                          }}
-                        >
-                          {active ? '✓ ' : '+ '}{c.nombre}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Municipios de cobertura */}
-                <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
-                    📍 Municipios donde puedes trabajar o desplazar tu cuadrilla
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {MUNICIPIOS_SUGERIDOS.map((mun) => {
-                      const active = form.municipios_cobertura.includes(mun);
-                      return (
-                        <button
-                          key={mun}
-                          type="button"
-                          onClick={() => toggleMunicipio(mun)}
-                          style={{
-                            padding: '4px 10px',
-                            borderRadius: 999,
-                            fontSize: 11,
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            border: active ? '1px solid #10b981' : '1px solid #334155',
-                            background: active ? 'rgba(16,185,129,0.2)' : 'transparent',
-                            color: active ? '#34d399' : '#94a3b8',
-                          }}
-                        >
-                          {active ? '✓ ' : ''}{mun}
-                        </button>
-                      );
-                    })}
-                  </div>
+            {successMsg && (
+              <div style={{ padding: '14px 16px', border: '1px solid #16a34a', background: '#f0fdf4', color: '#166534', fontSize: 13.5, marginBottom: 18 }}>
+                {successMsg}
+                <div style={{ marginTop: 10 }}>
+                  <Link href="/erp" style={{ color: '#166534', fontWeight: 700, textDecoration: 'underline' }}>
+                    Ir a Iniciar Sesión ➔
+                  </Link>
                 </div>
               </div>
             )}
 
-            {/* Campos específicos: CONSTRUCTOR */}
-            {selectedTipo === 'constructor' && (
-              <div style={{ background: 'rgba(212, 175, 55, 0.06)', border: '1px solid rgba(212, 175, 55, 0.25)', borderRadius: 12, padding: 18, marginBottom: 18 }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#d4af37', marginBottom: 12 }}>
-                  🏗️ Datos de la Constructora / Contratista (Espacio Multi-Tenant Aislado)
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginBottom: 14 }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 4 }}>
-                      Razón Social o Nombre de tu Firma *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={form.empresa}
-                      onChange={(e) => setForm({ ...form, empresa: e.target.value })}
-                      placeholder="Ej: Constructora Andina S.A.S."
-                      style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 4 }}>
-                      NIT / RUT
-                    </label>
-                    <input
-                      type="text"
-                      value={form.nit}
-                      onChange={(e) => setForm({ ...form, nit: e.target.value })}
-                      placeholder="Ej: 901.234.567-8"
-                      style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                    />
-                  </div>
-                </div>
-
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
-                  Plan de Suscripción (Pago único o recurrente vía Mercado Pago)
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 8 }}>
-                  <button
-                    type="button"
-                    onClick={() => setForm({ ...form, plan: 'free' })}
-                    style={{
-                      padding: 10,
-                      borderRadius: 8,
-                      border: form.plan === 'free' ? '2px solid #d4af37' : '1px solid #334155',
-                      background: form.plan === 'free' ? 'rgba(212,175,55,0.14)' : '#0b1324',
-                      color: '#f8fafc',
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <div style={{ fontSize: 12, fontWeight: 800 }}>Prueba Inicial</div>
-                    <div style={{ fontSize: 11, color: '#94a3b8' }}>1 proyecto básico</div>
-                  </button>
-                  {PLANES_CONSTRUCTORAS.map((pl) => (
+            <form onSubmit={handleSubmit}>
+              {/* SUBMODALIDAD COMERCIO VS PROVEEDOR */}
+              {selectedKey === 'comercio' && (
+                <div style={{ marginBottom: 20, padding: 16, border: '1px solid #e2e8f0', background: '#f8fafc' }}>
+                  <label className="manual-label">Modalidad Comercial</label>
+                  <div className="manual-row-2" style={{ marginBottom: 0 }}>
                     <button
-                      key={pl.key}
                       type="button"
-                      onClick={() => setForm({ ...form, plan: pl.key })}
+                      onClick={() => setSubtipoComercio('COMERCIO')}
                       style={{
-                        padding: 10,
-                        borderRadius: 8,
-                        border: form.plan === pl.key ? '2px solid #d4af37' : '1px solid #334155',
-                        background: form.plan === pl.key ? 'rgba(212,175,55,0.14)' : '#0b1324',
-                        color: '#f8fafc',
+                        padding: 12,
                         textAlign: 'left',
+                        background: subtipoComercio === 'COMERCIO' ? '#f0fdf4' : '#ffffff',
+                        color: '#0f172a',
+                        border: subtipoComercio === 'COMERCIO' ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                        borderRadius: 4,
                         cursor: 'pointer',
                       }}
                     >
-                      <div style={{ fontSize: 12, fontWeight: 800 }}>{pl.nombre}</div>
-                      <div style={{ fontSize: 11, color: '#d4af37', fontWeight: 700 }}>
-                        {formatMoney(pl.precio.COP, 'COP')} {pl.periodo}
+                      <div style={{ fontWeight: 700, fontSize: 13 }}>
+                        {subtipoComercio === 'COMERCIO' ? '✓ ' : ''}Ferretería / Depósito con POS
+                      </div>
+                      <div style={{ fontSize: 11.5, color: '#475569' }}>
+                        Caja registradora POS, inventario multi-sede y tienda en Marketplace.
                       </div>
                     </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Campos específicos: COMERCIO / PROVEEDOR */}
-            {(selectedTipo === 'comercio' || selectedTipo === 'proveedor') && (
-              <div style={{ background: 'rgba(16, 185, 129, 0.06)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: 12, padding: 18, marginBottom: 18 }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#10b981', marginBottom: 12 }}>
-                  🏪 Configuración Comercial (POS & Marketplace Kalarti)
-                </div>
-                <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
-                  <button
-                    type="button"
-                    onClick={() => setForm({ ...form, subtipo_comercio: 'COMERCIO' })}
-                    style={{
-                      flex: 1,
-                      padding: '10px 12px',
-                      borderRadius: 8,
-                      border: form.subtipo_comercio === 'COMERCIO' ? '2px solid #10b981' : '1px solid #334155',
-                      background: form.subtipo_comercio === 'COMERCIO' ? 'rgba(16,185,129,0.15)' : '#0b1324',
-                      color: '#f8fafc',
-                      fontSize: 12,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    🏪 Ferretería / Depósito (POS + Inventario + Marketplace)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setForm({ ...form, subtipo_comercio: 'PROVEEDOR' })}
-                    style={{
-                      flex: 1,
-                      padding: '10px 12px',
-                      borderRadius: 8,
-                      border: form.subtipo_comercio === 'PROVEEDOR' ? '2px solid #f59e0b' : '1px solid #334155',
-                      background: form.subtipo_comercio === 'PROVEEDOR' ? 'rgba(245,158,11,0.15)' : '#0b1324',
-                      color: '#f8fafc',
-                      fontSize: 12,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    🏭 Proveedor / Fabricante (Catálogo B2B y Precios APU)
-                  </button>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 4 }}>
-                      Nombre Comercial del Establecimiento *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={form.empresa}
-                      onChange={(e) => setForm({ ...form, empresa: e.target.value })}
-                      placeholder="Ej: Ferretería El Constructor del Sur"
-                      style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 4 }}>
-                      NIT / Cámara de Comercio
-                    </label>
-                    <input
-                      type="text"
-                      value={form.nit}
-                      onChange={(e) => setForm({ ...form, nit: e.target.value })}
-                      placeholder="Ej: 900.111.222-3"
-                      style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #334155', background: '#0b1324', color: '#f8fafc', fontSize: 13 }}
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setSubtipoComercio('PROVEEDOR')}
+                      style={{
+                        padding: 12,
+                        textAlign: 'left',
+                        background: subtipoComercio === 'PROVEEDOR' ? '#f0fdf4' : '#ffffff',
+                        color: '#0f172a',
+                        border: subtipoComercio === 'PROVEEDOR' ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                        borderRadius: 4,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, fontSize: 13 }}>
+                        {subtipoComercio === 'PROVEEDOR' ? '✓ ' : ''}Proveedor / Fabricante B2B
+                      </div>
+                      <div style={{ fontSize: 11.5, color: '#475569' }}>
+                        Catálogo mayorista e integración de precios en APUs regionales.
+                      </div>
+                    </button>
                   </div>
                 </div>
+              )}
+
+              {/* SUBMODALIDAD INMUEBLE: PARTICULAR (3%) VS INMOBILIARIA (0.3%) */}
+              {selectedKey === 'inmueble' && (
+                <div style={{ marginBottom: 20, padding: 16, border: '1px solid #e2e8f0', background: '#f8fafc' }}>
+                  <label className="manual-label">Modalidad Contractual de Publicación Inmobiliaria</label>
+                  <div className="manual-row-2" style={{ marginBottom: 0 }}>
+                    <button
+                      type="button"
+                      onClick={() => setSubtipoInmueble('PARTICULAR')}
+                      style={{
+                        padding: 14,
+                        textAlign: 'left',
+                        background: subtipoInmueble === 'PARTICULAR' ? '#f0fdf4' : '#ffffff',
+                        color: '#0f172a',
+                        border: subtipoInmueble === 'PARTICULAR' ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                        borderRadius: 4,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <div style={{ fontWeight: 800, fontSize: 13.5, marginBottom: 4 }}>
+                        {subtipoInmueble === 'PARTICULAR' ? '✓ ' : ''}Propietario Particular — Comisión 3.0%
+                      </div>
+                      <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.45 }}>
+                        Kalarti asesora, impulsa la venta con sus propios corredores y realiza el seguimiento de leads.
+                        Privacidad total de los datos del propietario.
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSubtipoInmueble('INMOBILIARIA')}
+                      style={{
+                        padding: 14,
+                        textAlign: 'left',
+                        background: subtipoInmueble === 'INMOBILIARIA' ? '#f0fdf4' : '#ffffff',
+                        color: '#0f172a',
+                        border: subtipoInmueble === 'INMOBILIARIA' ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                        borderRadius: 4,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <div style={{ fontWeight: 800, fontSize: 13.5, marginBottom: 4 }}>
+                        {subtipoInmueble === 'INMOBILIARIA' ? '✓ ' : ''}Inmobiliaria / Agencia — Comisión 0.3%
+                      </div>
+                      <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.45 }}>
+                        Administración aislada de cartera de inmuebles, CRM propio para seguimiento de prospectos y
+                        creación de múltiples perfiles de corredores.
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* PLANES CONSTRUCTOR */}
+              {selectedKey === 'constructor' && (
+                <div style={{ marginBottom: 20, padding: 16, border: '1px solid #e2e8f0', background: '#f8fafc' }}>
+                  <label className="manual-label">Plan de Suscripción</label>
+                  <div className="manual-row-2" style={{ marginBottom: 0 }}>
+                    {PLANES_CONSTRUCTORAS.map((pl) => (
+                      <button
+                        key={pl.id}
+                        type="button"
+                        onClick={() => setSelectedPlan(pl.id)}
+                        style={{
+                          padding: 12,
+                          textAlign: 'left',
+                          background: selectedPlan === pl.id ? '#f0fdf4' : '#ffffff',
+                          color: '#0f172a',
+                          border: selectedPlan === pl.id ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <div style={{ fontWeight: 700, fontSize: 13 }}>
+                          {selectedPlan === pl.id ? '✓ ' : ''}
+                          {pl.nombre}
+                        </div>
+                        <div style={{ fontSize: 12, color: '#475569' }}>
+                          {pl.precio === 0 ? 'Sin costo' : `${formatMoney(pl.precio)} / ${pl.periodo}`}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="manual-row-2">
+                <div>
+                  <label className="manual-label">Nombres y Apellidos *</label>
+                  <input
+                    className="manual-input"
+                    required
+                    value={form.nombre}
+                    onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                    placeholder="Nombre completo del titular o representante"
+                  />
+                </div>
+                <div>
+                  <label className="manual-label">Cédula o NIT *</label>
+                  <input
+                    className="manual-input"
+                    required
+                    value={form.documento}
+                    onChange={(e) => setForm({ ...form, documento: e.target.value })}
+                    placeholder="Número de identificación tributaria o personal"
+                  />
+                </div>
               </div>
-            )}
 
-            {/* Consentimiento Ley 1581 Habeas Data */}
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 10,
-                padding: '12px 14px',
-                background: 'rgba(255,255,255,0.03)',
-                borderRadius: 10,
-                border: '1px solid rgba(255,255,255,0.08)',
-                fontSize: 12,
-                color: '#cbd5e1',
-                cursor: 'pointer',
-                marginBottom: 20,
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={form.acepta_habeas_data}
-                onChange={(e) => setForm({ ...form, acepta_habeas_data: e.target.checked })}
-                style={{ marginTop: 3 }}
-              />
-              <span>
-                Autorizo de manera libre y expresa el tratamiento de mis datos personales conforme a la{' '}
-                <Link href="/privacidad" style={{ color: '#38bdf8' }}>
-                  Ley 1581 de 2012 (Habeas Data)
-                </Link>
-                . Entiendo que en la Red de Talento mis datos de contacto y documentos sensibles permanecerán protegidos y solo se compartirán cuando me postule a una convocatoria o acepte una vinculación.
-              </span>
-            </label>
+              {(selectedKey === 'constructor' ||
+                selectedKey === 'comercio' ||
+                (selectedKey === 'inmueble' && subtipoInmueble === 'INMOBILIARIA')) && (
+                <div style={{ marginBottom: 16 }}>
+                  <label className="manual-label">Razón Social / Nombre de la Empresa o Inmobiliaria *</label>
+                  <input
+                    className="manual-input"
+                    required
+                    value={form.empresa}
+                    onChange={(e) => setForm({ ...form, empresa: e.target.value })}
+                    placeholder="Razón social o nombre comercial"
+                  />
+                </div>
+              )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: '100%',
-                background: '#d4af37',
-                color: '#0f172a',
-                fontWeight: 900,
-                fontSize: 15,
-                padding: '14px 20px',
-                borderRadius: 10,
-                border: 'none',
-                cursor: loading ? 'wait' : 'pointer',
-              }}
-            >
-              {loading
-                ? 'Creando tu cuenta en el Ecosistema Kalarti...'
-                : selectedTipo === 'profesional'
-                ? 'Crear mi Perfil Profesional e Ir a Mi Portal ➔'
-                : selectedTipo === 'constructor' && form.plan !== 'free'
-                ? 'Crear Cuenta y Continuar a Mercado Pago ➔'
-                : 'Crear mi Cuenta Unificada ➔'}
-            </button>
-          </form>
+              <div className="manual-row-2">
+                <div>
+                  <label className="manual-label">Correo Electrónico *</label>
+                  <input
+                    className="manual-input"
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    placeholder="correo@dominio.com"
+                  />
+                </div>
+                <div>
+                  <label className="manual-label">Contraseña de Acceso *</label>
+                  <input
+                    className="manual-input"
+                    type="password"
+                    required
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    placeholder="Mínimo 6 caracteres"
+                  />
+                </div>
+              </div>
+
+              <div className="manual-row-3">
+                <div>
+                  <label className="manual-label">Teléfono / WhatsApp *</label>
+                  <input
+                    className="manual-input"
+                    required
+                    value={form.telefono}
+                    onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+                    placeholder="+57 300 000 0000"
+                  />
+                </div>
+                <div>
+                  <label className="manual-label">País</label>
+                  <input
+                    className="manual-input"
+                    value={form.pais}
+                    onChange={(e) => setForm({ ...form, pais: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="manual-label">Ciudad / Municipio *</label>
+                  <input
+                    className="manual-input"
+                    list="municipios-list"
+                    required
+                    value={form.ciudad}
+                    onChange={(e) => setForm({ ...form, ciudad: e.target.value })}
+                  />
+                  <datalist id="municipios-list">
+                    {MUNICIPIOS_BASE.map((m) => (
+                      <option key={m} value={m} />
+                    ))}
+                  </datalist>
+                </div>
+              </div>
+
+              {/* CAMPOS ESPECÍFICOS PROFESIONAL */}
+              {selectedKey === 'profesional' && (
+                <div style={{ marginTop: 18, paddingTop: 18, borderTop: '1px solid #e2e8f0' }}>
+                  <div className="manual-row-3">
+                    <div>
+                      <label className="manual-label">Profesión u Oficio Principal *</label>
+                      <input
+                        className="manual-input"
+                        required
+                        value={form.profesion}
+                        onChange={(e) => setForm({ ...form, profesion: e.target.value })}
+                        placeholder="Ej. Ingeniero Civil, Maestro de Obra..."
+                      />
+                    </div>
+                    <div>
+                      <label className="manual-label">Años de Experiencia</label>
+                      <input
+                        className="manual-input"
+                        type="number"
+                        min="0"
+                        value={form.anos_experiencia}
+                        onChange={(e) => setForm({ ...form, anos_experiencia: e.target.value })}
+                        placeholder="Ej. 5"
+                      />
+                    </div>
+                    <div>
+                      <label className="manual-label">Tarifa de Referencia (COP / Día)</label>
+                      <input
+                        className="manual-input"
+                        type="number"
+                        min="0"
+                        value={form.tarifa_referencia}
+                        onChange={(e) => setForm({ ...form, tarifa_referencia: e.target.value })}
+                        placeholder="Opcional"
+                      />
+                    </div>
+                  </div>
+
+                  {cargosCatalogo.length > 0 && (
+                    <div style={{ marginBottom: 18 }}>
+                      <label className="manual-label">
+                        Cargos y Especialidades en Obra (seleccione uno o varios)
+                      </label>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: 6,
+                          maxHeight: 165,
+                          overflowY: 'auto',
+                          padding: 10,
+                          border: '1px solid #cbd5e1',
+                          borderRadius: 4,
+                        }}
+                      >
+                        {cargosCatalogo.map((c) => {
+                          const sel = selectedCargos.includes(c.id);
+                          return (
+                            <button
+                              key={c.id}
+                              type="button"
+                              onClick={() => toggleCargo(c.id)}
+                              style={{
+                                fontSize: 12,
+                                padding: '5px 10px',
+                                borderRadius: 3,
+                                cursor: 'pointer',
+                                border: sel ? '1.5px solid #16a34a' : '1px solid #cbd5e1',
+                                background: sel ? '#f0fdf4' : '#ffffff',
+                                color: sel ? '#166534' : '#0f172a',
+                                fontWeight: sel ? 700 : 500,
+                              }}
+                            >
+                              {sel ? '✓ ' : ''}
+                              {c.nombre}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ACEPTACIÓN CONTRACTUAL INMUEBLES */}
+              {selectedKey === 'inmueble' && (
+                <div style={{ marginTop: 14, padding: 14, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 12.5, color: '#334155' }}>
+                  <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={form.acepta_contrato_comision}
+                      onChange={(e) => setForm({ ...form, acepta_contrato_comision: e.target.checked })}
+                      style={{ marginTop: 3 }}
+                    />
+                    <span>
+                      {subtipoInmueble === 'INMOBILIARIA' ? (
+                        <>
+                          <strong>Acuerdo de Afiliación para Inmobiliarias (Comisión 0.3%):</strong> Acepto que nuestra
+                          agencia administrará sus inmuebles, su CRM de prospectos y sus perfiles de corredores de
+                          manera aislada, reconociendo a KALARTI S.A.S. una comisión tecnológica del{' '}
+                          <strong>0.3%</strong> únicamente sobre las ventas efectivamente cerradas a través de la
+                          plataforma.
+                        </>
+                      ) : (
+                        <>
+                          <strong>Mandato de Corretaje para Propietario Particular (Comisión 3.0%):</strong> Autorizo a
+                          KALARTI S.A.S. para asesorar, promocionar e impulsar la venta de mi inmueble mediante sus
+                          corredores y realizar el seguimiento de leads, reconociendo una comisión del{' '}
+                          <strong>3.0%</strong> sobre el valor de venta efectiva al cierre del negocio. Mis datos
+                          personales de contacto se mantendrán bajo reserva frente al público general.
+                        </>
+                      )}
+                    </span>
+                  </label>
+                </div>
+              )}
+
+              {/* HABEAS DATA LEY 1581 */}
+              <div style={{ marginTop: 14, padding: 14, border: '1px solid #e2e8f0', fontSize: 12.5, color: '#334155' }}>
+                <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={form.acepta_habeas_data}
+                    onChange={(e) => setForm({ ...form, acepta_habeas_data: e.target.checked })}
+                    style={{ marginTop: 3 }}
+                  />
+                  <span>
+                    Autorizo de manera libre, previa, expresa e informada a <strong>KALARTI S.A.S.</strong> para el
+                    tratamiento de mis datos personales y técnicos conforme a la{' '}
+                    <Link href="/privacidad" target="_blank" style={{ color: '#0f172a', fontWeight: 700 }}>
+                      Política de Privacidad y Tratamiento de Datos — Ley 1581 de 2012 (Habeas Data)
+                    </Link>
+                    .
+                  </span>
+                </label>
+              </div>
+
+              <div style={{ marginTop: 22, display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  type="submit"
+                  disabled={busy}
+                  style={{
+                    background: '#0f172a',
+                    color: '#ffffff',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: 4,
+                    fontWeight: 700,
+                    fontSize: 14,
+                    cursor: busy ? 'wait' : 'pointer',
+                  }}
+                >
+                  {busy ? 'Procesando registro...' : 'Crear Cuenta y Continuar ➔'}
+                </button>
+              </div>
+            </form>
+          </div>
         )}
       </main>
     </div>
@@ -797,8 +1034,8 @@ function RegistroInner() {
 
 export default function RegistroPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#050b16', color: '#f8fafc', padding: 48, textAlign: 'center' }}>Cargando portal de registro...</div>}>
-      <RegistroInner />
+    <Suspense fallback={<div style={{ padding: 40, background: '#ffffff', color: '#0f172a' }}>Cargando formulario...</div>}>
+      <RegistroContent />
     </Suspense>
   );
 }

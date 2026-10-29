@@ -24,7 +24,8 @@ export default function HistorialPOSView() {
   const [filtroPV, setFiltroPV] = useState('TODOS');
   const [expandedId, setExpandedId] = useState(null);
 
-  const userTiendas = state.mkTiendas.filter(t => t.user_id === user?.id);
+  const isKalartiAdmin = ['gsalo90@outlook.com', 'guillermosalomonsolarte@gmail.com', 'arq.guillermo_salomon@kalarti.com'].includes((user?.email || '').toLowerCase()) || (user?.email || '').toLowerCase().endsWith('@kalarti.com');
+  const userTiendas = isKalartiAdmin ? (state.mkTiendas || []) : (state.mkTiendas || []).filter(t => t.user_id === user?.id);
   const [selectedTiendaId, setSelectedTiendaId] = useState('TODAS');
   const selectedTienda = userTiendas.find(t => t.id === selectedTiendaId) || null;
   const puntosVenta = state.mkPuntosVenta.filter(p => selectedTiendaId === 'TODAS' ? userTiendas.some(t => t.id === p.tienda_id) : p.tienda_id === selectedTiendaId);

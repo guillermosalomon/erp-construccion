@@ -28,8 +28,22 @@ export default function PuntoVentaView() {
     return () => { if (typeof window !== 'undefined') window.removeEventListener('db-error', handleDbError); };
   }, []);
 
-  // Múltiples tiendas del usuario
-  const userTiendas = state.mkTiendas.filter(t => t.user_id === user?.id);
+  // Múltiples tiendas del usuario (admins corporativos Kalarti ven todas las tiendas y priorizan las que tienen sucursales)
+  const isKalartiAdmin = useMemo(() => {
+    const em = (user?.email || '').toLowerCase();
+    return em.endsWith('@kalarti.com') || ['gsalo90@outlook.com', 'guillermosalomonsolarte@gmail.com', 'arq.guillermo_salomon@kalarti.com'].includes(em);
+  }, [user?.email]);
+
+  const userTiendas = useMemo(() => {
+    const base = isKalartiAdmin
+      ? (state.mkTiendas || [])
+      : (state.mkTiendas || []).filter(t => t.user_id === user?.id || (state.personalProyecto || []).some(ap => ap.tienda_id === t.id));
+    return [...base].sort((a, b) => {
+      const pvA = (state.mkPuntosVenta || []).filter(p => p.tienda_id === a.id).length;
+      const pvB = (state.mkPuntosVenta || []).filter(p => p.tienda_id === b.id).length;
+      return pvB - pvA;
+    });
+  }, [state.mkTiendas, state.mkPuntosVenta, state.personalProyecto, user?.id, isKalartiAdmin]);
   const [selectedTiendaId, setSelectedTiendaId] = useState(null);
   const [editingTienda, setEditingTienda] = useState(null);
 

@@ -9,8 +9,75 @@ export default function KalartiHub() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [activeAffiliation, setActiveAffiliation] = useState('talento');
+  const [footerForm, setFooterForm] = useState({ nombre: '', contacto: '', mensaje: '' });
+  const [footerSending, setFooterSending] = useState(false);
+  const [footerSent, setFooterSent] = useState(false);
   const audioRef = useRef(null);
   const userPausedRef = useRef(false);
+
+  const AFFILIATION_ITEMS = [
+    {
+      id: 'talento',
+      title: 'Red de Talento',
+      summary: 'Vinculación sin costo para profesionales, ingenieros, arquitectos, maestros y cuadrillas de obra. Postulación directa a licitaciones y contratación verificada por constructoras.',
+      manualHref: '/unete',
+      applyHref: '/registro?tipo=profesional',
+    },
+    {
+      id: 'proveedores',
+      title: 'Red de Proveedores',
+      summary: 'Afiliación B2B para fabricantes, distribuidores y proveedores de insumos. Sincronización de precios de materiales con los análisis de precios unitarios (APU) de la región.',
+      manualHref: '/proveedores',
+      applyHref: '/registro?tipo=proveedor',
+    },
+    {
+      id: 'comercio',
+      title: 'Activar Comercio y POS',
+      summary: 'Sistema integral de punto de venta (POS), control de inventario multi-bodega, facturación y catálogo en el Marketplace para ferreterías y depósitos de materiales.',
+      manualHref: '/comercio',
+      applyHref: '/registro?tipo=comercio',
+    },
+    {
+      id: 'planes',
+      title: 'Planes y Suscripciones ERP',
+      summary: 'Licenciamiento para constructoras y contratistas: presupuestos NSR-10, control financiero y programación 4D/5D, compras, almacén y acceso directo a la Red de Talento.',
+      manualHref: '/planes',
+      applyHref: '/planes',
+    },
+    {
+      id: 'inmueble',
+      title: 'Publicar Inmueble',
+      summary: 'Dos modalidades con aislamiento de privacidad (Ley 1581): Propietarios particulares con asesoría integral, promoción con nuestros corredores y seguimiento de leads (comisión 3% por venta); e Inmobiliarias con administración de cartera, CRM de prospectos y múltiples perfiles de corredores (comisión 0.3% por venta).',
+      manualHref: '/publicar-inmueble',
+      applyHref: '/publicar-inmueble',
+    },
+  ];
+
+  const handleFooterLead = async (e) => {
+    e.preventDefault();
+    if (!footerForm.nombre.trim() || !footerForm.contacto.trim()) return;
+    setFooterSending(true);
+    try {
+      await fetch('/api/marketing/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: footerForm.nombre.trim(),
+          email: footerForm.contacto.includes('@') ? footerForm.contacto.trim() : '',
+          telefono: !footerForm.contacto.includes('@') ? footerForm.contacto.trim() : '',
+          origen: 'footer_home_kalarti',
+          notas: footerForm.mensaje.trim() || 'Consulta desde el footer corporativo',
+        }),
+      });
+      setFooterSent(true);
+      setFooterForm({ nombre: '', contacto: '', mensaje: '' });
+    } catch {
+      setFooterSent(true);
+    } finally {
+      setFooterSending(false);
+    }
+  };
 
   useEffect(() => {
     const checkMobile = () => {
@@ -753,190 +820,480 @@ export default function KalartiHub() {
 
       </main>
       
-      {/* Barra Inferior Ecosistema Kalarti (4 Puntos de Acceso) + Footer Legal */}
-      <footer
-        style={{
-          background: 'linear-gradient(180deg, #070d19 0%, #030712 100%)',
-          borderTop: '1px solid rgba(212, 175, 55, 0.22)',
-          padding: '64px 24px 36px',
-          color: 'var(--text-muted)',
-        }}
-      >
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 36 }}>
-            <span
-              style={{
-                display: 'inline-block',
-                fontSize: 11,
-                fontWeight: 800,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: '#d4af37',
-                background: 'rgba(212, 175, 55, 0.1)',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                padding: '5px 14px',
-                borderRadius: 999,
-                marginBottom: 10,
-              }}
-            >
-              Únete al Ecosistema Kalarti
-            </span>
-            <h2 style={{ color: '#f8fafc', fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, margin: '6px 0 8px' }}>
-              Elige tu perfil en la red de construcción más completa
-            </h2>
-            <p style={{ color: '#94a3b8', fontSize: 14, maxWidth: 640, margin: '0 auto' }}>
-              Conectamos talento verificado, proveedores de materiales, ferreterías con POS y constructoras BIM 5D en una sola plataforma.
-            </p>
+      {/* Footer Corporativo KALARTI — Retícula de 5 Columnas sin iconos (únicamente iconos lineales en redes sociales) */}
+      <footer className="kalarti-clean-footer">
+        <style>{`
+          .kalarti-clean-footer {
+            background: #070b14;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 64px 28px 32px;
+            color: #94a3b8;
+            font-family: var(--font-main);
+          }
+          .kalarti-footer-container {
+            max-width: 1320px;
+            margin: 0 auto;
+          }
+          .kalarti-footer-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr 1fr 1.2fr 1.15fr;
+            gap: 32px;
+            align-items: start;
+            padding-bottom: 48px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          }
+          .kalarti-footer-col-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #f8fafc;
+            margin: 0 0 18px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          }
+          .kalarti-aff-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+          }
+          .kalarti-aff-btn {
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+            padding: 9px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.18s ease;
+          }
+          .kalarti-aff-btn:hover,
+          .kalarti-aff-btn.active {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(212, 175, 55, 0.55);
+            color: #ffffff;
+          }
+          .kalarti-aff-drawer {
+            margin: 4px 0 8px;
+            padding: 12px 14px;
+            background: rgba(15, 23, 42, 0.75);
+            border-left: 2px solid #d4af37;
+            font-size: 12px;
+            line-height: 1.55;
+            color: #cbd5e1;
+          }
+          .kalarti-aff-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+          }
+          .kalarti-aff-apply {
+            color: #d4af37;
+            font-weight: 700;
+            font-size: 12px;
+            text-decoration: none;
+            letter-spacing: 0.02em;
+          }
+          .kalarti-aff-apply:hover {
+            text-decoration: underline;
+          }
+          .kalarti-aff-manual {
+            color: #94a3b8;
+            font-size: 11px;
+            text-decoration: underline;
+          }
+          .kalarti-footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+          }
+          .kalarti-footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13px;
+            line-height: 1.45;
+            transition: color 0.15s ease;
+          }
+          .kalarti-footer-links a:hover {
+            color: #ffffff;
+          }
+          .kalarti-contact-text {
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #94a3b8;
+            margin: 0 0 12px 0;
+          }
+          .kalarti-contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 12px;
+          }
+          .kalarti-contact-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 4px;
+            padding: 7px 10px;
+            color: #f8fafc;
+            font-size: 12px;
+            font-family: inherit;
+          }
+          .kalarti-contact-input:focus {
+            outline: none;
+            border-color: #d4af37;
+          }
+          .kalarti-contact-submit {
+            background: #f8fafc;
+            color: #070b14;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+          }
+          .kalarti-contact-direct {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            font-size: 12px;
+          }
+          .kalarti-contact-direct a {
+            color: #cbd5e1;
+            text-decoration: none;
+          }
+          .kalarti-contact-direct a:hover {
+            color: #d4af37;
+          }
+          .kalarti-social-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+          }
+          .kalarti-social-icon {
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: border-color 0.18s ease, color 0.18s ease;
+          }
+          .kalarti-social-icon:hover {
+            border-color: #d4af37;
+            color: #ffffff;
+          }
+          .kalarti-brands-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+          }
+          .kalarti-brand-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 54px;
+          }
+          .kalarti-brand-box img {
+            max-width: 100%;
+            max-height: 40px;
+            object-fit: contain;
+            opacity: 0.88;
+          }
+          .kalarti-legal-bar {
+            padding-top: 26px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #64748b;
+          }
+          .kalarti-legal-bar a {
+            color: #cbd5e1;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+          }
+          .kalarti-legal-bar a:hover {
+            color: #ffffff;
+          }
+          @media (max-width: 1120px) {
+            .kalarti-footer-grid {
+              grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+          }
+          @media (max-width: 768px) {
+            .kalarti-clean-footer {
+              padding: 44px 18px 28px;
+            }
+            .kalarti-footer-grid {
+              grid-template-columns: 1fr;
+              gap: 28px;
+            }
+          }
+        `}</style>
+
+        <div className="kalarti-footer-container">
+          <div className="kalarti-footer-grid">
+            {/* COLUMNA 1: Afiliación & Red */}
+            <div>
+              <h3 className="kalarti-footer-col-title">Afiliación &amp; Red</h3>
+              <div className="kalarti-aff-list">
+                {AFFILIATION_ITEMS.map((item) => {
+                  const isOpen = activeAffiliation === item.id;
+                  return (
+                    <div key={item.id}>
+                      <button
+                        type="button"
+                        className={`kalarti-aff-btn ${isOpen ? 'active' : ''}`}
+                        onClick={() => setActiveAffiliation(isOpen ? '' : item.id)}
+                      >
+                        <span>{item.title}</span>
+                        <span style={{ fontSize: 11, color: isOpen ? '#d4af37' : '#64748b' }}>
+                          {isOpen ? '−' : '+'}
+                        </span>
+                      </button>
+                      {isOpen && (
+                        <div className="kalarti-aff-drawer">
+                          <div>{item.summary}</div>
+                          <div className="kalarti-aff-actions">
+                            <Link href={item.manualHref} className="kalarti-aff-manual">
+                              Ver manual y condiciones
+                            </Link>
+                            <Link href={item.applyHref} className="kalarti-aff-apply">
+                              Aplicar ➔
+                            </Link>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* COLUMNA 2: Plataforma & Ecosistema */}
+            <div>
+              <h3 className="kalarti-footer-col-title">Plataforma &amp; Ecosistema</h3>
+              <ul className="kalarti-footer-links">
+                <li>
+                  <Link href="/cotizador">Cotizador de Obra Gratis</Link>
+                </li>
+                <li>
+                  <Link href="/erp">Acceso al ERP</Link>
+                </li>
+                <li>
+                  <Link href="/marketplace">Marketplace B2B/B2C</Link>
+                </li>
+                <li>
+                  <Link href="/propiedades">Portafolio de Inmuebles</Link>
+                </li>
+                <li>
+                  <Link href="/mi-portal">Portal Privado de Perfil</Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* COLUMNA 3: Servicios */}
+            <div>
+              <h3 className="kalarti-footer-col-title">Servicios</h3>
+              <ul className="kalarti-footer-links">
+                <li>
+                  <Link href="/landing/diseno-estructural-pasto-narino">
+                    Diseño Arquitectónico y Modelado BIM 5D
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/landing/construccion">Construcción Llave en Mano</Link>
+                </li>
+                <li>
+                  <Link href="/blog">Blog Técnico</Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* COLUMNA 4: Sección de Contacto */}
+            <div>
+              <h3 className="kalarti-footer-col-title">Contacto</h3>
+              <p className="kalarti-contact-text">
+                Sede Principal: San Juan de Pasto, Nariño — Colombia. Atención corporativa y consultoría nacional.
+              </p>
+
+              {footerSent ? (
+                <div style={{ padding: '10px 12px', border: '1px solid rgba(212,175,55,0.4)', color: '#f8fafc', fontSize: 12, marginBottom: 12 }}>
+                  Solicitud registrada. Nuestro equipo de consultoría se pondrá en contacto.
+                </div>
+              ) : (
+                <form className="kalarti-contact-form" onSubmit={handleFooterLead}>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nombre o razón social"
+                    className="kalarti-contact-input"
+                    value={footerForm.nombre}
+                    onChange={(e) => setFooterForm({ ...footerForm, nombre: e.target.value })}
+                  />
+                  <input
+                    type="text"
+                    required
+                    placeholder="Correo electrónico o WhatsApp"
+                    className="kalarti-contact-input"
+                    value={footerForm.contacto}
+                    onChange={(e) => setFooterForm({ ...footerForm, contacto: e.target.value })}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Asunto o consulta breve"
+                    className="kalarti-contact-input"
+                    value={footerForm.mensaje}
+                    onChange={(e) => setFooterForm({ ...footerForm, mensaje: e.target.value })}
+                  />
+                  <button type="submit" className="kalarti-contact-submit" disabled={footerSending}>
+                    {footerSending ? 'Enviando...' : 'Solicitar Consultoría ➔'}
+                  </button>
+                </form>
+              )}
+
+              <div className="kalarti-contact-direct">
+                <a
+                  href="https://wa.me/573154064982?text=Hola%20KALARTI%2C%20solicito%20informaci%C3%B3n%20de%20consultor%C3%ADa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                   línea directa WhatsApp Consultoría ➔
+                </a>
+                <a href="mailto:gerencia@kalarti.com">
+                  gerencia@kalarti.com
+                </a>
+              </div>
+            </div>
+
+            {/* COLUMNA 5: Redes Sociales & Marcas (public/Marcas) */}
+            <div>
+              <h3 className="kalarti-footer-col-title">Redes Sociales &amp; Marcas</h3>
+              <div className="kalarti-social-row">
+                {/* LinkedIn */}
+                <a
+                  href="https://www.linkedin.com/company/kalarti-constructores-consultores-s-a-s/home/?viewAsMember=true"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn KALARTI"
+                  title="LinkedIn"
+                  className="kalarti-social-icon"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                    <rect x="2" y="9" width="4" height="12" />
+                    <circle cx="4" cy="4" r="2" />
+                  </svg>
+                </a>
+                {/* Instagram */}
+                <a
+                  href="https://www.instagram.com/kalarti_cyc.sas?obrf=amJzMDYxdHRwcGlr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram KALARTI"
+                  title="Instagram"
+                  className="kalarti-social-icon"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                  </svg>
+                </a>
+                {/* Facebook */}
+                <a
+                  href="https://www.facebook.com/share/18iiaqUgTt/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook KALARTI"
+                  title="Facebook"
+                  className="kalarti-social-icon"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                  </svg>
+                </a>
+                {/* X */}
+                <a
+                  href="https://x.com/KALARTI_SAS"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="X KALARTI"
+                  title="X"
+                  className="kalarti-social-icon"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4l16 16M20 4L4 20" />
+                  </svg>
+                </a>
+                {/* YouTube */}
+                <a
+                  href="https://www.youtube.com/@KALARTI_SAS"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="YouTube KALARTI"
+                  title="YouTube"
+                  className="kalarti-social-icon"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="4" ry="4" />
+                    <polygon points="10 9 15 12 10 15 10 9" />
+                  </svg>
+                </a>
+              </div>
+
+              <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+                Nuestras Marcas
+              </div>
+              <div className="kalarti-brands-grid">
+                {[
+                  '/Marcas/KALARTI Portfolio 2026 - Eng..png',
+                  '/Marcas/KALARTI Portfolio 2026 - Eng. (1).png',
+                  '/Marcas/KALARTI Portfolio 2026 - Eng. (2).png',
+                  '/Marcas/KALARTI Portfolio 2026 - Eng. (3).png',
+                ].map((src, idx) => (
+                  <div key={src} className="kalarti-brand-box">
+                    <img src={src} alt={`Marca Grupo Kalarti ${idx + 1}`} loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: 18,
-              marginBottom: 40,
-            }}
-          >
-            {/* 1. Trabaja con Nosotros */}
-            <Link
-              href="/unete"
-              style={{
-                textDecoration: 'none',
-                background: 'rgba(15, 23, 42, 0.85)',
-                border: '1px solid rgba(56, 189, 248, 0.25)',
-                borderRadius: 14,
-                padding: '22px 20px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: 12,
-                transition: 'transform 0.2s, border-color 0.2s',
-              }}
-            >
-              <div>
-                <div style={{ fontSize: 26, marginBottom: 8 }}>👷</div>
-                <div style={{ color: '#f8fafc', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>
-                  Trabaja con Nosotros
-                </div>
-                <p style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5, margin: 0 }}>
-                  Red de Profesionales y Cuadrillas. Postúlate a licitaciones y obras, obtén tu sello Verificado y conecta con constructoras gratis.
-                </p>
-              </div>
-              <span style={{ color: '#38bdf8', fontSize: 13, fontWeight: 700 }}>
-                Ir a Red de Talento ➔
-              </span>
-            </Link>
-
-            {/* 2. Sé Proveedor Kalarti */}
-            <Link
-              href="/proveedores"
-              style={{
-                textDecoration: 'none',
-                background: 'rgba(15, 23, 42, 0.85)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                borderRadius: 14,
-                padding: '22px 20px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: 12,
-              }}
-            >
-              <div>
-                <div style={{ fontSize: 26, marginBottom: 8 }}>🏭</div>
-                <div style={{ color: '#f8fafc', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>
-                  Sé Proveedor Kalarti / Afiliados
-                </div>
-                <p style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5, margin: 0 }}>
-                  Publica tus insumos en el Marketplace B2B/B2C y vincula tus precios directamente a los APUs de presupuestos en tu zona.
-                </p>
-              </div>
-              <span style={{ color: '#f59e0b', fontSize: 13, fontWeight: 700 }}>
-                Afiliarme como Proveedor ➔
-              </span>
-            </Link>
-
-            {/* 3. Comercio Electrónico y POS */}
-            <Link
-              href="/comercio"
-              style={{
-                textDecoration: 'none',
-                background: 'rgba(15, 23, 42, 0.85)',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
-                borderRadius: 14,
-                padding: '22px 20px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: 12,
-              }}
-            >
-              <div>
-                <div style={{ fontSize: 26, marginBottom: 8 }}>🏪</div>
-                <div style={{ color: '#f8fafc', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>
-                  Comercio Electrónico y POS
-                </div>
-                <p style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5, margin: 0 }}>
-                  Para ferreterías y depósitos: control de inventarios, facturación POS, CRM, ventas online y conexión automática a obras cercanas.
-                </p>
-              </div>
-              <span style={{ color: '#10b981', fontSize: 13, fontWeight: 700 }}>
-                Activar Comercio y POS ➔
-              </span>
-            </Link>
-
-            {/* 4. Constructoras y Contratistas */}
-            <Link
-              href="/planes"
-              style={{
-                textDecoration: 'none',
-                background: 'rgba(15, 23, 42, 0.85)',
-                border: '1px solid rgba(212, 175, 55, 0.35)',
-                borderRadius: 14,
-                padding: '22px 20px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: 12,
-              }}
-            >
-              <div>
-                <div style={{ fontSize: 26, marginBottom: 8 }}>🏗️</div>
-                <div style={{ color: '#f8fafc', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>
-                  Constructoras y Contratistas
-                </div>
-                <p style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5, margin: 0 }}>
-                  Planes de Cotizador NSR-10, ERP 5D, contratación directa en la Red de Talento y subcontratación de cuadrillas entre obras.
-                </p>
-              </div>
-              <span style={{ color: '#d4af37', fontSize: 13, fontWeight: 700 }}>
-                Ver Planes y Suscripciones ➔
-              </span>
-            </Link>
-          </div>
-
-          <div
-            style={{
-              borderTop: '1px solid rgba(255,255,255,0.07)',
-              paddingTop: 24,
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: 14,
-              fontSize: 13,
-            }}
-          >
-            <div>© 2026 Kalarti Ecosystem — Constructores y Consultores S.A.S. Todos los derechos reservados.</div>
-            <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
-              <Link href="/registro" style={{ color: '#d4af37', textDecoration: 'none', fontWeight: 700 }}>
-                Crear Cuenta Unificada
-              </Link>
-              <Link href="/mi-portal" style={{ color: '#94a3b8', textDecoration: 'none' }}>
-                Portal del Profesional
-              </Link>
-              <Link href="/privacidad" style={{ color: '#94a3b8', textDecoration: 'none' }}>
-                Política de Privacidad y Habeas Data (Ley 1581)
+          {/* 3. Franja Inferior (Legales & Copyright) Centrada */}
+          <div className="kalarti-legal-bar">
+            <div>© 2026 KALARTI S.A.S. Todos los derechos reservados</div>
+            <div>
+              Tratamiento de Datos Personales y Técnicos:{' '}
+              <Link href="/privacidad">
+                Política de Privacidad y Cookies conforme a la Ley 1581 de 2012 (Habeas Data)
               </Link>
             </div>
           </div>

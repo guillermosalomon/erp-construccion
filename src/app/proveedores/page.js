@@ -1,80 +1,264 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Sé Proveedor Kalarti — Afiliados Marketplace B2B | KALARTI',
+  title: 'Manual Red de Proveedores e Integración APU | Kalarti S.A.S.',
   description:
-    'Afilia tu fábrica, distribuidora o depósito de materiales al Marketplace Kalarti y vincula tus precios a los APUs de presupuestos en tu zona.',
+    'Documentación técnica y comercial para fabricantes, distribuidores y proveedores de materiales de construcción en Kalarti.',
 };
 
 export default function ProveedoresPage() {
-  const beneficios = [
-    {
-      icon: '📐',
-      title: 'Vinculación Directa a APUs por Zona',
-      desc: 'Tus precios alimentan automáticamente los Análisis de Precios Unitarios (APU) cuando una constructora o cliente cotiza una obra en tu municipio.',
-    },
-    {
-      icon: '🛒',
-      title: 'Órdenes de Compra B2B y B2C',
-      desc: 'Recibe pedidos directos desde las explosiones de insumos de los proyectos activos en el ERP y ventas de mostrador en el Marketplace con Mercado Pago.',
-    },
-    {
-      icon: '🚚',
-      title: 'Logística y Despacho Directo a Obra',
-      desc: 'Configura tus zonas de cobertura, tiempos de entrega y tarifas de flete para abastecer bodegas de obra sin intermediarios.',
-    },
-    {
-      icon: '📊',
-      title: 'Catálogo Estandarizado',
-      desc: 'Homologa tus referencias con los +800 insumos técnicos del catálogo Kalarti (aceros por calibre, cementos, agregados, tuberías CPVC/PVC y acabados).',
-    },
-  ];
-
   return (
-    <div style={{ minHeight: '100vh', background: '#050b16', color: '#f8fafc', fontFamily: 'var(--font-inter), sans-serif' }}>
-      <header style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '18px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1200, margin: '0 auto' }}>
-        <Link href="/" style={{ color: '#f8fafc', textDecoration: 'none', fontWeight: 900, fontSize: 20 }}>
-          KALARTI <span style={{ color: '#f59e0b', fontSize: 12, fontWeight: 700 }}>PROVEEDORES & AFILIADOS</span>
-        </Link>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <Link href="/marketplace" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: 13, padding: '8px 14px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)' }}>
-            Ver Marketplace
+    <div className="manual-page">
+      <style>{`
+        .manual-page {
+          min-height: 100vh;
+          background: #ffffff;
+          color: #0f172a;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          line-height: 1.65;
+        }
+        .manual-nav {
+          border-bottom: 1px solid #e2e8f0;
+          background: #ffffff;
+          position: sticky;
+          top: 0;
+          z-index: 40;
+          padding: 16px 28px;
+        }
+        .manual-nav-inner {
+          max-width: 1120px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 14px;
+        }
+        .manual-brand {
+          font-weight: 800;
+          font-size: 15px;
+          letter-spacing: 0.08em;
+          color: #0f172a;
+          text-decoration: none;
+        }
+        .manual-nav-links {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          flex-wrap: wrap;
+          font-size: 13px;
+        }
+        .manual-nav-links a {
+          color: #475569;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        .manual-btn-dark {
+          background: #0f172a;
+          color: #ffffff !important;
+          padding: 8px 16px;
+          border-radius: 4px;
+          font-weight: 600;
+          text-decoration: none;
+          display: inline-block;
+        }
+        .manual-btn-outline {
+          background: #ffffff;
+          color: #0f172a;
+          border: 1px solid #0f172a;
+          padding: 8px 16px;
+          border-radius: 4px;
+          font-weight: 600;
+          text-decoration: none;
+          display: inline-block;
+        }
+        .manual-container {
+          max-width: 1120px;
+          margin: 0 auto;
+          padding: 48px 28px 80px;
+        }
+        .manual-doc-code {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          color: #64748b;
+          margin-bottom: 10px;
+        }
+        .manual-title {
+          font-size: clamp(26px, 3.6vw, 40px);
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          color: #0f172a;
+          margin: 0 0 16px 0;
+          line-height: 1.2;
+        }
+        .manual-lead {
+          font-size: 16px;
+          color: #334155;
+          max-width: 820px;
+          margin: 0 0 32px 0;
+        }
+        .manual-section {
+          border-top: 1px solid #e2e8f0;
+          padding: 38px 0;
+        }
+        .manual-section-header {
+          display: flex;
+          align-items: baseline;
+          gap: 14px;
+          margin-bottom: 20px;
+        }
+        .manual-section-num {
+          font-size: 12px;
+          font-weight: 800;
+          color: #64748b;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+        .manual-section-title {
+          font-size: 22px;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 0;
+        }
+        .manual-grid-2 {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 20px;
+        }
+        .manual-box {
+          border: 1px solid #cbd5e1;
+          border-radius: 4px;
+          padding: 22px;
+          background: #ffffff;
+        }
+        .manual-box h3 {
+          font-size: 16px;
+          font-weight: 700;
+          margin: 0 0 8px 0;
+          color: #0f172a;
+        }
+        .manual-box p {
+          font-size: 14px;
+          color: #334155;
+          margin: 0;
+        }
+        @media (max-width: 768px) {
+          .manual-container {
+            padding: 32px 18px 60px;
+          }
+          .manual-grid-2 {
+            grid-template-columns: 1fr;
+          }
+          .manual-nav {
+            padding: 14px 18px;
+          }
+        }
+      `}</style>
+
+      <header className="manual-nav">
+        <div className="manual-nav-inner">
+          <Link href="/" className="manual-brand">
+            KALARTI — RED DE PROVEEDORES
           </Link>
-          <Link href="/registro?tipo=proveedor" style={{ background: '#f59e0b', color: '#0f172a', textDecoration: 'none', fontWeight: 800, fontSize: 13, padding: '8px 16px', borderRadius: 8 }}>
-            Afiliarme como Proveedor ➔
-          </Link>
+          <nav className="manual-nav-links">
+            <Link href="/marketplace">Marketplace B2B/B2C</Link>
+            <Link href="/comercio">Comercio y POS</Link>
+            <Link href="/registro?tipo=proveedor" className="manual-btn-dark">
+              Aplicar como Proveedor ➔
+            </Link>
+          </nav>
         </div>
       </header>
 
-      <main style={{ maxWidth: 1140, margin: '0 auto', padding: '56px 24px 80px' }}>
-        <section style={{ textAlign: 'center', marginBottom: 56 }}>
-          <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#f59e0b', background: 'rgba(245,158,11,0.12)', padding: '6px 14px', borderRadius: 999, marginBottom: 14 }}>
-            🏭 Fabricantes · Distribuidores · Ladrilleras · Trituradoras · Alquiler de Equipos
-          </span>
-          <h1 style={{ fontSize: 'clamp(28px, 4.5vw, 48px)', fontWeight: 900, lineHeight: 1.15, margin: '0 auto 16px', maxWidth: 820 }}>
-            Conecta tu catálogo de insumos directamente con los presupuestos de obra
-          </h1>
-          <p style={{ color: '#94a3b8', fontSize: 16, maxWidth: 680, margin: '0 auto 28px', lineHeight: 1.6 }}>
-            En Kalarti, cada presupuesto genera una explosión exacta de materiales. Al afiliarte como proveedor, tus productos aparecen como opción de compra inmediata para los residentes y directores de obra.
-          </p>
-          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/registro?tipo=proveedor" style={{ background: '#f59e0b', color: '#0f172a', fontWeight: 800, fontSize: 15, padding: '14px 26px', borderRadius: 10, textDecoration: 'none' }}>
-              Registrar mi Empresa Proveedora ➔
-            </Link>
-            <Link href="/comercio" style={{ background: 'rgba(255,255,255,0.06)', color: '#f8fafc', fontWeight: 700, fontSize: 15, padding: '14px 24px', borderRadius: 10, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.15)' }}>
-              ¿Tienes ferretería con mostrador? Ver POS ➔
-            </Link>
+      <main className="manual-container">
+        <div className="manual-doc-code">Manual de Afiliación B2B — Fabricantes, Distribuidores y Mayoristas</div>
+        <h1 className="manual-title">Red de Proveedores e Integración con Precios APU</h1>
+        <p className="manual-lead">
+          Vincule su catálogo técnico de materiales, agregados, aceros, sistemas livianos o alquiler de maquinaria al
+          motor de presupuestos y compras de KALARTI S.A.S. Cuando una constructora formula su presupuesto en su zona de
+          cobertura, sus insumos participan directamente en las órdenes de cotización y compra.
+        </p>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
+          <Link href="/registro?tipo=proveedor" className="manual-btn-dark">
+            Registrar Empresa Proveedora ➔
+          </Link>
+          <Link href="/comercio" className="manual-btn-outline">
+            Ver Modalidad Ferretería con POS
+          </Link>
+        </div>
+
+        {/* SECCIÓN 01 */}
+        <section className="manual-section">
+          <div className="manual-section-header">
+            <span className="manual-section-num">Sección 01</span>
+            <h2 className="manual-section-title">Alcance Operativo del Proveedor Afiliado</h2>
+          </div>
+
+          <div className="manual-grid-2">
+            <div className="manual-box">
+              <h3>01. Vinculación a Análisis de Precios Unitarios (APU)</h3>
+              <p>
+                Los precios unitarios de sus insumos alimentan la referencia técnica regional con la que arquitectos,
+                ingenieros y constructores estructuran sus presupuestos de obra.
+              </p>
+            </div>
+            <div className="manual-box">
+              <h3>02. Recepción de Órdenes de Compra del ERP</h3>
+              <p>
+                Reciba solicitudes de cotización formal y órdenes de compra generadas desde el módulo de Almacén y
+                Compras de los proyectos activos en su departamento.
+              </p>
+            </div>
+            <div className="manual-box">
+              <h3>03. Vitrina Comercial en Marketplace B2B/B2C</h3>
+              <p>
+                Publique fichas técnicas, unidades de empaque, disponibilidad de inventario y escalas de descuento por
+                volumen con recaudo electrónico a través de Mercado Pago.
+              </p>
+            </div>
+            <div className="manual-box">
+              <h3>04. Cobertura Logística y Tiempos de Entrega</h3>
+              <p>
+                Configure los municipios atendidos, costos de flete a obra y condiciones de despacho directo en planta o
+                bodega mayorista.
+              </p>
+            </div>
           </div>
         </section>
 
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 18 }}>
-          {beneficios.map((b, i) => (
-            <div key={i} style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(245, 158, 11, 0.22)', borderRadius: 14, padding: 24 }}>
-              <div style={{ fontSize: 28, marginBottom: 10 }}>{b.icon}</div>
-              <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 8, color: '#f8fafc' }}>{b.title}</h2>
-              <p style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.55, margin: 0 }}>{b.desc}</p>
+        {/* SECCIÓN 02 */}
+        <section className="manual-section">
+          <div className="manual-section-header">
+            <span className="manual-section-num">Sección 02</span>
+            <h2 className="manual-section-title">Diferencia entre Red de Proveedores y Comercio con POS</h2>
+          </div>
+
+          <div className="manual-grid-2">
+            <div className="manual-box">
+              <h3>Modalidad A — Proveedor / Distribuidor B2B</h3>
+              <p style={{ marginBottom: 14 }}>
+                Orientada a fabricantes, ladrilleras, concreteras, importadores y distribuidores mayoristas que desean
+                publicar su lista de precios en APUs y atender órdenes de compra de obra sin requerir caja registradora
+                de mostrador.
+              </p>
+              <Link href="/registro?tipo=proveedor" className="manual-btn-dark">
+                Aplicar como Proveedor B2B ➔
+              </Link>
             </div>
-          ))}
+            <div className="manual-box">
+              <h3>Modalidad B — Comercio Ferretero con POS</h3>
+              <p style={{ marginBottom: 14 }}>
+                Orientada a ferreterías y depósitos con atención al público en punto físico que requieren facturación en
+                mostrador (POS), control de inventario multi-sede, vendedores y ventas en el Marketplace.
+              </p>
+              <Link href="/registro?tipo=comercio" className="manual-btn-outline">
+                Aplicar a Comercio y POS ➔
+              </Link>
+            </div>
+          </div>
         </section>
       </main>
     </div>

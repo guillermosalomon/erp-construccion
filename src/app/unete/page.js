@@ -2,83 +2,287 @@ import Link from 'next/link';
 import ConvocatoriasPublicasList from '@/components/ecosistema/ConvocatoriasPublicasList';
 
 export const metadata = {
-  title: 'Trabaja con Nosotros — Red de Profesionales y Cuadrillas | KALARTI',
+  title: 'Manual Red de Talento y Cuadrillas | Kalarti S.A.S.',
   description:
-    'Únete gratis a la Red de Talento Kalarti. Postúlate a obras y licitaciones, obtén el sello Verificado y conecta con constructoras en toda Colombia.',
+    'Documentación de vinculación a la Red Bidireccional de Profesionales, Maestros y Cuadrillas de Construcción Kalarti.',
 };
 
 export default function UnetePage() {
-  const beneficios = [
-    {
-      icon: '✔',
-      title: 'Sello Profesional Verificado',
-      desc: 'Carga tu cédula, hoja de vida, tarjeta profesional (COPNIA/CONTE) y certificados SST/Alturas. Nuestro equipo valida tu perfil para destacarte ante las constructoras.',
-    },
-    {
-      icon: '🏗️',
-      title: 'Contratación Directa en Obras',
-      desc: 'Las constructoras que presupuestan en el ERP Kalarti ven directamente a los profesionales y cuadrillas disponibles en el municipio de la obra y los vinculan en 1 clic.',
-    },
-    {
-      icon: '📋',
-      title: 'Convocatorias y Licitaciones Abiertas',
-      desc: 'Aplica a vacantes reales de obra civil, estructura, instalaciones hidrosanitarias, eléctricas, bioconstrucción en guadua y dirección técnica.',
-    },
-    {
-      icon: '🔒',
-      title: 'Privacidad Protegida (Ley 1581)',
-      desc: '100% gratuito para trabajadores y profesionales. Tus datos de contacto y documentos sensibles solo se comparten cuando te postulas o aceptas una vinculación.',
-    },
-  ];
-
   return (
-    <div style={{ minHeight: '100vh', background: '#050b16', color: '#f8fafc', fontFamily: 'var(--font-inter), sans-serif' }}>
-      <header style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '18px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1200, margin: '0 auto' }}>
-        <Link href="/" style={{ color: '#f8fafc', textDecoration: 'none', fontWeight: 900, fontSize: 20, letterSpacing: '0.06em' }}>
-          KALARTI <span style={{ color: '#38bdf8', fontSize: 12, fontWeight: 700 }}>RED DE TALENTO</span>
-        </Link>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <Link href="/mi-portal" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: 13, padding: '8px 14px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)' }}>
-            Mi Portal Profesional
+    <div className="manual-page">
+      <style>{`
+        .manual-page {
+          min-height: 100vh;
+          background: #ffffff;
+          color: #0f172a;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          line-height: 1.65;
+        }
+        .manual-nav {
+          border-bottom: 1px solid #e2e8f0;
+          background: #ffffff;
+          position: sticky;
+          top: 0;
+          z-index: 40;
+          padding: 16px 28px;
+        }
+        .manual-nav-inner {
+          max-width: 1120px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 14px;
+        }
+        .manual-brand {
+          font-weight: 800;
+          font-size: 15px;
+          letter-spacing: 0.08em;
+          color: #0f172a;
+          text-decoration: none;
+        }
+        .manual-nav-links {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          flex-wrap: wrap;
+          font-size: 13px;
+        }
+        .manual-nav-links a {
+          color: #475569;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        .manual-btn-dark {
+          background: #0f172a;
+          color: #ffffff !important;
+          padding: 8px 16px;
+          border-radius: 4px;
+          font-weight: 600;
+          text-decoration: none;
+          display: inline-block;
+        }
+        .manual-btn-outline {
+          background: #ffffff;
+          color: #0f172a;
+          border: 1px solid #0f172a;
+          padding: 8px 16px;
+          border-radius: 4px;
+          font-weight: 600;
+          text-decoration: none;
+          display: inline-block;
+        }
+        .manual-container {
+          max-width: 1120px;
+          margin: 0 auto;
+          padding: 48px 28px 80px;
+        }
+        .manual-doc-code {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          color: #64748b;
+          margin-bottom: 10px;
+        }
+        .manual-title {
+          font-size: clamp(26px, 3.6vw, 40px);
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          color: #0f172a;
+          margin: 0 0 16px 0;
+          line-height: 1.2;
+        }
+        .manual-lead {
+          font-size: 16px;
+          color: #334155;
+          max-width: 820px;
+          margin: 0 0 32px 0;
+        }
+        .manual-section {
+          border-top: 1px solid #e2e8f0;
+          padding: 38px 0;
+        }
+        .manual-section-header {
+          display: flex;
+          align-items: baseline;
+          gap: 14px;
+          margin-bottom: 20px;
+        }
+        .manual-section-num {
+          font-size: 12px;
+          font-weight: 800;
+          color: #64748b;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+        .manual-section-title {
+          font-size: 22px;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 0;
+        }
+        .manual-grid-4 {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 18px;
+        }
+        .manual-grid-3 {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 20px;
+        }
+        .manual-box {
+          border: 1px solid #cbd5e1;
+          border-radius: 4px;
+          padding: 20px;
+          background: #ffffff;
+        }
+        .manual-box h3 {
+          font-size: 15px;
+          font-weight: 700;
+          margin: 0 0 8px 0;
+          color: #0f172a;
+        }
+        .manual-box p {
+          font-size: 13.5px;
+          color: #334155;
+          margin: 0;
+        }
+        @media (max-width: 900px) {
+          .manual-grid-4 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+          .manual-grid-3 {
+            grid-template-columns: 1fr;
+          }
+        }
+        @media (max-width: 640px) {
+          .manual-container {
+            padding: 32px 18px 60px;
+          }
+          .manual-grid-4 {
+            grid-template-columns: 1fr;
+          }
+          .manual-nav {
+            padding: 14px 18px;
+          }
+        }
+      `}</style>
+
+      <header className="manual-nav">
+        <div className="manual-nav-inner">
+          <Link href="/" className="manual-brand">
+            KALARTI — RED DE TALENTO
           </Link>
-          <Link href="/registro?tipo=profesional" style={{ background: '#38bdf8', color: '#0f172a', textDecoration: 'none', fontWeight: 800, fontSize: 13, padding: '8px 16px', borderRadius: 8 }}>
-            Registrarme Gratis ➔
-          </Link>
+          <nav className="manual-nav-links">
+            <Link href="/mi-portal">Portal Privado</Link>
+            <Link href="/planes">Para Constructoras</Link>
+            <Link href="/registro?tipo=profesional" className="manual-btn-dark">
+              Aplicar a la Red ➔
+            </Link>
+          </nav>
         </div>
       </header>
 
-      <main style={{ maxWidth: 1140, margin: '0 auto', padding: '56px 24px 80px' }}>
-        <section style={{ textAlign: 'center', marginBottom: 56 }}>
-          <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#38bdf8', background: 'rgba(56,189,248,0.12)', padding: '6px 14px', borderRadius: 999, marginBottom: 14 }}>
-            👷 Ingenieros · Arquitectos · Maestros · Oficiales · Cuadrillas
-          </span>
-          <h1 style={{ fontSize: 'clamp(28px, 4.5vw, 48px)', fontWeight: 900, lineHeight: 1.15, margin: '0 auto 16px', maxWidth: 820 }}>
-            Conecta tu talento con las obras y constructoras de tu región
-          </h1>
-          <p style={{ color: '#94a3b8', fontSize: 16, maxWidth: 680, margin: '0 auto 28px', lineHeight: 1.6 }}>
-            Haz parte del directorio técnico de Kalarti. Define tus oficios, tarifas de referencia y municipios de cobertura para recibir contrataciones directas desde los presupuestos de obra.
-          </p>
-          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/registro?tipo=profesional" style={{ background: '#38bdf8', color: '#0f172a', fontWeight: 800, fontSize: 15, padding: '14px 26px', borderRadius: 10, textDecoration: 'none' }}>
-              Crear mi Perfil en 2 Minutos ➔
-            </Link>
-            <Link href="/mi-portal" style={{ background: 'rgba(255,255,255,0.06)', color: '#f8fafc', fontWeight: 700, fontSize: 15, padding: '14px 24px', borderRadius: 10, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.15)' }}>
-              Ya tengo cuenta · Ir a Mi Portal
-            </Link>
+      <main className="manual-container">
+        <div className="manual-doc-code">Manual de Vinculación — Profesionales, Técnicos y Cuadrillas de Obra</div>
+        <h1 className="manual-title">Red Bidireccional de Talento para la Construcción</h1>
+        <p className="manual-lead">
+          El registro, validación de credenciales y postulación a convocatorias en la Red de Talento Kalarti es
+          completamente gratuito para profesionales y trabajadores. Su perfil técnico se enlaza directamente con los
+          cargos presupuestales de las constructoras que operan en el ERP.
+        </p>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
+          <Link href="/registro?tipo=profesional" className="manual-btn-dark">
+            Iniciar Registro Profesional ➔
+          </Link>
+          <Link href="/mi-portal" className="manual-btn-outline">
+            Ingresar a Mi Portal Privado
+          </Link>
+        </div>
+
+        {/* SECCIÓN 01: PERFILES ADMITIDOS */}
+        <section className="manual-section">
+          <div className="manual-section-header">
+            <span className="manual-section-num">Sección 01</span>
+            <h2 className="manual-section-title">Perfiles Técnicos y Operativos Admitidos</h2>
+          </div>
+
+          <div className="manual-grid-4">
+            <div className="manual-box">
+              <h3>01. Ingeniería y Arquitectura</h3>
+              <p>
+                Directores de obra, residentes técnicos, calculistas estructurales NSR-10, especialistas BIM 5D,
+                hidrosanitarios, eléctricos e interventores con matrícula COPNIA / CPNAA vigente.
+              </p>
+            </div>
+            <div className="manual-box">
+              <h3>02. Maestros y Oficiales</h3>
+              <p>
+                Maestros generales de obra, oficiales de mampostería, estructura en concreto, carpintería metálica y de
+                madera, estuco, pintura, enchapes y acabados arquitectónicos.
+              </p>
+            </div>
+            <div className="manual-box">
+              <h3>03. Cuadrillas Especializadas</h3>
+              <p>
+                Cuadrillas integradas para cimentación, estructura, redes eléctricas RETIE, plomería, impermeabilización,
+                cubiertas, drywall y bioconstrucción en Guadua Angustifolia.
+              </p>
+            </div>
+            <div className="manual-box">
+              <h3>04. SST, Topografía y Control</h3>
+              <p>
+                Inspectores SISO / SST con licencia vigente, coordinadores de trabajo seguro en alturas, comisiones de
+                topografía, almacenistas de obra y operadores de maquinaria.
+              </p>
+            </div>
           </div>
         </section>
 
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 18, marginBottom: 56 }}>
-          {beneficios.map((b, i) => (
-            <div key={i} style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: 14, padding: 24 }}>
-              <div style={{ fontSize: 28, marginBottom: 10 }}>{b.icon}</div>
-              <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 8, color: '#f8fafc' }}>{b.title}</h2>
-              <p style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.55, margin: 0 }}>{b.desc}</p>
+        {/* SECCIÓN 02: FLUJO DE VINCULACIÓN */}
+        <section className="manual-section">
+          <div className="manual-section-header">
+            <span className="manual-section-num">Sección 02</span>
+            <h2 className="manual-section-title">Protocolo de Registro, Verificación y Contratación</h2>
+          </div>
+
+          <div className="manual-grid-3">
+            <div className="manual-box">
+              <h3>Paso 01 — Registro Unificado y Oficios</h3>
+              <p>
+                Diligencie sus datos de identificación, ciudad base y seleccione los cargos u oficios que desempeña,
+                vinculados directamente al catálogo oficial de mano de obra del ERP.
+              </p>
             </div>
-          ))}
+            <div className="manual-box">
+              <h3>Paso 02 — Expediente Documental y Sello Verificado</h3>
+              <p>
+                En su portal privado (`/mi-portal`) adjunte cédula/NIT, hoja de vida en PDF, tarjeta profesional
+                (COPNIA/CONTE), afiliación ARL, curso de alturas SST y tarifa de referencia por jornal o mes.
+              </p>
+            </div>
+            <div className="manual-box">
+              <h3>Paso 03 — Postulación y Asignación en Obra</h3>
+              <p>
+                Active el interruptor de disponibilidad en la red para ser convocado por constructoras de su municipio o
+                postúlese directamente a las vacantes abiertas con protección de datos (Ley 1581).
+              </p>
+            </div>
+          </div>
         </section>
 
-        <ConvocatoriasPublicasList />
+        {/* SECCIÓN 03: CONVOCATORIAS ABIERTAS */}
+        <section className="manual-section">
+          <div className="manual-section-header">
+            <span className="manual-section-num">Sección 03</span>
+            <h2 className="manual-section-title">Convocatorias y Vacantes de Obra Vigentes</h2>
+          </div>
+          <ConvocatoriasPublicasList />
+        </section>
       </main>
     </div>
   );

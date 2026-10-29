@@ -8,7 +8,7 @@
  */
 import { supabase } from './supabase';
 
-export const ROLES_PERFIL = ['ADMIN', 'STAFF', 'RESIDENTE', 'CUADRILLA', 'VENDEDOR', 'CLIENTE', 'PROFESIONAL', 'CONSTRUCTOR', 'COMERCIO', 'PROVEEDOR'];
+export const ROLES_PERFIL = ['ADMIN', 'STAFF', 'RESIDENTE', 'CUADRILLA', 'VENDEDOR', 'CLIENTE', 'PROFESIONAL', 'CONSTRUCTOR', 'COMERCIO', 'PROVEEDOR', 'PROPIETARIO', 'INMOBILIARIA', 'CORREDOR'];
 
 export const normEmail = (e) => String(e || '').trim().toLowerCase();
 /** Últimos 10 dígitos del teléfono (ignora indicativo +57, espacios, guiones). */
@@ -284,6 +284,20 @@ export async function sincronizarIdentidad(authUser, metadata = {}) {
         console.warn('erp_proveedores onboarding:', e?.message);
       }
       await asegurarPersonal(authUser, { ...meta, role: 'TIENDA' });
+    } else if (tipoReg === 'INMOBILIARIA' || role === 'INMOBILIARIA') {
+      try {
+        await supabase.rpc('crear_organizacion', {
+          p_nombre: meta.empresa || meta.nombre || 'Inmobiliaria Asociada',
+          p_nit: meta.nit || meta.cedula || null,
+          p_tipo: 'INMOBILIARIA',
+          p_municipio: meta.ciudad || 'Pasto',
+        });
+      } catch {
+        // Tolerante si migration-fase23 aún no se ha corrido
+      }
+      await asegurarPersonal(authUser, { ...meta, role: 'INMOBILIARIA' });
+    } else if (tipoReg === 'PROPIETARIO' || role === 'PROPIETARIO') {
+      await asegurarClienteDePerfil(authUser, meta);
     } else if (role === 'CLIENTE' && tipoReg !== 'PROFESIONAL') {
       await asegurarClienteDePerfil(authUser, meta);
     } else {
