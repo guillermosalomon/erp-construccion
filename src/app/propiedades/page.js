@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { inmuebles as officialInmuebles } from '@/data/inmuebles';
+import { inmuebles as officialInmuebles, mergeCatalogWithDb } from '@/data/inmuebles';
 
 export default function PropiedadesMarketplace() {
   const [inmuebles, setInmuebles] = useState(officialInmuebles);
@@ -28,14 +28,9 @@ export default function PropiedadesMarketplace() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
-      // Merge: keep all official rich static properties with slugs
-      // and append any newly created dynamic properties that might exist
+
       if (data && data.length > 0) {
-        const extraProperties = data.filter(
-          (d) => !officialInmuebles.some((o) => o.titulo.toLowerCase() === d.titulo.toLowerCase())
-        );
-        setInmuebles([...officialInmuebles, ...extraProperties]);
+        setInmuebles(mergeCatalogWithDb(data, { onlyAvailable: true }));
       } else {
         setInmuebles(officialInmuebles);
       }

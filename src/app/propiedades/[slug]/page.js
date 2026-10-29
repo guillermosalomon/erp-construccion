@@ -1,16 +1,34 @@
 import { notFound } from 'next/navigation';
-import { inmuebles, getInmuebleBySlug } from '@/data/inmuebles';
+import { createClient } from '@supabase/supabase-js';
+import { inmuebles, getInmuebleBySlug, mergeCatalogWithDb } from '@/data/inmuebles';
 import PropertyDetailClient from './PropertyDetailClient';
 
-export async function generateStaticParams() {
-  return inmuebles.map((i) => ({
-    slug: i.slug,
-  }));
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+async function fetchDbInmueblesServer() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return [];
+  try {
+    const client = createClient(url, key, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data, error } = await client
+      .from('inmuebles')
+      .select('*, inmueble_fotos(*)')
+      .order('created_at', { ascending: false });
+    if (error) return [];
+    return data || [];
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const inmueble = getInmuebleBySlug(slug);
+  const dbRows = await fetchDbInmueblesServer();
+  const inmueble = getInmuebleBySlug(slug, dbRows);
 
   if (!inmueble) {
     return {
@@ -21,7 +39,8 @@ export async function generateMetadata({ params }) {
 
   const siteUrl = 'https://www.kalarti.com';
   const canonicalUrl = `${siteUrl}/propiedades/${slug}`;
-  const imageUrl = `${siteUrl}${inmueble.og_image_url || inmueble.portada_url}`;
+  const rawImg = inmueble.og_image_url || inmueble.portada_url || '/icon.png';
+  const imageUrl = rawImg.startsWith('http') ? rawImg : `${siteUrl}${rawImg}`;
 
   return {
     title: inmueble.seo?.title || `${inmueble.titulo} | Kalarti`,
@@ -59,13 +78,15 @@ export async function generateMetadata({ params }) {
 
 export default async function PropertyDetailPage({ params }) {
   const { slug } = await params;
-  const inmueble = getInmuebleBySlug(slug);
+  const dbRows = await fetchDbInmueblesServer();
+  const inmueble = getInmuebleBySlug(slug, dbRows);
 
   if (!inmueble) {
     notFound();
   }
 
-  const relatedInmuebles = inmuebles.filter((i) => i.slug !== slug);
+  const allCatalog = mergeCatalogWithDb(dbRows, { onlyAvailable: true });
+  const relatedInmuebles = allCatalog.filter((i) => i.slug !== inmueble.slug);
 
   // Schema.org Structured Data
   const jsonLd = {

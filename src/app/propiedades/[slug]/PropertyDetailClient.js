@@ -2,12 +2,37 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+import { getInmuebleBySlug, mergeCatalogWithDb } from '@/data/inmuebles';
 
-export default function PropertyDetailClient({ inmueble, relatedInmuebles }) {
+export default function PropertyDetailClient({ inmueble: initialInmueble, relatedInmuebles: initialRelated }) {
+  const [inmueble, setInmueble] = useState(initialInmueble);
+  const [relatedInmuebles, setRelatedInmuebles] = useState(initialRelated || []);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [formData, setFormData] = useState({ nombre: '', telefono: '', email: '', mensaje: '' });
   const [formStatus, setFormStatus] = useState({ loading: false, success: false, error: null });
   const thumbnailsRef = useRef(null);
+
+  useEffect(() => {
+    setInmueble(initialInmueble);
+    setRelatedInmuebles(initialRelated || []);
+  }, [initialInmueble, initialRelated]);
+
+  useEffect(() => {
+    if (!supabase || !initialInmueble?.slug) return;
+    supabase
+      .from('inmuebles')
+      .select('*, inmueble_fotos(*)')
+      .order('created_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (!error && data && data.length > 0) {
+          const updated = getInmuebleBySlug(initialInmueble.slug, data);
+          if (updated) setInmueble(updated);
+          const catalog = mergeCatalogWithDb(data, { onlyAvailable: true });
+          setRelatedInmuebles(catalog.filter((i) => i.slug !== initialInmueble.slug));
+        }
+      });
+  }, [initialInmueble?.slug]);
 
   // Build media list: include video, floor plan, and gallery photos
   const mediaList = [];

@@ -506,8 +506,266 @@ export const inmuebles = [
   }
 ];
 
-export function getInmuebleBySlug(slug) {
-  return inmuebles.find((i) => i.slug === slug);
+export function slugifyInmueble(text, fallback = 'propiedad') {
+  if (!text) return fallback;
+  return text
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || fallback;
+}
+
+export function findStaticInmuebleMatch(dbRow) {
+  if (!dbRow) return null;
+  const meta = dbRow.espacios_zonas && typeof dbRow.espacios_zonas === 'object' ? dbRow.espacios_zonas : {};
+
+  if (meta.slug) {
+    const bySlug = inmuebles.find((i) => i.slug === meta.slug);
+    if (bySlug) return bySlug;
+  }
+  if (meta.static_id) {
+    const byStaticId = inmuebles.find((i) => i.id === meta.static_id);
+    if (byStaticId) return byStaticId;
+  }
+  if (dbRow.id) {
+    const byId = inmuebles.find((i) => i.id === dbRow.id);
+    if (byId) return byId;
+  }
+  if (dbRow.titulo) {
+    const normTitle = dbRow.titulo.trim().toLowerCase();
+    const byTitle = inmuebles.find((i) => i.titulo.trim().toLowerCase() === normTitle);
+    if (byTitle) return byTitle;
+  }
+  if (dbRow.direccion) {
+    const normDir = dbRow.direccion.trim().toLowerCase();
+    const byDir = inmuebles.find((i) => i.direccion && i.direccion.trim().toLowerCase() === normDir);
+    if (byDir) return byDir;
+  }
+  return null;
+}
+
+export function mergeInmuebleWithDb(staticItem, dbRow, extraPhotos = []) {
+  if (!staticItem && !dbRow) return null;
+  if (!dbRow) return { ...staticItem };
+  if (!staticItem) return mapDbRowToInmueble(dbRow, extraPhotos);
+
+  const meta = dbRow.espacios_zonas && typeof dbRow.espacios_zonas === 'object' ? dbRow.espacios_zonas : {};
+  const photosFromRelation = Array.isArray(dbRow.inmueble_fotos) ? dbRow.inmueble_fotos : [];
+  const allDbPhotos = [...photosFromRelation, ...extraPhotos].sort((a, b) => (a.orden || 0) - (b.orden || 0));
+
+  const baseGaleria = Array.isArray(meta.galeria) && meta.galeria.length > 0
+    ? meta.galeria
+    : (Array.isArray(staticItem.galeria) ? [...staticItem.galeria] : []);
+
+  const mergedGaleria = [...baseGaleria];
+  const portada = dbRow.portada_url || staticItem.portada_url;
+  if (portada && mergedGaleria.length > 0 && mergedGaleria[0]?.url === staticItem.portada_url && portada !== staticItem.portada_url) {
+    mergedGaleria[0] = { url: portada, alt: dbRow.titulo || staticItem.titulo };
+  }
+
+  allDbPhotos.forEach((f) => {
+    if (f?.url && !mergedGaleria.some((g) => g.url === f.url)) {
+      mergedGaleria.push({
+        url: f.url,
+        alt: f.descripcion || dbRow.titulo || staticItem.titulo,
+      });
+    }
+  });
+
+  const dbAmenidades = Array.isArray(dbRow.amenidades) && dbRow.amenidades.length > 0
+    ? dbRow.amenidades
+    : (Array.isArray(meta.amenidades) && meta.amenidades.length > 0 ? meta.amenidades : staticItem.amenidades || []);
+
+  const precioNum = dbRow.precio !== null && dbRow.precio !== undefined ? Number(dbRow.precio) : staticItem.precio;
+  const formattedPrice = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(precioNum) + ' COP';
+
+  let precioTexto = meta.precio_texto !== undefined ? meta.precio_texto : staticItem.precio_texto;
+  if (precioNum !== staticItem.precio && (!meta.precio_texto || meta.precio_texto === staticItem.precio_texto)) {
+    precioTexto = formattedPrice;
+  }
+
+  const descCorta = meta.descripcion_corta || dbRow.descripcion || staticItem.descripcion_corta;
+  const descCompleta = meta.descripcion_completa || staticItem.descripcion_completa || dbRow.descripcion || descCorta;
+
+  return {
+    ...staticItem,
+    id: dbRow.id || staticItem.id,
+    static_id: staticItem.id,
+    slug: meta.slug || staticItem.slug,
+    titulo: dbRow.titulo || staticItem.titulo,
+    subtitulo: meta.subtitulo !== undefined ? meta.subtitulo : staticItem.subtitulo,
+    precio: precioNum,
+    precio_texto: precioTexto,
+    moneda: dbRow.moneda || staticItem.moneda || 'COP',
+    tipo: dbRow.tipo || staticItem.tipo,
+    subtipo: meta.subtipo !== undefined ? meta.subtipo : staticItem.subtipo,
+    etiqueta_especial: meta.etiqueta_especial !== undefined ? meta.etiqueta_especial : staticItem.etiqueta_especial,
+    estado: dbRow.estado || staticItem.estado || 'DISPONIBLE',
+    operacion: dbRow.operacion || staticItem.operacion || 'VENTA',
+    ciudad: dbRow.ciudad || staticItem.ciudad,
+    departamento: dbRow.departamento || staticItem.departamento,
+    sector: meta.sector !== undefined ? meta.sector : staticItem.sector,
+    direccion: dbRow.direccion || staticItem.direccion,
+    area_terreno: dbRow.area_terreno !== null && dbRow.area_terreno !== undefined ? Number(dbRow.area_terreno) : staticItem.area_terreno,
+    area_construida: dbRow.area_construida !== null && dbRow.area_construida !== undefined ? Number(dbRow.area_construida) : staticItem.area_construida,
+    habitaciones: dbRow.habitaciones !== null && dbRow.habitaciones !== undefined ? Number(dbRow.habitaciones) : staticItem.habitaciones,
+    banos: dbRow.banos !== null && dbRow.banos !== undefined ? Number(dbRow.banos) : staticItem.banos,
+    parqueaderos: dbRow.parqueaderos !== null && dbRow.parqueaderos !== undefined ? Number(dbRow.parqueaderos) : staticItem.parqueaderos,
+    piso: meta.piso !== undefined ? meta.piso : staticItem.piso,
+    etapa: meta.etapa !== undefined ? meta.etapa : staticItem.etapa,
+    entrega: meta.entrega !== undefined ? meta.entrega : staticItem.entrega,
+    tipologia: meta.tipologia !== undefined ? meta.tipologia : staticItem.tipologia,
+    licencia_turistica: meta.licencia_turistica !== undefined ? meta.licencia_turistica : staticItem.licencia_turistica,
+    portada_url: portada,
+    video_url: meta.video_url !== undefined ? meta.video_url : staticItem.video_url,
+    plano_url: meta.plano_url !== undefined ? meta.plano_url : staticItem.plano_url,
+    tour_360_url: dbRow.tour_360_url || staticItem.tour_360_url || '',
+    maps_url: meta.maps_url !== undefined ? meta.maps_url : staticItem.maps_url,
+    descripcion: descCorta,
+    descripcion_corta: descCorta,
+    descripcion_completa: descCompleta,
+    amenidades: dbAmenidades,
+    caracteristicas_internas: Array.isArray(meta.caracteristicas_internas) && meta.caracteristicas_internas.length > 0
+      ? meta.caracteristicas_internas
+      : (staticItem.caracteristicas_internas || []),
+    galeria: mergedGaleria,
+    propietario_nombre: dbRow.propietario_nombre || meta.propietario_nombre || staticItem.asesor?.nombre || 'Comercial Kalarti',
+    propietario_telefono: dbRow.propietario_telefono || meta.propietario_telefono || '+57 317 772 5056',
+    propietario_email: dbRow.propietario_email || meta.propietario_email || '',
+    comision_pct: dbRow.comision_pct !== null && dbRow.comision_pct !== undefined ? Number(dbRow.comision_pct) : 3.0,
+    espacios_zonas: meta,
+    seo: {
+      ...(staticItem.seo || {}),
+      title: meta.seo_title || `${dbRow.titulo || staticItem.titulo} | Kalarti`,
+      description: meta.seo_description || descCorta,
+    },
+    asesor: staticItem.asesor || {
+      nombre: 'Ana - Asesora Inmobiliaria Kalarti',
+      telefono: '573177725056',
+      whatsapp_msg: `Hola Ana, me interesa recibir más información sobre la propiedad ${dbRow.titulo || staticItem.titulo}.`,
+    },
+  };
+}
+
+export function mapDbRowToInmueble(dbRow, extraPhotos = []) {
+  if (!dbRow) return null;
+  const staticMatch = findStaticInmuebleMatch(dbRow);
+  if (staticMatch) {
+    return mergeInmuebleWithDb(staticMatch, dbRow, extraPhotos);
+  }
+
+  const meta = dbRow.espacios_zonas && typeof dbRow.espacios_zonas === 'object' ? dbRow.espacios_zonas : {};
+  const slug = meta.slug || slugifyInmueble(dbRow.titulo, dbRow.id);
+  const photosFromRelation = Array.isArray(dbRow.inmueble_fotos) ? dbRow.inmueble_fotos : [];
+  const allDbPhotos = [...photosFromRelation, ...extraPhotos].sort((a, b) => (a.orden || 0) - (b.orden || 0));
+
+  const galeria = [];
+  if (dbRow.portada_url) {
+    galeria.push({ url: dbRow.portada_url, alt: dbRow.titulo });
+  }
+  allDbPhotos.forEach((f) => {
+    if (f?.url && !galeria.some((g) => g.url === f.url)) {
+      galeria.push({ url: f.url, alt: f.descripcion || dbRow.titulo });
+    }
+  });
+
+  const descCorta = meta.descripcion_corta || dbRow.descripcion || '';
+  const descCompleta = meta.descripcion_completa || dbRow.descripcion || descCorta;
+
+  return {
+    id: dbRow.id,
+    slug,
+    titulo: dbRow.titulo,
+    subtitulo: meta.subtitulo || '',
+    precio: Number(dbRow.precio) || 0,
+    precio_texto: meta.precio_texto || '',
+    moneda: dbRow.moneda || 'COP',
+    tipo: dbRow.tipo || 'Apartamento',
+    subtipo: meta.subtipo || '',
+    etiqueta_especial: meta.etiqueta_especial || '',
+    estado: dbRow.estado || 'DISPONIBLE',
+    operacion: dbRow.operacion || 'VENTA',
+    ciudad: dbRow.ciudad || 'Pasto',
+    departamento: dbRow.departamento || 'Nariño',
+    sector: meta.sector || '',
+    direccion: dbRow.direccion || '',
+    area_terreno: Number(dbRow.area_terreno) || 0,
+    area_construida: Number(dbRow.area_construida) || 0,
+    habitaciones: Number(dbRow.habitaciones) || 0,
+    banos: Number(dbRow.banos) || 0,
+    parqueaderos: Number(dbRow.parqueaderos) || 0,
+    piso: meta.piso || null,
+    licencia_turistica: Boolean(meta.licencia_turistica),
+    portada_url: dbRow.portada_url || '/icon.png',
+    video_url: meta.video_url || '',
+    plano_url: meta.plano_url || '',
+    tour_360_url: dbRow.tour_360_url || '',
+    maps_url: meta.maps_url || '',
+    descripcion: descCorta,
+    descripcion_corta: descCorta,
+    descripcion_completa: descCompleta,
+    amenidades: Array.isArray(dbRow.amenidades) ? dbRow.amenidades : [],
+    caracteristicas_internas: Array.isArray(meta.caracteristicas_internas) ? meta.caracteristicas_internas : [],
+    galeria,
+    propietario_nombre: dbRow.propietario_nombre || 'Comercial Kalarti',
+    propietario_telefono: dbRow.propietario_telefono || '+57 317 772 5056',
+    propietario_email: dbRow.propietario_email || '',
+    comision_pct: dbRow.comision_pct !== null && dbRow.comision_pct !== undefined ? Number(dbRow.comision_pct) : 3.0,
+    espacios_zonas: meta,
+    seo: {
+      title: `${dbRow.titulo} | Kalarti`,
+      description: descCorta,
+      keywords: ['inmobiliaria kalarti', dbRow.ciudad || 'pasto', dbRow.tipo || 'inmueble'],
+      schema_type: 'RealEstateListing',
+    },
+    asesor: {
+      nombre: 'Ana - Asesora Inmobiliaria Kalarti',
+      telefono: '573177725056',
+      whatsapp_msg: `Hola Ana, me interesa recibir más información sobre la propiedad ${dbRow.titulo}.`,
+    },
+  };
+}
+
+export function mergeCatalogWithDb(dbRows = [], { onlyAvailable = false } = {}) {
+  if (!Array.isArray(dbRows) || dbRows.length === 0) {
+    return onlyAvailable ? inmuebles.filter((i) => i.estado === 'DISPONIBLE') : [...inmuebles];
+  }
+
+  const matchedDbIds = new Set();
+  const mergedOfficial = [];
+
+  inmuebles.forEach((staticItem) => {
+    const dbMatch = dbRows.find((row) => {
+      if (matchedDbIds.has(row.id)) return false;
+      const match = findStaticInmuebleMatch(row);
+      return match && match.slug === staticItem.slug;
+    });
+
+    if (dbMatch) {
+      matchedDbIds.add(dbMatch.id);
+      mergedOfficial.push(mergeInmuebleWithDb(staticItem, dbMatch));
+    } else if (!onlyAvailable) {
+      mergedOfficial.push({ ...staticItem });
+    }
+  });
+
+  const extraFromDb = dbRows
+    .filter((row) => !matchedDbIds.has(row.id))
+    .map((row) => mapDbRowToInmueble(row));
+
+  const combined = [...mergedOfficial, ...extraFromDb];
+  return onlyAvailable ? combined.filter((i) => i.estado === 'DISPONIBLE') : combined;
+}
+
+export function getInmuebleBySlug(slug, dbRows = []) {
+  if (Array.isArray(dbRows) && dbRows.length > 0) {
+    const all = mergeCatalogWithDb(dbRows, { onlyAvailable: false });
+    const found = all.find((i) => i.slug === slug || i.id === slug);
+    if (found) return found;
+  }
+  return inmuebles.find((i) => i.slug === slug || i.id === slug);
 }
 
 export function getAllInmuebles() {
