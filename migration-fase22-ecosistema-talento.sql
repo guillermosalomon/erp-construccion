@@ -44,6 +44,12 @@ CREATE INDEX IF NOT EXISTS idx_personal_red_talento
   ON personal(disponible_red_talento)
   WHERE disponible_red_talento = true;
 
+-- Columnas operativas en personal_proyecto para cuadrillas y equipos compuestos
+ALTER TABLE personal_proyecto
+  ADD COLUMN IF NOT EXISTS equipo_padre_id UUID,
+  ADD COLUMN IF NOT EXISTS tareas_asignadas JSONB DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS cuadrilla_idx INT DEFAULT 0;
+
 -- ─── 3. Tabla de Cuadrillas con Capacidad Ociosa (B2B Subcontratación) ──────
 CREATE TABLE IF NOT EXISTS cuadrillas_ofertadas (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

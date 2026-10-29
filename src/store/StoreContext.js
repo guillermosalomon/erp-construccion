@@ -1180,6 +1180,7 @@ async function syncToSupabase(action, state) {
                 payload.cargo_id = null;
                 return savePersonCreate(payload, attempt + 1);
               }
+              if (msg.includes('personal_email_key') || (msg.includes('duplicate key') && payload.email)) { const { data: ex } = await db().from('personal').select('id').ilike('email', payload.email).maybeSingle(); if (ex?.id) { const { id: _i, ...rest } = payload; await personalService.update(ex.id, rest); return; } }
               console.error('🔴 [Sync Error] ADD_PERSON:', msg);
             }
           };
@@ -1262,7 +1263,7 @@ async function syncToSupabase(action, state) {
           // Cross-sync dirección → Cliente CRM
           if (action.payload.email && (action.payload.direccion_residencia || action.payload.ciudad)) {
             try {
-              const linkedClient = state.clientes.find(c => c.email === action.payload.email || c.telegram_id === action.payload.telegram_id);
+              const linkedClient = (state.clientes || []).find(c => c.email === action.payload.email || c.telegram_id === action.payload.telegram_id);
               if (linkedClient) {
                 const crmUpdates = {};
                 if (action.payload.direccion_residencia) crmUpdates.direccion = action.payload.direccion_residencia;
@@ -1445,9 +1446,11 @@ async function syncToSupabase(action, state) {
             } catch (fullErr) {
               // Si falla por columnas, reintentar solo con las básicas
               console.warn(`[Sync] ${action.type} full failed: ${fullErr.message}. Retrying with core columns...`);
+              let resolvedPersonalId = action.payload.personal_id;
+              if ((fullErr.message || '').includes('personal_proyecto_personal_id_fkey') && db()) { const lp = (state.personal || []).find(p => p.id === resolvedPersonalId); if (lp?.email) { const { data: dp } = await db().from('personal').select('id').ilike('email', lp.email).maybeSingle(); if (dp?.id) resolvedPersonalId = dp.id; else { try { await personalService.create({ id: lp.id, nombre: lp.nombre || [lp.nombres, lp.apellidos].filter(Boolean).join(' ') || 'Personal', email: lp.email, telefono: lp.telefono || null, ciudad: lp.ciudad || null }); } catch (_) {} } } }
               const corePayload = {
                 id: action.payload.id,
-                personal_id: action.payload.personal_id,
+                personal_id: resolvedPersonalId,
                 proyecto_id: action.payload.proyecto_id,
                 cargo_id: action.payload.cargo_id || null,
                 unidades_asignadas: action.payload.unidades_asignadas || 0,
