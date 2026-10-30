@@ -56,27 +56,39 @@ export default function KalartiHub() {
 
   const handleFooterLead = async (e) => {
     e.preventDefault();
-    if (!footerForm.nombre.trim() || !footerForm.contacto.trim()) return;
+    const nombre = footerForm.nombre.trim();
+    const contacto = footerForm.contacto.trim();
+    const mensaje = footerForm.mensaje.trim() || 'Consulta desde el footer corporativo';
+    if (!nombre || !contacto) return;
     setFooterSending(true);
+
+    // 1. Guardar copia del lead en la base de datos
     try {
       await fetch('/api/marketing/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nombre: footerForm.nombre.trim(),
-          email: footerForm.contacto.includes('@') ? footerForm.contacto.trim() : '',
-          telefono: !footerForm.contacto.includes('@') ? footerForm.contacto.trim() : '',
+          nombre,
+          email: contacto.includes('@') ? contacto : '',
+          telefono: !contacto.includes('@') ? contacto : '',
           origen: 'footer_home_kalarti',
-          notas: footerForm.mensaje.trim() || 'Consulta desde el footer corporativo',
+          notas: `Consulta enviada a WhatsApp (+57 317 772 5056): ${mensaje}`,
         }),
       });
-      setFooterSent(true);
-      setFooterForm({ nombre: '', contacto: '', mensaje: '' });
     } catch {
-      setFooterSent(true);
-    } finally {
-      setFooterSending(false);
+      // tolerante a desconexión
     }
+
+    // 2. Redirigir y enviar la solicitud a WhatsApp al teléfono de contacto (+57 317 772 5056)
+    const waText = `Hola KALARTI, solicito consultoría:\n\n• Nombre: ${nombre}\n• Contacto: ${contacto}\n• Mensaje: ${mensaje}`;
+    const waUrl = `https://wa.me/573177725056?text=${encodeURIComponent(waText)}`;
+    if (typeof window !== 'undefined') {
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    setFooterSent(true);
+    setFooterForm({ nombre: '', contacto: '', mensaje: '' });
+    setFooterSending(false);
   };
 
   useEffect(() => {
@@ -1141,12 +1153,12 @@ export default function KalartiHub() {
             <div>
               <h3 className="kalarti-footer-col-title">Contacto</h3>
               <p className="kalarti-contact-text">
-                Sede Principal: San Juan de Pasto, Nariño — Colombia. Atención corporativa y consultoría nacional.
+                <strong>Sede Principal:</strong> Cra 28a No 17-15 Ed. Antonella Of. 401 - San Juan de Pasto, Nariño — Colombia.
               </p>
 
               {footerSent ? (
                 <div style={{ padding: '10px 12px', border: '1px solid rgba(212,175,55,0.4)', color: '#f8fafc', fontSize: 12, marginBottom: 12 }}>
-                  Solicitud registrada. Nuestro equipo de consultoría se pondrá en contacto.
+                  Solicitud enviada a WhatsApp y registrada en nuestro sistema de consultoría.
                 </div>
               ) : (
                 <form className="kalarti-contact-form" onSubmit={handleFooterLead}>
@@ -1174,18 +1186,21 @@ export default function KalartiHub() {
                     onChange={(e) => setFooterForm({ ...footerForm, mensaje: e.target.value })}
                   />
                   <button type="submit" className="kalarti-contact-submit" disabled={footerSending}>
-                    {footerSending ? 'Enviando...' : 'Solicitar Consultoría ➔'}
+                    {footerSending ? 'Enviando...' : 'Enviar Consulta a WhatsApp ➔'}
                   </button>
                 </form>
               )}
 
               <div className="kalarti-contact-direct">
+                <a href="tel:+573177725056">
+                  Contacto: +57 317 772 5056
+                </a>
                 <a
-                  href="https://wa.me/573154064982?text=Hola%20KALARTI%2C%20solicito%20informaci%C3%B3n%20de%20consultor%C3%ADa"
+                  href="https://wa.me/573152717932?text=Hola%20KALARTI%2C%20solicito%20informaci%C3%B3n%20de%20consultor%C3%ADa"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                   línea directa WhatsApp Consultoría ➔
+                  WhatsApp: +57 315 2717932 ➔
                 </a>
                 <a href="mailto:gerencia@kalarti.com">
                   gerencia@kalarti.com
