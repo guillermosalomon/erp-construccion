@@ -41,7 +41,6 @@ function Navbar() {
                 <div className={`lp-nav-links ${mobileOpen ? 'lp-nav-links--open' : ''}`}>
                     <a href="#servicios" onClick={() => setMobileOpen(false)}>Servicios</a>
                     <a href="#vulnerabilidad" onClick={() => setMobileOpen(false)}>Vulnerabilidad Sísmica</a>
-                    <a href="#equipo" onClick={() => setMobileOpen(false)}>Especialistas</a>
                     <a href="#contacto" className="lp-nav-cta" onClick={() => setMobileOpen(false)}>Cotizar Estudio</a>
                 </div>
                 <button className="lp-mobile-menu" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menú">
@@ -70,7 +69,7 @@ function HeroSection() {
                         Cálculo Estructural, <span className="lp-gradient-text">Vulnerabilidad Sísmica</span> & BIM en Pasto
                     </h1>
                     <p className="lp-hero-subtitle">
-                        Zona de amenaza sísmica alta. Evaluaciones post-sismo, dictámenes técnicos, patología estructural y memorias de cálculo avaladas bajo norma NSR-10 por la <strong>Ing. Sandra Paz (Esp. Estructural)</strong> y coordinación BIM por el <strong>Arq. Guillermo Salomón</strong>.
+                        Zona de amenaza sísmica alta. Evaluaciones post-sismo, dictámenes técnicos, patología estructural y memorias de cálculo avaladas bajo norma <strong>NSR-10</strong> con coordinación integral <strong>BIM 5D</strong>.
                     </p>
                     <div className="lp-hero-actions">
                         <a href="#contacto" className="lp-btn lp-btn-primary lp-btn-lg">
@@ -112,7 +111,7 @@ const SERVICES = [
     {
         icon: '📐',
         title: 'Cálculo Estructural y Licencias (Curadurías)',
-        desc: 'Memorias de cálculo completas y planos estructurales en concreto reforzado, estructura metálica y cimentaciones especiales avalados por la Ing. Sandra del Pilar Paz.',
+        desc: 'Memorias de cálculo completas y planos estructurales en concreto reforzado, estructura metálica y cimentaciones especiales avalados bajo normativa NSR-10.',
         features: [
             'Radicación y aprobación en Curadurías Urbanas',
             'Modelación en ETABS, SAP2000 y CYPECAD',
@@ -123,7 +122,7 @@ const SERVICES = [
     {
         icon: '🖥️',
         title: 'Coordinación BIM 5D & Diseño Arquitectónico',
-        desc: 'Diseño arquitectónico de residencias de lujo, comercio y remodelaciones coordinadas en Autodesk Revit por el Arq. Guillermo Salomón (Esp. BIM Management).',
+        desc: 'Diseño arquitectónico de residencias de lujo, comercio y remodelaciones coordinadas en Autodesk Revit bajo metodología BIM Management.',
         features: [
             'Modelado interdisciplinar Arq + Estructura + MEP',
             'Detección temprana de colisiones (Clash Detection)',
@@ -145,7 +144,7 @@ const SERVICES = [
     {
         icon: '💧',
         title: 'Redes Hidrosanitarias (HDS) & Contra Incendio (RCI)',
-        desc: 'Diseño integral de acueducto, alcantarillado, redes de rociadores y bombas contra incendio por la Ing. Ana Cristina Garcés.',
+        desc: 'Diseño integral de acueducto, alcantarillado, redes de rociadores y sistemas de bombeo contra incendio.',
         features: [
             'Cumplimiento de norma técnica y Empopasto',
             'Sistemas de bombeo y tanques de reserva',
@@ -265,43 +264,6 @@ function StatsSection() {
                         <div key={i} className="lp-stat-item">
                             <div className="lp-stat-number">{c}{i === 2 || i === 3 ? '%' : '+'}</div>
                             <div className="lp-stat-label">{labels[i]}</div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-}
-
-const TEAM = [
-    { photo: '/team/sandra-paz.jpg', initials: 'SPJ', name: 'Ing. Sandra del Pilar Paz Jojoa', role: 'Gerente de Construcción & Cálculo Estructural', spec: 'Ing. Civil — Esp. Estructural NSR-10, Sismo-resistencia y Curadurías' },
-    { photo: '/team/guillermo-salomon.jpg', initials: 'GS', name: 'Arq. Guillermo J. Salomón Solarte', role: 'Coordinador BIM & Director de Diseño', spec: 'Arquitecto — Esp. BIM Management & Bio-Construcción' },
-    { photo: '/team/jaime-paz.jpg', initials: 'JAP', name: 'Ing. Jaime Andrés Paz Jojoa', role: 'CEO KALARTI — Ingeniero Civil', spec: 'Esp. Vías, Interventoría & Contratación Estatal' },
-    { photo: '/team/ana-garces.jpg', initials: 'ACG', name: 'Ing. Ana Cristina Garcés Eraso', role: 'Directora de Proyectos & Redes Hidráulicas', spec: 'Ing. Civil — Esp. Redes HDS, RCI & Modelación Hidrológica' },
-];
-
-function TeamSection() {
-    return (
-        <section className="lp-team" id="equipo">
-            <div className="lp-container">
-                <div className="lp-section-header">
-                    <span className="lp-section-tag">Equipo Directivo & Consultor</span>
-                    <h2 className="lp-section-title">Especialistas al Frente de Tu Proyecto</h2>
-                    <p className="lp-section-desc">Un equipo multidisciplinario con sede en Pasto que respalda cada cálculo y decisión técnica.</p>
-                </div>
-                <div className="lp-team-grid">
-                    {TEAM.map((t, i) => (
-                        <div key={i} className="lp-team-card">
-                            <div className="lp-team-avatar">
-                                {t.photo ? (
-                                    <img src={t.photo} alt={t.name} />
-                                ) : (
-                                    <span>{t.initials}</span>
-                                )}
-                            </div>
-                            <h4>{t.name}</h4>
-                            <p className="lp-team-role">{t.role}</p>
-                            <p className="lp-team-spec">{t.spec}</p>
                         </div>
                     ))}
                 </div>
@@ -460,7 +422,6 @@ export default function LandingPastoNarino() {
             <ServicesSection />
             <VulnerabilityHighlight />
             <StatsSection />
-            <TeamSection />
             <ContactSection />
             <Footer />
             <a href="https://wa.me/573152717932?text=Hola%2C%20solicito%20asesor%C3%ADa%20para%20estudio%20estructural%20o%20vulnerabilidad%20en%20Pasto"

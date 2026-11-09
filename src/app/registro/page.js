@@ -518,13 +518,13 @@ function RegistroContent() {
       </header>
 
       <main className="manual-reg-container">
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#64748b', marginBottom: 6 }}>
+        <div style={{ marginBottom: 22 }}>
+          <h1 style={{ fontSize: 'clamp(22px, 2.6vw, 28px)', fontWeight: 800, color: '#0f172a', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
             Paso 01 — Selección de Perfil en el Ecosistema
-          </div>
-          <h1 style={{ fontSize: 'clamp(24px, 3vw, 32px)', fontWeight: 800, margin: 0 }}>
-            Seleccione su perfil a la izquierda y revise el alcance a la derecha
           </h1>
+          <p style={{ fontSize: 15, fontWeight: 400, color: '#475569', margin: 0, lineHeight: 1.55 }}>
+            Defina su perfil para conocer las características del módulo a continuación y continúe con el paso 02.
+          </p>
         </div>
 
         {/* PASO 1 EN 2 COLUMNAS: IZQUIERDA CASILLAS EN LISTA CON CHECK Y RECUADRO VERDE / DERECHA INFORMACIÓN GENERAL */}

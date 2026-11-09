@@ -134,7 +134,7 @@ const SERVICES = [
     {
         icon: '🖥️',
         title: 'BIM Management & Coordinación Interdisciplinaria',
-        desc: 'Liderado por el Arq. Guillermo Salomón (Esp. BIM Management). Modelado centralizado de arquitectura, estructura e ingeniería MEP para eliminar retrasos en obra.',
+        desc: 'Modelado centralizado bajo estándares BIM Management de arquitectura, estructura e ingeniería MEP para eliminar retrasos en obra.',
         features: [
             'Detección anticipada de colisiones (Clash Detection)',
             'Planos de coordinación para contratistas en Costa Rica',

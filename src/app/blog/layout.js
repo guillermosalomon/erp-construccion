@@ -228,9 +228,10 @@ export default function BlogLayout({ children }) {
           <nav className="clean-nav-links">
             <Link href="/">Ecosistema</Link>
             <Link href="/blog">Todos los Artículos</Link>
-            <Link href="/blog/categoria/arquitectonico">BIM & Arquitectura</Link>
-            <Link href="/blog/categoria/bio-construccion">Bio-Construcción 🌿</Link>
-            <Link href="/blog/categoria/estructural">Estructural</Link>
+            <Link href="/blog/categoria/hidraulica-sig">Hidráulica & SIG</Link>
+            <Link href="/blog/categoria/bim-mep">BIM & MEP</Link>
+            <Link href="/blog/categoria/bioconstruccion">Bio-Construcción 🌿</Link>
+            <Link href="/blog/categoria/normativa-riesgo">Normativa & Riesgo</Link>
             <a 
               href="https://wa.me/573152717932?text=Hola,%20quisiera%20solicitar%20asesor%C3%ADa%20sobre%20un%20proyecto" 
               target="_blank" 
@@ -255,21 +256,22 @@ export default function BlogLayout({ children }) {
               <strong style={{ color: 'var(--primary-navy)', fontSize: '18px' }}>KALARTI S.A.S.</strong>
             </div>
             <p style={{ fontSize: '14px', lineHeight: 1.6, maxWidth: '340px' }}>
-              Firma consultora y constructora especializada en Coordinación BIM 5D, Diseño Arquitectónico, Estructuras en Guadua, Ingeniería Estructural e Hidrosanitaria.
+              Firma consultora y constructora especializada en Coordinación BIM 5D, Diseño Arquitectónico, Estructuras en Guadua, Ingeniería Estructural, Ambiental e Hidrosanitaria.
             </p>
           </div>
           <div className="clean-footer-col">
-            <h4>Disciplinas & Especialistas</h4>
+            <h4>Disciplinas & Especialidades</h4>
             <ul>
-              <li><Link href="/blog/categoria/arquitectonico">BIM Management (Arq. Guillermo Salomón)</Link></li>
-              <li><Link href="/blog/categoria/bio-construccion">Bio-Construcción (Arq. Guillermo Salomón)</Link></li>
-              <li><Link href="/blog/categoria/estructural">Cálculo Estructural (Ing. Sandra Paz)</Link></li>
-              <li><Link href="/blog/categoria/hidrosanitario">Redes HDS & RCI (Ing. Ana Garcés)</Link></li>
+              <li><Link href="/blog/categoria/hidraulica-sig">Hidráulica, SIG & Territorio</Link></li>
+              <li><Link href="/blog/categoria/bim-mep">BIM Interdisciplinario & Coordinación MEP</Link></li>
+              <li><Link href="/blog/categoria/bioconstruccion">Bio-Construcción & Arquitectura Sostenible</Link></li>
+              <li><Link href="/blog/categoria/normativa-riesgo">Normativa & Gestión del Riesgo</Link></li>
             </ul>
           </div>
           <div className="clean-footer-col">
             <h4>Landings Geo-SEO</h4>
             <ul>
+              <li><Link href="/landing/plan-de-manejo-ambiental-barranquilla">Barranquilla & Atlántico — PMA Ambiental</Link></li>
               <li><Link href="/landing/bio-construccion-guadua-eje-cafetero">Eje Cafetero — Bio-Construcción</Link></li>
               <li><Link href="/landing/calculo-estructural-bogota">Bogotá — Cálculo Estructural</Link></li>
               <li><Link href="/landing/diseno-arquitectonico-costa-rica">Costa Rica — Luxury Architecture</Link></li>

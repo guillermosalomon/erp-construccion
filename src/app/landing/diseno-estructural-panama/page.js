@@ -70,7 +70,7 @@ function HeroSection() {
                         Diseño Arquitectónico, <span className="lp-gradient-text">Interiores, Paisajismo</span> & BIM en Panamá
                     </h1>
                     <p className="lp-hero-subtitle">
-                        Consultoría y diseño integral para desarrolladores e inversionistas en Panamá. Proyectos residenciales de lujo, oficinas corporativas, bodegas logísticas y retail coordinados con metodología <strong>BIM Management en Revit</strong> por el Arq. Guillermo Salomón. Máxima precisión en costos y cero desviaciones en obra.
+                        Consultoría y diseño integral para desarrolladores e inversionistas en Panamá. Proyectos residenciales de lujo, oficinas corporativas, bodegas logísticas y retail coordinados con metodología <strong>BIM Management en Revit</strong>. Máxima precisión en costos y cero desviaciones en obra.
                     </p>
                     <div className="lp-hero-actions">
                         <a href="#contacto" className="lp-btn lp-btn-primary lp-btn-lg">
@@ -134,7 +134,7 @@ const SERVICES = [
     {
         icon: '🖥️',
         title: 'Implementación BIM Management & Clash Detection',
-        desc: 'Liderado por el Arq. Guillermo Salomón (Esp. BIM Management). Coordinación espacial 3D de Arquitectura, Estructura y Redes MEP (HVAC, HDS, Eléctricas y RCI).',
+        desc: 'Coordinación espacial 3D bajo estándares BIM Management de Arquitectura, Estructura y Redes MEP (HVAC, HDS, Eléctricas y RCI).',
         features: [
             'Detección anticipada de choques interdisciplinarios',
             'Presupuesto 5D con cubicaciones precisas de materiales',

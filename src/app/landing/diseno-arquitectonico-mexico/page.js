@@ -70,7 +70,7 @@ function HeroSection() {
                         Arquitectura Eco-Luxury, <span className="lp-gradient-text">Interiores, Paisajismo</span> & BIM en Riviera Maya
                     </h1>
                     <p className="lp-hero-subtitle">
-                        Creamos eco-villas de lujo, hoteles boutique y desarrollos glamping que seducen al viajero internacional. Fusión magistral de bio-arquitectura en bambú/guadua, interiorismo chukum boho-chic, paisajismo selvático integrado y control riguroso con <strong>BIM Management en Revit</strong> dirigido por el Arq. Guillermo Salomón.
+                        Creamos eco-villas de lujo, hoteles boutique y desarrollos glamping que seducen al viajero internacional. Fusión magistral de bio-arquitectura en bambú/guadua, interiorismo chukum boho-chic, paisajismo selvático integrado y control riguroso con <strong>BIM Management en Revit</strong>.
                     </p>
                     <div className="lp-hero-actions">
                         <a href="#contacto" className="lp-btn lp-btn-primary lp-btn-lg">
@@ -134,7 +134,7 @@ const SERVICES = [
     {
         icon: '🖥️',
         title: 'Implementación BIM Management & Soporte a Preventas',
-        desc: 'Liderado por el Arq. Guillermo Salomón (Esp. BIM Management). Coordinación integral 3D de Arquitectura, Estructura e Instalaciones MEP para garantizar una obra sin sorpresas ni sobrecostos.',
+        desc: 'Coordinación integral 3D bajo estándares BIM Management de Arquitectura, Estructura e Instalaciones MEP para garantizar una obra sin sorpresas ni sobrecostos.',
         features: [
             'Detección anticipada de colisiones (Clash Detection) en Revit',
             'Cubicaciones y presupuestos 5D para desarrolladores e inversionistas',

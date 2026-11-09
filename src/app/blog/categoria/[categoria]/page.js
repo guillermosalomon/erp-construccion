@@ -6,6 +6,22 @@ import { useParams } from 'next/navigation';
 import metadata from '@/content/blog/metadata.json';
 
 const CATEGORY_NAMES = {
+  'hidraulica-sig': {
+    name: 'Hidráulica, SIG & Territorio 💧',
+    desc: 'Modelación hidrológica e hidráulica, sistemas de información geográfica (SIG), drenaje urbano sostenible y planificación territorial.'
+  },
+  'bim-mep': {
+    name: 'BIM Interdisciplinario & Coordinación MEP 🖥️',
+    desc: 'Coordinación 3D/5D en Autodesk Revit, detección de interferencias (Clash Detection) entre arquitectura, estructura y redes hidrosanitarias, eléctricas y RCI.'
+  },
+  'bioconstruccion': {
+    name: 'Bio-Construcción & Arquitectura Sostenible 🌿',
+    desc: 'Diseño sismo-resistente en Guadua Angustifolia Kunth, preservación certificada, arquitectura bioclimática, interiorismo y materiales de bajo impacto.'
+  },
+  'normativa-riesgo': {
+    name: 'Normativa & Gestión del Riesgo 📐',
+    desc: 'Cálculo estructural bajo norma NSR-10, estudios de vulnerabilidad sísmica, patología estructural, licenciamiento ambiental (PMA) y curadurías urbanas.'
+  },
   'bio-construccion': { name: 'Bio-Construcción & Guadua 🌿', desc: 'Diseño sostenible en Guadua Angustifolia Kunth, silvicultura, preservación con sales de boro, muros de tierra y arquitectura bioclimática.' },
   'estructural': { name: 'Cálculo Estructural & Sismo-Resistencia 📐', desc: 'Diseño sismo-resistente bajo norma NSR-10, memorias de cálculo para curadurías y coordinación estructural.' },
   'arquitectonico': { name: 'BIM Management & Diseño Arquitectónico 🎨', desc: 'Coordinación interdisciplinaria en Revit MEP, diseño de residencias de lujo, interiorismo, pieles de edificios y mobiliario a medida.' },
@@ -19,7 +35,9 @@ export default function CategoryPage() {
 
   const catInfo = CATEGORY_NAMES[categoria] || { name: categoria, desc: 'Publicaciones y casos de estudio sobre esta disciplina técnica.' };
   const articles = useMemo(() => {
-    return (metadata.articles || []).filter((art) => art.category === categoria);
+    return (metadata.articles || []).filter(
+      (art) => (Array.isArray(art.categoryIds) && art.categoryIds.includes(categoria)) || art.category === categoria
+    );
   }, [categoria]);
 
   return (

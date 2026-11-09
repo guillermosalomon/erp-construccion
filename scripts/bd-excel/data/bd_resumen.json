@@ -1,0 +1,58 @@
+{
+  "generado_en": "2026-11-05T18:29:19.729Z",
+  "archivos_salida": [
+    "D:\\DPTO. ARQUITECTURA\\0000 presupuestos\\BD_MAESTRA_ERP_KALARTI_2026.xlsx",
+    "C:\\Users\\Equipo\\.gemini\\antigravity\\scratch\\ERP_Construccion\\erp-construccion\\public\\BD_MAESTRA_ERP_KALARTI_2026.xlsx"
+  ],
+  "totales": {
+    "capitulos": 28,
+    "cargos_mo": 67,
+    "cuadrillas": 20,
+    "cuadrilla_detalle": 60,
+    "insumos_totales": 1636,
+    "insumos_en_uso": 1072,
+    "insumos_cotizados_2026": 1265,
+    "insumos_apeu_indexados_2026": 371,
+    "basicos_maestro": 16,
+    "basicos_detalle": 106,
+    "unitarios_maestro": 931,
+    "unitarios_detalle": 5156,
+    "registros_trazabilidad": 2711
+  },
+  "unitarios_por_fuente": {
+    "HOSPITAL": 313,
+    "RICAURTE": 130,
+    "DETECCION": 81,
+    "APEU": 407
+  },
+  "apus_por_capitulo": {
+    "00 BÁSICOS": 16,
+    "01 PRELIMINARES": 22,
+    "02 MOVIMIENTO DE TIERRAS": 21,
+    "03 CIMENTACIÓN": 20,
+    "04 ESTRUCTURA EN CONCRETO": 36,
+    "05 ESTRUCTURA METÁLICA Y CERRAJERÍA": 16,
+    "06 MAMPOSTERÍA": 12,
+    "07 PAÑETES": 14,
+    "08 PISOS Y ENCHAPES": 134,
+    "09 CUBIERTAS": 19,
+    "10 HIDROSANITARIAS Y PETAR": 138,
+    "11 REDES DE GAS DOMICILIARIO": 1,
+    "12 ELÉCTRICAS": 118,
+    "13 VOZ Y DATOS": 22,
+    "14 AIRE ACONDICIONADO": 74,
+    "15 RED CONTRA INCENDIO (EXTINCIÓN)": 44,
+    "16 DETECCIÓN Y ALARMA DE INCENDIO": 29,
+    "17 DRYWALL Y CIELOS": 17,
+    "18 ESTUCO Y PINTURA": 41,
+    "19 CARPINTERÍA EN MADERA": 21,
+    "20 CARPINTERÍA EN ALUMINIO Y VIDRIO": 13,
+    "21 APARATOS SANITARIOS": 17,
+    "22 CONSTRUCCIÓN EN GUADUA": 47,
+    "23 CONSTRUCCIÓN EN MADERA": 9,
+    "24 EXTERIORES Y VÍAS": 17,
+    "25 PISCINAS": 10,
+    "26 GASES MEDICINALES": 17,
+    "27 ASEO Y ENTREGA": 2
+  }
+}

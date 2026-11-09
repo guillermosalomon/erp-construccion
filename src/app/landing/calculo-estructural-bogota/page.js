@@ -70,7 +70,7 @@ function HeroSection() {
                         Cálculo Estructural NSR-10, <span className="lp-gradient-text">Curadurías</span> & Vulnerabilidad en Bogotá
                     </h1>
                     <p className="lp-hero-subtitle">
-                        Memorias de cálculo avaladas por la <strong>Ing. Sandra del Pilar Paz (Esp. Estructural)</strong> para licencias de construcción en Curadurías Urbanas de Bogotá y municipios de la Sabana. Estudios de vulnerabilidad sísmica y reforzamiento estructural.
+                        Memorias de cálculo avaladas por <strong>especialistas en ingeniería estructural</strong> para licencias de construcción en Curadurías Urbanas de Bogotá y municipios de la Sabana. Estudios de vulnerabilidad sísmica y reforzamiento estructural.
                     </p>
                     <div className="lp-hero-actions">
                         <a href="#contacto" className="lp-btn lp-btn-primary lp-btn-lg">

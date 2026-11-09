@@ -134,7 +134,7 @@ const SERVICES = [
     {
         icon: '📐',
         title: 'Cálculo Estructural y Licencias de Construcción',
-        desc: 'Memorias de cálculo avaladas por la Ing. Sandra del Pilar Paz (Esp. Estructural) para curadurías y secretarías de planeación del Valle del Cauca.',
+        desc: 'Memorias de cálculo avaladas por especialistas en ingeniería estructural para curadurías y secretarías de planeación del Valle del Cauca.',
         features: [
             'Estructuras sismorresistentes en concreto y metal',
             'Estudios geotécnicos y cimentación en ladera',

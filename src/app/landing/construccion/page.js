@@ -128,12 +128,13 @@ function HeroSection() {
 
 const SERVICES = [
     { icon: '🏠', title: 'Construcción de Viviendas & Comercial', desc: 'Casas campestres, condominios y edificaciones con diseño personalizado, acabados premium y ejecución llave en mano.', features: ['Diseño arquitectónico a medida', 'Estructura sismorresistente', 'Acabados de alta calidad'] },
-    { icon: '🏛️', title: 'Cálculo Estructural NSR-10 & Vulnerabilidad', desc: 'Diseño estructural sismo-resistente, peritaje post-sismo, patología y memorias de cálculo para Curadurías Urbanas liderado por la Ing. Sandra Paz.', features: ['Cálculo sísmico bajo NSR-10', 'Diagnóstico de vulnerabilidad', 'Aprobación en Curadurías'] },
-    { icon: '📐', title: 'Coordinación BIM 5D & Diseño', desc: 'Modelación paramétrica 3D, detección de interferencias (clash detection) y presupuestos integrados 5D liderado por Arq. Guillermo Salomón.', features: ['Modelación 3D en Revit', 'Presupuesto integrado 5D', 'Detección temprana de conflictos'] },
-    { icon: '🛣️', title: 'Diseño Geométrico de Vías & Pavimentos', desc: 'Trazado y modelación geométrica de vías urbanas, secundarias y terciarias bajo normativa INVIAS, movimiento de tierras y estructuras de pavimento liderado por Ing. Jaime Andrés Paz.', features: ['Diseño en planta, perfil y secciones (Civil 3D)', 'Normativa Manual de Diseño Geométrico INVIAS', 'Cubicaciones de explanación y diseño de pavimentos'] },
-    { icon: '💧', title: 'Redes Hidrosanitarias & Hidráulica', desc: 'Diseño de redes de acueducto, alcantarillado, redes contra incendio RCI (NFPA) y modelación de drenaje liderado por Ing. Ana Cristina Garcés.', features: ['Redes HDS y pluviales', 'Sistemas Contra Incendio RCI', 'Modelación hidrológica'] },
-    { icon: '🏗️', title: 'Obras Civiles & Contratación Estatal', desc: 'Construcción de infraestructura vial, pavimentos, puentes, redes matrices e interventoría técnica liderado por Ing. Jaime Andrés Paz.', features: ['Pavimentos e infraestructura vial', 'Interventoría de obras civiles', 'Contratación estatal y privada'] },
+    { icon: '🏛️', title: 'Cálculo Estructural NSR-10 & Vulnerabilidad', desc: 'Diseño estructural sismo-resistente, peritaje post-sismo, patología estructural y memorias de cálculo para aprobación en Curadurías Urbanas.', features: ['Cálculo sísmico bajo NSR-10', 'Diagnóstico de vulnerabilidad', 'Aprobación en Curadurías'] },
+    { icon: '📐', title: 'Coordinación BIM 5D & Diseño', desc: 'Modelación paramétrica 3D, detección de interferencias interdisciplinarias (clash detection) y presupuestos integrados 5D.', features: ['Modelación 3D en Revit', 'Presupuesto integrado 5D', 'Detección temprana de conflictos'] },
+    { icon: '🛣️', title: 'Diseño Geométrico de Vías & Pavimentos', desc: 'Trazado y modelación geométrica de vías urbanas, secundarias y terciarias bajo normativa INVIAS, movimiento de tierras y estructuras de pavimento.', features: ['Diseño en planta, perfil y secciones (Civil 3D)', 'Normativa Manual de Diseño Geométrico INVIAS', 'Cubicaciones de explanación y diseño de pavimentos'] },
+    { icon: '💧', title: 'Redes Hidrosanitarias & Hidráulica', desc: 'Diseño de redes de acueducto, alcantarillado, redes contra incendio RCI (NFPA) y modelación hidrológica e hidráulica de drenaje.', features: ['Redes HDS y pluviales', 'Sistemas Contra Incendio RCI', 'Modelación hidrológica'] },
+    { icon: '🏗️', title: 'Obras Civiles & Contratación Estatal', desc: 'Construcción de infraestructura vial, pavimentos, puentes, redes matrices, consultoría e interventoría técnica de obras.', features: ['Pavimentos e infraestructura vial', 'Interventoría de obras civiles', 'Contratación estatal y privada'] },
     { icon: '🌿', title: 'Bio-Construcción en Guadua', desc: 'Estructuras sismorresistentes en Guadua Angustifolia (NSR-10 Título E), eco-hoteles y arquitectura bioclimática de bajo impacto.', features: ['Guadua inmunizada y certificada', 'Aislamiento térmico natural', 'Estructuras sustentables'] },
+    { icon: '🌎', title: 'Plan de Manejo Ambiental (PMA) & Gestión Ambiental', desc: 'Formulación, implementación y seguimiento de Planes de Manejo Ambiental (PMA) para proyectos de infraestructura, urbanismo, industria y edificación.', features: ['Matrices de impacto y licenciamiento ambiental (CAR, CRA, EPA, ANLA)', 'Permisos de vertimientos, aprovechamiento forestal y ocupación de cauce', 'Gestión integral de RCD (Residuos de Construcción y Demolición) e informes ICA'] },
 ];
 
 function ServicesSection() {
@@ -351,7 +352,7 @@ function ContactSection() {
                                         <option value="redes_hidrosanitarias">Redes Hidrosanitarias y Modelación Hidráulica</option>
                                         <option value="consultoria">Consultoría / Interventoría</option>
                                         <option value="obras_civiles">Obras Civiles</option>
-                                        <option value="ambiental">Estudios Ambientales</option>
+                                        <option value="pma_ambiental">Plan de Manejo Ambiental (PMA) & Gestión Ambiental</option>
                                         <option value="otro">Otro</option>
                                     </select>
                                 </div>
@@ -400,8 +401,8 @@ function Footer() {
                         <a href="#servicios">Construcción de Viviendas</a>
                         <a href="#servicios">Diseño Geométrico de Vías</a>
                         <a href="#servicios">Diseño BIM 5D</a>
-                        <a href="#servicios">Obras Civiles</a>
-                        <a href="#servicios">Consultoría</a>
+                        <a href="#servicios">Plan de Manejo Ambiental (PMA)</a>
+                        <a href="#servicios">Obras Civiles & Consultoría</a>
                     </div>
                     <div className="lp-footer-links">
                         <h4>Contacto</h4>

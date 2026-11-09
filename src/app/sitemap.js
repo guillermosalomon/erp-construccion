@@ -13,7 +13,7 @@ export default async function sitemap() {
     priority: article.hub ? 0.9 : 0.8,
   }));
 
-  const categorySlugs = ['bio-construccion', 'estructural', 'arquitectonico', 'bim-3d', 'hidrosanitario'];
+  const categorySlugs = ['hidraulica-sig', 'bim-mep', 'bioconstruccion', 'normativa-riesgo'];
   const categoryUrls = categorySlugs.map((cat) => ({
     url: `${baseUrl}/blog/categoria/${cat}`,
     lastModified: new Date(),
@@ -31,6 +31,7 @@ export default async function sitemap() {
   const landingUrls = [
     '/landing/construccion',
     '/landing/bioconstruccion',
+    '/landing/plan-de-manejo-ambiental-barranquilla',
     '/landing/calculo-estructural-bogota',
     '/landing/diseno-arquitectonico-medellin',
     '/landing/construccion-residencial-cali',

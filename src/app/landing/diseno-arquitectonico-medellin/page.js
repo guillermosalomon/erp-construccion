@@ -70,7 +70,7 @@ function HeroSection() {
                         Diseño en Ladera, <span className="lp-gradient-text">Vulnerabilidad Sísmica</span> & BIM en Medellín
                     </h1>
                     <p className="lp-hero-subtitle">
-                        Protege y valoriza tus edificaciones residenciales y comerciales en Antioquia. Evaluaciones técnicas post-sismo, patología estructural y diseño arquitectónico en ladera coordinado en BIM 5D por el Arq. Guillermo Salomón y la Ing. Sandra Paz (Esp. Estructural).
+                        Protege y valoriza tus edificaciones residenciales y comerciales en Antioquia. Evaluaciones técnicas post-sismo, patología estructural y diseño arquitectónico en ladera coordinado bajo metodología <strong>BIM 5D</strong> y cálculo sismo-resistente.
                     </p>
                     <div className="lp-hero-actions">
                         <a href="#contacto" className="lp-btn lp-btn-primary lp-btn-lg">
@@ -134,7 +134,7 @@ const SERVICES = [
     {
         icon: '📐',
         title: 'Cálculo Estructural y Licencias en Curadurías',
-        desc: 'Memorias de cálculo avaladas por la Ing. Sandra del Pilar Paz (Esp. Estructural) para curadurías de Medellín, Envigado, Sabaneta y Rionegro.',
+        desc: 'Memorias de cálculo avaladas por especialistas en ingeniería estructural para curadurías de Medellín, Envigado, Sabaneta y Rionegro.',
         features: [
             'Estructuras de concreto reforzado y perfiles metálicos',
             'Cumplimiento estricto de norma NSR-10',
